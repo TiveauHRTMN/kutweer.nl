@@ -444,7 +444,7 @@ export default function WeatherDashboard() {
 
       {/* Affiliate Spot 1 */}
       <div className="animate-fade-in" style={{ animationDelay: "0.85s" }}>
-        <AffiliateCard variant="weather" weather={weather} />
+        <AffiliateCard variant="top" weather={weather} />
       </div>
 
       {/* Wat trek je aan? */}
@@ -541,7 +541,7 @@ export default function WeatherDashboard() {
 
       {/* Affiliate Spot 2 */}
       <div className="animate-fade-in" style={{ animationDelay: "1.15s" }}>
-        <AffiliateCard variant="generic" weather={weather} />
+        <AffiliateCard variant="bottom" weather={weather} />
       </div>
 
       {/* Footer / Share */}
