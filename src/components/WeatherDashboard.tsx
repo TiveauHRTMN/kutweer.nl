@@ -85,19 +85,19 @@ export default function WeatherDashboard() {
       {/* Header */}
       <header className="flex items-center justify-between animate-fade-in">
         <div className="flex items-center gap-2">
-          <CloudRain className="text-[#a89080] w-8 h-8" />
+          <CloudRain className="text-white/80 w-8 h-8" />
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-1">
               KutWeer
             </h1>
-            <p className="text-xs text-text-muted">Het weer, maar dan eerlijk.</p>
+            <p className="text-xs text-white/70">Het weer, maar dan eerlijk.</p>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
           <button 
             onClick={handleLocationClick}
-            className="w-10 h-10 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors"
+            className="w-10 h-10 rounded-full border border-white/30 bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
           >
             <MapPin className="text-accent-red w-4 h-4" />
           </button>
@@ -109,7 +109,7 @@ export default function WeatherDashboard() {
                 const selected = DUTCH_CITIES.find(c => c.name === e.target.value);
                 if (selected) setCity(selected);
               }}
-              className="appearance-none bg-transparent border border-black/10 rounded-full pl-4 pr-10 py-2 text-sm font-medium hover:bg-black/5 transition-colors cursor-pointer focus:outline-none focus:border-accent-orange"
+              className="appearance-none bg-white/10 border border-white/30 rounded-full pl-4 pr-10 py-2 text-sm font-medium text-white hover:bg-white/20 transition-colors cursor-pointer focus:outline-none focus:border-accent-orange backdrop-blur-sm"
             >
               <option value="Jouw Locatie" disabled hidden>Jouw Locatie</option>
               {DUTCH_CITIES.map(c => (
@@ -118,7 +118,7 @@ export default function WeatherDashboard() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-text-secondary" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-white/70" />
           </div>
         </div>
       </header>
@@ -168,8 +168,8 @@ export default function WeatherDashboard() {
             </div>
           </div>
           
-          <div className="mt-8 bg-[rgba(232,116,58,0.15)] border-l-4 border-accent-orange p-4 rounded-r-lg">
-            <p className="font-semibold text-lg text-white">
+          <div className="mt-8 bg-accent-orange/15 border-l-4 border-accent-orange p-4 rounded-r-lg">
+            <p className="font-semibold text-lg text-text-primary">
               {getMainCommentary(weather)}
             </p>
           </div>
@@ -444,7 +444,7 @@ export default function WeatherDashboard() {
             <div className="absolute bottom-[2px] left-1/2 -translate-x-1/2 w-3 h-3 bg-accent-amber rounded-full shadow-[0_0_10px_2px_rgba(240,160,64,0.5)]"></div>
           </div>
           
-          <div className="mt-6 flex items-center justify-between border-t border-[rgba(255,255,255,0.05)] pt-4">
+          <div className="mt-6 flex items-center justify-between border-t border-black/10 pt-4">
             <span className="text-sm font-medium text-text-secondary">UV-index vandaag</span>
             <span className="badge" style={{ backgroundColor: `${uvInfo.color}30`, color: uvInfo.color, border: `1px solid ${uvInfo.color}50` }}>
               {weather.uvIndex.toFixed(1)} — {uvInfo.label}
@@ -458,9 +458,8 @@ export default function WeatherDashboard() {
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Eerlijk VS Onzin</h3>
         </div>
-        <div className="card p-4 overflow-hidden relative border-none bg-transparent">
-          <div className="absolute inset-0 bg-gradient-to-br from-[rgba(52,211,153,0.05)] to-[rgba(239,68,68,0.05)]" />
-          <div className="grid grid-cols-2 gap-4 relative z-10">
+        <div className="card p-4 overflow-hidden relative">
+          <div className="grid grid-cols-2 gap-4">
             {/* KutWeer side */}
             <div className="p-4 border border-[rgba(52,211,153,0.2)] bg-[rgba(52,211,153,0.05)] rounded-xl flex flex-col justify-between">
               <div>
