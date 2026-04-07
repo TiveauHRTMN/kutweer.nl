@@ -97,7 +97,7 @@ export default function WeatherDashboard() {
         <div className="flex items-center gap-2">
           <button 
             onClick={handleLocationClick}
-            className="w-10 h-10 rounded-full border border-[rgba(255,200,150,0.1)] flex items-center justify-center hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+            className="w-10 h-10 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors"
           >
             <MapPin className="text-accent-red w-4 h-4" />
           </button>
@@ -109,7 +109,7 @@ export default function WeatherDashboard() {
                 const selected = DUTCH_CITIES.find(c => c.name === e.target.value);
                 if (selected) setCity(selected);
               }}
-              className="appearance-none bg-transparent border border-[rgba(255,200,150,0.1)] rounded-full pl-4 pr-10 py-2 text-sm font-medium hover:bg-[rgba(255,255,255,0.05)] transition-colors cursor-pointer focus:outline-none focus:border-accent-orange"
+              className="appearance-none bg-transparent border border-black/10 rounded-full pl-4 pr-10 py-2 text-sm font-medium hover:bg-black/5 transition-colors cursor-pointer focus:outline-none focus:border-accent-orange"
             >
               <option value="Jouw Locatie" disabled hidden>Jouw Locatie</option>
               {DUTCH_CITIES.map(c => (
@@ -135,7 +135,7 @@ export default function WeatherDashboard() {
             onChange={(e) => setChatInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') setChatInput(''); }}
           />
-          <button className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-accent-orange text-white flex items-center justify-center hover:bg-orange-600 transition-colors">
+          <button className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-accent-orange text-text-primary flex items-center justify-center hover:bg-orange-600 transition-colors">
             <Send className="w-4 h-4" />
           </button>
         </div>
@@ -175,14 +175,14 @@ export default function WeatherDashboard() {
           </div>
           
           <div className="flex flex-wrap gap-3 mt-6">
-            <span className="badge bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] font-normal px-3 py-1.5">
-              Voelt als <strong className="ml-1 text-white">{weather.current.feelsLike}°</strong>
+            <span className="badge bg-black/5 border border-black/10 font-normal px-3 py-1.5">
+              Voelt als <strong className="ml-1 text-text-primary">{weather.current.feelsLike}°</strong>
             </span>
-            <span className="badge bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] font-normal px-3 py-1.5">
+            <span className="badge bg-black/5 border border-black/10 font-normal px-3 py-1.5">
               {getWeatherDescription(weather.current.weatherCode)}
             </span>
-            <span className="badge bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.1)] font-normal px-3 py-1.5">
-              Luchtvochtigheid <strong className="ml-1 text-white">{weather.current.humidity}%</strong>
+            <span className="badge bg-black/5 border border-black/10 font-normal px-3 py-1.5">
+              Luchtvochtigheid <strong className="ml-1 text-text-primary">{weather.current.humidity}%</strong>
             </span>
           </div>
         </div>
@@ -199,7 +199,7 @@ export default function WeatherDashboard() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="text-lg font-medium text-white max-w-md"
+            className="text-lg font-medium text-text-primary max-w-md"
           >
             {quote}
           </motion.p>
@@ -207,7 +207,7 @@ export default function WeatherDashboard() {
         
         <button 
           onClick={() => setQuote(getRandomQuote())}
-          className="mt-6 flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(255,255,255,0.1)] text-sm font-medium hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+          className="mt-6 flex items-center gap-2 px-4 py-2 rounded-full border border-black/10 text-sm font-medium hover:bg-black/5 transition-colors"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Nog een
@@ -253,7 +253,7 @@ export default function WeatherDashboard() {
           </div>
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-bold">{weather.current.windSpeed}</span>
-            <span className="text-sm font-bold text-white">km/h</span>
+            <span className="text-sm font-bold text-text-primary">km/h</span>
           </div>
           <div className="text-sm text-text-muted mt-1">
              Richting: {weather.current.windDirection} • Stoten: {weather.current.windGusts} km/h
@@ -267,7 +267,7 @@ export default function WeatherDashboard() {
           </div>
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-bold">{weather.current.precipitation}</span>
-            <span className="text-sm font-bold text-white">mm</span>
+            <span className="text-sm font-bold text-text-primary">mm</span>
           </div>
           <div className="text-sm text-text-muted mt-1">
             {weather.current.precipitation > 0 ? "Gewoon nat 💧" : "Droog 👍"}
@@ -279,7 +279,7 @@ export default function WeatherDashboard() {
       <div className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Komende Uren</h3>
-          <span className="text-xs text-text-muted">Swipe →</span>
+          <span className="text-xs text-white/60">Swipe →</span>
         </div>
         <div className="horizontal-scroll">
           {weather.hourly.slice(0, 12).map((hour, idx) => {
@@ -327,7 +327,7 @@ export default function WeatherDashboard() {
           
           <div className="card p-4 flex flex-col justify-between h-full">
             <div className="flex justify-between items-start mb-2">
-              <span className="font-bold text-white">Morgen</span>
+              <span className="font-bold text-text-primary">Morgen</span>
               <span className="text-xl">{getWeatherEmoji(weather.daily[1].weatherCode)}</span>
             </div>
             <div className="flex items-baseline gap-2 mt-auto">
@@ -347,7 +347,7 @@ export default function WeatherDashboard() {
       <div className="animate-fade-in" style={{ animationDelay: "0.7s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">KutWeer-Score</h3>
-          <span className="text-xs text-text-muted">Hoe erg is het?</span>
+          <span className="text-xs text-white/60">Hoe erg is het?</span>
         </div>
         <div className="card p-6 overflow-hidden relative">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-accent-green via-accent-amber to-accent-red" />
@@ -370,7 +370,7 @@ export default function WeatherDashboard() {
             />
           </div>
           
-          <p className="mt-4 font-semibold text-white">{kutLabel}</p>
+          <p className="mt-4 font-semibold text-text-primary">{kutLabel}</p>
         </div>
       </div>
 
@@ -378,16 +378,16 @@ export default function WeatherDashboard() {
       <div className="animate-fade-in" style={{ animationDelay: "0.8s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Fiets-Weer</h3>
-          <span className="text-xs text-text-muted">Kan ik fietsen?</span>
+          <span className="text-xs text-white/60">Kan ik fietsen?</span>
         </div>
         <div className="card p-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[rgba(255,255,255,0.05)] rounded-full flex items-center justify-center text-2xl">
+            <div className="w-12 h-12 bg-black/5 rounded-full flex items-center justify-center text-2xl">
               🚴
             </div>
             <div className="flex-1">
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-2xl font-bold text-white">{fietsScore}</span>
+                <span className="text-2xl font-bold text-text-primary">{fietsScore}</span>
                 <span className="text-sm font-semibold text-text-muted">/10</span>
               </div>
               <div className="score-bar">
@@ -409,7 +409,7 @@ export default function WeatherDashboard() {
       <div className="animate-fade-in" style={{ animationDelay: "0.9s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Wat trek je aan?</h3>
-          <span className="text-xs text-text-muted">Outfit advisor</span>
+          <span className="text-xs text-white/60">Outfit advisor</span>
         </div>
         <div className="card p-4 flex items-center gap-4">
           <div className="text-3xl">{outfitEmoji}</div>
@@ -468,7 +468,7 @@ export default function WeatherDashboard() {
                   <span className="w-1.5 h-1.5 rounded-full bg-current" />
                   KutWeer
                 </h4>
-                <div className="text-sm font-semibold text-white mb-1">Komende 48 uur</div>
+                <div className="text-sm font-semibold text-text-primary mb-1">Komende 48 uur</div>
                 <div className="text-xs text-text-muted">Echte data. KNMI modellen. Accuraat tot op de minuut.</div>
               </div>
               <div className="mt-4 px-3 py-1.5 bg-[rgba(52,211,153,0.1)] text-accent-green text-xs font-bold text-center rounded-lg">
@@ -483,7 +483,7 @@ export default function WeatherDashboard() {
                   <span className="w-1.5 h-1.5 rounded-full bg-current" />
                   Die andere apps
                 </h4>
-                <div className="text-sm font-semibold text-white mb-1">"14-daagse voorspelling"</div>
+                <div className="text-sm font-semibold text-text-primary mb-1">"14-daagse voorspelling"</div>
                 <div className="text-xs text-text-muted opacity-50 filter blur-[0.5px]">
                   Vr. ☁️ 11°/21°<br />
                   Za. 🌥️ 8°/16°<br />
@@ -503,11 +503,11 @@ export default function WeatherDashboard() {
         <button className="btn-cta mx-auto">
           <Send className="w-4 h-4 ml-[-4px]" /> Deel dit kutweer
         </button>
-        
-        <p className="text-[10px] text-text-muted mt-8 uppercase font-semibold tracking-wider">
+
+        <p className="text-[10px] text-white/50 mt-8 uppercase font-semibold tracking-wider">
           KutWeer — Elke dag opnieuw teleurgesteld door het weer.
         </p>
-        <p className="text-[10px] text-text-muted mt-1">
+        <p className="text-[10px] text-white/50 mt-1">
           Data via <a href="https://open-meteo.com" className="text-accent-orange hover:underline">Open-Meteo</a>. 
           Geen meteorologen zijn gekwetst bij het maken van deze app. 💔
         </p>

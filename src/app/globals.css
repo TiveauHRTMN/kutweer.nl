@@ -1,21 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #3a9ae8;
-  --bg-secondary: #2a3848;
-  --bg-card: rgba(12, 20, 40, 0.55);
-  --bg-card-hover: rgba(18, 30, 55, 0.65);
-  --text-primary: #f0f4fa;
-  --text-secondary: #94a3c0;
-  --text-muted: #5a6a80;
+  --bg-primary: #4a9ee8;
+  --bg-secondary: #e8edf2;
+  --bg-card: rgba(255, 255, 255, 0.82);
+  --bg-card-hover: rgba(255, 255, 255, 0.92);
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-on-sky: rgba(255, 255, 255, 0.95);
   --accent-orange: #ff7a2f;
   --accent-amber: #ffb340;
-  --accent-green: #22c55e;
+  --accent-green: #16a34a;
   --accent-red: #ef4444;
-  --accent-cyan: #06b6d4;
-  --gradient-line: linear-gradient(90deg, #ff7a2f, #ffb340, #06b6d4);
-  --card-border: rgba(255, 255, 255, 0.08);
-  --card-radius: 16px;
+  --accent-cyan: #0891b2;
+  --gradient-line: linear-gradient(90deg, #ff7a2f, #ffb340, #0891b2);
+  --card-border: rgba(255, 255, 255, 0.6);
+  --card-radius: 18px;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 }
 
@@ -25,6 +26,7 @@
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-muted: var(--text-muted);
+  --color-text-on-sky: var(--text-on-sky);
   --color-accent-orange: var(--accent-orange);
   --color-accent-amber: var(--accent-amber);
   --color-accent-green: var(--accent-green);
@@ -42,42 +44,39 @@ html {
 
 body {
   background: transparent;
-  color: var(--text-primary);
+  color: var(--text-on-sky);
   font-family: var(--font-sans);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.12); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.2); }
 
-/* Card base — frosted glass */
+/* Card — cloud style */
 .card {
   background: var(--bg-card);
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 8px 32px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  color: var(--text-primary);
   transition: all 0.3s ease;
 }
 .card:hover {
   background: var(--bg-card-hover);
-  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    0 12px 40px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 /* Gradient divider */
@@ -88,20 +87,21 @@ body {
   opacity: 0.7;
 }
 
-/* Section titles */
+/* Section titles — sit on sky */
 .section-title {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--text-secondary);
+  color: var(--text-on-sky);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 /* Score bar */
 .score-bar {
   height: 6px;
   border-radius: 3px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.06);
   overflow: hidden;
 }
 .score-bar-fill {
@@ -110,7 +110,7 @@ body {
   transition: width 1s ease-out;
 }
 
-/* Chip / tag */
+/* Chip */
 .chip {
   display: inline-flex;
   align-items: center;
@@ -119,16 +119,16 @@ body {
   border-radius: 999px;
   font-size: 0.85rem;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.06);
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 .chip:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 200, 150, 0.2);
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(255, 122, 47, 0.3);
   transform: translateY(-1px);
 }
 
@@ -139,7 +139,7 @@ body {
 }
 
 /* ============================================
-   Animations — UI
+   Animations
    ============================================ */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -164,8 +164,6 @@ body {
 /* ============================================
    Weather background elements
    ============================================ */
-
-/* Sun */
 .sun-glow {
   position: absolute;
   top: -60px;
@@ -188,7 +186,6 @@ body {
   box-shadow: 0 0 40px 10px rgba(255, 200, 60, 0.3);
 }
 
-/* Stars */
 .star {
   position: absolute;
   border-radius: 50%;
@@ -203,7 +200,7 @@ body {
 /* Clouds */
 .cloud-shape {
   position: absolute;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.35);
   border-radius: 60px;
   filter: blur(2px);
 }
@@ -215,111 +212,31 @@ body {
   border-radius: 50%;
 }
 
-.cloud-1 {
-  width: 180px;
-  height: 50px;
-  top: 8%;
-  animation: drift 35s linear infinite;
-}
-.cloud-1::before {
-  width: 70px;
-  height: 60px;
-  top: -30px;
-  left: 30px;
-}
-.cloud-1::after {
-  width: 90px;
-  height: 55px;
-  top: -25px;
-  right: 25px;
-}
+.cloud-1 { width: 180px; height: 50px; top: 8%; animation: drift 35s linear infinite; }
+.cloud-1::before { width: 70px; height: 60px; top: -30px; left: 30px; }
+.cloud-1::after { width: 90px; height: 55px; top: -25px; right: 25px; }
 
-.cloud-2 {
-  width: 140px;
-  height: 40px;
-  top: 18%;
-  animation: drift 50s linear infinite;
-  animation-delay: -15s;
-}
-.cloud-2::before {
-  width: 55px;
-  height: 48px;
-  top: -24px;
-  left: 20px;
-}
-.cloud-2::after {
-  width: 70px;
-  height: 44px;
-  top: -20px;
-  right: 18px;
-}
+.cloud-2 { width: 140px; height: 40px; top: 18%; animation: drift 50s linear infinite; animation-delay: -15s; }
+.cloud-2::before { width: 55px; height: 48px; top: -24px; left: 20px; }
+.cloud-2::after { width: 70px; height: 44px; top: -20px; right: 18px; }
 
-.cloud-3 {
-  width: 200px;
-  height: 55px;
-  top: 28%;
-  animation: drift 42s linear infinite;
-  animation-delay: -8s;
-}
-.cloud-3::before {
-  width: 80px;
-  height: 65px;
-  top: -32px;
-  left: 35px;
-}
-.cloud-3::after {
-  width: 100px;
-  height: 58px;
-  top: -28px;
-  right: 28px;
-}
+.cloud-3 { width: 200px; height: 55px; top: 28%; animation: drift 42s linear infinite; animation-delay: -8s; }
+.cloud-3::before { width: 80px; height: 65px; top: -32px; left: 35px; }
+.cloud-3::after { width: 100px; height: 58px; top: -28px; right: 28px; }
 
-.cloud-4 {
-  width: 120px;
-  height: 35px;
-  top: 12%;
-  animation: drift 55s linear infinite;
-  animation-delay: -25s;
-}
-.cloud-4::before {
-  width: 50px;
-  height: 42px;
-  top: -20px;
-  left: 18px;
-}
-.cloud-4::after {
-  width: 60px;
-  height: 38px;
-  top: -18px;
-  right: 15px;
-}
+.cloud-4 { width: 120px; height: 35px; top: 12%; animation: drift 55s linear infinite; animation-delay: -25s; }
+.cloud-4::before { width: 50px; height: 42px; top: -20px; left: 18px; }
+.cloud-4::after { width: 60px; height: 38px; top: -18px; right: 15px; }
 
-.cloud-5 {
-  width: 160px;
-  height: 45px;
-  top: 22%;
-  animation: drift 38s linear infinite;
-  animation-delay: -20s;
-}
-.cloud-5::before {
-  width: 65px;
-  height: 55px;
-  top: -28px;
-  left: 25px;
-}
-.cloud-5::after {
-  width: 80px;
-  height: 50px;
-  top: -22px;
-  right: 22px;
-}
+.cloud-5 { width: 160px; height: 45px; top: 22%; animation: drift 38s linear infinite; animation-delay: -20s; }
+.cloud-5::before { width: 65px; height: 55px; top: -28px; left: 25px; }
+.cloud-5::after { width: 80px; height: 50px; top: -22px; right: 22px; }
 
 @keyframes drift {
   0% { transform: translateX(-250px); }
   100% { transform: translateX(calc(100vw + 250px)); }
 }
 
-/* Rain */
 .rain-drop {
   position: absolute;
   top: -20px;
@@ -334,7 +251,6 @@ body {
   100% { transform: translateY(100vh); opacity: 0; }
 }
 
-/* Snow */
 .snow-flake {
   position: absolute;
   top: -10px;
@@ -348,7 +264,6 @@ body {
   100% { transform: translateY(100vh) translateX(40px) rotate(360deg); opacity: 0.2; }
 }
 
-/* Lightning */
 .lightning-flash {
   position: absolute;
   inset: 0;
@@ -397,14 +312,8 @@ body {
   flex-shrink: 0;
 }
 
-/* No scrollbar helper */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* CTA button */
 .btn-cta {
@@ -438,29 +347,14 @@ body {
   font-size: 0.75rem;
   font-weight: 600;
 }
-.badge-green {
-  background: rgba(52, 211, 153, 0.15);
-  color: var(--accent-green);
-  border: 1px solid rgba(52, 211, 153, 0.2);
-}
-.badge-red {
-  background: rgba(239, 68, 68, 0.15);
-  color: var(--accent-red);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-.badge-amber {
-  background: rgba(240, 160, 64, 0.15);
-  color: var(--accent-amber);
-  border: 1px solid rgba(240, 160, 64, 0.2);
-}
 
 /* Input */
 .search-input {
   width: 100%;
   padding: 14px 52px 14px 44px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(12, 20, 40, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.7);
   color: var(--text-primary);
   font-size: 0.95rem;
   outline: none;
@@ -473,5 +367,5 @@ body {
 .search-input:focus {
   border-color: rgba(255, 122, 47, 0.4);
   box-shadow: 0 0 0 3px rgba(255, 122, 47, 0.1);
-  background: rgba(12, 20, 40, 0.6);
+  background: rgba(255, 255, 255, 0.9);
 }
