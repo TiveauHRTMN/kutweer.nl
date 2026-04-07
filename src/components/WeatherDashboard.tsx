@@ -16,6 +16,7 @@ import {
 import { getWeatherEmoji, getWeatherDescription } from "@/lib/weather";
 import { motion, AnimatePresence } from "framer-motion";
 import WeatherBackground from "./WeatherBackground";
+import AffiliateCard from "./AffiliateCard";
 
 export default function WeatherDashboard() {
   const [city, setCity] = useState<City>(DUTCH_CITIES.find(c => c.name === "Alkmaar") || DUTCH_CITIES[0]);
@@ -85,19 +86,19 @@ export default function WeatherDashboard() {
       {/* Header */}
       <header className="flex items-center justify-between animate-fade-in">
         <div className="flex items-center gap-2">
-          <CloudRain className="text-[#a89080] w-8 h-8" />
+          <CloudRain className="text-white/80 w-8 h-8" />
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-1">
               KutWeer
             </h1>
-            <p className="text-xs text-text-muted">Het weer, maar dan eerlijk.</p>
+            <p className="text-xs text-white/70">Het weer, maar dan eerlijk.</p>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
           <button 
             onClick={handleLocationClick}
-            className="w-10 h-10 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors"
+            className="w-10 h-10 rounded-full border border-white/30 bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
           >
             <MapPin className="text-accent-red w-4 h-4" />
           </button>
@@ -109,7 +110,7 @@ export default function WeatherDashboard() {
                 const selected = DUTCH_CITIES.find(c => c.name === e.target.value);
                 if (selected) setCity(selected);
               }}
-              className="appearance-none bg-transparent border border-black/10 rounded-full pl-4 pr-10 py-2 text-sm font-medium hover:bg-black/5 transition-colors cursor-pointer focus:outline-none focus:border-accent-orange"
+              className="appearance-none bg-white/10 border border-white/30 rounded-full pl-4 pr-10 py-2 text-sm font-medium text-white hover:bg-white/20 transition-colors cursor-pointer focus:outline-none focus:border-accent-orange backdrop-blur-sm"
             >
               <option value="Jouw Locatie" disabled hidden>Jouw Locatie</option>
               {DUTCH_CITIES.map(c => (
@@ -118,7 +119,7 @@ export default function WeatherDashboard() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-text-secondary" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-white/70" />
           </div>
         </div>
       </header>
@@ -168,8 +169,8 @@ export default function WeatherDashboard() {
             </div>
           </div>
           
-          <div className="mt-8 bg-[rgba(232,116,58,0.15)] border-l-4 border-accent-orange p-4 rounded-r-lg">
-            <p className="font-semibold text-lg text-white">
+          <div className="mt-8 bg-accent-orange/15 border-l-4 border-accent-orange p-4 rounded-r-lg">
+            <p className="font-semibold text-lg text-text-primary">
               {getMainCommentary(weather)}
             </p>
           </div>
@@ -275,6 +276,35 @@ export default function WeatherDashboard() {
         </div>
       </div>
 
+      {/* Model Confidence */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.45s" }}>
+        <div className="card p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center text-lg">
+                {weather.models.agreement >= 70 ? "🎯" : weather.models.agreement >= 40 ? "🤔" : "⚠️"}
+              </div>
+              <div>
+                <div className="text-sm font-bold text-text-primary">{weather.models.label}</div>
+                <div className="text-xs text-text-muted">{weather.models.sources.join(" + ")}</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="score-bar w-16">
+                <div
+                  className="score-bar-fill"
+                  style={{
+                    width: `${weather.models.agreement}%`,
+                    background: weather.models.agreement >= 70 ? 'var(--accent-green)' : weather.models.agreement >= 40 ? 'var(--accent-amber)' : 'var(--accent-red)'
+                  }}
+                />
+              </div>
+              <span className="text-xs font-bold text-text-secondary">{weather.models.agreement}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Hourly Forecast */}
       <div className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
@@ -285,9 +315,10 @@ export default function WeatherDashboard() {
           {weather.hourly.slice(0, 12).map((hour, idx) => {
             const h = new Date(hour.time).getHours();
             const isNow = idx === 0;
+            const confidenceColor = hour.confidence === "high" ? "bg-accent-green" : hour.confidence === "medium" ? "bg-accent-amber" : "bg-accent-red";
             return (
-              <div 
-                key={hour.time} 
+              <div
+                key={hour.time}
                 className={`card p-4 flex flex-col items-center justify-between min-w-[70px] ${isNow ? 'border-accent-orange' : ''}`}
               >
                 <div className={`text-xs font-semibold ${isNow ? 'text-accent-orange' : 'text-text-secondary'}`}>
@@ -297,9 +328,15 @@ export default function WeatherDashboard() {
                   {getWeatherEmoji(hour.weatherCode, h > 6 && h < 21)}
                 </div>
                 <div className="text-sm font-bold">{hour.temperature}°</div>
+                <div className={`w-1.5 h-1.5 rounded-full mt-1.5 ${confidenceColor}`} title={`Vertrouwen: ${hour.confidence}`} />
               </div>
             );
           })}
+        </div>
+        <div className="flex items-center gap-4 mt-2 px-1">
+          <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-green" /><span className="text-[10px] text-white/50">Zeker</span></div>
+          <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-amber" /><span className="text-[10px] text-white/50">Redelijk</span></div>
+          <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-red" /><span className="text-[10px] text-white/50">Onzeker</span></div>
         </div>
       </div>
 
@@ -405,6 +442,11 @@ export default function WeatherDashboard() {
         </div>
       </div>
 
+      {/* Affiliate Spot 1 */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.85s" }}>
+        <AffiliateCard variant="top" weather={weather} />
+      </div>
+
       {/* Wat trek je aan? */}
       <div className="animate-fade-in" style={{ animationDelay: "0.9s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
@@ -444,7 +486,7 @@ export default function WeatherDashboard() {
             <div className="absolute bottom-[2px] left-1/2 -translate-x-1/2 w-3 h-3 bg-accent-amber rounded-full shadow-[0_0_10px_2px_rgba(240,160,64,0.5)]"></div>
           </div>
           
-          <div className="mt-6 flex items-center justify-between border-t border-[rgba(255,255,255,0.05)] pt-4">
+          <div className="mt-6 flex items-center justify-between border-t border-black/10 pt-4">
             <span className="text-sm font-medium text-text-secondary">UV-index vandaag</span>
             <span className="badge" style={{ backgroundColor: `${uvInfo.color}30`, color: uvInfo.color, border: `1px solid ${uvInfo.color}50` }}>
               {weather.uvIndex.toFixed(1)} — {uvInfo.label}
@@ -458,9 +500,8 @@ export default function WeatherDashboard() {
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Eerlijk VS Onzin</h3>
         </div>
-        <div className="card p-4 overflow-hidden relative border-none bg-transparent">
-          <div className="absolute inset-0 bg-gradient-to-br from-[rgba(52,211,153,0.05)] to-[rgba(239,68,68,0.05)]" />
-          <div className="grid grid-cols-2 gap-4 relative z-10">
+        <div className="card p-4 overflow-hidden relative">
+          <div className="grid grid-cols-2 gap-4">
             {/* KutWeer side */}
             <div className="p-4 border border-[rgba(52,211,153,0.2)] bg-[rgba(52,211,153,0.05)] rounded-xl flex flex-col justify-between">
               <div>
@@ -469,7 +510,7 @@ export default function WeatherDashboard() {
                   KutWeer
                 </h4>
                 <div className="text-sm font-semibold text-text-primary mb-1">Komende 48 uur</div>
-                <div className="text-xs text-text-muted">Echte data. KNMI modellen. Accuraat tot op de minuut.</div>
+                <div className="text-xs text-text-muted">KNMI HARMONIE + DWD ICON. Multi-model, fijnmazig.</div>
               </div>
               <div className="mt-4 px-3 py-1.5 bg-[rgba(52,211,153,0.1)] text-accent-green text-xs font-bold text-center rounded-lg">
                 Dit klopt gewoon.
@@ -498,6 +539,11 @@ export default function WeatherDashboard() {
         </div>
       </div>
 
+      {/* Affiliate Spot 2 */}
+      <div className="animate-fade-in" style={{ animationDelay: "1.15s" }}>
+        <AffiliateCard variant="bottom" weather={weather} />
+      </div>
+
       {/* Footer / Share */}
       <footer className="pt-8 pb-4 text-center animate-fade-in" style={{ animationDelay: "1.2s" }}>
         <button className="btn-cta mx-auto">
@@ -508,7 +554,7 @@ export default function WeatherDashboard() {
           KutWeer — Elke dag opnieuw teleurgesteld door het weer.
         </p>
         <p className="text-[10px] text-white/50 mt-1">
-          Data via <a href="https://open-meteo.com" className="text-accent-orange hover:underline">Open-Meteo</a>. 
+          Data via <a href="https://open-meteo.com" className="text-accent-orange hover:underline">Open-Meteo</a> (KNMI HARMONIE + DWD ICON).
           Geen meteorologen zijn gekwetst bij het maken van deze app. 💔
         </p>
       </footer>
