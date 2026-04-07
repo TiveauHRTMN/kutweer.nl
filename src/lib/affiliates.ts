@@ -11,10 +11,12 @@ export const AFFILIATE_CONFIG = {
     enabled: false, // zet op true zodra je ID hebt
   },
   booking: {
-    // Booking.com affiliate: https://www.booking.com/affiliate-program
-    // Na aanmelding krijg je een aid nummer
-    aid: "", // bijv. "2311236"
-    enabled: false,
+    // Booking.com via CJ Affiliate (members.cj.com)
+    // Publisher ID: je CJ account ID
+    // Advertiser CID: Booking.com's CJ advertiser ID (krijg je na goedkeuring)
+    cjPublisherId: "7923380",
+    cjAdvertiserCid: "", // Vul in na goedkeuring door Booking.com
+    enabled: false, // Zet op true na goedkeuring
   },
   thuisbezorgd: {
     // Thuisbezorgd via Awin: https://www.awin.com
@@ -37,10 +39,14 @@ export function bolUrl(path: string): string {
 }
 
 export function bookingUrl(destination: string): string {
-  if (!AFFILIATE_CONFIG.booking.enabled || !AFFILIATE_CONFIG.booking.aid) {
-    return `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(destination)}`;
+  const bookingTarget = `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(destination)}&label=kutweer`;
+
+  if (!AFFILIATE_CONFIG.booking.enabled || !AFFILIATE_CONFIG.booking.cjAdvertiserCid) {
+    return bookingTarget;
   }
-  return `https://www.booking.com/searchresults.html?aid=${AFFILIATE_CONFIG.booking.aid}&ss=${encodeURIComponent(destination)}&label=kutweer`;
+
+  // CJ Affiliate deep link format
+  return `https://www.anrdoezrs.net/click-${AFFILIATE_CONFIG.booking.cjPublisherId}-${AFFILIATE_CONFIG.booking.cjAdvertiserCid}?url=${encodeURIComponent(bookingTarget)}`;
 }
 
 export function thuisbezorgdUrl(): string {
