@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MapPin, Send, RefreshCw, ChevronDown } from "lucide-react";
-import Image from "next/image";
+import Logo from "./Logo";
 import { getWeather } from "@/app/actions";
 import { DUTCH_CITIES, findNearestCity, type City, type WeatherData } from "@/lib/types";
 import {
@@ -126,14 +126,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
   if (loading || !weather) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center">
-        <Image
-          src="/logo-white.png"
-          alt="WeerZone"
-          width={200}
-          height={33}
-          priority
-          className="h-8 w-auto animate-pulse mb-6"
-        />
+        <Logo size={64} className="animate-pulse mb-6" />
         <h2 className="text-xl font-medium">Even geduld, we kijken naar buiten...</h2>
       </div>
     );
@@ -150,16 +143,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
     <div className="relative z-10 max-w-2xl mx-auto p-4 pb-20 sm:p-6 space-y-6" style={{ isolation: "isolate" }}>
       {/* Header */}
       <header className="flex items-center justify-between animate-fade-in">
-        <div className="flex items-center gap-3">
-          <Image
-            src="/logo-white.png"
-            alt="WeerZone"
-            width={160}
-            height={26}
-            priority
-            className="h-7 w-auto drop-shadow-[0_1px_3px_rgba(0,0,0,0.2)]"
-          />
-        </div>
+        <Logo size={38} showText />
         
         <div className="flex items-center gap-2">
           <button 

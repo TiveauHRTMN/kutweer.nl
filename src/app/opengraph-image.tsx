@@ -21,34 +21,49 @@ export default function OgImage() {
           position: "relative",
         }}
       >
-        {/* Sun */}
+        {/* Globe */}
         <div
           style={{
-            position: "absolute",
-            top: "60px",
-            right: "120px",
-            width: "100px",
-            height: "100px",
+            width: "120px",
+            height: "120px",
             borderRadius: "50%",
-            background: "radial-gradient(circle, #FFD93D 0%, #F0A040 100%)",
-            boxShadow: "0 0 60px 20px rgba(255,217,61,0.3)",
+            background: "linear-gradient(135deg, #4BA3E3 0%, #1A6FA0 100%)",
+            border: "3px solid rgba(255,255,255,0.2)",
             display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.2), inset 0 -4px 12px rgba(0,0,0,0.1)",
           }}
-        />
+        >
+          {/* W on globe */}
+          <div
+            style={{
+              fontSize: "64px",
+              fontWeight: 900,
+              color: "white",
+              display: "flex",
+              textShadow: "0 2px 4px rgba(0,0,0,0.2)",
+            }}
+          >
+            W
+          </div>
 
-        {/* Cloud */}
-        <div
-          style={{
-            position: "absolute",
-            top: "80px",
-            left: "100px",
-            width: "160px",
-            height: "60px",
-            borderRadius: "30px",
-            background: "rgba(255,255,255,0.7)",
-            display: "flex",
-          }}
-        />
+          {/* Sun overlapping top-right */}
+          <div
+            style={{
+              position: "absolute",
+              top: "-16px",
+              right: "-20px",
+              width: "52px",
+              height: "52px",
+              borderRadius: "50%",
+              background: "radial-gradient(circle, #FFE566 0%, #FFB340 100%)",
+              boxShadow: "0 0 24px 8px rgba(255,217,61,0.4)",
+              display: "flex",
+            }}
+          />
+        </div>
 
         {/* Title */}
         <div
@@ -57,12 +72,10 @@ export default function OgImage() {
             fontWeight: 900,
             color: "white",
             letterSpacing: "-2px",
+            marginTop: "24px",
             display: "flex",
-            alignItems: "center",
-            gap: "16px",
           }}
         >
-          <span style={{ fontSize: "64px" }}>🌤️</span>
           WeerZone
         </div>
 
@@ -72,7 +85,7 @@ export default function OgImage() {
             fontSize: "28px",
             fontWeight: 500,
             color: "rgba(255,255,255,0.85)",
-            marginTop: "16px",
+            marginTop: "8px",
             display: "flex",
           }}
         >
@@ -87,7 +100,7 @@ export default function OgImage() {
             marginTop: "32px",
           }}
         >
-          {["KNMI HARMONIE", "DWD ICON", "48 uur", "Brutaal nauwkeurig"].map(
+          {["KNMI HARMONIE", "DWD ICON", "Brutaal nauwkeurig"].map(
             (tag) => (
               <div
                 key={tag}
