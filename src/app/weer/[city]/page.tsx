@@ -68,6 +68,7 @@ export default async function CityWeatherPage({
     name: `Weer ${city.name} — WeerZone`,
     description: `Actueel weer en 48-uurs voorspelling voor ${city.name}`,
     url: `https://weerzone.nl/weer/${slug}`,
+    dateModified: new Date().toISOString(),
     isPartOf: {
       "@type": "WebSite",
       name: "WeerZone",
@@ -88,11 +89,40 @@ export default async function CityWeatherPage({
     },
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "WeerZone",
+        item: "https://weerzone.nl",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Weer",
+        item: "https://weerzone.nl/weer",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: city.name,
+        item: `https://weerzone.nl/weer/${slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <main>
         <WeatherDashboard initialCity={city} />
