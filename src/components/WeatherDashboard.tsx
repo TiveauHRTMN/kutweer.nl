@@ -13,7 +13,7 @@ import {
   getRandomQuote,
   getUvLabel,
 } from "@/lib/commentary";
-import { getWeatherEmoji, getWeatherDescription } from "@/lib/weather";
+import { getWeatherEmoji, getWeatherDescription, getWindBeaufort } from "@/lib/weather";
 import { motion, AnimatePresence } from "framer-motion";
 import WeatherBackground from "./WeatherBackground";
 import AffiliateCard from "./AffiliateCard";
@@ -28,6 +28,54 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
   const [loading, setLoading] = useState(true);
   const [quote, setQuote] = useState("");
   const [chatInput, setChatInput] = useState("");
+  const [chatAnswer, setChatAnswer] = useState<string | null>(null);
+
+  const answerQuestion = (q: string) => {
+    if (!weather) return;
+    const lower = q.toLowerCase();
+    const rain = weather.current.precipitation > 0;
+    const rainSoon = weather.hourly.slice(0, 6).some(h => h.precipitation > 0.5);
+    const temp = weather.current.temperature;
+    const wind = weather.current.windSpeed;
+
+    if (lower.includes("jas") || lower.includes("jacket")) {
+      setChatAnswer(temp < 12 || rain ? "Ja. Jas aan. Niet onderhandelen. 🧥" : "Nee joh, lekker zonder. Geniet ervan zolang het kan. 😎");
+    } else if (lower.includes("hardlop") || lower.includes("rennen") || lower.includes("joggen")) {
+      const ok = !rain && wind < 35 && temp > 2 && temp < 32;
+      setChatAnswer(ok ? `${temp}° en ${rain ? 'nat' : 'droog'}. Prima hardloopweer. Geen excuus. 🏃‍♂️` : `Nee. ${rain ? 'Regen' : wind > 35 ? 'Veel te veel wind' : temp <= 2 ? 'IJskoud' : 'Te warm'}. Bank is ook cardio. 🛋️`);
+    } else if (lower.includes("morgen") || lower.includes("beter")) {
+      const tomorrow = weather.daily[1];
+      const today = weather.daily[0];
+      const betterTemp = tomorrow.tempMax > today.tempMax;
+      const lessRain = tomorrow.precipitationSum < today.precipitationSum;
+      setChatAnswer(betterTemp && lessRain ? `Ja. Morgen ${tomorrow.tempMax}° en ${tomorrow.precipitationSum === 0 ? 'droog' : 'minder nattigheid'}. Houden zo. 📈` : betterTemp ? `Warmer (${tomorrow.tempMax}°), maar ${tomorrow.precipitationSum > 0 ? 'natter' : 'verder hetzelfde'}. 🤷` : `Nee. Morgen ${tomorrow.tempMax}°. Vandaag is je beste kans. 📉`);
+    } else if (lower.includes("fiets") || lower.includes("fietsen")) {
+      const { score, label } = getFietsScore(weather);
+      setChatAnswer(`Fietsscore: ${score}/10. ${label} 🚴`);
+    } else if (lower.includes("regen") || lower.includes("nat") || lower.includes("droog")) {
+      setChatAnswer(rain ? `Ja, het regent. ${weather.current.precipitation}mm. Paraplu of accepteer je lot. ☔` : rainSoon ? "Nu nog droog, maar niet lang meer. Paraplu mee, vertrouw ons. 🌦️" : "Droog. De komende uren geen druppel. Dat beloven we. ☀️");
+    } else if (lower.includes("zon") || lower.includes("zonnig")) {
+      const sunset = new Date(weather.sunset);
+      setChatAnswer(`Zon onder om ${sunset.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}. UV: ${weather.uvIndex.toFixed(1)}. ${weather.uvIndex > 5 ? 'Smeren. Nu. Je bent geen leguaan. 🧴' : '☀️'}`);
+    } else if (lower.includes("wind")) {
+      setChatAnswer(getWindComment(weather.current.windSpeed, weather.current.windGusts));
+    } else {
+      setChatAnswer(`${temp}° in ${city.name}, ${rain ? 'regen' : 'droog'}, wind ${wind} km/h. ${getMainCommentary(weather)}`);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!weather) return;
+    const text = `${getWeatherEmoji(weather.current.weatherCode, weather.current.isDay)} ${weather.current.temperature}° in ${city.name} — ${getMainCommentary(weather)}\n\nweerzone.nl — 48 uur. De rest is gelul.`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `Weer in ${city.name}`, text, url: "https://weerzone.nl" });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(text);
+      alert("Weer gekopieerd naar klembord! 📋");
+    }
+  };
 
   const fetchWeather = async (targetCity: City) => {
     setLoading(true);
@@ -95,7 +143,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
             <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-1">
               WeerZone
             </h1>
-            <p className="text-xs text-white/70">Het weer, maar dan eerlijk.</p>
+            <p className="text-xs text-white/70">48 uur. De rest is gelul.</p>
           </div>
         </div>
         
@@ -128,27 +176,45 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </header>
 
-      {/* Intro AI Chat */}
+      {/* Weer Vraag */}
       <div className="card p-4 animate-fade-in" style={{ animationDelay: "0.1s" }}>
         <div className="relative flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-orange to-accent-amber flex items-center justify-center text-sm">🤖</div>
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-orange to-accent-amber flex items-center justify-center text-sm shrink-0">🤖</div>
           <input
             type="text"
-            placeholder="Stel een vraag... bijv. 'Kan ik om 19:00 droog fietsen?'"
+            placeholder="Stel een vraag over het weer..."
             className="search-input flex-1"
             value={chatInput}
-            onChange={(e) => setChatInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === 'Enter') setChatInput(''); }}
+            onChange={(e) => { setChatInput(e.target.value); setChatAnswer(null); }}
+            onKeyDown={(e) => { if (e.key === 'Enter' && chatInput.trim()) { answerQuestion(chatInput); setChatInput(''); } }}
           />
-          <button className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-accent-orange text-text-primary flex items-center justify-center hover:bg-orange-600 transition-colors">
+          <button
+            onClick={() => { if (chatInput.trim()) { answerQuestion(chatInput); setChatInput(''); } }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-accent-orange text-white flex items-center justify-center hover:bg-orange-600 transition-colors"
+          >
             <Send className="w-4 h-4" />
           </button>
         </div>
-        
-        <div className="flex overflow-x-auto gap-2 mt-4 pb-1 pl-1 no-scrollbar">
-          <button className="chip flex-shrink-0">🧥 Jas mee?</button>
-          <button className="chip flex-shrink-0">🏃‍♂️ Hardlopen?</button>
-          <button className="chip flex-shrink-0">🗓️ Morgen beter?</button>
+
+        <AnimatePresence mode="wait">
+          {chatAnswer && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-3 px-3 py-2.5 bg-accent-orange/10 rounded-xl text-sm font-medium text-text-primary border border-accent-orange/20"
+            >
+              {chatAnswer}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex overflow-x-auto gap-2 mt-3 pb-1 pl-1 no-scrollbar">
+          <button onClick={() => answerQuestion("Jas mee?")} className="chip flex-shrink-0">🧥 Jas mee?</button>
+          <button onClick={() => answerQuestion("Kan ik hardlopen?")} className="chip flex-shrink-0">🏃‍♂️ Hardlopen?</button>
+          <button onClick={() => answerQuestion("Wordt het morgen beter?")} className="chip flex-shrink-0">🗓️ Morgen beter?</button>
+          <button onClick={() => answerQuestion("Gaat het regenen?")} className="chip flex-shrink-0">🌧️ Regen?</button>
+          <button onClick={() => answerQuestion("Kan ik fietsen?")} className="chip flex-shrink-0">🚴 Fietsen?</button>
         </div>
       </div>
 
@@ -254,14 +320,17 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         {/* Wind */}
         <div className="card p-4">
           <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <span className="text-accent-cyan text-base">🌬️</span> Wind
+            <span className="text-accent-cyan text-base">🌬️</span> Wind — Bft {getWindBeaufort(weather.current.windSpeed).scale}
           </div>
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-bold">{weather.current.windSpeed}</span>
             <span className="text-sm font-bold text-text-primary">km/h</span>
           </div>
-          <div className="text-sm text-text-muted mt-1">
-             Richting: {weather.current.windDirection} • Stoten: {weather.current.windGusts} km/h
+          <div className="text-xs text-text-muted mt-1">
+            {weather.current.windDirection} • Stoten {weather.current.windGusts} km/h
+          </div>
+          <div className="text-xs font-medium text-text-secondary mt-2 italic">
+            {getWindComment(weather.current.windSpeed, weather.current.windGusts)}
           </div>
         </div>
         
@@ -388,7 +457,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       <div className="animate-fade-in" style={{ animationDelay: "0.7s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">WeerZone-Score</h3>
-          <span className="text-xs text-white/60">Hoe erg is het?</span>
+          <span className="text-xs text-white/60">Hoe erg is het écht?</span>
         </div>
         <div className="card p-6 overflow-hidden relative">
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-accent-green via-accent-amber to-accent-red" />
@@ -419,7 +488,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       <div className="animate-fade-in" style={{ animationDelay: "0.8s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Fiets-Weer</h3>
-          <span className="text-xs text-white/60">Kan ik fietsen?</span>
+          <span className="text-xs text-white/60">Durf je?</span>
         </div>
         <div className="card p-4">
           <div className="flex items-center gap-4">
@@ -455,7 +524,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       <div className="animate-fade-in" style={{ animationDelay: "0.9s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Wat trek je aan?</h3>
-          <span className="text-xs text-white/60">Outfit advisor</span>
+          <span className="text-xs text-white/60">Geen smoesjes meer</span>
         </div>
         <div className="card p-4 flex items-center gap-4">
           <div className="text-3xl">{outfitEmoji}</div>
@@ -486,8 +555,33 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
             </div>
           </div>
           
-          <div className="sun-arc">
-            <div className="absolute bottom-[2px] left-1/2 -translate-x-1/2 w-3 h-3 bg-accent-amber rounded-full shadow-[0_0_10px_2px_rgba(240,160,64,0.5)]"></div>
+          <div className="sun-arc relative">
+            {(() => {
+              const now = Date.now();
+              const rise = new Date(weather.sunrise).getTime();
+              const set = new Date(weather.sunset).getTime();
+              const progress = Math.max(0, Math.min(1, (now - rise) / (set - rise)));
+              const isDayTime = now >= rise && now <= set;
+              // Arc: left=0%, right=100%, bottom at edges, top at center
+              const leftPct = progress * 100;
+              // Sine curve for the arc height (0 at edges, max at center)
+              const arcHeight = Math.sin(progress * Math.PI) * 100;
+              return isDayTime ? (
+                <div
+                  className="absolute w-3.5 h-3.5 bg-accent-amber rounded-full shadow-[0_0_12px_3px_rgba(240,160,64,0.5)] transition-all duration-1000"
+                  style={{
+                    left: `${leftPct}%`,
+                    bottom: `${arcHeight}%`,
+                    transform: "translate(-50%, 50%)",
+                  }}
+                />
+              ) : (
+                <div
+                  className="absolute bottom-0 w-3 h-3 bg-gray-400 rounded-full opacity-50"
+                  style={{ left: now < rise ? "0%" : "100%", transform: "translate(-50%, 50%)" }}
+                />
+              );
+            })()}
           </div>
           
           <div className="mt-6 flex items-center justify-between border-t border-black/10 pt-4">
@@ -513,14 +607,14 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
                   <span className="w-1.5 h-1.5 rounded-full bg-current" />
                   WeerZone
                 </h4>
-                <div className="text-sm font-semibold text-text-primary mb-1">Komende 48 uur</div>
-                <div className="text-xs text-text-muted">KNMI HARMONIE + DWD ICON. Multi-model, fijnmazig.</div>
+                <div className="text-sm font-semibold text-text-primary mb-1">48 uur, twee modellen</div>
+                <div className="text-xs text-text-muted">KNMI HARMONIE + DWD ICON. Supercomputers, niet onderbuikgevoel.</div>
               </div>
               <div className="mt-4 px-3 py-1.5 bg-[rgba(52,211,153,0.1)] text-accent-green text-xs font-bold text-center rounded-lg">
-                Dit klopt gewoon.
+                Bewezen nauwkeurig.
               </div>
             </div>
-            
+
             {/* Onzin side */}
             <div className="p-4 border border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.05)] rounded-xl opacity-80 flex flex-col justify-between">
               <div>
@@ -536,7 +630,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
                 </div>
               </div>
               <div className="mt-4 px-3 py-1.5 bg-[rgba(239,68,68,0.1)] text-accent-red text-[10px] font-bold text-center rounded-lg leading-tight">
-                100% verzonnen.<br/>Niemand weet dit.
+                Compleet verzonnen.<br/>Net zo betrouwbaar als je horoscoop.
               </div>
             </div>
           </div>
@@ -550,16 +644,16 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
 
       {/* Footer / Share */}
       <footer className="pt-8 pb-4 text-center animate-fade-in" style={{ animationDelay: "1.2s" }}>
-        <button className="btn-cta mx-auto">
+        <button onClick={handleShare} className="btn-cta mx-auto">
           <Send className="w-4 h-4 ml-[-4px]" /> Deel het weer
         </button>
 
         <p className="text-[10px] text-white/50 mt-8 uppercase font-semibold tracking-wider">
-          WeerZone — Het weer, maar dan eerlijk.
+          WeerZone — 48 uur. De rest is gelul.
         </p>
         <p className="text-[10px] text-white/50 mt-1">
-          Data via <a href="https://open-meteo.com" className="text-accent-orange hover:underline">Open-Meteo</a> (KNMI HARMONIE + DWD ICON).
-          Geen meteorologen zijn gekwetst bij het maken van deze app. 💔
+          Data via <a href="https://open-meteo.com" className="text-accent-orange hover:underline">Open-Meteo</a> · KNMI HARMONIE · DWD ICON.
+          Twee supercomputers, nul gelul.
         </p>
       </footer>
     </div>

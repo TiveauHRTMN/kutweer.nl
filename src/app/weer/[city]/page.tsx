@@ -24,8 +24,8 @@ export async function generateMetadata({
   const city = findCity(slug);
   if (!city) return {};
 
-  const title = `Weer ${city.name} — Vandaag & 48 uur vooruit | WeerZone`;
-  const description = `Actueel weer in ${city.name}. Temperatuur, neerslag, wind en 48-uurs voorspelling op basis van KNMI HARMONIE en DWD ICON modellen. Betrouwbaar en nauwkeurig.`;
+  const title = `Weer ${city.name} — 48 uur extreem nauwkeurig | WeerZone`;
+  const description = `Het weer in ${city.name}, zonder gelul. Temperatuur, neerslag, wind en 48-uurs voorspelling met KNMI HARMONIE + DWD ICON. De brutale weerdienst van Nederland.`;
 
   return {
     title,
@@ -66,7 +66,7 @@ export default async function CityWeatherPage({
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: `Weer ${city.name} — WeerZone`,
-    description: `Actueel weer en 48-uurs voorspelling voor ${city.name}`,
+    description: `48 uur extreem nauwkeurig weer voor ${city.name}. KNMI HARMONIE + DWD ICON.`,
     url: `https://weerzone.nl/weer/${slug}`,
     dateModified: new Date().toISOString(),
     isPartOf: {

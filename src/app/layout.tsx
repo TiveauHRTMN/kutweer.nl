@@ -9,13 +9,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "WeerZone — Het weer, maar dan eerlijk",
+  metadataBase: new URL("https://weerzone.nl"),
+  title: "WeerZone — 48 uur. De rest is gelul.",
   description:
-    "WeerZone.nl — Nauwkeurig weer voor Nederland met KNMI HARMONIE en DWD ICON modellen. 48-uurs voorspelling, fietsweer, en eerlijk weeradvies.",
-  keywords: ["weer", "nederland", "weersverwachting", "weerbericht", "weer vandaag", "48 uur weer", "fietsweer", "regen", "weerzone"],
+    "WeerZone.nl — De brutale weerdienst van Nederland. KNMI HARMONIE + DWD ICON: 48 uur extreem nauwkeurig weer. Geen 14-daagse onzin, gewoon de waarheid.",
+  keywords: ["weer", "nederland", "weersverwachting", "weerbericht", "weer vandaag", "48 uur weer", "fietsweer", "regen", "weerzone", "nauwkeurig weer", "KNMI", "weerbericht vandaag"],
   openGraph: {
-    title: "WeerZone — Het weer, maar dan eerlijk",
-    description: "Nauwkeurig weer voor Nederland. KNMI HARMONIE + DWD ICON modellen. 48 uur betrouwbaar.",
+    title: "WeerZone — 48 uur. De rest is gelul.",
+    description: "De brutale weerdienst van Nederland. KNMI HARMONIE + DWD ICON. 48 uur extreem nauwkeurig. Geen verzonnen 14-daagse onzin.",
     type: "website",
     locale: "nl_NL",
     url: "https://weerzone.nl",

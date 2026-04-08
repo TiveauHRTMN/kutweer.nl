@@ -13,7 +13,7 @@ const jsonLd = {
   name: "WeerZone",
   url: "https://weerzone.nl",
   description:
-    "Nauwkeurig weer voor Nederland met KNMI HARMONIE en DWD ICON modellen. 48-uurs voorspelling, fietsweer, en eerlijk weeradvies.",
+    "De brutale weerdienst van Nederland. KNMI HARMONIE + DWD ICON: 48 uur extreem nauwkeurig. Geen verzonnen voorspellingen.",
   potentialAction: {
     "@type": "SearchAction",
     target: "https://weerzone.nl/weer/{city}",

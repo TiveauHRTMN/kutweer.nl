@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "WeerZone — Het weer, maar dan eerlijk";
+export const alt = "WeerZone — 48 uur. De rest is gelul.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -76,7 +76,7 @@ export default function OgImage() {
             display: "flex",
           }}
         >
-          Het weer, maar dan eerlijk.
+          48 uur. De rest is gelul.
         </div>
 
         {/* Tags */}
@@ -87,7 +87,7 @@ export default function OgImage() {
             marginTop: "32px",
           }}
         >
-          {["KNMI HARMONIE", "DWD ICON", "48-uurs voorspelling"].map(
+          {["KNMI HARMONIE", "DWD ICON", "48 uur", "Brutaal nauwkeurig"].map(
             (tag) => (
               <div
                 key={tag}
