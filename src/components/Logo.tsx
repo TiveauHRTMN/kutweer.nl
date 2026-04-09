@@ -14,18 +14,24 @@ export function LogoIcon({ size = 40, className = "" }: { size?: number; classNa
   );
 }
 
-/** Volledig logo: WeerZone tekst + zon */
+/** Volledig logo: WeerZone tekst + zon
+ *  De PNG heeft ~8% transparante padding aan alle kanten.
+ *  We compenseren via negatieve margin zodat de tekst visueel uitlijnt.
+ */
 export function LogoFull({ height = 32, className = "" }: { height?: number; className?: string }) {
-  const width = Math.round(height * (2430 / 645)); // aspect ratio van het logo
+  const width = Math.round(height * (2430 / 645));
+  const pad = Math.round(height * 0.12); // ~12% inset compensatie
   return (
-    <Image
-      src="/logo-full.png"
-      alt="WeerZone"
-      width={width}
-      height={height}
-      className={className}
-      priority
-    />
+    <div style={{ margin: `-${pad}px` }} className="inline-flex">
+      <Image
+        src="/logo-full.png"
+        alt="WeerZone"
+        width={width}
+        height={height}
+        className={className}
+        priority
+      />
+    </div>
   );
 }
 

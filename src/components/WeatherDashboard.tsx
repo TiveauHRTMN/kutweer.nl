@@ -148,9 +148,9 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
     <div className="relative z-10 max-w-2xl mx-auto p-4 pb-20 sm:p-6 space-y-6" style={{ isolation: "isolate" }}>
       {/* Header */}
       <header className="flex items-center justify-between animate-fade-in">
-        <div className="flex flex-col gap-1">
-          <LogoFull height={52} />
-          <p className="text-[12px] text-white/65 tracking-wide font-medium pl-0.5">Het weer binnen 48 uur</p>
+        <div>
+          <LogoFull height={48} className="-ml-2" />
+          <p className="text-[11px] text-white/60 font-semibold tracking-widest uppercase mt-0.5 ml-0.5">Het weer binnen 48 uur</p>
         </div>
         
         <div className="flex items-center gap-2">
