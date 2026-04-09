@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MapPin, Send, RefreshCw, ChevronDown } from "lucide-react";
-import Logo from "./Logo";
+import Logo, { LogoIcon, LogoFull } from "./Logo";
 import { getWeather } from "@/app/actions";
 import { DUTCH_CITIES, findNearestCity, type City, type WeatherData } from "@/lib/types";
 import {
@@ -126,8 +126,8 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
   if (loading || !weather) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-center">
-        <Logo size={64} className="animate-pulse mb-6" />
-        <h2 className="text-xl font-medium">Even geduld, we kijken naar buiten...</h2>
+        <LogoIcon size={80} className="animate-pulse mb-6 drop-shadow-lg" />
+        <h2 className="text-xl font-medium text-white mt-4">Even geduld, we kijken naar buiten...</h2>
       </div>
     );
   }
@@ -143,7 +143,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
     <div className="relative z-10 max-w-2xl mx-auto p-4 pb-20 sm:p-6 space-y-6" style={{ isolation: "isolate" }}>
       {/* Header */}
       <header className="flex items-center justify-between animate-fade-in">
-        <Logo size={44} showText />
+        <LogoFull height={28} />
         
         <div className="flex items-center gap-2">
           <button 
