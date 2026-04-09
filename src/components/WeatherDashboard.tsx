@@ -146,29 +146,32 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
     <>
     <WeatherBackground weatherCode={weather.current.weatherCode} isDay={weather.current.isDay} />
     <div className="relative z-10 max-w-2xl mx-auto p-4 pb-20 sm:p-6 space-y-6" style={{ isolation: "isolate" }}>
-      {/* Header */}
-      <header className="flex items-center justify-between animate-fade-in">
-        <div>
-          <LogoFull height={48} className="-ml-2" />
-          <p className="text-[11px] text-white/60 font-semibold tracking-widest uppercase mt-0.5 ml-0.5">Het weer binnen 48 uur</p>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <button 
+      {/* Header — één samenhangende frosted balk */}
+      <header className="animate-fade-in">
+        <div className="flex items-center justify-between bg-white/10 border border-white/25 backdrop-blur-md rounded-2xl px-4 py-2.5 shadow-sm">
+          {/* Logo + tagline */}
+          <div className="flex flex-col justify-center min-w-0">
+            <LogoFull height={36} />
+            <p className="text-[9px] text-white/55 font-semibold tracking-widest uppercase leading-none mt-1">Het weer binnen 48 uur</p>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center gap-2 shrink-0 ml-3">
+          <button
             onClick={handleLocationClick}
-            className="w-10 h-10 rounded-full border border-white/30 bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors backdrop-blur-sm"
+            className="w-9 h-9 rounded-full border border-white/30 bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
           >
             <MapPin className="text-accent-red w-4 h-4" />
           </button>
-          
-          <div className="relative group">
+
+          <div className="relative">
             <select
               value={city.name}
               onChange={(e) => {
                 const selected = DUTCH_CITIES.find(c => c.name === e.target.value);
                 if (selected) setCity(selected);
               }}
-              className="appearance-none bg-white/10 border border-white/30 rounded-full pl-4 pr-10 py-2 text-sm font-medium text-white hover:bg-white/20 transition-colors cursor-pointer focus:outline-none focus:border-accent-orange backdrop-blur-sm"
+              className="appearance-none bg-white/10 border border-white/30 rounded-full pl-3 pr-8 py-2 text-xs font-semibold text-white hover:bg-white/20 transition-colors cursor-pointer focus:outline-none focus:border-accent-orange max-w-[120px] sm:max-w-none"
             >
               <optgroup label="Steden" className="bg-bg-secondary text-text-primary">
                 {DUTCH_CITIES.slice(0, 10).map(c => (
@@ -185,7 +188,8 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
                 ))}
               </optgroup>
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-white/70" />
+            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none text-white/70" />
+          </div>
           </div>
         </div>
       </header>
