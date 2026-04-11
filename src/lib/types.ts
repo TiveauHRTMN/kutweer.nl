@@ -127,24 +127,24 @@ export const DUTCH_CITIES: City[] = [
 ];
 
 /**
- * Reverse geocode via Open-Meteo: geeft de werkelijke plaatsnaam
- * voor de opgegeven GPS-coördinaten. Valt terug op findNearestCity
- * als de API geen resultaat geeft.
+ * Reverse geocode via OpenStreetMap Nominatim: geeft de werkelijke
+ * plaatsnaam voor de opgegeven GPS-coördinaten. Gebruikt de exacte
+ * locatie van de gebruiker — geen snapping naar KNMI-stations.
+ * Valt terug op findNearestCity als de API geen resultaat geeft.
  */
 export async function reverseGeocode(lat: number, lon: number): Promise<City> {
   try {
     const res = await fetch(
-      `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&count=1&language=nl`
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=nl&zoom=14`,
+      { headers: { "User-Agent": "WeerZone/1.0 (weerzone.nl)" } }
     );
     if (res.ok) {
       const data = await res.json();
-      if (data.results && data.results.length > 0) {
-        const r = data.results[0];
-        return {
-          name: r.name,
-          lat,
-          lon,
-        };
+      // Nominatim retourneert address.village, address.town, of address.city
+      const addr = data.address;
+      const name = addr?.village || addr?.town || addr?.city || addr?.municipality;
+      if (name) {
+        return { name, lat, lon };
       }
     }
   } catch {
