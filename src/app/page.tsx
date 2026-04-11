@@ -41,7 +41,7 @@ const faqLd = {
       name: "Wat is WeerZone?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "WeerZone is de weerdienst die niet liegt. We combineren KNMI HARMONIE en DWD ICON — twee supercomputers — voor de enige voorspelling die er toe doet: de komende 48 uur. De rest is ruis.",
+        text: "WeerZone is de weerdienst die niet liegt. We combineren KNMI HARMONIE en DWD ICON — twee supercomputers — voor de enige voorspelling die ertoe doet: de komende 48 uur. De rest is ruis.",
       },
     },
     {

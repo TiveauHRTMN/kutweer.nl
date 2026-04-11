@@ -70,7 +70,7 @@ export default function ZakelijkPage() {
 
         <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-8">
           Vergeet de 14-daagse. Die klopt niet. Dat weet iedereen behalve de mensen die hem verkopen.
-          WeerZone levert de enige data die er toe doet: de komende 48 uur, op de vierkante meter.
+          WeerZone levert de enige data die ertoe doet: de komende 48 uur, op de vierkante meter.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
