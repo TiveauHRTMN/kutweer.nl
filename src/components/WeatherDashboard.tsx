@@ -22,6 +22,7 @@ import WeatherBackground from "./WeatherBackground";
 import WeatherAlarm from "./WeatherAlarm";
 import AffiliateCard from "./AffiliateCard";
 import AuthGate from "./AuthGate";
+import EmailSubscribe from "./EmailSubscribe";
 
 interface DashboardProps {
   initialCity?: City;
@@ -1020,6 +1021,11 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
             </div>
           </div>
         </AuthGate>
+      </div>
+
+      {/* E-mail Weerrapport */}
+      <div className="animate-fade-in" style={{ animationDelay: "1.2s" }}>
+        <EmailSubscribe city={city} />
       </div>
 
       {/* Footer / Share */}
