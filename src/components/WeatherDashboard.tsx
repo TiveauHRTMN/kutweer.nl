@@ -457,6 +457,25 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           alerts.push({ icon: "🌨️", title: "Sneeuw verwacht", detail: `Sneeuw in de komende 48 uur. Pas op voor gladheid.`, severity: "orange" });
         }
 
+        // Mist
+        const fogHours = allHours.filter(h => h.weatherCode >= 45 && h.weatherCode <= 48);
+        if (fogHours.length >= 3) {
+          alerts.push({ icon: "🌫️", title: "Aanhoudende mist", detail: `Mist verwacht de komende uren. Zicht sterk verminderd. Rij voorzichtig.`, severity: "orange" });
+        }
+
+        // UV extreem
+        if (weather.uvIndex >= 8) {
+          alerts.push({ icon: "☀️", title: "Extreme UV-straling", detail: `UV-index ${weather.uvIndex.toFixed(1)}. Binnenblijven tussen 12:00–15:00 of SPF50+. Geen discussie.`, severity: "red" });
+        } else if (weather.uvIndex >= 6) {
+          alerts.push({ icon: "🧴", title: "Hoge UV-straling", detail: `UV-index ${weather.uvIndex.toFixed(1)}. Insmeren verplicht. Elke 2 uur opnieuw.`, severity: "orange" });
+        }
+
+        // IJzel (regen bij vriestemperatuur)
+        const iceRisk = allHours.some(h => h.precipitation > 0 && h.temperature <= 0);
+        if (iceRisk) {
+          alerts.push({ icon: "🧊", title: "IJzel mogelijk", detail: `Regen bij vriestemperatuur. Extreem glad op de weg. Blijf thuis als het kan.`, severity: "red" });
+        }
+
         if (alerts.length === 0) return null;
 
         return (

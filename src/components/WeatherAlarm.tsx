@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Bell, BellOff } from "lucide-react";
 import type { City } from "@/lib/types";
 
@@ -11,41 +11,68 @@ interface Props {
 export default function WeatherAlarm({ city }: Props) {
   const [enabled, setEnabled] = useState(false);
   const [supported, setSupported] = useState(false);
-  const [intervalId, setIntervalId] = useState<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    setSupported("Notification" in window && "serviceWorker" in navigator);
-    // Check if already enabled
-    const saved = localStorage.getItem("wz_alarm");
-    if (saved === "on") setEnabled(true);
+    setSupported("Notification" in window);
+    if (localStorage.getItem("wz_alarm") === "on") setEnabled(true);
   }, []);
+
+  const checkWeather = useCallback(async () => {
+    if (Notification.permission !== "granted") return;
+    try {
+      const res = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&hourly=precipitation,weather_code&timezone=Europe/Amsterdam&forecast_hours=6`
+      );
+      const data = await res.json();
+      const precip = data.hourly?.precipitation || [];
+      const codes = data.hourly?.weather_code || [];
+      const times = data.hourly?.time || [];
+
+      // Regen binnen 2 uur
+      const rainIdx = precip.slice(0, 3).findIndex((p: number) => p > 0.3);
+      if (rainIdx >= 0) {
+        const t = new Date(times[rainIdx]).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+        const lastShown = localStorage.getItem("wz_alarm_last_rain");
+        const key = `rain-${new Date().toISOString().slice(0, 13)}`;
+        if (lastShown !== key) {
+          new Notification("WeerZone — Regen op komst", {
+            body: `Regen verwacht in ${city.name} om ${t}. Paraplu mee!`,
+            icon: "/favicon-icon.png",
+            tag: "wz-rain",
+          });
+          localStorage.setItem("wz_alarm_last_rain", key);
+        }
+      }
+
+      // Onweer binnen 6 uur
+      const stormIdx = codes.findIndex((c: number) => c >= 95);
+      if (stormIdx >= 0) {
+        const t = new Date(times[stormIdx]).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+        const lastShown = localStorage.getItem("wz_alarm_last_storm");
+        const key = `storm-${new Date().toISOString().slice(0, 13)}`;
+        if (lastShown !== key) {
+          new Notification("WeerZone — Onweer!", {
+            body: `Onweer verwacht in ${city.name} rond ${t}. Ga naar binnen.`,
+            icon: "/favicon-icon.png",
+            tag: "wz-storm",
+          });
+          localStorage.setItem("wz_alarm_last_storm", key);
+        }
+      }
+    } catch (e) {
+      console.error("WeerZone alarm check failed:", e);
+    }
+  }, [city]);
 
   useEffect(() => {
     if (!enabled || !supported) return;
 
-    // Register SW and start checking
-    navigator.serviceWorker.register("/sw.js").then((reg) => {
-      // Check immediately
-      checkNow(reg);
-      // Then every 30 minutes
-      const id = setInterval(() => checkNow(reg), 30 * 60 * 1000);
-      setIntervalId(id);
-    });
-
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, city.name]);
-
-  function checkNow(reg: ServiceWorkerRegistration) {
-    reg.active?.postMessage({
-      type: "CHECK_WEATHER",
-      city: city.name,
-      lat: city.lat,
-      lon: city.lon,
-    });
-  }
+    // Check direct
+    checkWeather();
+    // Check elke 15 minuten
+    const id = setInterval(checkWeather, 15 * 60 * 1000);
+    return () => clearInterval(id);
+  }, [enabled, supported, checkWeather]);
 
   async function toggleAlarm() {
     if (!supported) return;
@@ -53,11 +80,9 @@ export default function WeatherAlarm({ city }: Props) {
     if (enabled) {
       setEnabled(false);
       localStorage.setItem("wz_alarm", "off");
-      if (intervalId) clearInterval(intervalId);
       return;
     }
 
-    // Request notification permission
     const perm = await Notification.requestPermission();
     if (perm === "granted") {
       setEnabled(true);
@@ -75,7 +100,8 @@ export default function WeatherAlarm({ city }: Props) {
           ? "bg-accent-orange text-text-primary shadow-sm"
           : "border border-white/25 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20"
       }`}
-      title={enabled ? "Regen-alarm uit" : "Regen-alarm aan"}
+      title={enabled ? "Weer-alarm uit" : "Weer-alarm aan"}
+      aria-label={enabled ? "Weer-alarm uit" : "Weer-alarm aan"}
     >
       {enabled ? <Bell className="w-4.5 h-4.5" /> : <BellOff className="w-4.5 h-4.5" />}
     </button>
