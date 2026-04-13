@@ -346,6 +346,11 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
+      {/* ===== 1.5. E-mail Weerrapport (Nieuwe Positie Bovenaan) ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.12s" }}>
+        <EmailSubscribe city={city} />
+      </div>
+
       {/* ===== 2. Rain Radar — "Gaat het regenen over 15 min?" ===== */}
       {weather.minutely.length > 0 && (
         <div className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
@@ -1016,10 +1021,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </AuthGate>
       </div>
 
-      {/* ===== 18. E-mail Weerrapport ===== */}
-      <div className="animate-fade-in" style={{ animationDelay: "1.0s" }}>
-        <EmailSubscribe city={city} />
-      </div>
+      {/* ===== 18. E-mail Weerrapport (Moved to top) ===== */}
 
       {/* ===== Footer / Share ===== */}
       <footer className="pt-8 pb-4 text-center animate-fade-in" style={{ animationDelay: "1.0s" }}>

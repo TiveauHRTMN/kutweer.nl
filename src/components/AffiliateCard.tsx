@@ -45,7 +45,7 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
       subtitle: "Booking.com",
       products: [
         {
-          image: placeholderImg("🏖️", 200),
+          image: "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=400&h=400&fit=crop",
           title: "Barcelona",
           price: "vanaf €149",
           brand: "Booking.com",
@@ -53,14 +53,14 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
           tag: "Populair",
         },
         {
-          image: placeholderImg("🌴", 120),
+          image: "https://images.unsplash.com/photo-1534008897995-27a23e859048?w=400&h=400&fit=crop",
           title: "Malaga",
           price: "vanaf €179",
           brand: "Booking.com",
           href: bookingUrl("Malaga"),
         },
         {
-          image: placeholderImg("☀️", 40),
+          image: "https://images.unsplash.com/photo-1585218356057-062e5b7fb60f?w=400&h=400&fit=crop",
           title: "Lissabon",
           price: "vanaf €159",
           oldPrice: "€209",
@@ -69,14 +69,14 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
           tag: "Deal",
         },
         {
-          image: placeholderImg("🏝️", 170),
+          image: "https://images.unsplash.com/photo-1605553556093-9c98a5d3f23a?w=400&h=400&fit=crop",
           title: "Kreta",
           price: "vanaf €219",
           brand: "Booking.com",
           href: bookingUrl("Kreta"),
         },
         {
-          image: placeholderImg("🗼", 280),
+          image: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&h=400&fit=crop",
           title: "Parijs",
           price: "vanaf €129",
           brand: "Booking.com",
@@ -93,7 +93,7 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
       subtitle: "Amazon.nl",
       products: [
         {
-          image: placeholderImg("🧥", 210),
+          image: "https://images.unsplash.com/photo-1504280613098-befe68d3ee6b?w=400&h=400&fit=crop",
           title: "Regenjas waterdicht",
           price: "€49,99",
           oldPrice: "€69,99",
@@ -102,7 +102,7 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
           tag: "Aanbieding",
         },
         {
-          image: placeholderImg("☂️", 240),
+          image: "https://images.unsplash.com/photo-1519001389478-433cce7f86eb?w=400&h=400&fit=crop",
           title: "Stormparaplu XL",
           price: "€24,95",
           brand: "Amazon.nl",
@@ -110,14 +110,14 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
           tag: "Bestseller",
         },
         {
-          image: placeholderImg("👢", 30),
+          image: "https://images.unsplash.com/photo-1520699697851-3dc68aa3a474?w=400&h=400&fit=crop",
           title: "Regenlaarzen",
           price: "€34,99",
           brand: "Amazon.nl",
           href: amazonUrl("regenlaarzen waterdicht"),
         },
         {
-          image: placeholderImg("🎒", 190),
+          image: "https://images.unsplash.com/photo-1491637639811-60e2756cc1c7?w=400&h=400&fit=crop",
           title: "Waterdichte rugzak",
           price: "€39,95",
           brand: "Amazon.nl",
@@ -133,14 +133,14 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
       subtitle: "Amazon.nl",
       products: [
         {
-          image: placeholderImg("🧣", 0),
+          image: "https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&h=400&fit=crop",
           title: "Merino sjaal",
           price: "€29,95",
           brand: "Amazon.nl",
           href: amazonUrl("merino wol sjaal"),
         },
         {
-          image: placeholderImg("🧤", 340),
+          image: "https://images.unsplash.com/photo-1544605963-3de1b7dfb3ce?w=400&h=400&fit=crop",
           title: "Thermo handschoenen",
           price: "€19,99",
           oldPrice: "€27,99",
@@ -149,7 +149,7 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
           tag: "Aanbieding",
         },
         {
-          image: placeholderImg("🧥", 20),
+          image: "https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?w=400&h=400&fit=crop",
           title: "Winterjas",
           price: "€89,95",
           brand: "Amazon.nl",
@@ -157,7 +157,7 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
           tag: "Bestseller",
         },
         {
-          image: placeholderImg("☕", 30),
+          image: "https://images.unsplash.com/photo-1604183861214-e53b98471ce6?w=400&h=400&fit=crop",
           title: "Thermosfles 500ml",
           price: "€22,50",
           brand: "Amazon.nl",
@@ -173,7 +173,7 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
       subtitle: "Amazon.nl",
       products: [
         {
-          image: placeholderImg("🧴", 40),
+          image: "https://images.unsplash.com/photo-1526413232644-8a407dd56156?w=400&h=400&fit=crop",
           title: "Zonnebrand SPF50",
           price: "€12,99",
           brand: "Amazon.nl",
@@ -181,7 +181,7 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
           tag: "Noodzaak",
         },
         {
-          image: placeholderImg("😎", 200),
+          image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=400&h=400&fit=crop",
           title: "Polaroid zonnebril",
           price: "€34,95",
           oldPrice: "€49,95",
@@ -190,14 +190,14 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
           tag: "Deal",
         },
         {
-          image: placeholderImg("🌀", 180),
+          image: "https://images.unsplash.com/photo-1616782522778-9ebcd473b64c?w=400&h=400&fit=crop",
           title: "Tafelventilator",
           price: "€29,99",
           brand: "Amazon.nl",
           href: amazonUrl("tafelventilator stil"),
         },
         {
-          image: placeholderImg("🧊", 210),
+          image: "https://images.unsplash.com/photo-1599839619722-39751411ea63?w=400&h=400&fit=crop",
           title: "Koelbox 24L",
           price: "€44,95",
           brand: "Amazon.nl",
@@ -212,7 +212,7 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
     subtitle: "Amazon.nl",
     products: [
       {
-        image: placeholderImg("🚴", 150),
+        image: "https://images.unsplash.com/photo-1532298229144-0ec0c57515c7?w=400&h=400&fit=crop",
         title: "Fietslamp set LED",
         price: "€14,95",
         brand: "Amazon.nl",
@@ -220,7 +220,7 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
         tag: "Populair",
       },
       {
-        image: placeholderImg("🎒", 120),
+        image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
         title: "Dagrugzak 20L",
         price: "€29,99",
         oldPrice: "€39,99",
@@ -229,14 +229,14 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
         tag: "Aanbieding",
       },
       {
-        image: placeholderImg("⚽", 100),
+        image: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=400&h=400&fit=crop",
         title: "Buitenspeelgoed",
         price: "vanaf €9,99",
         brand: "Amazon.nl",
         href: amazonUrl("buitenspeelgoed kinderen"),
       },
       {
-        image: placeholderImg("🪑", 40),
+        image: "https://images.unsplash.com/photo-1595844730298-b960ff88fee6?w=400&h=400&fit=crop",
         title: "Tuinstoel opvouwbaar",
         price: "€24,95",
         brand: "Amazon.nl",
@@ -258,7 +258,7 @@ function getBottomProducts(weather: WeatherData): AffiliateSection {
       subtitle: "Amazon.nl",
       products: [
         {
-          image: placeholderImg("🛋️", 30),
+          image: "https://images.unsplash.com/photo-1580302302824-34ba85c4939b?w=400&h=400&fit=crop",
           title: "Fleece deken XL",
           price: "€19,99",
           brand: "Amazon.nl",
@@ -266,14 +266,14 @@ function getBottomProducts(weather: WeatherData): AffiliateSection {
           tag: "Favoriet",
         },
         {
-          image: placeholderImg("☕", 15),
+          image: "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=400&h=400&fit=crop",
           title: "Nespresso cups",
           price: "€24,99",
           brand: "Amazon.nl",
           href: amazonUrl("nespresso capsules compatible"),
         },
         {
-          image: placeholderImg("🕯️", 40),
+          image: "https://images.unsplash.com/photo-1602874801007-bd458bb1b8b6?w=400&h=400&fit=crop",
           title: "Geurkaarsen set",
           price: "€16,95",
           brand: "Amazon.nl",
@@ -281,14 +281,7 @@ function getBottomProducts(weather: WeatherData): AffiliateSection {
           tag: "Populair",
         },
         {
-          image: placeholderImg("🎮", 260),
-          title: "Nintendo Switch game",
-          price: "vanaf €39,99",
-          brand: "Amazon.nl",
-          href: amazonUrl("nintendo switch games"),
-        },
-        {
-          image: placeholderImg("📖", 350),
+          image: "https://images.unsplash.com/photo-1592285896110-8d88b5b3a5d8?w=400&h=400&fit=crop",
           title: "Kindle Paperwhite",
           price: "€149,99",
           brand: "Amazon.nl",
@@ -306,7 +299,7 @@ function getBottomProducts(weather: WeatherData): AffiliateSection {
       subtitle: "Amazon.nl",
       products: [
         {
-          image: placeholderImg("🔥", 15),
+          image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=400&fit=crop",
           title: "Houtskool BBQ",
           price: "€49,99",
           oldPrice: "€69,99",
@@ -315,21 +308,14 @@ function getBottomProducts(weather: WeatherData): AffiliateSection {
           tag: "Deal",
         },
         {
-          image: placeholderImg("🥩", 0),
+          image: "https://images.unsplash.com/photo-1596796417769-ca3b9c66914b?w=400&h=400&fit=crop",
           title: "BBQ gereedschap set",
           price: "€24,95",
           brand: "Amazon.nl",
           href: amazonUrl("bbq gereedschap set rvs"),
         },
         {
-          image: placeholderImg("💡", 50),
-          title: "Tuinverlichting LED",
-          price: "€19,99",
-          brand: "Amazon.nl",
-          href: amazonUrl("tuinverlichting led solar"),
-        },
-        {
-          image: placeholderImg("🪑", 40),
+          image: "https://images.unsplash.com/photo-1595844730298-b960ff88fee6?w=400&h=400&fit=crop",
           title: "Loungestoel tuin",
           price: "€79,95",
           brand: "Amazon.nl",
@@ -345,7 +331,7 @@ function getBottomProducts(weather: WeatherData): AffiliateSection {
     subtitle: "Amazon.nl",
     products: [
       {
-        image: placeholderImg("📱", 220),
+        image: "https://images.unsplash.com/photo-1534067783941-51c9c23ecefd?w=400&h=400&fit=crop",
         title: "Netatmo weerstation",
         price: "€149,99",
         oldPrice: "€189,99",
@@ -354,21 +340,14 @@ function getBottomProducts(weather: WeatherData): AffiliateSection {
         tag: "Tip",
       },
       {
-        image: placeholderImg("🌡️", 0),
+        image: "https://images.unsplash.com/photo-1561565509-f1fbffc4c23c?w=400&h=400&fit=crop",
         title: "Buiten thermometer",
         price: "€12,95",
         brand: "Amazon.nl",
         href: amazonUrl("buitenthermometer digitaal"),
       },
       {
-        image: placeholderImg("💨", 200),
-        title: "Windmeter digitaal",
-        price: "€34,95",
-        brand: "Amazon.nl",
-        href: amazonUrl("anemometer windmeter digitaal"),
-      },
-      {
-        image: placeholderImg("🌧️", 210),
+        image: "https://images.unsplash.com/photo-1596781745422-92e1069bdccc?w=400&h=400&fit=crop",
         title: "Regenmeter tuin",
         price: "€8,99",
         brand: "Amazon.nl",
