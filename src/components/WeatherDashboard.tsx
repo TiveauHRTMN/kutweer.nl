@@ -463,7 +463,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
                 <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">
                   {isCurrentlyDry ? "Wanneer regent het?" : "Wanneer droog?"}
                 </div>
-                <div className="text-sm font-semibold text-text-primary">
+                <div className="text-sm font-semibold text-text-primary break-words leading-snug">
                   {isCurrentlyDry && rainStart
                     ? `Nu droog. Regen verwacht om ${fmt(rainStart)}. Pak je kans.`
                     : isCurrentlyDry

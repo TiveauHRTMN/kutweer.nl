@@ -398,7 +398,7 @@ export default function AffiliateCard({ variant, weather }: Props) {
     <div className="card p-5 overflow-hidden relative">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h4 className="text-sm font-bold text-text-primary">{section.heading}</h4>
+          <h4 className="text-sm font-bold text-text-primary break-words leading-tight">{section.heading}</h4>
           <span className="text-[10px] text-text-muted">{section.subtitle}</span>
         </div>
         <span className="text-[9px] font-bold uppercase tracking-wider text-accent-orange/70 bg-accent-orange/10 px-2 py-0.5 rounded-full">Advertentie</span>

@@ -90,12 +90,14 @@ body {
 
 /* Section titles — sit on sky */
 .section-title {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-on-sky);
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 /* Score bar */

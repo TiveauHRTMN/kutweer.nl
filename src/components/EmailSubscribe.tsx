@@ -50,7 +50,7 @@ export default function EmailSubscribe({ city }: Props) {
         <Mail className="w-4 h-4 text-accent-orange" />
         <h3 className="text-sm font-bold text-text-primary">De 48-Uur Update</h3>
       </div>
-      <p className="text-xs text-text-secondary">
+      <p className="text-xs text-text-secondary break-words leading-snug">
         Elke ochtend om 08:00 de keiharde voorspelling voor {city.name}. Geen standaard weerman-poespas. Gratis.
       </p>
       <form onSubmit={handleSubmit} className="flex gap-2">
