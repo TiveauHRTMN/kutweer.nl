@@ -25,11 +25,11 @@ export const metadata: Metadata = {
     template: "%s | WeerZone — 48 uur. De rest is ruis.",
   },
   description:
-    "WeerZone.nl — Vergeet de 14-daagse. De komende 48 uur, op de vierkante meter. KNMI HARMONIE + DWD ICON gecombineerd. De enige weerdienst die niet liegt.",
+    "WeerZone.nl — Vergeet de 14-daagse. De komende 48 uur op de vierkante meter. KNMI HARMONIE + ICON + ICON-D2. De enige weerdienst die de waarheid durft te vertellen.",
   keywords: [
     "weer", "weer nederland", "weerbericht", "weersverwachting", "weer vandaag",
     "weer morgen", "48 uur weer", "weer komende 48 uur", "fietsweer", "regen verwachting",
-    "weerzone", "nauwkeurig weer", "KNMI", "KNMI HARMONIE", "DWD ICON",
+    "weerzone", "nauwkeurig weer", "KNMI", "KNMI HARMONIE", "DWD ICON", "ICON-D2",
     "weerbericht vandaag", "temperatuur nederland", "wind nederland",
     "neerslag radar", "buienradar alternatief", "weer per postcode",
     "weer exact locatie", "hyperlocaal weer", "weerzone.nl",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "WeerZone — 48 uur. De rest is ruis.",
-    description: "Vergeet de 14-daagse. De komende 48 uur, op de vierkante meter. KNMI HARMONIE + DWD ICON.",
+    description: "Vergeet de 14-daagse. De komende 48 uur op de vierkante meter. KNMI HARMONIE + ICON + ICON-D2.",
   },
   robots: {
     index: true,
