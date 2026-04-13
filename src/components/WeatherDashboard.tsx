@@ -8,7 +8,7 @@ import { getWeather } from "@/app/actions";
 import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData } from "@/lib/types";
 import {
   getMainCommentary,
-  getKutweerScore,
+  getMisereScore,
   getFietsScore,
   getOutfitAdvice,
   getWindComment,
@@ -23,6 +23,7 @@ import WeatherAlarm from "./WeatherAlarm";
 import AffiliateCard from "./AffiliateCard";
 import AuthGate from "./AuthGate";
 import EmailSubscribe from "./EmailSubscribe";
+import RainRadar from "./RainRadar";
 
 interface DashboardProps {
   initialCity?: City;
@@ -266,7 +267,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
     return <LoadingScreen />;
   }
 
-  const { score: kutScore, label: kutLabel, emoji: kutEmoji } = getKutweerScore(weather);
+  const { score: misereScore, label: misereLabel, emoji: misereEmoji } = getMisereScore(weather);
   const { score: fietsScore, label: fietsLabel } = getFietsScore(weather);
   const { emoji: outfitEmoji, advice: outfitAdvice } = getOutfitAdvice(weather);
   const uvInfo = getUvLabel(weather.uvIndex);
@@ -297,60 +298,8 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </header>
 
-      {/* Weer Vraag */}
-      <div className="card p-4 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-        <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gradient-to-br from-accent-orange to-accent-amber flex items-center justify-center text-sm pointer-events-none">🤖</div>
-          <input
-            type="text"
-            placeholder="Stel een vraag over het weer..."
-            className="w-full py-3 pl-14 pr-12 rounded-full border border-black/10 bg-white/70 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-accent-orange/40 focus:ring-2 focus:ring-accent-orange/10 focus:bg-white/90 transition-all"
-            value={chatInput}
-            onChange={(e) => { setChatInput(e.target.value); setChatAnswer(null); }}
-            onKeyDown={(e) => { if (e.key === 'Enter' && chatInput.trim()) { answerQuestion(chatInput); setChatInput(''); } }}
-          />
-          <button
-            onClick={() => { if (chatInput.trim()) { answerQuestion(chatInput); setChatInput(''); } }}
-            aria-label="Vraag versturen"
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-accent-orange text-text-primary flex items-center justify-center hover:brightness-90 transition-colors"
-          >
-            <Send className="w-4 h-4" />
-          </button>
-        </div>
-
-        <AnimatePresence mode="wait">
-          {chatAnswer && (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.2 }}
-              className="mt-3 flex items-start gap-2.5 px-3 py-2.5 bg-accent-orange/10 rounded-xl border border-accent-orange/20"
-            >
-              <span className="text-base shrink-0 mt-0.5">💬</span>
-              <p className="text-sm font-medium text-text-primary leading-relaxed">{chatAnswer}</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <div className="flex overflow-x-auto gap-2 mt-3 pb-1 no-scrollbar">
-          {[
-            { q: "Jas mee?", icon: "🧥" },
-            { q: "Kan ik hardlopen?", icon: "🏃‍♂️" },
-            { q: "Wordt het morgen beter?", icon: "🗓️" },
-            { q: "Gaat het regenen?", icon: "🌧️" },
-            { q: "Kan ik fietsen?", icon: "🚴" },
-            { q: "Hoe hard waait het?", icon: "💨" },
-          ].map(({ q, icon }) => (
-            <button key={q} onClick={() => answerQuestion(q)} className="chip flex-shrink-0">
-              {icon} {q}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Weather Card */}
-      <div className="card overflow-hidden relative animate-fade-in" style={{ animationDelay: "0.2s" }}>
+      {/* ===== 1. Main Weather Card — FIRST THING THE USER SEES ===== */}
+      <div className="card overflow-hidden relative animate-fade-in" style={{ animationDelay: "0.1s" }}>
         <div className="p-6 relative z-[2]">
           <div className="text-sm font-medium text-text-secondary flex items-center gap-1 mb-2">
             <MapPin className="w-3 h-3 text-accent-red" />
@@ -397,243 +346,15 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* Extreem Weer Alert */}
-      {(() => {
-        // Scan 48h data for extreme conditions
-        type Alert = { icon: string; title: string; detail: string; severity: "orange" | "red" };
-        const alerts: Alert[] = [];
-        const allHours = weather.hourly;
-        const today = weather.daily[0];
-        const tomorrow = weather.daily[1];
-
-        // Storm: wind > 75 km/h
-        const maxWindHour = allHours.reduce((max, h) => h.windSpeed > max.windSpeed ? h : max, allHours[0]);
-        if (maxWindHour.windSpeed >= 75) {
-          const t = new Date(maxWindHour.time).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
-          alerts.push({ icon: "🌪️", title: "Stormachtig", detail: `Windstoten tot ${maxWindHour.windSpeed} km/h verwacht rond ${t}.`, severity: "red" });
-        } else if (maxWindHour.windSpeed >= 50) {
-          const t = new Date(maxWindHour.time).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
-          alerts.push({ icon: "💨", title: "Krachtige wind", detail: `Wind tot ${maxWindHour.windSpeed} km/h rond ${t}. Fietsen wordt avontuurlijk.`, severity: "orange" });
-        }
-
-        // Extreme hitte: > 30°C
-        if (today.tempMax >= 35 || tomorrow.tempMax >= 35) {
-          const day = today.tempMax >= 35 ? "vandaag" : "morgen";
-          const temp = today.tempMax >= 35 ? today.tempMax : tomorrow.tempMax;
-          alerts.push({ icon: "🔥", title: "Extreme hitte", detail: `${temp}° verwacht ${day}. Blijf hydrateren. Serieus.`, severity: "red" });
-        } else if (today.tempMax >= 30 || tomorrow.tempMax >= 30) {
-          const day = today.tempMax >= 30 ? "vandaag" : "morgen";
-          const temp = today.tempMax >= 30 ? today.tempMax : tomorrow.tempMax;
-          alerts.push({ icon: "☀️", title: "Tropisch warm", detail: `${temp}° verwacht ${day}. Smeer je in en zoek schaduw.`, severity: "orange" });
-        }
-
-        // Strenge vorst: < -5°C
-        if (today.tempMin <= -10 || tomorrow.tempMin <= -10) {
-          alerts.push({ icon: "🥶", title: "Strenge vorst", detail: `Tot ${Math.min(today.tempMin, tomorrow.tempMin)}°. Alles bevriest. Leidingen beschermen.`, severity: "red" });
-        } else if (today.tempMin <= -5 || tomorrow.tempMin <= -5) {
-          alerts.push({ icon: "❄️", title: "Vorst", detail: `Minimaal ${Math.min(today.tempMin, tomorrow.tempMin)}°. Gladheid op de weg.`, severity: "orange" });
-        }
-
-        // Onweer
-        const thunderHours = allHours.filter(h => h.weatherCode >= 95);
-        if (thunderHours.length > 0) {
-          const firstT = new Date(thunderHours[0].time).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
-          alerts.push({ icon: "⛈️", title: "Onweer verwacht", detail: `Onweer mogelijk vanaf ${firstT}. Blijf uit de buurt van open water en bomen.`, severity: thunderHours.length > 3 ? "red" : "orange" });
-        }
-
-        // Zware neerslag: > 15mm/dag
-        if (today.precipitationSum >= 25 || tomorrow.precipitationSum >= 25) {
-          const day = today.precipitationSum >= 25 ? "vandaag" : "morgen";
-          const mm = today.precipitationSum >= 25 ? today.precipitationSum : tomorrow.precipitationSum;
-          alerts.push({ icon: "🌊", title: "Zware neerslag", detail: `${mm}mm verwacht ${day}. Wateroverlast mogelijk.`, severity: "red" });
-        } else if (today.precipitationSum >= 15 || tomorrow.precipitationSum >= 15) {
-          const day = today.precipitationSum >= 15 ? "vandaag" : "morgen";
-          const mm = today.precipitationSum >= 15 ? today.precipitationSum : tomorrow.precipitationSum;
-          alerts.push({ icon: "🌧️", title: "Veel regen", detail: `${mm}mm verwacht ${day}. Paraplu is niet optioneel.`, severity: "orange" });
-        }
-
-        // Sneeuw
-        const snowHours = allHours.filter(h => h.weatherCode >= 71 && h.weatherCode <= 77);
-        if (snowHours.length > 0) {
-          alerts.push({ icon: "🌨️", title: "Sneeuw verwacht", detail: `Sneeuw in de komende 48 uur. Pas op voor gladheid.`, severity: "orange" });
-        }
-
-        // Mist
-        const fogHours = allHours.filter(h => h.weatherCode >= 45 && h.weatherCode <= 48);
-        if (fogHours.length >= 3) {
-          alerts.push({ icon: "🌫️", title: "Aanhoudende mist", detail: `Mist verwacht de komende uren. Zicht sterk verminderd. Rij voorzichtig.`, severity: "orange" });
-        }
-
-        // UV extreem
-        if (weather.uvIndex >= 8) {
-          alerts.push({ icon: "☀️", title: "Extreme UV-straling", detail: `UV-index ${weather.uvIndex.toFixed(1)}. Binnenblijven tussen 12:00–15:00 of SPF50+. Geen discussie.`, severity: "red" });
-        } else if (weather.uvIndex >= 6) {
-          alerts.push({ icon: "🧴", title: "Hoge UV-straling", detail: `UV-index ${weather.uvIndex.toFixed(1)}. Insmeren verplicht. Elke 2 uur opnieuw.`, severity: "orange" });
-        }
-
-        // IJzel (regen bij vriestemperatuur)
-        const iceRisk = allHours.some(h => h.precipitation > 0 && h.temperature <= 0);
-        if (iceRisk) {
-          alerts.push({ icon: "🧊", title: "IJzel mogelijk", detail: `Regen bij vriestemperatuur. Extreem glad op de weg. Blijf thuis als het kan.`, severity: "red" });
-        }
-
-        if (alerts.length === 0) return null;
-
-        return (
-          <div className="animate-fade-in space-y-2" style={{ animationDelay: "0.25s" }}>
-            {alerts.map((alert, i) => (
-              <div
-                key={i}
-                className={`card p-4 flex items-start gap-3 border ${
-                  alert.severity === "red"
-                    ? "border-accent-red/40 bg-red-50/80"
-                    : "border-accent-amber/40 bg-amber-50/80"
-                }`}
-              >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0 ${
-                  alert.severity === "red" ? "bg-accent-red/15" : "bg-accent-amber/15"
-                }`}>
-                  {alert.icon}
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <AlertTriangle className={`w-3.5 h-3.5 ${
-                      alert.severity === "red" ? "text-accent-red" : "text-accent-amber"
-                    }`} />
-                    <span className={`text-xs font-bold uppercase tracking-wider ${
-                      alert.severity === "red" ? "text-accent-red" : "text-amber-600"
-                    }`}>
-                      {alert.title}
-                    </span>
-                  </div>
-                  <p className="text-sm font-medium text-text-primary mt-1">{alert.detail}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        );
-      })()}
-
-      {/* Quote section */}
-      <div className="card p-6 flex flex-col items-center justify-center text-center relative overflow-hidden animate-fade-in" style={{ animationDelay: "0.3s" }}>
-        <div className="text-4xl mb-4">☀️</div>
-        <AnimatePresence mode="wait">
-          <motion.p 
-            key={quote} 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="text-lg font-medium text-text-primary max-w-md"
-          >
-            {quote}
-          </motion.p>
-        </AnimatePresence>
-        
-        <button 
-          onClick={() => setQuote(getRandomQuote())}
-          className="mt-6 flex items-center gap-2 px-4 py-2 rounded-full border border-black/10 text-sm font-medium hover:bg-black/5 transition-colors"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          Nog een
-        </button>
-      </div>
-
-      {/* Grid for minor stats */}
-      <div className="grid grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-        {/* Voelt Als */}
-        <div className="card p-4">
-          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <span className="text-accent-amber text-base">🌡️</span> Gevoelstemperatuur
-          </div>
-          <div className="text-3xl font-bold flex items-start">
-            {weather.current.feelsLike}<span className="text-lg mt-1">°</span>
-          </div>
-          <div className="text-sm text-text-muted mt-1">
-            {weather.current.feelsLike < weather.current.temperature ? "Voelt kouder dan het is" : 
-             weather.current.feelsLike > weather.current.temperature ? "Voelt warmer dan het is" : 
-             "Precies wat het is"}
-          </div>
+      {/* ===== 2. Rain Radar — "Gaat het regenen over 15 min?" ===== */}
+      {weather.minutely.length > 0 && (
+        <div className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+          <RainRadar data={weather.minutely} />
         </div>
-        
-        {/* Luchtvochtigheid */}
-        <div className="card p-4">
-          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <span className="text-accent-cyan text-base">💧</span> Luchtvochtigheid
-          </div>
-          <div className="text-3xl font-bold flex items-start">
-            {weather.current.humidity}<span className="text-lg mt-1">%</span>
-          </div>
-          <div className="text-sm text-text-muted mt-1">
-            {weather.current.humidity > 80 ? "Klam en benauwd" : 
-             weather.current.humidity < 40 ? "Lekker droog" : 
-             "Normaal Nederlands zweetweer"}
-          </div>
-        </div>
-        
-        {/* Wind */}
-        <div className="card p-4">
-          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <span className="text-accent-cyan text-base">🌬️</span> Wind — Bft {getWindBeaufort(weather.current.windSpeed).scale}
-          </div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-3xl font-bold">{weather.current.windSpeed}</span>
-            <span className="text-sm font-bold text-text-primary">km/h</span>
-          </div>
-          <div className="text-xs text-text-muted mt-1">
-            {weather.current.windDirection} • Stoten {weather.current.windGusts} km/h
-          </div>
-          <div className="text-xs font-medium text-text-secondary mt-2 italic">
-            {getWindComment(weather.current.windSpeed, weather.current.windGusts)}
-          </div>
-        </div>
-        
-        {/* Neerslag */}
-        <div className="card p-4">
-          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <span className="text-accent-cyan text-base">🌧️</span> Neerslag
-          </div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-3xl font-bold">{weather.current.precipitation}</span>
-            <span className="text-sm font-bold text-text-primary">mm</span>
-          </div>
-          <div className="text-sm text-text-muted mt-1">
-            {weather.current.precipitation > 0 ? "Gewoon nat 💧" : "Droog 👍"}
-          </div>
-        </div>
-      </div>
+      )}
 
-      {/* Model Confidence */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.45s" }}>
-        <div className="card p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center text-lg">
-                {weather.models.agreement >= 70 ? "🎯" : weather.models.agreement >= 40 ? "🤔" : "⚠️"}
-              </div>
-              <div>
-                <div className="text-sm font-bold text-text-primary">{weather.models.label}</div>
-                <div className="text-xs text-text-muted">{weather.models.sources.join(" + ")}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="score-bar w-16">
-                <div
-                  className="score-bar-fill"
-                  style={{
-                    width: `${weather.models.agreement}%`,
-                    background: weather.models.agreement >= 70 ? 'var(--accent-green)' : weather.models.agreement >= 40 ? 'var(--accent-amber)' : 'var(--accent-red)'
-                  }}
-                />
-              </div>
-              <span className="text-xs font-bold text-text-secondary">{weather.models.agreement}%</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Hourly Forecast */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
+      {/* ===== 3. Hourly Forecast — Wat wordt het de komende uren ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
         <div className="flex justify-between items-center mb-3 px-1">
           <h3 className="section-title">Komende Uren</h3>
           <div className="flex items-center gap-1 bg-white/10 rounded-full p-0.5 border border-white/20">
@@ -704,8 +425,217 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* Vandaag & Morgen */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.6s" }}>
+      {/* ===== 4. Wanneer wordt het droog? + Alerts — urgent info ===== */}
+      {weather.current.precipitation > 0 || weather.hourly.slice(0, 12).some(h => h.precipitation > 0) ? (() => {
+        const now = new Date();
+        const upcoming = weather.hourly.slice(0, 24);
+        let dryStart: Date | null = null;
+        let dryHours = 0;
+        for (let i = 0; i < upcoming.length; i++) {
+          if (upcoming[i].precipitation === 0) {
+            if (!dryStart) dryStart = new Date(upcoming[i].time);
+            dryHours++;
+          } else {
+            if (dryHours >= 2) break;
+            dryStart = null;
+            dryHours = 0;
+          }
+        }
+        const isCurrentlyDry = weather.current.precipitation === 0;
+        let rainStart: Date | null = null;
+        if (isCurrentlyDry) {
+          const firstRain = upcoming.find(h => h.precipitation > 0.1);
+          if (firstRain) rainStart = new Date(firstRain.time);
+        }
+        const fmt = (d: Date) => d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+        return (
+          <div className="animate-fade-in" style={{ animationDelay: "0.25s" }}>
+            <div className="card p-4 flex items-center gap-4">
+              <div className="w-12 h-12 bg-accent-cyan/15 rounded-full flex items-center justify-center text-2xl shrink-0">
+                {isCurrentlyDry ? "🌦️" : dryStart && dryHours >= 2 ? "🌤️" : "🌧️"}
+              </div>
+              <div>
+                <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">
+                  {isCurrentlyDry ? "Wanneer regent het?" : "Wanneer droog?"}
+                </div>
+                <div className="text-sm font-semibold text-text-primary">
+                  {isCurrentlyDry && rainStart
+                    ? `Nu droog. Regen verwacht om ${fmt(rainStart)}. Pak je kans.`
+                    : isCurrentlyDry
+                    ? "Voorlopig droog. Geniet ervan."
+                    : dryStart && dryHours >= 2
+                    ? `Droog vanaf ${fmt(dryStart)} — venster van ${dryHours} uur. Wees er snel bij.`
+                    : dryStart
+                    ? `Korte droge pauze rond ${fmt(dryStart)}. Sprint-tempo.`
+                    : "Geen droog moment in zicht. Accepteer het."}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })() : null}
+
+      {/* Extreem Weer Alerts */}
+      {(() => {
+        type Alert = { icon: string; title: string; detail: string; severity: "orange" | "red" };
+        const alerts: Alert[] = [];
+        const allHours = weather.hourly;
+        const today = weather.daily[0];
+        const tomorrow = weather.daily[1];
+
+        const maxWindHour = allHours.reduce((max, h) => h.windSpeed > max.windSpeed ? h : max, allHours[0]);
+        if (maxWindHour.windSpeed >= 75) {
+          const t = new Date(maxWindHour.time).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+          alerts.push({ icon: "🌪️", title: "Stormachtig", detail: `Windstoten tot ${maxWindHour.windSpeed} km/h verwacht rond ${t}.`, severity: "red" });
+        } else if (maxWindHour.windSpeed >= 50) {
+          const t = new Date(maxWindHour.time).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+          alerts.push({ icon: "💨", title: "Krachtige wind", detail: `Wind tot ${maxWindHour.windSpeed} km/h rond ${t}. Fietsen wordt avontuurlijk.`, severity: "orange" });
+        }
+
+        if (today.tempMax >= 35 || tomorrow.tempMax >= 35) {
+          const day = today.tempMax >= 35 ? "vandaag" : "morgen";
+          const temp = today.tempMax >= 35 ? today.tempMax : tomorrow.tempMax;
+          alerts.push({ icon: "🔥", title: "Extreme hitte", detail: `${temp}° verwacht ${day}. Blijf hydrateren. Serieus.`, severity: "red" });
+        } else if (today.tempMax >= 30 || tomorrow.tempMax >= 30) {
+          const day = today.tempMax >= 30 ? "vandaag" : "morgen";
+          const temp = today.tempMax >= 30 ? today.tempMax : tomorrow.tempMax;
+          alerts.push({ icon: "☀️", title: "Tropisch warm", detail: `${temp}° verwacht ${day}. Smeer je in en zoek schaduw.`, severity: "orange" });
+        }
+
+        if (today.tempMin <= -10 || tomorrow.tempMin <= -10) {
+          alerts.push({ icon: "🥶", title: "Strenge vorst", detail: `Tot ${Math.min(today.tempMin, tomorrow.tempMin)}°. Alles bevriest. Leidingen beschermen.`, severity: "red" });
+        } else if (today.tempMin <= -5 || tomorrow.tempMin <= -5) {
+          alerts.push({ icon: "❄️", title: "Vorst", detail: `Minimaal ${Math.min(today.tempMin, tomorrow.tempMin)}°. Gladheid op de weg.`, severity: "orange" });
+        }
+
+        const thunderHours = allHours.filter(h => h.weatherCode >= 95);
+        if (thunderHours.length > 0) {
+          const firstT = new Date(thunderHours[0].time).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+          alerts.push({ icon: "⛈️", title: "Onweer verwacht", detail: `Onweer mogelijk vanaf ${firstT}. Blijf uit de buurt van open water en bomen.`, severity: thunderHours.length > 3 ? "red" : "orange" });
+        }
+
+        if (today.precipitationSum >= 25 || tomorrow.precipitationSum >= 25) {
+          const day = today.precipitationSum >= 25 ? "vandaag" : "morgen";
+          const mm = today.precipitationSum >= 25 ? today.precipitationSum : tomorrow.precipitationSum;
+          alerts.push({ icon: "🌊", title: "Zware neerslag", detail: `${mm}mm verwacht ${day}. Wateroverlast mogelijk.`, severity: "red" });
+        } else if (today.precipitationSum >= 15 || tomorrow.precipitationSum >= 15) {
+          const day = today.precipitationSum >= 15 ? "vandaag" : "morgen";
+          const mm = today.precipitationSum >= 15 ? today.precipitationSum : tomorrow.precipitationSum;
+          alerts.push({ icon: "🌧️", title: "Veel regen", detail: `${mm}mm verwacht ${day}. Paraplu is niet optioneel.`, severity: "orange" });
+        }
+
+        const snowHours = allHours.filter(h => h.weatherCode >= 71 && h.weatherCode <= 77);
+        if (snowHours.length > 0) {
+          alerts.push({ icon: "🌨️", title: "Sneeuw verwacht", detail: `Sneeuw in de komende 48 uur. Pas op voor gladheid.`, severity: "orange" });
+        }
+
+        const fogHours = allHours.filter(h => h.weatherCode >= 45 && h.weatherCode <= 48);
+        if (fogHours.length >= 3) {
+          alerts.push({ icon: "🌫️", title: "Aanhoudende mist", detail: `Mist verwacht de komende uren. Zicht sterk verminderd. Rij voorzichtig.`, severity: "orange" });
+        }
+
+        if (weather.uvIndex >= 8) {
+          alerts.push({ icon: "☀️", title: "Extreme UV-straling", detail: `UV-index ${weather.uvIndex.toFixed(1)}. Binnenblijven tussen 12:00–15:00 of SPF50+. Geen discussie.`, severity: "red" });
+        } else if (weather.uvIndex >= 6) {
+          alerts.push({ icon: "🧴", title: "Hoge UV-straling", detail: `UV-index ${weather.uvIndex.toFixed(1)}. Insmeren verplicht. Elke 2 uur opnieuw.`, severity: "orange" });
+        }
+
+        const iceRisk = allHours.some(h => h.precipitation > 0 && h.temperature <= 0);
+        if (iceRisk) {
+          alerts.push({ icon: "🧊", title: "IJzel mogelijk", detail: `Regen bij vriestemperatuur. Extreem glad op de weg. Blijf thuis als het kan.`, severity: "red" });
+        }
+
+        if (alerts.length === 0) return null;
+
+        return (
+          <div className="animate-fade-in space-y-2" style={{ animationDelay: "0.3s" }}>
+            {alerts.map((alert, i) => (
+              <div
+                key={i}
+                className={`card p-4 flex items-start gap-3 border ${
+                  alert.severity === "red"
+                    ? "border-accent-red/40 bg-red-50/80"
+                    : "border-accent-amber/40 bg-amber-50/80"
+                }`}
+              >
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0 ${
+                  alert.severity === "red" ? "bg-accent-red/15" : "bg-accent-amber/15"
+                }`}>
+                  {alert.icon}
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className={`w-3.5 h-3.5 ${
+                      alert.severity === "red" ? "text-accent-red" : "text-accent-amber"
+                    }`} />
+                    <span className={`text-xs font-bold uppercase tracking-wider ${
+                      alert.severity === "red" ? "text-accent-red" : "text-amber-600"
+                    }`}>
+                      {alert.title}
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium text-text-primary mt-1">{alert.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
+
+      {/* ===== 5. AI Weer Vraag — now below the core weather info ===== */}
+      <div className="card p-4 animate-fade-in" style={{ animationDelay: "0.35s" }}>
+        <div className="relative">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-gradient-to-br from-accent-orange to-accent-amber flex items-center justify-center text-sm pointer-events-none">🤖</div>
+          <input
+            type="text"
+            placeholder="Stel een vraag over het weer..."
+            className="w-full py-3 pl-14 pr-12 rounded-full border border-black/10 bg-white/70 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-accent-orange/40 focus:ring-2 focus:ring-accent-orange/10 focus:bg-white/90 transition-all"
+            value={chatInput}
+            onChange={(e) => { setChatInput(e.target.value); setChatAnswer(null); }}
+            onKeyDown={(e) => { if (e.key === 'Enter' && chatInput.trim()) { answerQuestion(chatInput); setChatInput(''); } }}
+          />
+          <button
+            onClick={() => { if (chatInput.trim()) { answerQuestion(chatInput); setChatInput(''); } }}
+            aria-label="Vraag versturen"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-accent-orange text-text-primary flex items-center justify-center hover:brightness-90 transition-colors"
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </div>
+
+        <AnimatePresence mode="wait">
+          {chatAnswer && (
+            <motion.div
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.2 }}
+              className="mt-3 flex items-start gap-2.5 px-3 py-2.5 bg-accent-orange/10 rounded-xl border border-accent-orange/20"
+            >
+              <span className="text-base shrink-0 mt-0.5">💬</span>
+              <p className="text-sm font-medium text-text-primary leading-relaxed">{chatAnswer}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex overflow-x-auto gap-2 mt-3 pb-1 no-scrollbar">
+          {[
+            { q: "Jas mee?", icon: "🧥" },
+            { q: "Kan ik hardlopen?", icon: "🏃‍♂️" },
+            { q: "Wordt het morgen beter?", icon: "🗓️" },
+            { q: "Gaat het regenen?", icon: "🌧️" },
+            { q: "Kan ik fietsen?", icon: "🚴" },
+            { q: "Hoe hard waait het?", icon: "💨" },
+          ].map(({ q, icon }) => (
+            <button key={q} onClick={() => answerQuestion(q)} className="chip flex-shrink-0">
+              {icon} {q}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ===== 6. Vandaag & Morgen ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Vandaag & Morgen</h3>
         </div>
@@ -744,89 +674,37 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* Wanneer wordt het droog? */}
-      {weather.current.precipitation > 0 || weather.hourly.slice(0, 12).some(h => h.precipitation > 0) ? (() => {
-        const now = new Date();
-        const upcoming = weather.hourly.slice(0, 24);
-        // Find first dry window (2+ consecutive dry hours)
-        let dryStart: Date | null = null;
-        let dryHours = 0;
-        for (let i = 0; i < upcoming.length; i++) {
-          if (upcoming[i].precipitation === 0) {
-            if (!dryStart) dryStart = new Date(upcoming[i].time);
-            dryHours++;
-          } else {
-            if (dryHours >= 2) break;
-            dryStart = null;
-            dryHours = 0;
-          }
-        }
-        const isCurrentlyDry = weather.current.precipitation === 0;
-        // Find when rain starts if currently dry
-        let rainStart: Date | null = null;
-        if (isCurrentlyDry) {
-          const firstRain = upcoming.find(h => h.precipitation > 0.1);
-          if (firstRain) rainStart = new Date(firstRain.time);
-        }
-        const fmt = (d: Date) => d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
-        return (
-          <div className="animate-fade-in" style={{ animationDelay: "0.65s" }}>
-            <div className="card p-4 flex items-center gap-4">
-              <div className="w-12 h-12 bg-accent-cyan/15 rounded-full flex items-center justify-center text-2xl shrink-0">
-                {isCurrentlyDry ? "🌦️" : dryStart && dryHours >= 2 ? "🌤️" : "🌧️"}
-              </div>
-              <div>
-                <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">
-                  {isCurrentlyDry ? "Wanneer regent het?" : "Wanneer droog?"}
-                </div>
-                <div className="text-sm font-semibold text-text-primary">
-                  {isCurrentlyDry && rainStart
-                    ? `Nu droog. Regen verwacht om ${fmt(rainStart)}. Pak je kans.`
-                    : isCurrentlyDry
-                    ? "Voorlopig droog. Geniet ervan."
-                    : dryStart && dryHours >= 2
-                    ? `Droog vanaf ${fmt(dryStart)} — venster van ${dryHours} uur. Wees er snel bij.`
-                    : dryStart
-                    ? `Korte droge pauze rond ${fmt(dryStart)}. Sprint-tempo.`
-                    : "Geen droog moment in zicht. Accepteer het."}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })() : null}
-
-      {/* WeerZone-Score */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.7s" }}>
+      {/* ===== 7. Misère-Score ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.45s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
-          <h3 className="section-title">WeerZone-Score</h3>
-          <span className="text-xs text-white/60">Hoe erg is het écht?</span>
+          <h3 className="section-title">Misère-Score</h3>
+          <span className="text-xs text-white/60">Hoe beroerd is het écht?</span>
         </div>
         <div className="card p-6 overflow-hidden relative">
           <div className="flex items-end justify-between">
             <div className="flex items-baseline gap-1">
-              <span className="text-6xl font-black text-accent-green leading-none">{kutScore}</span>
+              <span className="text-6xl font-black text-accent-green leading-none">{misereScore}</span>
               <span className="text-xl font-bold text-text-muted">/ 10</span>
             </div>
-            <div className="text-6xl leading-none">{kutEmoji}</div>
+            <div className="text-6xl leading-none">{misereEmoji}</div>
           </div>
           
           <div className="score-bar mt-6">
             <div 
               className="score-bar-fill"
               style={{ 
-                width: `${kutScore * 10}%`,
-                background: kutScore > 7 ? 'var(--accent-red)' : kutScore > 4 ? 'var(--accent-amber)' : 'var(--accent-green)'
+                width: `${misereScore * 10}%`,
+                background: misereScore > 7 ? 'var(--accent-red)' : misereScore > 4 ? 'var(--accent-amber)' : 'var(--accent-green)'
               }}
             />
           </div>
           
-          <p className="mt-4 font-semibold text-text-primary">{kutLabel}</p>
+          <p className="mt-4 font-semibold text-text-primary">{misereLabel}</p>
         </div>
       </div>
 
-      {/* Fiets-Weer */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.8s" }}>
+      {/* ===== 8. Fiets-Weer ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Fiets-Weer</h3>
           <span className="text-xs text-white/60">Durf je?</span>
@@ -856,13 +734,132 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* Affiliate Spot 1 */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.85s" }}>
+      {/* ===== 9. Quote — compact ===== */}
+      <div className="card p-4 animate-fade-in flex items-center gap-3" style={{ animationDelay: "0.55s" }}>
+        <div className="text-2xl shrink-0">💬</div>
+        <div className="flex-1 min-w-0">
+          <AnimatePresence mode="wait">
+            <motion.p 
+              key={quote} 
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.3 }}
+              className="text-sm font-medium text-text-primary leading-snug"
+            >
+              {quote}
+            </motion.p>
+          </AnimatePresence>
+        </div>
+        <button 
+          onClick={() => setQuote(getRandomQuote())}
+          className="w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors shrink-0"
+          aria-label="Nieuwe quote"
+        >
+          <RefreshCw className="w-3 h-3" />
+        </button>
+      </div>
+
+      {/* ===== 10. Detail Grid — wind, vocht, neerslag, temp ===== */}
+      <div className="grid grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: "0.6s" }}>
+        {/* Voelt Als */}
+        <div className="card p-4">
+          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span className="text-accent-amber text-base">🌡️</span> Gevoelstemperatuur
+          </div>
+          <div className="text-3xl font-bold flex items-start">
+            {weather.current.feelsLike}<span className="text-lg mt-1">°</span>
+          </div>
+          <div className="text-sm text-text-muted mt-1">
+            {weather.current.feelsLike < weather.current.temperature ? "Voelt kouder dan het is" : 
+             weather.current.feelsLike > weather.current.temperature ? "Voelt warmer dan het is" : 
+             "Precies wat het is"}
+          </div>
+        </div>
+        
+        {/* Luchtvochtigheid */}
+        <div className="card p-4">
+          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span className="text-accent-cyan text-base">💧</span> Luchtvochtigheid
+          </div>
+          <div className="text-3xl font-bold flex items-start">
+            {weather.current.humidity}<span className="text-lg mt-1">%</span>
+          </div>
+          <div className="text-sm text-text-muted mt-1">
+            {weather.current.humidity > 80 ? "Klam en benauwd" : 
+             weather.current.humidity < 40 ? "Lekker droog" : 
+             "Normaal Nederlands zweetweer"}
+          </div>
+        </div>
+        
+        {/* Wind */}
+        <div className="card p-4">
+          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span className="text-accent-cyan text-base">🌬️</span> Wind — Bft {getWindBeaufort(weather.current.windSpeed).scale}
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-3xl font-bold">{weather.current.windSpeed}</span>
+            <span className="text-sm font-bold text-text-primary">km/h</span>
+          </div>
+          <div className="text-xs text-text-muted mt-1">
+            {weather.current.windDirection} • Stoten {weather.current.windGusts} km/h
+          </div>
+          <div className="text-xs font-medium text-text-secondary mt-2 italic">
+            {getWindComment(weather.current.windSpeed, weather.current.windGusts)}
+          </div>
+        </div>
+        
+        {/* Neerslag */}
+        <div className="card p-4">
+          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span className="text-accent-cyan text-base">🌧️</span> Neerslag
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-3xl font-bold">{weather.current.precipitation}</span>
+            <span className="text-sm font-bold text-text-primary">mm</span>
+          </div>
+          <div className="text-sm text-text-muted mt-1">
+            {weather.current.precipitation > 0 ? "Gewoon nat 💧" : "Droog 👍"}
+          </div>
+        </div>
+      </div>
+
+      {/* ===== 11. Model Confidence ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.65s" }}>
+        <div className="card p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center text-lg">
+                {weather.models.agreement >= 70 ? "🎯" : weather.models.agreement >= 40 ? "🤔" : "⚠️"}
+              </div>
+              <div>
+                <div className="text-sm font-bold text-text-primary">{weather.models.label}</div>
+                <div className="text-xs text-text-muted">{weather.models.sources.join(" + ")}</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="score-bar w-16">
+                <div
+                  className="score-bar-fill"
+                  style={{
+                    width: `${weather.models.agreement}%`,
+                    background: weather.models.agreement >= 70 ? 'var(--accent-green)' : weather.models.agreement >= 40 ? 'var(--accent-amber)' : 'var(--accent-red)'
+                  }}
+                />
+              </div>
+              <span className="text-xs font-bold text-text-secondary">{weather.models.agreement}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ===== 12. Affiliate Spot 1 ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.7s" }}>
         <AffiliateCard variant="top" weather={weather} />
       </div>
 
-      {/* Wat trek je aan? */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.9s" }}>
+      {/* ===== 13. Wat trek je aan? ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.75s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Wat trek je aan?</h3>
           <span className="text-xs text-white/60">Geen smoesjes meer</span>
@@ -873,8 +870,8 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* Zon */}
-      <div className="animate-fade-in" style={{ animationDelay: "1.0s" }}>
+      {/* ===== 14. Zon ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.8s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Zon</h3>
         </div>
@@ -903,9 +900,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
               const set = new Date(weather.sunset).getTime();
               const progress = Math.max(0, Math.min(1, (now - rise) / (set - rise)));
               const isDayTime = now >= rise && now <= set;
-              // Arc: left=0%, right=100%, bottom at edges, top at center
               const leftPct = progress * 100;
-              // Sine curve for the arc height (0 at edges, max at center)
               const arcHeight = Math.sin(progress * Math.PI) * 100;
               return isDayTime ? (
                 <div
@@ -934,14 +929,13 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* Eerlijk vs Onzin */}
-      <div className="animate-fade-in" style={{ animationDelay: "1.1s" }}>
+      {/* ===== 15. Eerlijk vs Onzin ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.85s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Eerlijk VS Onzin</h3>
         </div>
         <div className="card p-4 overflow-hidden relative">
           <div className="grid grid-cols-2 gap-4">
-            {/* WeerZone side */}
             <div className="p-4 border border-[rgba(52,211,153,0.2)] bg-[rgba(52,211,153,0.05)] rounded-xl flex flex-col justify-between">
               <div>
                 <h4 className="text-accent-green font-bold text-xs uppercase flex items-center gap-1.5 mb-2">
@@ -956,14 +950,13 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
               </div>
             </div>
 
-            {/* Onzin side */}
             <div className="p-4 border border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.05)] rounded-xl opacity-80 flex flex-col justify-between">
               <div>
                 <h4 className="text-accent-red font-bold text-xs uppercase flex items-center gap-1.5 mb-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                  Die andere apps
+                  Buienradar & co
                 </h4>
-                <div className="text-sm font-semibold text-text-primary mb-1">"14-daagse voorspelling"</div>
+                <div className="text-sm font-semibold text-text-primary mb-1">De "14-daagse voorspelling"</div>
                 <div className="text-xs text-text-muted opacity-50 filter blur-[0.5px]">
                   Vr. ☁️ 11°/21°<br />
                   Za. 🌥️ 8°/16°<br />
@@ -971,20 +964,20 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
                 </div>
               </div>
               <div className="mt-4 px-3 py-1.5 bg-[rgba(239,68,68,0.1)] text-accent-red text-[10px] font-bold text-center rounded-lg leading-tight">
-                Compleet verzonnen.<br/>Net zo betrouwbaar als je horoscoop.
+                Commerciële clickbait.<br/>Puur gokwerk na dag 3.
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Affiliate Spot 2 */}
-      <div className="animate-fade-in" style={{ animationDelay: "1.15s" }}>
+      {/* ===== 16. Affiliate Spot 2 ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.9s" }}>
         <AffiliateCard variant="bottom" weather={weather} />
       </div>
 
-      {/* Premium: 48-uurs Impact Analyse */}
-      <div className="animate-fade-in" style={{ animationDelay: "1.18s" }}>
+      {/* ===== 17. Premium: 48-uurs Impact Analyse ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.95s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">48-uurs Impact Analyse</h3>
           <span className="text-[10px] font-bold text-accent-orange uppercase tracking-wider">Premium</span>
@@ -1023,13 +1016,13 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </AuthGate>
       </div>
 
-      {/* E-mail Weerrapport */}
-      <div className="animate-fade-in" style={{ animationDelay: "1.2s" }}>
+      {/* ===== 18. E-mail Weerrapport ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "1.0s" }}>
         <EmailSubscribe city={city} />
       </div>
 
-      {/* Footer / Share */}
-      <footer className="pt-8 pb-4 text-center animate-fade-in" style={{ animationDelay: "1.2s" }}>
+      {/* ===== Footer / Share ===== */}
+      <footer className="pt-8 pb-4 text-center animate-fade-in" style={{ animationDelay: "1.0s" }}>
         <button onClick={handleShare} className="btn-cta mx-auto">
           <Send className="w-4 h-4 ml-[-4px]" /> Deel het weer
         </button>

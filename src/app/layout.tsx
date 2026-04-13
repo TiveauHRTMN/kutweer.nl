@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import CookieBanner from "@/components/CookieBanner";
 import InstallPrompt from "@/components/InstallPrompt";
+import { Providers } from "./providers";
 import "./globals.css";
 
 const inter = Inter({
@@ -75,9 +76,11 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className="min-h-screen">
-        {children}
-        <CookieBanner />
-        <InstallPrompt />
+        <Providers>
+          {children}
+          <CookieBanner />
+          <InstallPrompt />
+        </Providers>
       </body>
     </html>
   );

@@ -34,14 +34,14 @@ function getTopProducts(weather: WeatherData): AffiliateSection {
   const rain = weather.current.precipitation > 0 || weather.hourly.some(h => h.precipitation > 0.5);
   const cold = temp < 8;
   const hot = temp > 25;
-  const kutWeer = rain || cold || weather.current.windSpeed > 35;
+  const isRukWeer = rain || cold || weather.current.windSpeed > 35;
 
   const hour = new Date().getHours();
-  const showBooking = kutWeer ? hour % 3 !== 0 : hour % 4 === 0;
+  const showBooking = isRukWeer ? hour % 3 !== 0 : hour % 4 === 0;
 
   if (showBooking) {
     return {
-      heading: kutWeer ? "Ontsnap aan dit kutweer" : "Weekendje weg?",
+      heading: isRukWeer ? "Ontsnap aan dit rukweer" : "Weekendje weg?",
       subtitle: "Booking.com",
       products: [
         {
@@ -250,9 +250,9 @@ function getBottomProducts(weather: WeatherData): AffiliateSection {
   const temp = weather.current.temperature;
   const rain = weather.current.precipitation > 0 || weather.hourly.some(h => h.precipitation > 0.5);
   const cold = temp < 10;
-  const kutWeer = rain || cold || weather.current.windSpeed > 35;
+  const isRukWeer = rain || cold || weather.current.windSpeed > 35;
 
-  if (kutWeer) {
+  if (isRukWeer) {
     return {
       heading: "Binnen blijven = investeren in comfort",
       subtitle: "Amazon.nl",

@@ -30,69 +30,50 @@ function buildEmailHtml(city: string, data: Record<string, unknown>): string {
   const emoji = getWeatherEmoji(code, true);
   const desc = getWeatherDescription(code);
   const wind = Math.round(current.wind_speed_10m);
-  const precip = current.precipitation;
-  const maxToday = Math.round(daily.temperature_2m_max[0]);
-  const minToday = Math.round(daily.temperature_2m_min[0]);
-  const maxMorgen = Math.round(daily.temperature_2m_max[1]);
-  const minMorgen = Math.round(daily.temperature_2m_min[1]);
-  const precipToday = daily.precipitation_sum[0];
-  const precipMorgen = daily.precipitation_sum[1];
-  const codeMorgen = (daily.weather_code as number[])[1];
-  const emojiMorgen = getWeatherEmoji(codeMorgen, true);
-  const descMorgen = getWeatherDescription(codeMorgen);
-
+  
+  const dailyTempMax = Math.round(Math.max(...daily.temperature_2m_max.slice(0, 2)));
+  const dailyTempMin = Math.round(Math.min(...daily.temperature_2m_min.slice(0, 2)));
+  const totalPrecip = daily.precipitation_sum[0] + daily.precipitation_sum[1];
+  
   return `
 <!DOCTYPE html>
 <html lang="nl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
-<body style="margin:0;padding:0;background:#4a9ee8;font-family:'Inter',system-ui,sans-serif;">
-  <div style="max-width:480px;margin:0 auto;padding:24px 16px;">
+<body style="margin:0;padding:0;background:#4a9ee8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <div style="max-width:480px;margin:0 auto;padding:32px 24px;">
 
-    <div style="text-align:center;padding:20px 0;">
-      <h1 style="color:#fff;font-size:24px;margin:0;">WeerZone</h1>
-      <p style="color:rgba(255,255,255,0.6);font-size:12px;margin:4px 0 0;letter-spacing:2px;text-transform:uppercase;">48 uur. De rest is ruis.</p>
+    <div style="text-align:center;padding:12px 0 32px;">
+      <img src="https://weerzone.nl/logo-full.png" alt="WeerZone" style="height: 50px; width: auto; margin-bottom: 8px;" />
+      <p style="color:#ffffff;font-size:11px;margin:4px 0 0;letter-spacing:2px;text-transform:uppercase;font-weight:700;">De Komende 48 Uur In ${city}</p>
     </div>
 
-    <div style="background:rgba(255,255,255,0.92);border-radius:18px;padding:24px;margin-bottom:12px;">
-      <p style="margin:0 0 4px;font-size:12px;color:#94a3b8;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Nu in ${city}</p>
-      <div style="display:flex;align-items:center;gap:12px;">
+    <div style="background:#ffffff;border-radius:18px;padding:24px;margin-bottom:16px;box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <div style="display:flex;align-items:center;gap:16px;">
         <span style="font-size:48px;">${emoji}</span>
         <div>
-          <p style="margin:0;font-size:36px;font-weight:900;color:#1e293b;">${temp}°</p>
-          <p style="margin:0;font-size:14px;color:#475569;">${desc} · Wind ${wind} km/h</p>
+          <p style="margin:0;font-size:36px;font-weight:800;color:#1e293b;">${temp}°</p>
+          <p style="margin:4px 0 0;font-size:15px;color:#475569;">${desc}</p>
         </div>
       </div>
-      ${precip > 0 ? `<p style="margin:8px 0 0;font-size:13px;color:#ef4444;font-weight:600;">🌧️ ${precip}mm neerslag nu</p>` : ""}
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid #f1f5f9;">
+        <p style="margin:0 0 8px;font-size:14px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Jouw Lokale Vooruitzicht (48u):</p>
+        <ul style="margin:0;padding-left:20px;color:#475569;line-height:1.6;font-size:15px;">
+          <li>Temperatuur schommelt tussen <strong style="color:#1e293b;">${dailyTempMin}°</strong> en <strong style="color:#1e293b;">${dailyTempMax}°</strong></li>
+          ${wind > 20 ? `<li>Windstoten tot <strong style="color:#ef4444;">${wind} km/u</strong></li>` : `<li>Windvlagen rond de ${wind} km/u</li>`}
+          ${totalPrecip > 0 ? `<li style="color:#ef4444;font-weight:600;">Totale regen verwacht: ${totalPrecip.toFixed(1)}mm</li>` : `<li>Geen druppel regen verwacht.</li>`}
+        </ul>
+      </div>
     </div>
 
-    <div style="background:rgba(255,255,255,0.92);border-radius:18px;padding:20px;margin-bottom:12px;">
-      <table style="width:100%;border-collapse:collapse;font-size:14px;color:#1e293b;">
-        <tr>
-          <td style="padding:8px 0;font-weight:700;">Vandaag</td>
-          <td style="text-align:center;">${emoji} ${desc}</td>
-          <td style="text-align:right;font-weight:600;">${minToday}° / ${maxToday}°</td>
-        </tr>
-        <tr style="border-top:1px solid rgba(0,0,0,0.06);">
-          <td style="padding:8px 0;font-weight:700;">Morgen</td>
-          <td style="text-align:center;">${emojiMorgen} ${descMorgen}</td>
-          <td style="text-align:right;font-weight:600;">${minMorgen}° / ${maxMorgen}°</td>
-        </tr>
-      </table>
-      ${precipToday > 0 || precipMorgen > 0 ? `
-      <p style="margin:12px 0 0;font-size:12px;color:#475569;">
-        💧 Neerslag: vandaag ${precipToday}mm${precipMorgen > 0 ? `, morgen ${precipMorgen}mm` : ""}
-      </p>` : ""}
-    </div>
-
-    <div style="text-align:center;padding:16px 0;">
-      <a href="https://weerzone.nl" style="display:inline-block;padding:12px 32px;background:#ffe500;color:#1e293b;font-weight:700;font-size:14px;border-radius:999px;text-decoration:none;">
-        Bekijk volledige voorspelling →
+    <div style="text-align:center;padding:24px 0;">
+      <a href="https://weerzone.nl/weer/${city.toLowerCase().replace(/\s+/g, '-')}" style="display:inline-block;padding:14px 32px;background:#ffe500;color:#1e293b;font-weight:700;font-size:14px;border-radius:999px;text-decoration:none;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(255,229,0,0.3);">
+        BEKIJK RADAR & IMPACT →
       </a>
     </div>
 
-    <p style="text-align:center;font-size:11px;color:rgba(255,255,255,0.4);margin:16px 0 0;">
-      Je ontvangt dit omdat je je hebt aangemeld op WeerZone.nl<br>
-      <a href="https://weerzone.nl/api/unsubscribe?email={{EMAIL}}" style="color:rgba(255,255,255,0.5);">Uitschrijven</a>
+    <p style="text-align:center;font-size:11px;color:rgba(255,255,255,0.7);margin:16px 0 0;">
+      Laat de buren maar lekker onvoorbereid de deur uit gaan.<br><br>
+      <a href="https://weerzone.nl/api/unsubscribe?email={{EMAIL}}" style="color:rgba(255,255,255,0.9);text-decoration:underline;">Klaar met de feiten? Schrijf je uit.</a>
     </p>
   </div>
 </body>
@@ -152,7 +133,7 @@ export async function GET(req: Request) {
       for (const sub of group.subscribers) {
         try {
           await resend.emails.send({
-            from: "WeerZone <weer@weerzone.nl>",
+            from: "WeerZone <info@weerzone.nl>",
             to: sub.email,
             subject: `${getWeatherEmoji(weatherData.current.weather_code, true)} ${Math.round(weatherData.current.temperature_2m)}° in ${sub.city} — WeerZone`,
             html: html.replace("{{EMAIL}}", encodeURIComponent(sub.email)),

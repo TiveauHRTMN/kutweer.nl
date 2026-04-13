@@ -2,7 +2,11 @@
   "crons": [
     {
       "path": "/api/cron/weather-email",
-      "schedule": "30 5 * * *"
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/sentinel",
+      "schedule": "0 * * * *"
     }
   ]
 }

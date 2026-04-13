@@ -12,9 +12,9 @@ export function getMainCommentary(w: WeatherData): string {
   const code = w.current.weatherCode;
 
   // Regen
-  if (rain > 5) return "Het regent alsof Petrus z'n aquarium omgooit. Buienradar had dit niet zien aankomen, wij wel.";
-  if (rain > 1) return "Regen. Andere apps doen alsof het droog is. Wij liegen niet tegen je.";
-  if (rain > 0) return "Motregen. Net genoeg om je humeur en je kapsel naar de klote te helpen.";
+  if (rain > 5) return "Het regent alsof Petrus z'n aquarium omgooit. Buienradar past z'n voorspelling nu pas aan, wij zagen dit gisteren al.";
+  if (rain > 1) return "Regen. Weerplaza zegt 'kans op een buitje'. Wij zeggen: pak een paraplu, eikel.";
+  if (rain > 0) return "Motregen. Net genoeg om je dag te verzieken. En nee, het waait niet over, wat de NOS ook beweert.";
 
   // Sneeuw
   if (code >= 71 && code <= 77) return "Sneeuw! Over een kwartier staat heel Nederland op z'n gat. Letterlijk.";
@@ -23,7 +23,7 @@ export function getMainCommentary(w: WeatherData): string {
   if (code >= 95) return "Onweer. Bliksem, donder, het hele circus. Ga naar binnen en geniet van het drama.";
 
   // Mist
-  if (code >= 45 && code <= 48) return "Dikke mist. Je ziet geen hand voor ogen. KNMI-nerds zitten weer te puzzelen, wij kijken gewoon 48 uur vooruit.";
+  if (code >= 45 && code <= 48) return "Dikke mist. Je ziet geen hand voor ogen. De KNMI-app is net zo blind, wij kijken 48 uur vooruit.";
 
   // Wind
   if (wind > 60) return "Storm. Ga nu naar buiten en je kunt je eigen begrafenis regelen.";
@@ -44,12 +44,12 @@ export function getMainCommentary(w: WeatherData): string {
   }
 
   // Default
-  if (t < 5) return "Koud en grijs. Welkom in de realiteit. Welkom in Nederland.";
+  if (t < 5) return "Koud en grijs. Welkom in Nederland. Staar je niet blind op die 'zonnige' 14-daagse grafiekjes van Weerplaza, het is gewoon koud.";
   if (t < 10) return "Frisjes. Jas aan. Niet onderhandelen, niet zeuren, gewoon doen.";
   return "Doorsnee Nederlands weer. Niet warm, niet koud, niet droog, niet nat. Saai.";
 }
 
-export function getKutweerScore(w: WeatherData): { score: number; label: string; emoji: string } {
+export function getMisereScore(w: WeatherData): { score: number; label: string; emoji: string } {
   let score = 5; // baseline
 
   const t = w.current.temperature;
@@ -145,24 +145,24 @@ export function getWindComment(wind: number, gusts: number): string {
 }
 
 const ROTATING_QUOTES = [
-  "Buienradar kan de tering krijgen met hun 14-daagse. Wij doen 48 uur en dat klopt.",
-  "Morgen wordt het beter. Dat zeiden ze gisteren ook. Wij zeggen gewoon hoe het zit.",
-  "\"Kans op zon\" is meteorologen-taal voor: we hebben geen flauw idee. Wij weten het wél.",
-  "48 uur. Meer heb je niet nodig. Meer is ook gewoon nep.",
-  "Je weer-app zegt 22° volgende week? Dat is een random number generator met een zonnebloem-icoontje.",
-  "KNMI HARMONIE + DWD ICON. Twee supercomputers. Eén eerlijk antwoord. Geen gelul.",
-  "14-daagse voorspelling? Dan kun je net zo goed een dartpijl naar een kalender gooien.",
-  "Fietsen in de regen bouwt karakter, zeggen mensen die lekker droog in hun auto zitten.",
-  "Jas-aan-jas-uit-jas-aan weer. Typisch Nederlands. Typisch kut.",
-  "De windmolens draaien. Tenminste iemand profiteert van deze ellende.",
-  "Nederland: vier seizoenen op één dag. Soms op één uur. Soms in één straat.",
-  "WeerZone liegt niet. Nooit. Punt. Andere apps wel.",
-  "Iedereen is meteoroloog totdat ze kletsnat op het station staan.",
-  "Wij beloven niks. Behalve dat de komende 48 uur klopt. De rest is ruis.",
-  "\"Lekker weertje\" zeggen terwijl het 12 graden is. Typisch Nederland. Wij doen daar niet aan mee.",
-  "De eerlijkste weerdienst van Nederland. Brutaal? Nee. Gewoon niet bang voor de waarheid.",
-  "Regen voorspeld? Dan regent het ook. Andere apps draaien er omheen, wij niet.",
-  "Je horoscoop is betrouwbaarder dan een 10-daagse weersverwachting. Denk daar maar eens over na.",
+  "Buienradar gokt, wij rekenen. 48 uur messcherp, de rest is koffiedik kijken.",
+  "Morgen wordt het beter? Dat zeiden ze gisteren ook. Geloof de KNMI-app niet blind.",
+  "\"Kans op zon\" is de laffe uitweg van Weerplaza. Wij vertellen je gewoon de realiteit.",
+  "48 uur. Meer heb je niet nodig. Een 14-daagse voorspelling is commerciële clickbait.",
+  "Je weer-app zegt 22° volgende week? Trap er niet in. Puur bedrog om je terug te laten komen.",
+  "KNMI HARMONIE + DWD ICON. Twee supercomputers. Eén brute waarheid. Geen gelul.",
+  "14-daagse voorspelling? Dan kun je net zo goed je horoscoop lezen.",
+  "Weerplaza, NOS, Buienradar... Stuk voor stuk bezig met gokken. Wij doen data.",
+  "Jas-aan-jas-uit-jas-aan weer. Typisch Nederlands. Volkomen ruk, maar wij waarschuwen tenminste eerlijk.",
+  "\"Lokaal een bui\" is meteorologen-taal voor: we hebben geen flauw idee. Wij wel.",
+  "De gevestigde orde zit er weer naast? Logisch, die gebruiken achterhaalde modellen.",
+  "WeerZone liegt niet. Geen valse hoop, geen 'misschien'. Keiharde data over jouw postcodestrook.",
+  "Iedereen is meteoroloog totdat ze kletsnat op het station staan. Vertrouw op de radar, niet je buikgevoel.",
+  "Wij beloven niks. Behalve dat de komende 48 uur klopt. De rest is commerciële ruis.",
+  "\"Lekker weertje\" zeggen terwijl het 12 graden is. Wij doen niet mee aan die massapsychose.",
+  "De enige serieuze weerdienst van Nederland. Geen poespas, gewoon confronterend accuraat.",
+  "Regen voorspeld? Dan regent het ook. De rest draait er omheen om je niet af te schrikken.",
+  "Weerplaza zit qua voorspellingen dichter bij een tarotkaart-lezer dan een meteoroloog.",
 ];
 
 export function getRandomQuote(): string {

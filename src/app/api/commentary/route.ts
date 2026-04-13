@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { fetchWeatherData } from "@/lib/weather";
 import {
   getMainCommentary,
-  getKutweerScore,
+  getMisereScore,
   getFietsScore,
   getOutfitAdvice,
   getWindComment,
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     weather,
     commentary: {
       main: getMainCommentary(weather),
-      kutweerScore: getKutweerScore(weather),
+      misereScore: getMisereScore(weather),
       fietsScore: getFietsScore(weather),
       outfit: getOutfitAdvice(weather),
       wind: getWindComment(weather.current.windSpeed, weather.current.windGusts),

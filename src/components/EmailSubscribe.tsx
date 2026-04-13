@@ -36,9 +36,9 @@ export default function EmailSubscribe({ city }: Props) {
         <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent-green/15">
           <Check className="w-5 h-5 text-accent-green" />
         </div>
-        <p className="text-sm font-bold text-text-primary">Je staat op de lijst</p>
+        <p className="text-sm font-bold text-text-primary">Aanmelding Voltooid</p>
         <p className="text-xs text-text-secondary">
-          Elke ochtend om 06:30 krijg je het weer voor {city.name} in je inbox. Geen spam. Beloofd.
+          Morgenochtend stipt om 08:00 krijg je de eerste keiharde feiten voor {city.name} in je inbox. Hou het lokaal.
         </p>
       </div>
     );
@@ -48,10 +48,10 @@ export default function EmailSubscribe({ city }: Props) {
     <div className="card p-5 space-y-3">
       <div className="flex items-center gap-2">
         <Mail className="w-4 h-4 text-accent-orange" />
-        <h3 className="text-sm font-bold text-text-primary">Dagelijks weerrapport</h3>
+        <h3 className="text-sm font-bold text-text-primary">De 48-Uur Update</h3>
       </div>
       <p className="text-xs text-text-secondary">
-        Elke ochtend om 06:30 het weer voor {city.name} in je inbox. Gratis. Geen troep.
+        Elke ochtend om 08:00 de keiharde voorspelling voor {city.name}. Geen standaard weerman-poespas. Gratis.
       </p>
       <form onSubmit={handleSubmit} className="flex gap-2">
         <input

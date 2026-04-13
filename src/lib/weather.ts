@@ -1,4 +1,4 @@
-import type { WeatherData, HourlyForecast } from "./types";
+import type { WeatherData, HourlyForecast, MinutelyPrecipitation } from "./types";
 
 const OPEN_METEO_BASE = "https://api.open-meteo.com/v1/forecast";
 const DWD_ICON_BASE = "https://api.open-meteo.com/v1/dwd-icon";
@@ -149,13 +149,14 @@ function blendHourly(
 export async function fetchWeatherData(lat: number, lon: number): Promise<WeatherData> {
   // Fetch all three sources in parallel
   const [genericRes, harmonieData, iconData] = await Promise.all([
-    // Generic forecast (always reliable, used for current + daily + fallback hourly)
+    // Generic forecast (always reliable, used for current + daily + fallback hourly + minutely_15)
     fetch(`${OPEN_METEO_BASE}?${new URLSearchParams({
       latitude: lat.toString(),
       longitude: lon.toString(),
       current: CURRENT_PARAMS,
       hourly: HOURLY_PARAMS,
       daily: DAILY_PARAMS,
+      minutely_15: "precipitation",
       timezone: "Europe/Amsterdam",
       forecast_days: "2",
       forecast_hours: "48",
@@ -173,6 +174,23 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
 
   // Blend hourly data from models
   const { hourly, agreement } = blendHourly(harmonieData, iconData, data.hourly);
+
+  // Parse minutely_15 precipitation data (next 2 hours = 8 intervals)
+  const minutely: MinutelyPrecipitation[] = [];
+  if (data.minutely_15?.time && data.minutely_15?.precipitation) {
+    const nowMs = Date.now();
+    const twoHoursMs = 2 * 60 * 60 * 1000;
+    for (let i = 0; i < data.minutely_15.time.length; i++) {
+      const t = new Date(data.minutely_15.time[i]).getTime();
+      // Only include data from now to +2 hours
+      if (t >= nowMs - 15 * 60 * 1000 && t <= nowMs + twoHoursMs) {
+        minutely.push({
+          time: data.minutely_15.time[i],
+          precipitation: data.minutely_15.precipitation[i] ?? 0,
+        });
+      }
+    }
+  }
 
   // Model comparison info
   const sources: string[] = ["Open-Meteo"];
@@ -198,6 +216,7 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
       isDay: data.current.is_day === 1,
       cloudCover: data.current.cloud_cover,
     },
+    minutely,
     hourly,
     daily: data.daily.time.map((date: string, i: number) => ({
       date,

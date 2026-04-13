@@ -1,3 +1,8 @@
+export interface MinutelyPrecipitation {
+  time: string;
+  precipitation: number;
+}
+
 export interface WeatherData {
   current: {
     temperature: number;
@@ -11,6 +16,7 @@ export interface WeatherData {
     isDay: boolean;
     cloudCover: number;
   };
+  minutely: MinutelyPrecipitation[];
   hourly: HourlyForecast[];
   daily: DailyForecast[];
   sunrise: string;
