@@ -15,7 +15,7 @@ const jsonLd = {
   name: "WeerZone",
   url: "https://weerzone.nl",
   description:
-    "Vergeet de 14-daagse. De komende 48 uur op de vierkante meter. KNMI HARMONIE + DWD ICON. De enige weerdienst die niet liegt.",
+    "Vergeet de 14-daagse. De komende 48 uur op de vierkante meter. KNMI HARMONIE + DWD ICON + ICON-D2. De enige weerdienst die niet liegt.",
   potentialAction: {
     "@type": "SearchAction",
     target: "https://weerzone.nl/weer/{city}",
@@ -41,7 +41,7 @@ const faqLd = {
       name: "Wat is WeerZone?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "WeerZone is de weerdienst die niet liegt. We combineren KNMI HARMONIE en DWD ICON — twee supercomputers — voor de enige voorspelling die ertoe doet: de komende 48 uur. De rest is ruis.",
+        text: "WeerZone is de weerdienst die niet liegt. We combineren KNMI HARMONIE, DWD ICON en ICON-D2 — voor de enige voorspelling die ertoe doet: de komende 48 uur op de kilometer nauwkeurig. De rest is ruis.",
       },
     },
     {
@@ -57,7 +57,7 @@ const faqLd = {
       name: "Welke weermodellen gebruikt WeerZone?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "KNMI HARMONIE (het Nederlandse supercomputer-model voor lokaal weer) en DWD ICON (het Duitse weermodel). Wanneer beide het eens zijn, weet je het zeker. Wanneer ze het oneens zijn, vertellen we je dat ook. Eerlijkheid boven alles.",
+        text: "KNMI HARMONIE (het Nederlandse supercomputer-model), DWD ICON en ICON-D2 (het ultra-high-resolution geneste model). Wanneer alle modellen het eens zijn, weet je het zeker. Wanneer ze het oneens zijn, vertellen we je dat ook. Eerlijkheid boven alles.",
       },
     },
     {

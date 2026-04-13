@@ -130,7 +130,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
     } else if (lower.includes("station") || lower.includes("waar") || lower.includes("locatie") || lower.includes("dichtbij") || lower.includes("meetpunt")) {
       setChatAnswer(`📍 Je bekijkt nu het weer bij ${city.name} (${city.lat.toFixed(2)}°N, ${city.lon.toFixed(2)}°O). Dit is ${city.name.includes("Airport") || city.name.includes("Meetstation") ? 'een KNMI weerstation' : 'gekoppeld aan het dichtstbijzijnde KNMI meetpunt'}. Klik op het 📍 icoontje linksboven voor je exacte locatie — we koppelen je automatisch aan het dichtstbijzijnde station. We hebben ${DUTCH_CITIES.length} meetpunten door heel Nederland. Altijd een in de buurt.`);
     } else if (lower.includes("hoe werkt") || lower.includes("nauwkeurig") || lower.includes("betrouwbaar") || lower.includes("model") || lower.includes("weerzone")) {
-      setChatAnswer(`WeerZone draait op twee professionele weermodellen: KNMI HARMONIE (het Nederlandse supercomputer-model, 2.5km resolutie) en DWD ICON (het Duitse model). We tonen maximaal 48 uur — langer is wetenschappelijk gezien klinkklare onzin. Modelovereenkomst nu: ${weather.models.agreement}%. ${weather.models.agreement >= 80 ? 'Beide modellen zijn het roerend eens. Dit gaat zo gebeuren.' : weather.models.agreement >= 60 ? 'Redelijke overeenstemming. De grote lijn klopt, details kunnen afwijken.' : 'De modellen twijfelen. Wij tonen dat eerlijk — andere apps verbergen die onzekerheid.'} We updaten elk uur. Geen 14-daagse fantasie, geen sponsoring door parapluverkopers. Gewoon data. 🎯`);
+      setChatAnswer(`WeerZone draait op onze favoriete supercomputer-modellen: KNMI HARMONIE (2.5km resolutie), DWD ICON en het ultra-nauwkeurige ICON-D2. We tonen maximaal 48 uur — langer is wetenschappelijk gezien klinkklare onzin. Modelovereenkomst nu: ${weather.models.agreement}%. ${weather.models.agreement >= 80 ? 'De modellen zijn het roerend eens. Dit gaat zo gebeuren.' : weather.models.agreement >= 60 ? 'Redelijke overeenstemming. De grote lijn klopt, details kunnen afwijken.' : 'De modellen twijfelen. Wij tonen dat eerlijk — andere apps verbergen die onzekerheid.'} We updaten elk uur. Geen 14-daagse fantasie. Gewoon data. 🎯`);
     } else if (lower.includes("wat trek") || lower.includes("kleding") || lower.includes("aantrekken") || lower.includes("outfit")) {
       const { emoji, advice } = getOutfitAdvice(weather);
       setChatAnswer(`${emoji} ${advice} Details: ${temp}° (voelt als ${feelsLike}°), ${rain ? `regen (${rainMm}mm)` : 'droog'}, wind ${wind} km/h. ${temp < 5 ? 'Laagjes. Thermo ondergoed als je lang buiten bent.' : temp < 12 ? 'Trui + jas, de klassieke Nederlandse combo.' : temp < 20 ? 'Licht jasje of vest, eventueel in je tas.' : 'Zo min mogelijk. Maar zonnebrand wél.'} ${rain ? 'Waterdichte laag is verplicht, niet optioneel.' : ''}`);
@@ -948,7 +948,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
                   WeerZone
                 </h4>
                 <div className="text-sm font-semibold text-text-primary mb-1">48 uur, twee modellen</div>
-                <div className="text-xs text-text-muted">KNMI HARMONIE + DWD ICON. Supercomputers, niet onderbuikgevoel.</div>
+                <div className="text-xs text-text-muted">KNMI HARMONIE + ICON + ICON-D2. Supercomputers, niet onderbuikgevoel.</div>
               </div>
               <div className="mt-4 px-3 py-1.5 bg-[rgba(52,211,153,0.1)] text-accent-green text-xs font-bold text-center rounded-lg">
                 Bewezen nauwkeurig.
@@ -1033,7 +1033,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           WeerZone — 48 uur. De rest is ruis.
         </p>
         <p className="text-[10px] text-white/50 mt-1">
-          Data via <a href="https://open-meteo.com" className="text-accent-orange hover:underline">Open-Meteo</a> · KNMI HARMONIE · DWD ICON.
+          Data via <a href="https://open-meteo.com" className="text-accent-orange hover:underline">Open-Meteo</a> · KNMI HARMONIE · DWD ICON · ICON-D2.
           Twee supercomputers, nul ruis.
         </p>
       </footer>

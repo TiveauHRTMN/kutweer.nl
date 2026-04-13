@@ -47,7 +47,7 @@ export async function POST(req: Request) {
               <div style="background: #ffffff; border-radius: 18px; padding: 32px; box-shadow: 0 8px 32px rgba(0,0,0,0.04);">
                 <h2 style="color: #1e293b; margin-top: 0; font-size: 24px;">Aanmelding Voltooid. Tijd Voor De Harde Feiten.</h2>
                 <p style="font-size: 16px; line-height: 1.6; color: #475569;">Je alerts voor locatie <strong>${city || "jouw stad"}</strong> staan scherp.</p>
-                <p style="font-size: 16px; line-height: 1.6; color: #475569;">Laten we eerlijk zijn: die standaard 14-daagse weersvoorspelling op je telefoon is complete kolder. Het is gewoon nattevingerwerk. Terwijl de rest van de straat argeloos zonder jas de deur uitloopt en wegrekent, krijg jij vanaf nu de ongezouten realiteit. Wij tappen de ruwe weermodellen af (KNMI HARMONIE en DWD ICON) en filteren het slappe geouwehoer eruit.</p>
+                <p style="font-size: 16px; line-height: 1.6; color: #475569;">Laten we eerlijk zijn: die standaard 14-daagse weersvoorspelling op je telefoon is complete kolder. Het is gewoon nattevingerwerk. Terwijl de rest van de straat argeloos zonder jas de deur uitloopt en wegrekent, krijg jij vanaf nu de ongezouten realiteit. Wij tappen de ruwe weermodellen af (KNMI HARMONIE, ICON en ICON-D2) en filteren het slappe geouwehoer eruit.</p>
                 
                 <div style="background: #f8fafc; padding: 20px; border-left: 4px solid #4a9ee8; border-radius: 4px; margin: 24px 0;">
                   <h3 style="margin-top: 0; color: #1e293b; font-size: 18px;">Wat wij jou op een serveerblaadje aanleveren:</h3>
