@@ -280,19 +280,19 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       <header className="animate-fade-in">
         <div className="flex items-center justify-between">
           <div>
-            <LogoFull height={44} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] sm:hidden" />
+            <LogoFull height={38} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] sm:hidden" />
             <LogoFull height={52} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] hidden sm:block" />
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <WeatherAlarm city={city} />
             <button
               onClick={handleLocationClick}
               aria-label={`Locatie: ${city.name}`}
-              className="flex items-center gap-2 h-10 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 hover:bg-white/20 active:scale-[0.97] transition-all"
+              className="flex items-center gap-1.5 h-9 sm:h-10 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-2.5 sm:px-3 hover:bg-white/20 active:scale-[0.97] transition-all max-w-[120px] sm:max-w-none"
             >
-              <MapPin className="text-white w-4 h-4" />
-              <span className="text-xs font-semibold text-white">{city.name}</span>
+              <MapPin className="text-white w-3.5 h-3.5" />
+              <span className="text-[11px] sm:text-xs font-semibold text-white truncate">{city.name}</span>
             </button>
           </div>
         </div>
@@ -318,26 +318,26 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           </div>
           
           <div className="mt-8 bg-accent-orange/15 border-l-4 border-accent-orange p-4 rounded-r-lg">
-            <p className="font-semibold text-lg text-text-primary">
+            <p className="font-semibold text-lg text-text-primary break-words leading-snug">
               {getMainCommentary(weather)}
             </p>
           </div>
           
-          <div className="flex flex-wrap gap-3 mt-6">
-            <span className="badge bg-black/5 border border-black/10 font-normal px-3 py-1.5">
+          <div className="flex flex-wrap gap-2 sm:gap-3 mt-6">
+            <span className="badge bg-black/5 border border-black/10 font-normal px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs">
               Voelt als <strong className="ml-1 text-text-primary">{weather.current.feelsLike}°</strong>
             </span>
-            <span className="badge bg-black/5 border border-black/10 font-normal px-3 py-1.5">
+            <span className="badge bg-black/5 border border-black/10 font-normal px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs">
               {getWeatherDescription(weather.current.weatherCode)}
             </span>
-            <span className="badge bg-black/5 border border-black/10 font-normal px-3 py-1.5">
-              Luchtvochtigheid <strong className="ml-1 text-text-primary">{weather.current.humidity}%</strong>
+            <span className="badge bg-black/5 border border-black/10 font-normal px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs">
+              Vocht <strong className="ml-1 text-text-primary">{weather.current.humidity}%</strong>
             </span>
             {(() => {
               const climate = getTemperatureComparison(weather.current.temperature, new Date().getMonth());
               const isWarm = climate.diff > 0;
               return Math.abs(climate.diff) >= 1 ? (
-                <span className={`badge font-normal px-3 py-1.5 ${isWarm ? 'bg-orange-100/80 border border-orange-200/60 text-orange-700' : 'bg-blue-100/80 border border-blue-200/60 text-blue-700'}`}>
+                <span className={`badge font-normal px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs ${isWarm ? 'bg-orange-100/80 border border-orange-200/60 text-orange-700' : 'bg-blue-100/80 border border-blue-200/60 text-blue-700'}`}>
                   {climate.emoji} {isWarm ? '+' : ''}{climate.diff}° vs normaal
                 </span>
               ) : null;
@@ -573,13 +573,13 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
                     <AlertTriangle className={`w-3.5 h-3.5 ${
                       alert.severity === "red" ? "text-accent-red" : "text-accent-amber"
                     }`} />
-                    <span className={`text-xs font-bold uppercase tracking-wider ${
+                    <span className={`text-[10px] xs:text-xs font-bold uppercase tracking-wider ${
                       alert.severity === "red" ? "text-accent-red" : "text-amber-600"
                     }`}>
                       {alert.title}
                     </span>
                   </div>
-                  <p className="text-sm font-medium text-text-primary mt-1">{alert.detail}</p>
+                  <p className="text-sm font-medium text-text-primary mt-1 break-words leading-normal">{alert.detail}</p>
                 </div>
               </div>
             ))}
@@ -647,8 +647,8 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         <div className="grid grid-cols-2 gap-4 text-left">
           <div className="card p-4 border border-accent-orange flex flex-col justify-between h-full">
             <div className="flex justify-between items-start mb-2">
-              <span className="font-bold text-accent-orange">Vandaag</span>
-              <span className="text-xl">{getWeatherEmoji(weather.daily[0].weatherCode)}</span>
+              <span className="font-bold text-accent-orange text-[13px] sm:text-base">Vandaag</span>
+              <span className="text-xl shrink-0">{getWeatherEmoji(weather.daily[0].weatherCode)}</span>
             </div>
             <div className="flex items-baseline gap-2 mt-auto">
               <span className="text-3xl font-bold">{weather.daily[0].tempMax}°</span>
@@ -663,8 +663,8 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           
           <div className="card p-4 flex flex-col justify-between h-full">
             <div className="flex justify-between items-start mb-2">
-              <span className="font-bold text-text-primary">Morgen</span>
-              <span className="text-xl">{getWeatherEmoji(weather.daily[1].weatherCode)}</span>
+              <span className="font-bold text-text-primary text-[13px] sm:text-base">Morgen</span>
+              <span className="text-xl shrink-0">{getWeatherEmoji(weather.daily[1].weatherCode)}</span>
             </div>
             <div className="flex items-baseline gap-2 mt-auto">
               <span className="text-3xl font-bold">{weather.daily[1].tempMax}°</span>
@@ -766,11 +766,11 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       </div>
 
       {/* ===== 10. Detail Grid — wind, vocht, neerslag, temp ===== */}
-      <div className="grid grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: "0.6s" }}>
+      <div className="grid grid-cols-2 xs:grid-cols-2 gap-3 sm:gap-4 animate-fade-in" style={{ animationDelay: "0.6s" }}>
         {/* Voelt Als */}
-        <div className="card p-4">
-          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <span className="text-accent-amber text-base">🌡️</span> Gevoelstemperatuur
+        <div className="card p-3 sm:p-4">
+          <div className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5 break-words">
+            <span className="text-accent-amber text-base shrink-0">🌡️</span> <span className="truncate sm:whitespace-normal">Gevoelstemperatuur</span>
           </div>
           <div className="text-3xl font-bold flex items-start">
             {weather.current.feelsLike}<span className="text-lg mt-1">°</span>
@@ -783,9 +783,9 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
         
         {/* Luchtvochtigheid */}
-        <div className="card p-4">
-          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <span className="text-accent-cyan text-base">💧</span> Luchtvochtigheid
+        <div className="card p-3 sm:p-4">
+          <div className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5 break-words">
+            <span className="text-accent-cyan text-base shrink-0">💧</span> <span className="truncate sm:whitespace-normal">Luchtvochtigheid</span>
           </div>
           <div className="text-3xl font-bold flex items-start">
             {weather.current.humidity}<span className="text-lg mt-1">%</span>
@@ -798,9 +798,9 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
         
         {/* Wind */}
-        <div className="card p-4">
-          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <span className="text-accent-cyan text-base">🌬️</span> Wind — Bft {getWindBeaufort(weather.current.windSpeed).scale}
+        <div className="card p-3 sm:p-4">
+          <div className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5 break-words">
+            <span className="text-accent-cyan text-base shrink-0">🌬️</span> <span className="truncate sm:whitespace-normal">Wind — Bft {getWindBeaufort(weather.current.windSpeed).scale}</span>
           </div>
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-bold">{weather.current.windSpeed}</span>
@@ -815,9 +815,9 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
         
         {/* Neerslag */}
-        <div className="card p-4">
-          <div className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <span className="text-accent-cyan text-base">🌧️</span> Neerslag
+        <div className="card p-3 sm:p-4">
+          <div className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <span className="text-accent-cyan text-base shrink-0">🌧️</span> Neerslag
           </div>
           <div className="flex items-baseline gap-1">
             <span className="text-3xl font-bold">{weather.current.precipitation}</span>
@@ -940,7 +940,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           <h3 className="section-title">Eerlijk VS Onzin</h3>
         </div>
         <div className="card p-4 overflow-hidden relative">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="p-4 border border-[rgba(52,211,153,0.2)] bg-[rgba(52,211,153,0.05)] rounded-xl flex flex-col justify-between">
               <div>
                 <h4 className="text-accent-green font-bold text-xs uppercase flex items-center gap-1.5 mb-2">
@@ -990,10 +990,10 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         <AuthGate>
           <div className="card p-5 space-y-4">
             <div className="flex items-start gap-3">
-              <span className="text-2xl">🎯</span>
-              <div>
+              <span className="text-2xl shrink-0">🎯</span>
+              <div className="min-w-0">
                 <h4 className="font-bold text-text-primary text-sm mb-1">Jouw 48-uurs window</h4>
-                <p className="text-sm text-text-secondary leading-relaxed">
+                <p className="text-sm text-text-secondary leading-relaxed break-words">
                   {weather.current.precipitation > 0
                     ? `Het regent nu in ${city.name}. Verwacht de komende uren ${weather.hourly.filter(h => h.precipitation > 0).length > 6 ? 'langdurige neerslag' : 'buien die overgaan'}. ${weather.daily[1].precipitationSum > 2 ? 'Morgen ook nat — plan binnenshuis.' : 'Morgen wordt het droger.'}`
                     : weather.hourly.slice(0, 12).some(h => h.precipitation > 0.5)
@@ -1004,10 +1004,10 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <span className="text-2xl">👔</span>
-              <div>
+              <span className="text-2xl shrink-0">👔</span>
+              <div className="min-w-0">
                 <h4 className="font-bold text-text-primary text-sm mb-1">Slim kleden vandaag</h4>
-                <p className="text-sm text-text-secondary leading-relaxed">
+                <p className="text-sm text-text-secondary leading-relaxed break-words">
                   Ochtend {weather.hourly[0]?.temperature ?? weather.current.temperature}°, middag {weather.daily[0].tempMax}°.
                   {weather.daily[0].tempMax - (weather.hourly[0]?.temperature ?? weather.current.temperature) > 8
                     ? ' Groot verschil — laagjes zijn je vriend. Begin warm, strip af na de lunch.'
