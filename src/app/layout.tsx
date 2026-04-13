@@ -41,11 +41,20 @@ export const metadata: Metadata = {
     locale: "nl_NL",
     url: "https://weerzone.nl",
     siteName: "WeerZone",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "WeerZone",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "WeerZone — 48 uur. De rest is ruis.",
     description: "Vergeet de 14-daagse. De komende 48 uur op de vierkante meter. KNMI HARMONIE + ICON + ICON-D2.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
@@ -58,6 +67,12 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "WeerZone",
+  },
   verification: {},
 };
 
@@ -69,11 +84,7 @@ export default function RootLayout({
   return (
     <html lang="nl" className={`${inter.variable} antialiased`}>
       <head>
-        <link rel="icon" href="/favicon-icon.png" type="image/png" />
-        <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#4a9ee8" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className="min-h-screen">
         <Providers>
