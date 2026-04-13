@@ -308,11 +308,11 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           
           <div className="flex justify-between items-start mt-4">
             <div className="flex items-start">
-              <span className="text-7xl font-bold tracking-tighter leading-none">{weather.current.temperature}</span>
-              <span className="text-4xl font-semibold mt-1">°C</span>
+              <span className="text-6xl sm:text-7xl font-bold tracking-tighter leading-none">{weather.current.temperature}</span>
+              <span className="text-3xl sm:text-4xl font-semibold mt-1">°C</span>
             </div>
             
-            <div className="text-7xl leading-none">
+            <div className="text-6xl sm:text-7xl leading-none">
               {getWeatherEmoji(weather.current.weatherCode, weather.current.isDay)}
             </div>
           </div>

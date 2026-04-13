@@ -142,7 +142,7 @@ export default function RainRadar({ data }: RainRadarProps) {
 
         {/* Bars */}
         <div
-          className="flex items-end gap-[2px]"
+          className="flex items-end justify-center gap-[4px]"
           style={{ height: 64 }}
         >
           {data.map((point, idx) => {
@@ -159,7 +159,8 @@ export default function RainRadar({ data }: RainRadarProps) {
                 transition={{ duration: 0.5, delay: idx * 0.03, ease: "easeOut" }}
                 style={{
                   background: isRaining ? color : "rgba(0,0,0,0.04)",
-                  minWidth: 0,
+                  minWidth: "8px",
+                  maxWidth: "32px",
                 }}
                 title={`${new Date(point.time).toLocaleTimeString("nl-NL", {
                   hour: "2-digit",
