@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 import { fetchWeatherData } from "@/lib/weather";
 import { Resend } from "resend";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Anthropic from "@anthropic-ai/sdk";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || "");
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || "" });
 
 
 // System prompt voor de autonoom draaiende agent
@@ -128,7 +128,6 @@ export async function GET(req: Request) {
     if (error || !users) throw error;
 
     const emailsSent = [];
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     for (const user of users as any[]) {
       if (!user.lat || !user.lon) continue;
@@ -139,16 +138,19 @@ export async function GET(req: Request) {
       if (anomaly) {
         let alertMsg = "";
         try {
-          const result = await model.generateContent({
-            contents: [{ role: "user", parts: [{ text: `${SENTINEL_PROMPT}\n\nDATA: ${JSON.stringify({ city: user.city, anomaly })}` }] }],
-            generationConfig: {
-              maxOutputTokens: 50,
-              temperature: 0.9,
-            },
+          const result = await anthropic.messages.create({
+            model: "claude-haiku-4-20250414",
+            max_tokens: 60,
+            temperature: 0.9,
+            system: SENTINEL_PROMPT.trim(),
+            messages: [
+              { role: "user", content: `DATA: ${JSON.stringify({ city: user.city, anomaly })}` },
+            ],
           });
-          alertMsg = result.response.text().trim().replace(/^"|"$/g, '');
+          const textBlock = result.content.find((b: any) => b.type === "text");
+          alertMsg = (textBlock as any)?.text?.trim().replace(/^"|"$/g, '') || "";
         } catch (aiErr) {
-          console.error("Gemini Error:", aiErr);
+          console.error("Claude Haiku Error:", aiErr);
           alertMsg = `${user.city} wordt een teringzooi morgen. Succes ermee.`;
         }
 

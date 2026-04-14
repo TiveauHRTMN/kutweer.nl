@@ -31,6 +31,7 @@ export interface HourlyForecast {
   weatherCode: number;
   precipitation: number;
   windSpeed: number;
+  cape: number; // Convective Available Potential Energy (J/kg) — onweersrisico
   confidence: "high" | "medium" | "low";
   models?: {
     harmonie?: { temperature: number; precipitation: number; weatherCode: number };

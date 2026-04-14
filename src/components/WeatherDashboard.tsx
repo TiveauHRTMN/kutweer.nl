@@ -125,6 +125,27 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       const uvVal = weather.uvIndex;
       const cloudCover = weather.current.cloudCover;
       setChatAnswer(`Zon op om ${sunriseStr}, onder om ${sunsetStr}. UV-index: ${uvVal.toFixed(1)}. ${uvVal >= 8 ? 'EXTREEM. Smeren met SPF50, hoed op, zonnebril. Geen discussie. Je huid onthoudt elke verbranding.' : uvVal >= 6 ? 'Hoog. Zonnebrand is verplicht. Elke 2 uur opnieuw aanbrengen, ook als je denkt dat het meevalt.' : uvVal >= 3 ? 'Matig. Bij langdurig buiten zijn toch smeren — je merkt het pas als het te laat is.' : 'Laag. Je overleeft het zonder zonnebrand, maar het kan altijd.'} Bewolking nu: ${cloudCover}%. ${cloudCover < 25 ? 'Strakblauwe lucht.' : cloudCover < 50 ? 'Half bewolkt, zon breekt geregeld door.' : cloudCover < 80 ? 'Overwegend bewolkt, af en toe een glimp zon.' : 'Dichtbewolkt. De zon is er, maar je ziet hem niet.'} ☀️`);
+    } else if (lower.includes("onweer") || lower.includes("bliksem") || lower.includes("donder") || lower.includes("cape") || lower.includes("thunder") || lower.includes("bui")) {
+      // CAPE-based thunderstorm analysis
+      const thunderHours = weather.hourly.filter(h => h.weatherCode >= 95);
+      const highCapeHours = weather.hourly.filter(h => h.cape >= 500);
+      const maxCape = Math.max(...weather.hourly.map(h => h.cape));
+      const maxCapeHour = weather.hourly.find(h => h.cape === maxCape);
+      const maxCapeTime = maxCapeHour ? new Date(maxCapeHour.time).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' }) : '';
+
+      let capeLabel: string;
+      if (maxCape >= 2500) capeLabel = 'EXTREEM — zwaar onweer, hagel en windstoten zeer waarschijnlijk';
+      else if (maxCape >= 1500) capeLabel = 'HOOG — krachtig onweer verwacht, grote kans op hagel';
+      else if (maxCape >= 1000) capeLabel = 'AANZIENLIJK — onweer goed mogelijk, lokaal heftig';
+      else if (maxCape >= 500) capeLabel = 'MATIG — buien kunnen onweerachtig worden';
+      else if (maxCape >= 200) capeLabel = 'LAAG — kleine kans op onweer';
+      else capeLabel = 'MINIMAAL — nauwelijks instabiliteit';
+
+      const thunderTiming = thunderHours.length > 0
+        ? `Onweer verwacht: ${thunderHours.map(h => new Date(h.time).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })).slice(0, 4).join(', ')}${thunderHours.length > 4 ? ` (+${thunderHours.length - 4} uur)` : ''}.`
+        : 'Op dit moment geen onweer in het model.';
+
+      setChatAnswer(`⛈️ Onweersanalyse ${city.name}:\n\nCAPE-piek: ${maxCape} J/kg ${maxCapeTime ? `(rond ${maxCapeTime})` : ''}. Risico: ${capeLabel}.\n\n${thunderTiming} ${highCapeHours.length > 0 ? `Instabiele uren (CAPE ≥500): ${highCapeHours.length} van de komende 48 uur.` : 'Atmosfeer is stabiel — geen significante buienactiviteit verwacht.'} ${maxCape >= 1000 ? 'Bij CAPE boven 1000: zoek schuilplaats bij donkere wolken, vermijd open water en alleenstaande bomen. Ontkoppel elektronica.' : maxCape >= 500 ? 'Houd de lucht in de gaten als het bewolkt wordt. Bij donkere stapelwolken: naar binnen.' : 'Geen speciale maatregelen nodig.'}`);
     } else if (lower.includes("wind") || lower.includes("waai") || lower.includes("storm")) {
       setChatAnswer(`Wind: ${wind} km/h (Beaufort ${beaufort.scale}: ${beaufort.label}). Windstoten tot ${gusts} km/h — dat is het getal waar je je aan vast moet houden. Richting: ${weather.current.windDirection}. ${gusts > 60 ? 'Bij deze windstoten waait alles om wat niet vastgebonden is. Tuinmeubels naar binnen, fiets op slot in de schuur, en niet onder bomen lopen.' : gusts > 40 ? 'Flink. Fietsen wordt een avontuur, paraplu is zinloos (waait binnenstebuiten), en je kapsel is sowieso naar de klote.' : wind > 20 ? 'Merkbaar, maar je overleeft het. Jas dicht, en verwacht dat alles 2 graden kouder aanvoelt.' : 'Rustig. Wind is nauwelijks een factor vandaag.'} 💨`);
     } else if (lower.includes("station") || lower.includes("waar") || lower.includes("locatie") || lower.includes("dichtbij") || lower.includes("meetpunt")) {
