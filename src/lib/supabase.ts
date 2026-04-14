@@ -9,9 +9,13 @@ export function getSupabase(): SupabaseClient | null {
   if (_supabase) return _supabase;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return null;
-  _supabase = createClient(url, key);
-  return _supabase;
+  if (!url || !key || !url.startsWith("http")) return null;
+  try {
+    _supabase = createClient(url, key);
+    return _supabase;
+  } catch {
+    return null;
+  }
 }
 
 // Backwards compat — lazy proxy that won't crash at build time
@@ -36,5 +40,7 @@ export interface UserProfile {
 
 // Check of Supabase geconfigureerd is
 export function isSupabaseConfigured(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  return Boolean(url && key && url.startsWith("http") && key !== "jouw-supabase-anon-key");
 }
