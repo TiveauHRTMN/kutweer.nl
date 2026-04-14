@@ -295,14 +295,60 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       <header className="animate-fade-in flex flex-col items-center mb-2">
         <LogoFull height={52} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] sm:hidden mb-4" />
         <LogoFull height={64} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] hidden sm:block mb-5" />
-        <button
-          onClick={handleLocationClick}
-          aria-label={`Locatie: ${city.name}`}
-          className="flex items-center justify-center gap-2 h-10 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-6 hover:bg-white/20 active:scale-[0.97] transition-all"
-        >
-          <MapPin className="text-white w-4 h-4" />
-          <span className="text-sm font-semibold text-white truncate">{city.name}</span>
-        </button>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full max-w-lg">
+          <button
+            onClick={handleLocationClick}
+            aria-label={`Locatie: ${city.name}`}
+            className="flex items-center justify-center gap-2 h-10 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-5 hover:bg-white/20 active:scale-[0.97] transition-all shrink-0"
+          >
+            <MapPin className="text-white w-4 h-4" />
+            <span className="text-sm font-semibold text-white truncate">{city.name}</span>
+          </button>
+          
+          {/* AI Chat Input - Header Style */}
+          <div className="relative flex-1 w-full">
+            <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-accent-orange flex items-center justify-center text-[10px] pointer-events-none shadow-sm">🤖</div>
+            <input
+              type="text"
+              placeholder="Claude AI Weer-Vraag..."
+              className="w-full h-10 pl-9 pr-10 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm text-sm text-white placeholder:text-white/70 outline-none focus:border-accent-orange/60 focus:bg-white/20 transition-all font-medium"
+              value={chatInput}
+              onChange={(e) => { setChatInput(e.target.value); setChatAnswer(null); }}
+              onKeyDown={(e) => { if (e.key === 'Enter' && chatInput.trim()) { answerQuestion(chatInput); setChatInput(''); } }}
+            />
+            <button
+              onClick={() => { if (chatInput.trim()) { answerQuestion(chatInput); setChatInput(''); } }}
+              aria-label="Vraag versturen"
+              className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full text-white flex items-center justify-center hover:bg-white/20 transition-colors"
+            >
+              <Send className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {/* AI Answer Dropdown */}
+        <AnimatePresence mode="wait">
+          {chatAnswer && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="w-full max-w-lg mt-3 relative z-50"
+            >
+              <div className="card px-4 py-3 bg-white/95 backdrop-blur-md border border-white/40 shadow-xl flex items-start gap-3 rounded-2xl">
+                <span className="text-lg shrink-0 mt-0.5">💬</span>
+                <p className="text-sm font-medium text-text-primary leading-relaxed whitespace-pre-wrap">{chatAnswer}</p>
+                <button 
+                  onClick={() => setChatAnswer(null)}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-text-primary text-white rounded-full flex items-center justify-center text-xs border border-white/20 hover:scale-110 shadow-md transition-transform"
+                >
+                  ✕
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* ===== 1. Main Weather Card — Kerninformatie ===== */}
@@ -357,78 +403,85 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
 
       {/* Mails & Ads moved below alerts */}
 
-      {/* ===== 2. Rain Radar & Komende Uren (Samengevoegd) ===== */}
-      <div className="animate-fade-in space-y-3" style={{ animationDelay: "0.15s" }}>
+      {/* ===== 2. Rain Radar & Komende Uren (Samengevoegd in 1 box) ===== */}
+      <div className="card p-4 animate-fade-in" style={{ animationDelay: "0.15s" }}>
         {weather.minutely && weather.minutely.length > 0 && (
-          <RainRadar data={weather.minutely} />
-        )}
-        <div className="flex justify-between items-center mb-1 px-1">
-          <h3 className="section-title">Komende Uren</h3>
-          <div className="flex items-center gap-1 bg-white/10 rounded-full p-0.5 border border-white/20">
-            {([
-              { key: "temp" as const, icon: <Thermometer className="w-3 h-3" />, label: "°C" },
-              { key: "rain" as const, icon: <CloudRain className="w-3 h-3" />, label: "mm" },
-              { key: "wind" as const, icon: <Wind className="w-3 h-3" />, label: "km/h" },
-            ]).map(({ key, icon, label }) => (
-              <button
-                key={key}
-                onClick={() => setHourlyMetric(key)}
-                aria-label={`Toon ${label}`}
-                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${hourlyMetric === key ? 'bg-accent-orange text-text-primary shadow-sm' : 'text-white/50 hover:text-white/80'}`}
-              >
-                {icon}
-              </button>
-            ))}
+          <div className="mb-6 pb-6 border-b border-black/5">
+            <RainRadar data={weather.minutely} />
           </div>
-        </div>
-        <div className="horizontal-scroll">
-          {weather.hourly.slice(0, 12).map((hour, idx) => {
-            const h = new Date(hour.time).getHours();
-            const isNow = idx === 0;
-            const maxPrecip = Math.max(...weather.hourly.slice(0, 12).map(hr => hr.precipitation), 1);
-            const maxWind = Math.max(...weather.hourly.slice(0, 12).map(hr => hr.windSpeed), 1);
-            const rainBarH = Math.max(2, (hour.precipitation / maxPrecip) * 24);
-            const windBarH = Math.max(2, (hour.windSpeed / maxWind) * 24);
-            const confidenceColor = hour.confidence === "high" ? "bg-accent-green" : hour.confidence === "medium" ? "bg-accent-amber" : "bg-accent-red";
-            return (
-              <div
-                key={hour.time}
-                className={`card p-3 flex flex-col items-center justify-between min-w-[70px] gap-1 ${isNow ? 'border-accent-orange' : ''}`}
-              >
-                <div className={`text-xs font-semibold ${isNow ? 'text-accent-orange' : 'text-text-secondary'}`}>
-                  {isNow ? 'Nu' : `${h.toString().padStart(2, '0')}:00`}
-                </div>
-                <div className="text-2xl my-1">
-                  {getWeatherEmoji(hour.weatherCode, h > 6 && h < 21)}
-                </div>
-                {hourlyMetric === "temp" && (
-                  <div className="text-sm font-bold">{hour.temperature}°</div>
-                )}
-                {hourlyMetric === "rain" && (
-                  <div className="flex flex-col items-center gap-0.5">
-                    <div className="w-4 flex items-end justify-center" style={{ height: 24 }}>
-                      <div className="w-full rounded-t bg-accent-cyan/70" style={{ height: rainBarH }} />
-                    </div>
-                    <span className="text-[10px] font-bold text-accent-cyan">{hour.precipitation > 0 ? hour.precipitation.toFixed(1) : '0'}</span>
+        )}
+        
+        <div>
+          <div className="flex justify-between items-center mb-4 px-1">
+            <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider">Komende Uren</h3>
+            <div className="flex items-center gap-1 bg-black/5 rounded-full p-0.5 border border-black/5">
+              {([
+                { key: "temp" as const, icon: <Thermometer className="w-3 h-3" />, label: "°C" },
+                { key: "rain" as const, icon: <CloudRain className="w-3 h-3" />, label: "mm" },
+                { key: "wind" as const, icon: <Wind className="w-3 h-3" />, label: "km/h" },
+              ]).map(({ key, icon, label }) => (
+                <button
+                  key={key}
+                  onClick={() => setHourlyMetric(key)}
+                  aria-label={`Toon ${label}`}
+                  className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${hourlyMetric === key ? 'bg-white text-text-primary shadow-sm ring-1 ring-black/5' : 'text-text-muted hover:text-text-primary'}`}
+                >
+                  {icon}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="horizontal-scroll pb-2">
+            {weather.hourly.slice(0, 12).map((hour, idx) => {
+              const h = new Date(hour.time).getHours();
+              const isNow = idx === 0;
+              const maxPrecip = Math.max(...weather.hourly.slice(0, 12).map(hr => hr.precipitation), 1);
+              const maxWind = Math.max(...weather.hourly.slice(0, 12).map(hr => hr.windSpeed), 1);
+              const rainBarH = Math.max(2, (hour.precipitation / maxPrecip) * 24);
+              const windBarH = Math.max(2, (hour.windSpeed / maxWind) * 24);
+              const confidenceColor = hour.confidence === "high" ? "bg-accent-green" : hour.confidence === "medium" ? "bg-accent-amber" : "bg-accent-red";
+              return (
+                <div
+                  key={hour.time}
+                  className={`border border-black/5 rounded-2xl p-3 flex flex-col items-center justify-between min-w-[70px] gap-1 ${isNow ? 'bg-accent-orange/10 border-accent-orange/30' : 'bg-black/[0.02]'}`}
+                >
+                  <div className={`text-xs font-semibold ${isNow ? 'text-accent-orange' : 'text-text-secondary'}`}>
+                    {isNow ? 'Nu' : `${h.toString().padStart(2, '0')}:00`}
                   </div>
-                )}
-                {hourlyMetric === "wind" && (
-                  <div className="flex flex-col items-center gap-0.5">
-                    <div className="w-4 flex items-end justify-center" style={{ height: 24 }}>
-                      <div className="w-full rounded-t bg-white/40" style={{ height: windBarH }} />
-                    </div>
-                    <span className="text-[10px] font-bold text-white/70">{hour.windSpeed}</span>
+                  <div className="text-2xl my-1">
+                    {getWeatherEmoji(hour.weatherCode, h > 6 && h < 21)}
                   </div>
-                )}
-                <div className={`w-1.5 h-1.5 rounded-full ${confidenceColor}`} title={`Vertrouwen: ${hour.confidence}`} />
-              </div>
-            );
-          })}
-        </div>
-        <div className="flex items-center gap-4 mt-2 px-1">
-          <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-green" /><span className="text-[10px] text-white/50">Zeker</span></div>
-          <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-amber" /><span className="text-[10px] text-white/50">Redelijk</span></div>
-          <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-red" /><span className="text-[10px] text-white/50">Onzeker</span></div>
+                  {hourlyMetric === "temp" && (
+                    <div className="text-sm font-bold text-text-primary">{hour.temperature}°</div>
+                  )}
+                  {hourlyMetric === "rain" && (
+                    <div className="flex flex-col items-center gap-0.5">
+                      <div className="w-4 flex items-end justify-center" style={{ height: 24 }}>
+                        <div className="w-full rounded-t bg-accent-cyan/80" style={{ height: rainBarH }} />
+                      </div>
+                      <span className="text-[10px] font-bold text-accent-cyan">{hour.precipitation > 0 ? hour.precipitation.toFixed(1) : '0'}</span>
+                    </div>
+                  )}
+                  {hourlyMetric === "wind" && (
+                    <div className="flex flex-col items-center gap-0.5">
+                      <div className="w-4 flex items-end justify-center" style={{ height: 24 }}>
+                        <div className="w-full rounded-t bg-black/20" style={{ height: windBarH }} />
+                      </div>
+                      <span className="text-[10px] font-bold text-text-secondary">{hour.windSpeed}</span>
+                    </div>
+                  )}
+                  <div className={`w-1.5 h-1.5 rounded-full ${confidenceColor}`} title={`Vertrouwen: ${hour.confidence}`} />
+                </div>
+              );
+            })}
+          </div>
+          
+          <div className="flex items-center gap-4 mt-1 px-1">
+            <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-green" /><span className="text-[10px] whitespace-nowrap text-text-muted">Zeker</span></div>
+            <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-amber" /><span className="text-[10px] whitespace-nowrap text-text-muted">Redelijk</span></div>
+            <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-red" /><span className="text-[10px] whitespace-nowrap text-text-muted">Onzeker</span></div>
+          </div>
         </div>
       </div>
 
