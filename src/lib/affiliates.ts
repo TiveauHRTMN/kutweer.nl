@@ -57,10 +57,14 @@ export function bookingUrl(destination: string): string {
 }
 
 export function amazonUrl(keywords: string): string {
+  // Amazon search parameters work better with + instead of %20
+  const searchK = encodeURIComponent(keywords).replace(/%20/g, "+");
+  
   if (!AFFILIATE_CONFIG.amazon.enabled || !AFFILIATE_CONFIG.amazon.tag) {
-    return `https://www.amazon.nl/s?k=${encodeURIComponent(keywords)}`;
+    return `https://www.amazon.nl/s?k=${searchK}`;
   }
-  return `https://www.amazon.nl/s?k=${encodeURIComponent(keywords)}&tag=${AFFILIATE_CONFIG.amazon.tag}`;
+  // linkCode=ll2 indicates a standard text link which stabilizes tracking
+  return `https://www.amazon.nl/s?k=${searchK}&tag=${AFFILIATE_CONFIG.amazon.tag}&linkCode=ll2`;
 }
 
 export function thuisbezorgdUrl(): string {
