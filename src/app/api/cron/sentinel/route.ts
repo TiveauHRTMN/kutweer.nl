@@ -4,9 +4,6 @@ import { fetchWeatherData } from "@/lib/weather";
 import { Resend } from "resend";
 import Anthropic from "@anthropic-ai/sdk";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || "" });
-
 
 // System prompt voor de autonoom draaiende agent
 const SENTINEL_PROMPT = `
@@ -128,6 +125,8 @@ export async function GET(req: Request) {
     if (error || !users) throw error;
 
     const emailsSent = [];
+    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || "" });
+    const resend = new Resend(process.env.RESEND_API_KEY || "dummy");
 
     for (const user of users as any[]) {
       if (!user.lat || !user.lon) continue;
