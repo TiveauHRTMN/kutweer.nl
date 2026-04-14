@@ -19,7 +19,7 @@ Houd het grof, feitelijk en sarcastisch. Gebruik géén aanhef. Begin direct met
 export async function GET(req: Request) {
   // Beveiliging: vereist een authorization header die we matchen met env, of een bypass voor cron-job.org
   const authHeader = req.headers.get("authorization");
-  if (process.env.CRON_SECRET && authHeader !== \`Bearer \${process.env.CRON_SECRET}\`) {
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -57,34 +57,34 @@ export async function GET(req: Request) {
         model: "claude-3-5-haiku-20241022",
         max_tokens: 250,
         system: AGENT_PROMPT,
-        messages: [{ role: "user", content: \`De gebruiker in \${user.city} krijgt een bui van \${upcomingRain.precipitation}mm/u om \${timeStr}. Waarschuw ze en upsell iets nuttigs.\` }]
+        messages: [{ role: "user", content: `De gebruiker in ${user.city} krijgt een bui van ${upcomingRain.precipitation}mm/u om ${timeStr}. Waarschuw ze en upsell iets nuttigs.` }]
       });
 
       const aiText = (aiResponse.content[0] as any).text;
       
-      const html = \`
+      const html = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-top: 5px solid #ef4444; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
         <h2 style="color: #ef4444; margin-top: 0; text-transform: uppercase;">Acuut WeerZone Alarm</h2>
-        <p style="color: #333; font-size: 16px; line-height: 1.6;">\${aiText.replace(/\\n/g, '<br>')}</p>
+        <p style="color: #333; font-size: 16px; line-height: 1.6;">${aiText.replace(/\n/g, '<br>')}</p>
         <div style="margin-top: 30px; text-align: center;">
           <a href="https://weerzone.nl" style="background: #1e293b; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 50px; font-weight: bold;">Check Radar</a>
         </div>
         <p style="text-align: center; font-size: 11px; color: #999; margin-top: 30px;">
-          Wil je dit niet meer weten? <a href="https://weerzone.nl/api/unsubscribe?email=\${user.email}" style="color: #999;">Uitschrijven</a>
+          Wil je dit niet meer weten? <a href="https://weerzone.nl/api/unsubscribe?email=${user.email}" style="color: #999;">Uitschrijven</a>
         </p>
-      </div>\`;
+      </div>`;
 
       if (process.env.RESEND_API_KEY) {
         await resend.emails.send({
           from: "WeerZone Alerts <info@weerzone.nl>",
           to: user.email,
-          subject: \`Noodweer om \${timeStr} in \${user.city}\`,
+          subject: `Noodweer om ${timeStr} in ${user.city}`,
           html: html,
         });
         emailsSent.push({ to: user.email, time: timeStr });
       }
     } catch (e) {
-      console.error(\`Failed to process agent alert for \${user.email}:\`, e);
+      console.error(`Failed to process agent alert for ${user.email}:`, e);
     }
   }
 
