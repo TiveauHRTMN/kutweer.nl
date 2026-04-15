@@ -753,6 +753,11 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           Data via <a href="https://open-meteo.com" className="text-accent-orange hover:underline">Open-Meteo</a> · KNMI HARMONIE · DWD ICON · ICON-D2.
           Twee weermodellen, nul ruis.
         </p>
+        <div className="mt-8 pt-6 border-t border-white/5 opacity-40">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em]">
+            Een Tiveau-product
+          </p>
+        </div>
       </footer>
     </div>
     </>
