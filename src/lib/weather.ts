@@ -79,10 +79,11 @@ function blendHourly(
   const times = fallbackData.time;
 
   const hourly: HourlyForecast[] = times.map((time, i) => {
-    const temperature = Math.round(harmonieData?.temperature_2m[i] ?? fallbackData.temperature_2m[i]);
-    const precipitation = harmonieData?.precipitation[i] ?? fallbackData.precipitation[i];
-    const weatherCode = harmonieData?.weather_code[i] ?? fallbackData.weather_code[i];
-    const windSpeed = Math.round(harmonieData?.wind_speed_10m[i] ?? fallbackData.wind_speed_10m[i]);
+    // Gebruik Harmonie data indien beschikbaar, anders fallback op generic
+    const temperature = Math.round(harmonieData?.temperature_2m?.[i] ?? fallbackData.temperature_2m[i]);
+    const precipitation = harmonieData?.precipitation?.[i] ?? fallbackData.precipitation[i];
+    const weatherCode = harmonieData?.weather_code?.[i] ?? fallbackData.weather_code[i];
+    const windSpeed = Math.round(harmonieData?.wind_speed_10m?.[i] ?? fallbackData.wind_speed_10m[i]);
 
     return {
       time,
@@ -99,26 +100,28 @@ function blendHourly(
 }
 
 export async function fetchWeatherData(lat: number, lon: number): Promise<WeatherData> {
-  // Fetch KNMI Seamless (HARMONIE) as primary source
-  // and Generic Open-Meteo as secondary/fallback for daily/minutely
-  const [genericRes, harmonieData] = await Promise.all([
-    fetch(`${OPEN_METEO_BASE}?${new URLSearchParams({
-      latitude: lat.toString(),
-      longitude: lon.toString(),
-      current: CURRENT_PARAMS,
-      hourly: HOURLY_PARAMS,
-      daily: DAILY_PARAMS,
-      minutely_15: "precipitation",
-      forecast_minutely_15: "24",
-      timezone: "Europe/Amsterdam",
-      forecast_days: "2",
-      forecast_hours: "48",
-    })}`, { next: { revalidate: 300 } }).then(r => r.json()),
-    fetchModel(OPEN_METEO_BASE, lat, lon, { models: "knmi_seamless" }),
-  ]);
+  try {
+    const [genericRes, harmonieData] = await Promise.all([
+      fetch(`${OPEN_METEO_BASE}?${new URLSearchParams({
+        latitude: lat.toString(),
+        longitude: lon.toString(),
+        current: CURRENT_PARAMS,
+        hourly: HOURLY_PARAMS,
+        daily: DAILY_PARAMS,
+        minutely_15: "precipitation",
+        forecast_minutely_15: "24",
+        timezone: "Europe/Amsterdam",
+        forecast_days: "2",
+        forecast_hours: "48",
+      })}`, { next: { revalidate: 300 } }).then(r => {
+        if (!r.ok) throw new Error("Open-Meteo main API error");
+        return r.json();
+      }),
+      fetchModel(OPEN_METEO_BASE, lat, lon, { models: "knmi_seamless" }).catch(() => null),
+    ]);
 
-  const data = genericRes;
-  const { hourly, agreement } = blendHourly(harmonieData, null, data.hourly);
+    const data = genericRes;
+    const { hourly, agreement } = blendHourly(harmonieData, data.hourly);
 
   const minutely: MinutelyPrecipitation[] = [];
   if (data.minutely_15?.time && data.minutely_15?.precipitation) {
@@ -159,12 +162,16 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
     sunrise: data.daily.sunrise[0],
     sunset: data.daily.sunset[0],
     uvIndex: data.daily.uv_index_max[0],
-    models: {
-      agreement,
-      label: "KNMI HARMONIE Geverifieerd",
-      sources: ["KNMI HARMONIE"],
-    },
-  };
+      models: {
+        agreement,
+        label: "KNMI HARMONIE Geverifieerd",
+        sources: ["KNMI HARMONIE"],
+      },
+    };
+  } catch (error) {
+    console.error("fetchWeatherData crash:", error);
+    throw error;
+  }
 }
 
 function degreesToDirection(deg: number): string {
