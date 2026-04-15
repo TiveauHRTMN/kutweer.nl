@@ -316,18 +316,18 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       <header className="animate-fade-in flex flex-col items-center mb-2">
         <LogoFull height={52} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] sm:hidden mb-4" />
         <LogoFull height={64} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] hidden sm:block mb-5" />
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 w-full max-w-lg">
+        <div className="flex flex-row items-center justify-center gap-2 w-full max-w-lg">
           <button
             onClick={handleLocationClick}
             aria-label={`Locatie: ${city.name}`}
-            className="flex items-center justify-center gap-2 h-10 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-5 hover:bg-white/20 active:scale-[0.97] transition-all shrink-0"
+            className="flex items-center justify-center gap-2 h-10 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm px-3 sm:px-5 hover:bg-white/20 active:scale-[0.97] transition-all shrink-0"
           >
             <MapPin className="text-white w-4 h-4" />
-            <span className="text-sm font-semibold text-white truncate">{city.name}</span>
+            <span className="text-sm font-semibold text-white truncate max-w-[80px] sm:max-w-none">{city.name}</span>
           </button>
-          
-          {/* AI Chat Input - Header Style */}
-          <div className="relative flex-1 w-full">
+
+          {/* AI Chat Input - altijd naast GPS */}
+          <div className="relative flex-1 min-w-0">
             <div className="absolute left-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-accent-orange flex items-center justify-center text-[10px] pointer-events-none shadow-sm">🤖</div>
             <input
               type="text"
@@ -993,60 +993,26 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* ===== 14. Zon ===== */}
+      {/* ===== 14. Zon & UV — compact ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.8s" }}>
-        <div className="flex justify-between items-end mb-3 px-1">
-          <h3 className="section-title">Zon</h3>
-        </div>
-        <div className="card p-6">
-          <div className="flex justify-between items-end mb-6">
-            <div className="text-center">
-              <div className="text-xl mb-1 mt-2">🌅</div>
-              <div className="text-[10px] font-bold text-text-secondary uppercase">Opkomst</div>
-              <div className="text-lg font-bold">
-                {new Date(weather.sunrise).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+        <div className="card p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm">🌅</span>
+                <span className="text-xs font-bold text-text-primary">
+                  {new Date(weather.sunrise).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm">🌇</span>
+                <span className="text-xs font-bold text-text-primary">
+                  {new Date(weather.sunset).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
             </div>
-            <div className="text-center">
-              <div className="text-xl mb-1 mt-2">🌇</div>
-              <div className="text-[10px] font-bold text-text-secondary uppercase">Ondergang</div>
-              <div className="text-lg font-bold">
-                {new Date(weather.sunset).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
-              </div>
-            </div>
-          </div>
-          
-          <div className="sun-arc relative">
-            {(() => {
-              const now = Date.now();
-              const rise = new Date(weather.sunrise).getTime();
-              const set = new Date(weather.sunset).getTime();
-              const progress = Math.max(0, Math.min(1, (now - rise) / (set - rise)));
-              const isDayTime = now >= rise && now <= set;
-              const leftPct = progress * 100;
-              const arcHeight = Math.sin(progress * Math.PI) * 100;
-              return isDayTime ? (
-                <div
-                  className="absolute w-3.5 h-3.5 bg-accent-amber rounded-full shadow-[0_0_12px_3px_rgba(240,160,64,0.5)] transition-all duration-1000"
-                  style={{
-                    left: `${leftPct}%`,
-                    bottom: `${arcHeight}%`,
-                    transform: "translate(-50%, 50%)",
-                  }}
-                />
-              ) : (
-                <div
-                  className="absolute bottom-0 w-3 h-3 bg-gray-400 rounded-full opacity-50"
-                  style={{ left: now < rise ? "0%" : "100%", transform: "translate(-50%, 50%)" }}
-                />
-              );
-            })()}
-          </div>
-          
-          <div className="mt-6 flex items-center justify-between border-t border-black/10 pt-4">
-            <span className="text-sm font-medium text-text-secondary">UV-index vandaag</span>
-            <span className="badge" style={{ backgroundColor: `${uvInfo.color}30`, color: uvInfo.color, border: `1px solid ${uvInfo.color}50` }}>
-              {weather.uvIndex.toFixed(1)} — {uvInfo.label}
+            <span className="badge text-[10px]" style={{ backgroundColor: `${uvInfo.color}20`, color: uvInfo.color, border: `1px solid ${uvInfo.color}40` }}>
+              UV {weather.uvIndex.toFixed(0)} — {uvInfo.label.split("—")[0].trim()}
             </span>
           </div>
         </div>
