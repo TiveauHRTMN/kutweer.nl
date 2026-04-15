@@ -82,6 +82,12 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         const geoCity = await reverseGeocode(lat, lon);
         setCity(geoCity);
         localStorage.setItem("wz_city", JSON.stringify(geoCity));
+      }, (err) => {
+        console.error("GPS Error:", err);
+      }, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
       });
     }
   };
@@ -113,10 +119,14 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         <LogoFull height={52} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] sm:hidden mb-4" />
         <LogoFull height={64} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] hidden sm:block mb-5" />
         <div className="flex flex-row items-center justify-center gap-2 w-full max-w-sm px-4">
-          <div className="flex items-center justify-center gap-2 h-11 w-full rounded-2xl border border-white/25 bg-white/10 backdrop-blur-md px-5 shadow-lg">
+          <button 
+            onClick={handleLocationClick}
+            className="flex items-center justify-center gap-2 h-11 w-full rounded-2xl border border-white/25 bg-white/10 backdrop-blur-md px-5 shadow-lg active:scale-95 transition-all outline-none"
+          >
             <MapPin className="text-white w-4 h-4" />
             <span className="text-base font-bold text-white truncate">{city.name}</span>
-          </div>
+            <RefreshCw className="w-3 h-3 text-white/40 ml-1" />
+          </button>
         </div>
       </header>
 
@@ -135,7 +145,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
             </div>
             <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-cyan/10 border border-accent-cyan/20">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
-              <span className="text-[9px] font-bold text-accent-cyan uppercase tracking-wider">HARMONIE + ICON Live</span>
+              <span className="text-[9px] font-bold text-accent-cyan uppercase tracking-wider">KNMI HARMONIE Live</span>
             </div>
           </div>
           
@@ -724,8 +734,8 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           Data via <a href="https://open-meteo.com" className="text-accent-orange hover:underline">Open-Meteo</a> · KNMI HARMONIE · DWD ICON · ICON-D2.
           Twee weermodellen, nul ruis.
         </p>
-        <div className="mt-8 pt-6 border-t border-white/5 opacity-40">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em]">
+        <div className="mt-8 pt-6 border-t border-white/10 opacity-100">
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white">
             POWERED BY TIVEAU & KNMI
           </p>
         </div>
