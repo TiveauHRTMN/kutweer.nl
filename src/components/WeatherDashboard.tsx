@@ -726,7 +726,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </p>
         <div className="mt-8 pt-6 border-t border-white/5 opacity-40">
           <p className="text-[10px] font-black uppercase tracking-[0.3em]">
-            A Tiveau Product
+            POWERED BY TIVEAU & KNMI
           </p>
         </div>
       </footer>
