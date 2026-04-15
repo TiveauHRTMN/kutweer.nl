@@ -1,11 +1,17 @@
 {
   "name": "WeerZone",
   "short_name": "WeerZone",
-  "description": "De enige weerdienst die de waarheid durft te vertellen. 48 uur op de vierkante meter.",
+  "description": "48-uurs weerbericht — de rest is ruis",
   "start_url": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#4a9ee8",
   "theme_color": "#4a9ee8",
+  "lang": "nl",
+  "categories": ["weather"],
+  "scope": "/",
+  "id": "/",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/favicon-icon.png",

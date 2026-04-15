@@ -25,6 +25,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     });
   }
 
+  // City alert pages — /weer/amsterdam/alert, etc.
+  // Hogere priority: Google beloont frequent bijgewerkte alert-content
+  for (const city of DUTCH_CITIES) {
+    const slug = city.name.toLowerCase().replace(/\s+/g, "-");
+    routes.push({
+      url: `${baseUrl}/weer/${slug}/alert`,
+      lastModified: new Date(),
+      changeFrequency: "hourly",
+      priority: 0.9,
+    });
+  }
+
   // Static pages
   routes.push(
     { url: `${baseUrl}/zakelijk`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
