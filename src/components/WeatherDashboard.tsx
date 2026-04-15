@@ -230,10 +230,6 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
                 {weather.models.label}
               </div>
           
-          {/* Email Promo — Prominent na de hoofdkaart */}
-          <div className="mt-4 animate-fade-in" style={{ animationDelay: "0.15s" }}>
-            <EmailSubscribe city={city} />
-          </div>
               <p className="text-[11px] text-text-secondary leading-snug">
                 {weather.models.agreement >= 80 
                   ? "Alle modellen zitten op één lijn. De kans dat deze voorspelling uitkomt is maximaal."
