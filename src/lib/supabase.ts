@@ -9,7 +9,10 @@ export function getSupabase(): SupabaseClient | null {
   if (_supabase) return _supabase;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
-  if (!url || !key || !url.startsWith("http")) return null;
+  if (!url || !key || !url.startsWith("http")) {
+    console.warn("[Supabase] Missing config:", { url: !!url, key: !!key });
+    return null;
+  }
   try {
     _supabase = createClient(url, key);
     return _supabase;
