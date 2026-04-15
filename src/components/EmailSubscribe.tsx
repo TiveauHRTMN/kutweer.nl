@@ -61,7 +61,7 @@ export default function EmailSubscribe({ city }: Props) {
 
       <div className="flex items-center gap-2">
         <Mail className="w-4 h-4 text-accent-orange" />
-        <h3 className="text-sm font-bold text-text-primary">De 48-Uur Update</h3>
+        <h3 className="text-sm font-bold text-text-primary">Krijg 48u weerupdates</h3>
       </div>
 
       <p className="text-xs text-text-secondary break-words leading-snug">

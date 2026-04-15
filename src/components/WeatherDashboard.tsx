@@ -112,9 +112,6 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       <header className="animate-fade-in flex flex-col items-center mb-6">
         <LogoFull height={52} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] sm:hidden mb-1" />
         <LogoFull height={64} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] hidden sm:block mb-2" />
-        <div className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em]">
-          Persoonlijke Forecast • {city.name}
-        </div>
       </header>
 
       {/* Email Promo — Prominent direct onder de header voor maximale conversie */}
