@@ -40,7 +40,7 @@ export async function POST(req: Request) {
         let { data, error } = await resend.emails.send({
           from: fromAddress,
           to: email,
-          subject: "Bevestigd: Je Toegang tot WeerZone.",
+          subject: "Bevestigd: je toegang tot WeerZone",
           html: `
 <!DOCTYPE html>
 <html lang="nl">
@@ -70,14 +70,14 @@ export async function POST(req: Request) {
         <tr>
           <td style="width:48%;background:#f8fafc;border-radius:12px;padding:20px;vertical-align:top;">
             <p style="margin:0;font-size:28px;line-height:1;">📡</p>
-            <p style="margin:8px 0 4px;font-size:14px;font-weight:800;color:#1e293b;">48-Uur Briefing</p>
+            <p style="margin:8px 0 4px;font-size:14px;font-weight:800;color:#1e293b;">48-uursvoorspelling</p>
             <p style="margin:0;font-size:12px;color:#64748b;line-height:1.5;">Elke ochtend om 08:00. Temperatuur, regen, wind, UV — per uur uitgesplitst. Geen gelul.</p>
           </td>
           <td style="width:4%;"></td>
           <td style="width:48%;background:#f8fafc;border-radius:12px;padding:20px;vertical-align:top;">
             <p style="margin:0;font-size:28px;line-height:1;">🚨</p>
-            <p style="margin:8px 0 4px;font-size:14px;font-weight:800;color:#1e293b;">Extreme Alerts</p>
-            <p style="margin:0;font-size:12px;color:#64748b;line-height:1.5;">Wolkbreuk? Storm? Hittegolf? Je weet het eerder dan het KNMI het meldt.</p>
+            <p style="margin:8px 0 4px;font-size:14px;font-weight:800;color:#1e293b;">Extreme-weerwaarschuwingen</p>
+            <p style="margin:0;font-size:12px;color:#64748b;line-height:1.5;">Wolkbreuk? Storm? Hittegolf? Je weet het eerder dan je buren.</p>
           </td>
         </tr>
       </table>
@@ -86,14 +86,14 @@ export async function POST(req: Request) {
         <tr>
           <td style="width:48%;background:#f8fafc;border-radius:12px;padding:20px;vertical-align:top;">
             <p style="margin:0;font-size:28px;line-height:1;">🎯</p>
-            <p style="margin:8px 0 4px;font-size:14px;font-weight:800;color:#1e293b;">Jouw Locatie</p>
-            <p style="margin:0;font-size:12px;color:#64748b;line-height:1.5;">Niet "ergens in Nederland". Exacte data voor ${city || "jouw stad"}. Op de vierkante meter.</p>
+            <p style="margin:8px 0 4px;font-size:14px;font-weight:800;color:#1e293b;">Jouw locatie</p>
+            <p style="margin:0;font-size:12px;color:#64748b;line-height:1.5;">Niet 'ergens in Nederland'. Exacte data voor ${city || "jouw stad"}, op de vierkante meter.</p>
           </td>
           <td style="width:4%;"></td>
           <td style="width:48%;background:#f8fafc;border-radius:12px;padding:20px;vertical-align:top;">
             <p style="margin:0;font-size:28px;line-height:1;">🧠</p>
             <p style="margin:8px 0 4px;font-size:14px;font-weight:800;color:#1e293b;">KNMI HARMONIE</p>
-            <p style="margin:0;font-size:12px;color:#64748b;line-height:1.5;">Direct van het KNMI supercomputer. 2.5km resolutie. Zo nauwkeurig als het kan.</p>
+            <p style="margin:0;font-size:12px;color:#64748b;line-height:1.5;">Rechtstreeks van de KNMI-supercomputer. 2,5 km resolutie — zo nauwkeurig als het kan.</p>
           </td>
         </tr>
       </table>
@@ -117,8 +117,8 @@ export async function POST(req: Request) {
             <div style="width:24px;height:24px;border-radius:50%;background:#3b82f6;text-align:center;line-height:24px;color:white;font-size:12px;">⟳</div>
           </td>
           <td style="padding-bottom:16px;">
-            <p style="margin:0;font-size:14px;font-weight:700;color:#1e293b;">Radar kalibreren</p>
-            <p style="margin:2px 0 0;font-size:12px;color:#64748b;">We laden de weermodellen voor ${city || "jouw locatie"}</p>
+            <p style="margin:0;font-size:14px;font-weight:700;color:#1e293b;">Weerdata laden</p>
+            <p style="margin:2px 0 0;font-size:12px;color:#64748b;">We laden HARMONIE voor ${city || "jouw locatie"}</p>
           </td>
         </tr>
         <tr>
@@ -126,7 +126,7 @@ export async function POST(req: Request) {
             <div style="width:24px;height:24px;border-radius:50%;background:#f1f5f9;text-align:center;line-height:24px;color:#94a3b8;font-size:12px;">◦</div>
           </td>
           <td>
-            <p style="margin:0;font-size:14px;font-weight:700;color:#1e293b;">Eerste briefing</p>
+            <p style="margin:0;font-size:14px;font-weight:700;color:#1e293b;">Eerste weerrapport</p>
             <p style="margin:2px 0 0;font-size:12px;color:#64748b;">Morgenochtend 08:00 in je inbox</p>
           </td>
         </tr>
@@ -137,7 +137,7 @@ export async function POST(req: Request) {
     <div style="background:#ffffff;padding:28px 24px;text-align:center;">
       <p style="margin:0 0 16px;font-size:14px;color:#475569;">Wil je nu al zien wat er aankomt?</p>
       <a href="https://weerzone.nl/weer/${(city || "amsterdam").toLowerCase().replace(/\\s+/g, '-')}" style="display:inline-block;padding:14px 40px;background:#f59e0b;color:#1e293b;font-weight:800;font-size:14px;border-radius:999px;text-decoration:none;text-transform:uppercase;box-shadow:0 4px 12px rgba(245,158,11,0.3);">
-        Bekijk Live Dashboard →
+        Bekijk live dashboard →
       </a>
     </div>
 
@@ -163,7 +163,7 @@ export async function POST(req: Request) {
           const retry = await resend.emails.send({
             from: fallbackFrom,
             to: email,
-            subject: "Bevestigd: Je Toegang tot WeerZone.",
+            subject: "Bevestigd: je toegang tot WeerZone",
             html: `<div style="font-family:system-ui;padding:40px;max-width:480px;margin:0 auto;background:linear-gradient(135deg,#2563eb,#3b82f6);border-radius:18px;text-align:center;">
               <div style="font-size:48px;margin-bottom:12px;">✅</div>
               <h2 style="color:#ffffff;margin:0 0 8px;">Je bent binnen.</h2>
