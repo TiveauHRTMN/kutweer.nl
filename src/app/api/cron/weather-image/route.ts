@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getSupabase } from "@/lib/supabase";
 import { getWeatherDescription, getWeatherEmoji } from "@/lib/weather";
-import { getConditionTag, getAffiliateUrl, trackEvent, ConditionTag } from "@/lib/affiliate-orchestrator";
+import { getConditionTag, trackEvent, ConditionTag } from "@/lib/affiliate-orchestrator";
 import { WeatherData } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -69,45 +69,111 @@ function buildHourBlock(hour: string, temp: number, code: number, precipProb: nu
     </td>`;
 }
 
-function buildAffiliateBlock(tag: ConditionTag, city: string, sessionId: string): string {
-  const affiliate = getAffiliateUrl(tag, city);
-  let icon = "🛒";
-  let headline = "Passend bij het weer van vandaag";
+function buildAffiliateBlock(tag: ConditionTag, weatherData: Record<string, unknown>): string {
+  const current = weatherData.current as Record<string, number>;
+  const daily = weatherData.daily as Record<string, number[]>;
+  const temp = Math.round(current.temperature_2m);
+  const wind = Math.round(current.wind_speed_10m);
+  const totalRain = (daily.precipitation_sum?.[0] ?? 0) + (daily.precipitation_sum?.[1] ?? 0);
+  const maxTemp = Math.round(Math.max(...(daily.temperature_2m_max?.slice(0, 2) ?? [temp])));
+  const minTemp = Math.round(Math.min(...(daily.temperature_2m_min?.slice(0, 2) ?? [temp])));
+
+  let productImage = "";
+  let productTitle = "";
+  let productPrice = "";
+  let productOldPrice = "";
+  let productUrl = "";
+  let reason = "";
+  let urgency = "";
+  let tagLabel = "";
+
   switch (tag) {
     case "RAIN":
-      icon = "🍕";
-      headline = "Vandaag thuisbezorgd laten bezorgen?";
+      productImage = "https://m.media-amazon.com/images/I/71W-kisuJRL._AC_UL320_.jpg";
+      productTitle = "Waterdichte regenjas — ademend";
+      productPrice = "€49,99";
+      productOldPrice = "€69,99";
+      productUrl = "https://www.amazon.nl/dp/B0DLH9WJSG?tag=tiveaubusines-21";
+      reason = `${totalRain.toFixed(0)}mm regen verwacht. Een paraplu vergeet je, een jas niet.`;
+      urgency = "🔴 Vandaag nog nodig";
+      tagLabel = "Bestseller";
       break;
     case "HEAT":
-      icon = "☀️";
-      headline = "Mooi weer — boek een dagje weg";
+      productImage = "https://m.media-amazon.com/images/I/714aS4VLtjL._AC_UL320_.jpg";
+      productTitle = "Zonnebrand SPF 50+ waterproof";
+      productPrice = "€12,99";
+      productUrl = "https://www.amazon.nl/s?k=zonnebrand+spf+50+waterproof&tag=tiveaubusines-21";
+      reason = `${maxTemp}° en hoge UV. Zonder smeren ben je binnen 20 minuten verbrand.`;
+      urgency = "☀️ Smeren voor je de deur uit gaat";
+      tagLabel = `UV hoog`;
       break;
     case "COLD":
+      productImage = "https://m.media-amazon.com/images/I/61B7yOCdstL._AC_UL320_.jpg";
+      productTitle = "Softshell jas — wind- en waterdicht";
+      productPrice = "€49,99";
+      productOldPrice = "€64,99";
+      productUrl = "https://www.amazon.nl/dp/B0836GND15?tag=tiveaubusines-21";
+      reason = `${minTemp}° tot ${maxTemp}°. Te koud voor een trui, te wisselvallig voor een winterjas.`;
+      urgency = "🧊 Kou op komst";
+      tagLabel = "Deal";
+      break;
     case "WIND":
-      icon = "🧥";
-      headline = "Bescherm je tegen het weer";
+      productImage = "https://m.media-amazon.com/images/I/61zPZGagoSL._AC_UL320_.jpg";
+      productTitle = "Senz stormparaplu — windproof 100 km/u";
+      productPrice = "€29,95";
+      productUrl = "https://www.amazon.nl/dp/B07B8K47M2?tag=tiveaubusines-21";
+      reason = `Windstoten tot ${wind} km/u. Een normale paraplu overleeft dit niet.`;
+      urgency = "💨 Windkracht neemt toe";
+      tagLabel = "Anti-storm";
       break;
     case "PERFECT":
-      icon = "🌿";
-      headline = "Perfect weer voor een dagje uit";
+      productImage = "https://m.media-amazon.com/images/I/71tONXZG4VL._AC_UL320_.jpg";
+      productTitle = "Picknickdeken XL — waterdichte onderkant";
+      productPrice = "€24,99";
+      productUrl = "https://www.amazon.nl/dp/B0GLFFKWT4?tag=tiveaubusines-21";
+      reason = `${maxTemp}°, droog, weinig wind. Dit is zeldzaam in Nederland.`;
+      urgency = "🌿 Ga naar buiten — nu";
+      tagLabel = "Prachtweer";
+      break;
+    default:
+      productImage = "https://m.media-amazon.com/images/I/71W-kisuJRL._AC_UL320_.jpg";
+      productTitle = "3-in-1 jas — regen, wind én kou";
+      productPrice = "€59,99";
+      productOldPrice = "€79,99";
+      productUrl = "https://www.amazon.nl/dp/B0DLH9WJSG?tag=tiveaubusines-21";
+      reason = `${minTemp}° tot ${maxTemp}°, wisselvallig. Eén jas voor alles.`;
+      urgency = "📦 Morgen in huis";
+      tagLabel = "Alleskunner";
       break;
   }
 
-  // Fire MAIL impression (fire-and-forget, no await — this is called inside a sync function)
-  // Tracking is done outside in the async flow
-  const trackingPixel = `https://bhguergqkyiejyxsiwdu.supabase.co/rest/v1/rpc/noop?session=${encodeURIComponent(sessionId)}`;
-  void trackingPixel; // not used directly — tracking handled separately
-
   return `
     <!-- AFFILIATE BLOCK -->
-    <div style="background:#ffffff;padding:24px;border-bottom:1px solid #e2e8f0;text-align:center;">
-      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:20px 24px;">
-        <p style="margin:0;font-size:22px;line-height:1;">${icon}</p>
-        <p style="margin:8px 0 4px;font-size:15px;font-weight:800;color:#1e293b;">${headline}</p>
-        <a href="${affiliate.url}" style="display:inline-block;margin-top:12px;padding:12px 32px;background:#f59e0b;color:#1e293b;font-weight:800;font-size:13px;border-radius:999px;text-decoration:none;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(245,158,11,0.25);">
-          ${affiliate.label} →
+    <div style="background:#ffffff;padding:0;border-bottom:1px solid #e2e8f0;">
+      <div style="background:#1e293b;padding:10px 24px;text-align:center;">
+        <p style="margin:0;font-size:11px;color:#f59e0b;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;">${urgency}</p>
+      </div>
+      <div style="padding:20px 24px;">
+        <table cellpadding="0" cellspacing="0" border="0" style="width:100%;"><tr>
+          <td style="width:90px;vertical-align:top;padding-right:16px;">
+            <div style="width:90px;height:90px;border-radius:12px;overflow:hidden;position:relative;">
+              <img src="${productImage}" alt="${productTitle}" style="width:100%;height:100%;object-fit:cover;" />
+              ${tagLabel ? `<span style="position:absolute;top:4px;left:4px;background:#f59e0b;color:#1e293b;font-size:9px;font-weight:800;padding:2px 6px;border-radius:99px;text-transform:uppercase;">${tagLabel}</span>` : ""}
+            </div>
+          </td>
+          <td style="vertical-align:top;">
+            <p style="margin:0;font-size:14px;font-weight:800;color:#1e293b;line-height:1.3;">${productTitle}</p>
+            <p style="margin:4px 0 0;font-size:12px;color:#64748b;line-height:1.4;">${reason}</p>
+            <div style="margin-top:10px;">
+              <span style="font-size:18px;font-weight:900;color:#1e293b;">${productPrice}</span>
+              ${productOldPrice ? `<span style="font-size:12px;color:#94a3b8;text-decoration:line-through;margin-left:6px;">${productOldPrice}</span>` : ""}
+            </div>
+          </td>
+        </tr></table>
+        <a href="${productUrl}" style="display:block;margin-top:16px;padding:13px;background:#f59e0b;color:#1e293b;font-weight:800;font-size:13px;border-radius:12px;text-decoration:none;text-align:center;box-shadow:0 4px 12px rgba(245,158,11,0.25);">
+          Bekijk op Amazon.nl →
         </a>
-        <p style="margin:10px 0 0;font-size:10px;color:#94a3b8;">Gesponsord · ${affiliate.platform}</p>
+        <p style="margin:8px 0 0;font-size:10px;color:#94a3b8;text-align:center;">Advertentie · Amazon.nl</p>
       </div>
     </div>`;
 }
@@ -422,7 +488,7 @@ export async function GET(req: Request) {
 
     const emailSessionId = Math.random().toString(36).slice(2);
     const conditionTag = getConditionTag(weatherForOrchestrator);
-    const affiliateBlock = buildAffiliateBlock(conditionTag, city, emailSessionId);
+    const affiliateBlock = buildAffiliateBlock(conditionTag, weatherData);
 
     // Track MAIL impression async (fire-and-forget)
     trackEvent(

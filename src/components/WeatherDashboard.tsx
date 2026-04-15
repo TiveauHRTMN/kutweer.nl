@@ -533,7 +533,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           <h3 className="section-title">Op basis van het weer in {city.name}</h3>
           <span className="text-[10px] font-bold text-accent-orange/70 uppercase tracking-wider">Aanbevolen</span>
         </div>
-        <AffiliateCard variant="top" weather={weather} />
+        <AffiliateCard weather={weather} />
       </div>
 
 
@@ -733,7 +733,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           </h3>
           <span className="text-[10px] font-bold text-accent-orange/70 uppercase tracking-wider">Aanbevolen</span>
         </div>
-        <AffiliateCard variant="bottom" weather={weather} />
+        <AffiliateCard weather={weather} />
       </div>
 
       {/* ===== 18. E-mail Weerrapport (Moved to top) ===== */}
