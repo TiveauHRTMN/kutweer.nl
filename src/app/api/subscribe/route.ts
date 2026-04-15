@@ -34,8 +34,11 @@ export async function POST(req: Request) {
     // Welkomstmail sturen via Resend
     if (process.env.RESEND_API_KEY) {
       try {
-        const { data, error } = await resend.emails.send({
-          from: "WeerZone <info@weerzone.nl>",
+        // Probeer eigen domein, fallback naar resend.dev
+        const fromAddress = "WeerZone <info@weerzone.nl>";
+        const fallbackFrom = "WeerZone <onboarding@resend.dev>";
+        let { data, error } = await resend.emails.send({
+          from: fromAddress,
           to: email,
           subject: "Bevestigd: Je Toegang tot WeerZone.",
           html: `
@@ -67,9 +70,28 @@ export async function POST(req: Request) {
           `,
         });
 
+        // Als domein niet geverifieerd is, fallback naar resend.dev
+        if (error && (error.message?.includes("not verified") || error.message?.includes("domain"))) {
+          console.warn("Domain not verified, falling back to resend.dev");
+          const retry = await resend.emails.send({
+            from: fallbackFrom,
+            to: email,
+            subject: "Bevestigd: Je Toegang tot WeerZone.",
+            html: `<div style="font-family:system-ui;padding:40px;max-width:480px;margin:0 auto;background:#4a9ee8;border-radius:18px;">
+              <div style="background:white;border-radius:18px;padding:32px;">
+                <h2 style="color:#1e293b;margin-top:0;">Je staat op de lijst!</h2>
+                <p style="color:#475569;">Morgenochtend om 08:00 krijg je de eerste keiharde feiten voor ${city || "jouw stad"}.</p>
+                <p style="color:#1e293b;font-weight:600;">Hou het lokaal. Laat de rest maar natregenen.</p>
+              </div>
+            </div>`,
+          });
+          data = retry.data;
+          error = retry.error;
+        }
         if (error) {
           console.error("Resend API rejected the email:", error);
-          return NextResponse.json({ error: "Email niet verzonden (Resend error)", details: error.message }, { status: 500 });
+          // Subscriber is opgeslagen, email mislukt — geen 500 teruggeven
+          console.error("Email failed but subscriber saved:", error.message);
         } else {
           console.log("Welcome email sent successfully:", data);
         }

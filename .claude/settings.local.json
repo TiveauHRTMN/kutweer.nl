@@ -24,7 +24,9 @@
       "Bash(curl -s \"https://api.open-meteo.com/v1/knmi-icon?latitude=52.37&longitude=4.89&hourly=temperature_2m\")",
       "WebSearch",
       "Bash(nslookup weerzone.nl)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "WebFetch(domain:weerzone.nl)",
+      "WebFetch(domain:api.open-meteo.com)"
     ]
   }
 }

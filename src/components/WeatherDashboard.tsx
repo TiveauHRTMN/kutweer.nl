@@ -377,9 +377,15 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       {/* ===== 1. Main Weather Card — Kerninformatie ===== */}
       <div className="card overflow-hidden relative animate-fade-in" style={{ animationDelay: "0.1s" }}>
         <div className="p-6 relative z-[2]">
-          <div className="text-sm font-medium text-text-secondary flex items-center gap-1 mb-2">
-            <MapPin className="w-3 h-3 text-accent-red" />
-            {city.name} — {new Date().toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm font-medium text-text-secondary flex items-center gap-1">
+              <MapPin className="w-3 h-3 text-accent-red" />
+              {city.name} — {new Date().toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}
+            </div>
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-accent-cyan/10 border border-accent-cyan/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-green animate-pulse" />
+              <span className="text-[9px] font-bold text-accent-cyan uppercase tracking-wider">HARMONIE + ICON Live</span>
+            </div>
           </div>
           
           <div className="flex justify-between items-start mt-4">
@@ -396,6 +402,16 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           <div className="mt-8 bg-accent-orange/15 border-l-4 border-accent-orange p-4 rounded-r-lg">
             <p className="font-semibold text-lg text-text-primary break-words leading-snug">
               {getMainCommentary(weather)}
+            </p>
+            {/* FOMO urgentie-trigger */}
+            <p className="text-xs text-text-muted mt-2 italic">
+              {weather.hourly.slice(0, 6).some(h => h.precipitation > 0.5)
+                ? `⚡ Verandering binnen ${weather.hourly.findIndex(h => h.precipitation > 0.5) + 1} uur — wie dit niet leest, staat straks in de regen.`
+                : weather.daily[1] && Math.abs(weather.daily[1].tempMax - weather.daily[0].tempMax) >= 4
+                ? `📉 Morgen ${weather.daily[1].tempMax > weather.daily[0].tempMax ? "stuk warmer" : "flink kouder"} — ${Math.abs(weather.daily[1].tempMax - weather.daily[0].tempMax)}° verschil. Pas je plannen aan.`
+                : weather.current.windSpeed > 30
+                ? "💨 Dit is niet het moment om dingen op hun beloop te laten."
+                : `📊 ${new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })} — ${weather.models.sources.length} supercomputers bevestigen dit.`}
             </p>
           </div>
           
@@ -910,9 +926,13 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* ===== 11. Model Confidence ===== */}
+      {/* ===== 11. Model Confidence — HARMONIE + ICON ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.65s" }}>
-        <div className="card p-4">
+        <div className="flex justify-between items-end mb-2 px-1">
+          <h3 className="section-title">Supercomputer Check</h3>
+          <span className="text-[10px] text-white/60">Real-time modeldata</span>
+        </div>
+        <div className="card p-4 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center text-lg">
@@ -935,6 +955,26 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
               </div>
               <span className="text-xs font-bold text-text-secondary">{weather.models.agreement}%</span>
             </div>
+          </div>
+          {/* Model detail badges */}
+          <div className="flex flex-wrap gap-2 pt-2 border-t border-black/5">
+            {weather.models.sources.includes("KNMI HARMONIE") && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-accent-cyan bg-accent-cyan/10 px-2 py-1 rounded-full border border-accent-cyan/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-green" /> KNMI HARMONIE — 2.5km
+              </span>
+            )}
+            {weather.models.sources.includes("DWD ICON") && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-500 bg-blue-500/10 px-2 py-1 rounded-full border border-blue-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-green" /> DWD ICON — 7km
+              </span>
+            )}
+            <span className="text-[10px] text-text-muted italic">
+              {weather.models.agreement >= 70
+                ? "Beide supercomputers zien hetzelfde. Dit gaat zo gebeuren."
+                : weather.models.agreement >= 40
+                ? "Kleine verschillen — de grote lijn staat vast."
+                : "Modellen twijfelen. Andere apps verbergen dit. Wij niet."}
+            </span>
           </div>
         </div>
       </div>
@@ -1016,6 +1056,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       <div className="animate-fade-in" style={{ animationDelay: "0.85s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Eerlijk VS Onzin</h3>
+          <span className="text-[10px] text-white/60">Waarom 90% fout zit</span>
         </div>
         <div className="card p-4 overflow-hidden relative">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

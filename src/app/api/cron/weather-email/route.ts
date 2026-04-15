@@ -138,13 +138,17 @@ export async function GET(req: Request) {
       // Batch verstuur per stad
       for (const sub of group.subscribers) {
         try {
-          await resend.emails.send({
-            from: "WeerZone <info@weerzone.nl>",
+          const emailPayload = {
             to: sub.email,
             subject: `${getWeatherEmoji(weatherData.current.weather_code, true)} ${Math.round(weatherData.current.temperature_2m)}° in ${sub.city} — WeerZone`,
             html: html.replace("{{EMAIL}}", encodeURIComponent(sub.email)),
-          });
-          sent++;
+          };
+          // Probeer eigen domein, fallback naar resend.dev
+          let result = await resend.emails.send({ from: "WeerZone <info@weerzone.nl>", ...emailPayload });
+          if (result.error && (result.error.message?.includes("not verified") || result.error.message?.includes("domain"))) {
+            result = await resend.emails.send({ from: "WeerZone <onboarding@resend.dev>", ...emailPayload });
+          }
+          if (!result.error) sent++; else errors.push(`${sub.email}: ${result.error.message}`);
         } catch (e) {
           errors.push(`${sub.email}: ${e}`);
         }
