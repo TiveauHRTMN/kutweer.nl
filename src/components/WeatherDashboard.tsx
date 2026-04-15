@@ -108,24 +108,22 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
     <>
     <WeatherBackground weatherCode={weather.current.weatherCode} isDay={weather.current.isDay} />
     <div className="relative z-10 max-w-2xl mx-auto p-4 pb-20 sm:p-6 space-y-6" style={{ isolation: "isolate" }}>
-      {/* Header */}
+      {/* Header — Nu zonder stadskeuze, puur persoonlijk */}
       <header className="animate-fade-in flex flex-col items-center mb-6">
-        <LogoFull height={52} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] sm:hidden mb-4" />
-        <LogoFull height={64} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] hidden sm:block mb-5" />
-        <div className="flex flex-row items-center justify-center gap-2 w-full max-w-sm">
-          <button
-            onClick={handleLocationClick}
-            aria-label={`Locatie: ${city.name}`}
-            className="flex items-center justify-center gap-2 h-11 w-full rounded-2xl border border-white/25 bg-white/10 backdrop-blur-md px-5 hover:bg-white/20 active:scale-[0.97] transition-all shadow-lg"
-          >
-            <MapPin className="text-white w-4 h-4" />
-            <span className="text-base font-bold text-white truncate">{city.name}</span>
-          </button>
+        <LogoFull height={52} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] sm:hidden mb-1" />
+        <LogoFull height={64} className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.15)] hidden sm:block mb-2" />
+        <div className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em]">
+          Persoonlijke Forecast • {city.name}
         </div>
       </header>
 
+      {/* Email Promo — Prominent direct onder de header voor maximale conversie */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
+        <EmailSubscribe city={city} />
+      </div>
+
       {/* ===== 1. Main Weather Card — Kerninformatie ===== */}
-      <div className="card overflow-hidden relative animate-fade-in" style={{ animationDelay: "0.1s" }}>
+      <div className="card overflow-hidden relative animate-fade-in" style={{ animationDelay: "0.15s" }}>
         <div className="p-6 relative z-[2]">
           <div className="flex items-center justify-between mb-2">
             <div className="text-sm font-medium text-text-secondary flex items-center gap-1">
@@ -231,6 +229,11 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
               <div className="text-sm font-bold text-text-primary mb-1">
                 {weather.models.label}
               </div>
+          
+          {/* Email Promo — Prominent na de hoofdkaart */}
+          <div className="mt-4 animate-fade-in" style={{ animationDelay: "0.15s" }}>
+            <EmailSubscribe city={city} />
+          </div>
               <p className="text-[11px] text-text-secondary leading-snug">
                 {weather.models.agreement >= 80 
                   ? "Alle modellen zitten op één lijn. De kans dat deze voorspelling uitkomt is maximaal."
@@ -334,57 +337,6 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* ===== 4. Wanneer wordt het droog? — Cruciale info ===== */}
-      {(() => {
-        const upcoming = weather.hourly.slice(0, 24);
-        let dryStart: Date | null = null;
-        let dryHours = 0;
-        for (let i = 0; i < upcoming.length; i++) {
-          if (upcoming[i].precipitation === 0) {
-            if (!dryStart) dryStart = new Date(upcoming[i].time);
-            dryHours++;
-          } else {
-            if (dryHours >= 2) break;
-            dryStart = null;
-            dryHours = 0;
-          }
-        }
-        const isCurrentlyDry = weather.current.precipitation === 0;
-        let rainStart: Date | null = null;
-        if (isCurrentlyDry) {
-          const firstRain = upcoming.find(h => h.precipitation > 0.1);
-          if (firstRain) rainStart = new Date(firstRain.time);
-        }
-        const fmt = (d: Date) => d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
-        
-        return (
-          <div className="animate-fade-in" style={{ animationDelay: "0.25s" }}>
-            <div className={`card p-5 border-l-8 ${isCurrentlyDry && !rainStart ? 'border-accent-green' : isCurrentlyDry ? 'border-accent-amber' : 'border-accent-red shadow-[0_0_20px_rgba(239,68,68,0.1)]'}`}>
-              <div className="flex items-center gap-5">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 ${isCurrentlyDry ? 'bg-accent-green/10' : 'bg-accent-red/10'}`}>
-                  {isCurrentlyDry ? "🏃" : "☕"}
-                </div>
-                <div className="flex-1">
-                  <div className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-1">
-                    {isCurrentlyDry ? "PLAN JE MOMENT" : "WANNEER NAAR BUITEN?"}
-                  </div>
-                  <div className="text-base sm:text-lg font-bold text-text-primary leading-tight">
-                    {isCurrentlyDry && rainStart
-                      ? `Geniet ervan. Over ${Math.round((rainStart.getTime() - Date.now()) / 3600000)} uur (${fmt(rainStart)}) wordt het nat.`
-                      : isCurrentlyDry
-                      ? "De kust is veilig. Er wordt de komende uren geen neerslag verwacht."
-                      : dryStart && dryHours >= 2
-                      ? `Wacht tot ${fmt(dryStart)}. Dan heb je een droog venster van ${dryHours} uur.`
-                      : dryStart
-                      ? `Korte pauze rond ${fmt(dryStart)}. Ideaal voor een snelle boodschap.`
-                      : "Slecht nieuws: de komende uren blijft het zeiken van de regen."}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
 
       {/* ===== Extremiteiten-index ===== */}
       {(() => {
@@ -552,10 +504,6 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         );
       })()}
 
-      {/* ===== E-mail weerrapport ===== */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.18s" }}>
-        <EmailSubscribe city={city} />
-      </div>
 
       {/* ===== Affiliate Spot 1 — prominent boven de vouw ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
@@ -637,36 +585,49 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* ===== 8. Fiets-Weer ===== */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
-        <div className="flex justify-between items-end mb-3 px-1">
-          <h3 className="section-title">Fiets-Weer</h3>
-          <span className="text-xs text-white/60">Durf je?</span>
-        </div>
-        <div className="card p-4">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-black/5 rounded-full flex items-center justify-center text-2xl">
-              🚴
+      {/* ===== 8. Activiteiten-Weer (Fiets & Wandel) ===== */}
+      {(() => {
+        // Wandelen is minder windgevoelig dan fietsen
+        const wandelScore = Math.min(10, Math.max(0, fietsScore + (weather.current.windSpeed > 25 ? 2 : 0) - (weather.current.precipitation > 0.5 ? 1 : 0)));
+        const avgScore = Math.round((fietsScore + wandelScore) / 2);
+        
+        return (
+          <div className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
+            <div className="flex justify-between items-end mb-3 px-1">
+              <h3 className="section-title">Activiteiten-Weer</h3>
+              <span className="text-xs text-white/60">Fietsen & Wandelen</span>
             </div>
-            <div className="flex-1">
-              <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-2xl font-bold text-text-primary">{fietsScore}</span>
-                <span className="text-sm font-semibold text-text-muted">/10</span>
+            <div className="card p-4">
+              <div className="flex items-center gap-6">
+                <div className="flex -space-x-4">
+                  <div className="w-14 h-14 bg-accent-orange/10 border-4 border-white rounded-full flex items-center justify-center text-2xl shadow-sm relative z-10">🚴</div>
+                  <div className="w-14 h-14 bg-accent-cyan/10 border-4 border-white rounded-full flex items-center justify-center text-2xl shadow-sm relative z-0">🥾</div>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-bold text-text-primary">Buitenindex</span>
+                    <span className="text-xl font-black text-text-primary">{avgScore}<span className="text-xs text-text-muted ml-0.5">/10</span></span>
+                  </div>
+                  <div className="score-bar h-2.5">
+                    <div 
+                      className="score-bar-fill"
+                      style={{ 
+                        width: `${avgScore * 10}%`,
+                        background: avgScore > 7 ? 'var(--accent-green)' : avgScore > 4 ? 'var(--accent-amber)' : 'var(--accent-red)'
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="score-bar">
-                <div 
-                  className="score-bar-fill"
-                  style={{ 
-                    width: `${fietsScore * 10}%`,
-                    background: fietsScore > 7 ? 'var(--accent-green)' : fietsScore > 4 ? 'var(--accent-amber)' : 'var(--accent-red)'
-                  }}
-                />
-              </div>
+              <p className="mt-4 text-sm font-medium leading-snug">
+                {avgScore >= 8 ? "Perfecte dag voor een tocht. Geen smoesjes, trek die schoenen aan." :
+                 avgScore >= 5 ? `Prima te doen. ${weather.current.windSpeed > 25 ? 'Lekker uitwaaien, met de wind in de rug.' : 'Lekker buitenmomentje.'}` :
+                 "Niet ideaal. Korte wandeling kan, maar laat die fietstocht maar zitten."}
+              </p>
             </div>
           </div>
-          <p className="mt-4 text-sm font-medium">{fietsLabel}</p>
-        </div>
-      </div>
+        );
+      })()}
 
 
       {/* ===== 10. Detail Grid — wind, vocht, neerslag, temp ===== */}
@@ -738,72 +699,9 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* ===== 11. Model Confidence — HARMONIE + ICON ===== */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.65s" }}>
-        <div className="flex justify-between items-end mb-2 px-1">
-          <h3 className="section-title">Weermodel Check</h3>
-          <span className="text-[10px] text-white/60">Real-time modeldata</span>
-        </div>
-        <div className="card p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-black/5 flex items-center justify-center text-lg">
-                {weather.models.agreement >= 70 ? "🎯" : weather.models.agreement >= 40 ? "🤔" : "⚠️"}
-              </div>
-              <div>
-                <div className="text-sm font-bold text-text-primary">{weather.models.label}</div>
-                <div className="text-xs text-text-muted">{weather.models.sources.join(" + ")}</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="score-bar w-16">
-                <div
-                  className="score-bar-fill"
-                  style={{
-                    width: `${weather.models.agreement}%`,
-                    background: weather.models.agreement >= 70 ? 'var(--accent-green)' : weather.models.agreement >= 40 ? 'var(--accent-amber)' : 'var(--accent-red)'
-                  }}
-                />
-              </div>
-              <span className="text-xs font-bold text-text-secondary">{weather.models.agreement}%</span>
-            </div>
-          </div>
-          {/* Model detail badges */}
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-black/5">
-            {weather.models.sources.includes("KNMI HARMONIE") && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-accent-cyan bg-accent-cyan/10 px-2 py-1 rounded-full border border-accent-cyan/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-green" /> KNMI HARMONIE — 2.5km
-              </span>
-            )}
-            {weather.models.sources.includes("DWD ICON") && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-500 bg-blue-500/10 px-2 py-1 rounded-full border border-blue-500/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-accent-green" /> DWD ICON — 7km
-              </span>
-            )}
-            <span className="text-[10px] text-text-muted italic">
-              {weather.models.agreement >= 70
-                ? "Beide weermodellen zien hetzelfde. Dit gaat zo gebeuren."
-                : weather.models.agreement >= 40
-                ? "Kleine verschillen — de grote lijn staat vast."
-                : "Modellen twijfelen. Andere apps verbergen dit. Wij niet."}
-            </span>
-          </div>
-        </div>
-      </div>
 
       {/* Affiliate Spot 1 moved to top */}
 
-      {/* ===== 13. Wat trek je aan? ===== */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.75s" }}>
-        <div className="flex justify-between items-end mb-3 px-1">
-          <h3 className="section-title">Wat trek je aan?</h3>
-          <span className="text-xs text-white/60">Geen smoesjes meer</span>
-        </div>
-        <div className="card p-4 flex items-center gap-4">
-          <div className="text-3xl">{outfitEmoji}</div>
-          <div className="font-semibold text-sm">{outfitAdvice}</div>
-        </div>
-      </div>
 
       {/* ===== 14. Zon & UV — compact ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.8s" }}>
@@ -826,49 +724,6 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
             <span className="badge text-[10px]" style={{ backgroundColor: `${uvInfo.color}20`, color: uvInfo.color, border: `1px solid ${uvInfo.color}40` }}>
               UV {weather.uvIndex.toFixed(0)} — {uvInfo.label.split("—")[0].trim()}
             </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ===== 15. Eerlijk vs Onzin ===== */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.85s" }}>
-        <div className="flex justify-between items-end mb-3 px-1">
-          <h3 className="section-title">Eerlijk VS Onzin</h3>
-          <span className="text-[10px] text-white/60">Waarom 90% fout zit</span>
-        </div>
-        <div className="card p-4 overflow-hidden relative">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-4 border border-[rgba(52,211,153,0.2)] bg-[rgba(52,211,153,0.05)] rounded-xl flex flex-col justify-between">
-              <div>
-                <h4 className="text-accent-green font-bold text-xs uppercase flex items-center gap-1.5 mb-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                  WeerZone
-                </h4>
-                <div className="text-sm font-semibold text-text-primary mb-1">48 uur, twee modellen</div>
-                <div className="text-xs text-text-muted">KNMI HARMONIE + ICON + ICON-D2. Weermodellen, niet onderbuikgevoel.</div>
-              </div>
-              <div className="mt-4 px-3 py-1.5 bg-[rgba(52,211,153,0.1)] text-accent-green text-xs font-bold text-center rounded-lg">
-                Bewezen nauwkeurig.
-              </div>
-            </div>
-
-            <div className="p-4 border border-[rgba(239,68,68,0.2)] bg-[rgba(239,68,68,0.05)] rounded-xl opacity-80 flex flex-col justify-between">
-              <div>
-                <h4 className="text-accent-red font-bold text-xs uppercase flex items-center gap-1.5 mb-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                  Buienradar & co
-                </h4>
-                <div className="text-sm font-semibold text-text-primary mb-1">De "14-daagse voorspelling"</div>
-                <div className="text-xs text-text-muted opacity-50 filter blur-[0.5px]">
-                  Vr. ☁️ 11°/21°<br />
-                  Za. 🌥️ 8°/16°<br />
-                  Zo. 🌧️ 9°/14°
-                </div>
-              </div>
-              <div className="mt-4 px-3 py-1.5 bg-[rgba(239,68,68,0.1)] text-accent-red text-[10px] font-bold text-center rounded-lg leading-tight">
-                Commerciële clickbait.<br/>Puur gokwerk na dag 3.
-              </div>
-            </div>
           </div>
         </div>
       </div>
