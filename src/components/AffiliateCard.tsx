@@ -671,7 +671,7 @@ export default function AffiliateCard({ variant, weather }: Props) {
   const section = variant === "top" ? getTopProducts(weather) : getBottomProducts(weather);
 
   return (
-    <div className="rounded-2xl overflow-hidden relative" style={{ background: "linear-gradient(135deg, rgba(255,229,0,0.08) 0%, rgba(255,255,255,0.85) 60%)", border: "1px solid rgba(255,229,0,0.3)", backdropFilter: "blur(12px)" }}>
+    <div className="rounded-2xl overflow-hidden relative" style={{ background: "linear-gradient(135deg, rgba(245,158,11,0.08) 0%, rgba(255,255,255,0.85) 60%)", border: "1px solid rgba(245,158,11,0.3)", backdropFilter: "blur(12px)" }}>
       {/* Header stripe */}
       <div className="px-5 pt-4 pb-3 border-b border-black/[0.06]">
         <div className="flex items-start justify-between gap-2">

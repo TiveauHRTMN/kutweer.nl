@@ -95,7 +95,7 @@ function buildAffiliateEmailHtml(city: string, anomaly: any, alertMsg: string) {
           <div style="background: #fffbeb; border-left: 4px solid #facc15; padding: 20px; border-radius: 4px; margin-top: 32px;">
             <h3 style="color: #b45309; margin-top: 0; margin-bottom: 8px; font-size: 18px;">${promoTitle}</h3>
             <p style="color: #78350f; margin-top: 0; margin-bottom: 24px; line-height: 1.5;">${promoDesc}</p>
-            <a href="${promoLink}" style="display: inline-block; background: #ffe500; color: #1e293b; font-weight: 800; text-decoration: none; padding: 14px 24px; border-radius: 999px; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(255,229,0,0.3);">${promoBtn} →</a>
+            <a href="${promoLink}" style="display: inline-block; background: #f59e0b; color: #1e293b; font-weight: 800; text-decoration: none; padding: 14px 24px; border-radius: 999px; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(245,158,11,0.3);">${promoBtn} →</a>
           </div>
         </div>
         <div style="padding: 16px 24px; background: #f8fafc; text-align: center; border-top: 1px solid #e2e8f0;">

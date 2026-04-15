@@ -66,7 +66,7 @@ function buildEmailHtml(city: string, data: Record<string, unknown>): string {
     </div>
 
     <div style="text-align:center;padding:24px 0;">
-      <a href="https://weerzone.nl/weer/${city.toLowerCase().replace(/\s+/g, '-')}" style="display:inline-block;padding:14px 32px;background:#ffe500;color:#1e293b;font-weight:700;font-size:14px;border-radius:999px;text-decoration:none;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(255,229,0,0.3);">
+      <a href="https://weerzone.nl/weer/${city.toLowerCase().replace(/\s+/g, '-')}" style="display:inline-block;padding:14px 32px;background:#f59e0b;color:#1e293b;font-weight:700;font-size:14px;border-radius:999px;text-decoration:none;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(245,158,11,0.3);">
         BEKIJK RADAR & IMPACT →
       </a>
     </div>
