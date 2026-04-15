@@ -57,7 +57,7 @@ const faqLd = {
       name: "Welke weermodellen gebruikt WeerZone?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "KNMI HARMONIE (het Nederlandse supercomputer-model), DWD ICON en ICON-D2 (het ultra-high-resolution geneste model). Wanneer alle modellen het eens zijn, weet je het zeker. Wanneer ze het oneens zijn, vertellen we je dat ook. Eerlijkheid boven alles.",
+        text: "KNMI HARMONIE (het Nederlandse weermodel), DWD ICON en ICON-D2 (het ultra-high-resolution geneste model). Wanneer alle modellen het eens zijn, weet je het zeker. Wanneer ze het oneens zijn, vertellen we je dat ook. Eerlijkheid boven alles.",
       },
     },
     {

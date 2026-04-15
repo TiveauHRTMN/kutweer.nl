@@ -129,7 +129,7 @@ export function getMainCommentary(w: WeatherData): string {
   }
 
   // ===== DEFAULT =====
-  return `${t}° in de lucht, voelt als ${feelsLike}°. ${code <= 3 ? "Bewolkt" : "Wisselend"}. ${wind > 20 ? `Wind ${wind} km/h — frisser dan je denkt.` : ""} ${rain === 0 ? "Droog." : `${rain}mm neerslag.`} ${tomorrowDiff >= 3 ? `Morgen stuk beter: ${tomorrow.tempMax}°.` : tomorrowDiff <= -3 ? `Morgen kouder: ${tomorrow.tempMax}°.` : "Morgen vergelijkbaar."} Twee supercomputers bevestigen dit.`.replace(/\s+/g, " ").trim();
+  return `${t}° in de lucht, voelt als ${feelsLike}°. ${code <= 3 ? "Bewolkt" : "Wisselend"}. ${wind > 20 ? `Wind ${wind} km/h — frisser dan je denkt.` : ""} ${rain === 0 ? "Droog." : `${rain}mm neerslag.`} ${tomorrowDiff >= 3 ? `Morgen stuk beter: ${tomorrow.tempMax}°.` : tomorrowDiff <= -3 ? `Morgen kouder: ${tomorrow.tempMax}°.` : "Morgen vergelijkbaar."} Twee weermodellen bevestigen dit.`.replace(/\s+/g, " ").trim();
 }
 
 export function getMisereScore(w: WeatherData): { score: number; label: string; emoji: string } {
@@ -242,7 +242,7 @@ const ROTATING_QUOTES = [
   "\"Kans op zon\" is de laffe uitweg van Weerplaza. Wij vertellen je gewoon de realiteit op de kilometer nauwkeurig.",
   "48 uur. Meer heb je niet nodig. Een 14-daagse voorspelling is commerciële clickbait voor de massa.",
   "Je weer-app zegt 22° volgende week? Trap er niet in. Puur bedrog om clicks te genereren.",
-  "KNMI HARMONIE + ICON + ICON-D2. Drie supercomputers. Eén brute waarheid. Geen gelul.",
+  "KNMI HARMONIE + ICON + ICON-D2. Drie weermodellen. Eén brute waarheid. Geen gelul.",
   "14-daagse voorspelling? Dan kun je net zo goed je horoscoop of de krant van gisteren lezen.",
   "Weerplaza, NOS, Buienradar... Stuk voor stuk bezig met nattevingerwerk. Wij doen data.",
   "Jas-aan-jas-uit-jas-aan weer. Typisch Nederlands. Volkomen ruk, maar wij waarschuwen tenminste eerlijk.",

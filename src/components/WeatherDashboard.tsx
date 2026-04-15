@@ -168,7 +168,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
                 ? "💨 Dit is niet het moment om dingen op hun beloop te laten."
                 : weather.aiVerdict 
                 ? "📊 Real-time AI analyse van KNMI-data compleet."
-                : `📊 ${new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })} — ${weather.models.sources.length} supercomputers bevestigen dit.`}
+                : `📊 ${new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })} — ${weather.models.sources.length} weermodellen bevestigen dit.`}
             </p>
           </div>
           
@@ -195,10 +195,10 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
       </div>
 
-      {/* ===== 2. Supercomputer Verificatie — Waarom dit klopt ===== */}
+      {/* ===== 2. Weermodel Verificatie — Waarom dit klopt ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
         <div className="flex justify-between items-end mb-2 px-1">
-          <h3 className="section-title">Supercomputer Verificatie</h3>
+          <h3 className="section-title">Weermodel Verificatie</h3>
           <span className="text-[10px] text-white/60">Live feed: HARMONIE + ICON</span>
         </div>
         <div className="card p-4">
@@ -741,7 +741,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       {/* ===== 11. Model Confidence — HARMONIE + ICON ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.65s" }}>
         <div className="flex justify-between items-end mb-2 px-1">
-          <h3 className="section-title">Supercomputer Check</h3>
+          <h3 className="section-title">Weermodel Check</h3>
           <span className="text-[10px] text-white/60">Real-time modeldata</span>
         </div>
         <div className="card p-4 space-y-3">
@@ -782,7 +782,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
             )}
             <span className="text-[10px] text-text-muted italic">
               {weather.models.agreement >= 70
-                ? "Beide supercomputers zien hetzelfde. Dit gaat zo gebeuren."
+                ? "Beide weermodellen zien hetzelfde. Dit gaat zo gebeuren."
                 : weather.models.agreement >= 40
                 ? "Kleine verschillen — de grote lijn staat vast."
                 : "Modellen twijfelen. Andere apps verbergen dit. Wij niet."}
@@ -845,7 +845,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
                   WeerZone
                 </h4>
                 <div className="text-sm font-semibold text-text-primary mb-1">48 uur, twee modellen</div>
-                <div className="text-xs text-text-muted">KNMI HARMONIE + ICON + ICON-D2. Supercomputers, niet onderbuikgevoel.</div>
+                <div className="text-xs text-text-muted">KNMI HARMONIE + ICON + ICON-D2. Weermodellen, niet onderbuikgevoel.</div>
               </div>
               <div className="mt-4 px-3 py-1.5 bg-[rgba(52,211,153,0.1)] text-accent-green text-xs font-bold text-center rounded-lg">
                 Bewezen nauwkeurig.
@@ -897,7 +897,7 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </p>
         <p className="text-[10px] text-white/50 mt-1">
           Data via <a href="https://open-meteo.com" className="text-accent-orange hover:underline">Open-Meteo</a> · KNMI HARMONIE · DWD ICON · ICON-D2.
-          Twee supercomputers, nul ruis.
+          Twee weermodellen, nul ruis.
         </p>
       </footer>
     </div>
