@@ -23,18 +23,29 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherData>
           ]
         });
 
+        const tomorrow = weather.daily[1];
         const prompt = `
-          Vertel in één krachtige, nuchtere en menselijke zin (max 15 woorden) wat het weer nu betekent voor de gebruiker. 
-          GEEN ÉÉN-WOORD-ANTWOORDEN (zoals alleen 'Jas'). Maak er een echte zin van.
-          GEBRUIK GEEN AI-JARGON (geen 'analyse', 'data', 'verdict', 'verwachting').
-          STIJL: Ongezouten de waarheid, typisch Nederlands nuchter.
+          Schrijf een volledig, nuchter Nederlands weerbericht (geen AI-jargon!) op basis van deze feiten.
+          Focus op de komende 48 uur. Vertel wat mensen buiten gaan merken.
           
-          WEER-FACTS: 
-          Temp: ${weather.current.temperature}°
+          FEITEN NU:
+          Lucht: ${getWeatherDescription(weather.current.weatherCode)}
+          Temp: ${weather.current.temperature}° (voelt als ${weather.current.feelsLike}°)
           Wind: ${weather.current.windSpeed} km/h
           Regen nu: ${weather.current.precipitation} mm
-          Regen komende 48u: ${weather.hourly.reduce((acc, h) => acc + h.precipitation, 0).toFixed(1)} mm
-          Lucht: ${getWeatherDescription(weather.current.weatherCode)}
+          
+          VERLOOP VANDAAG/AVOND:
+          Regen totaal: ${weather.hourly.slice(0, 12).reduce((acc, h) => acc + h.precipitation, 0).toFixed(1)} mm
+          
+          MORGEN (${tomorrow.date}):
+          Max: ${tomorrow.tempMax}°, Min: ${tomorrow.tempMin}°
+          Lucht: ${getWeatherDescription(tomorrow.weatherCode)}
+          Regen: ${tomorrow.precipitationSum} mm
+          
+          STIJLREGELS:
+          1. GEEN woorden als 'analyse', 'data', 'verdict', 'verwachting', 'significant'.
+          2. Praat als een nuchtere kenner. Recht door zee.
+          3. Maximaal 60 woorden.
         `.trim();
 
         const result = await model.generateContent({
