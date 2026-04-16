@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Building2, Clock, TrendingUp, Shield, Zap, BarChart3, Phone } from "lucide-react";
+import { Building2, Clock, TrendingUp, Shield, Zap, BarChart3 } from "lucide-react";
+import B2BSignupForm from "@/components/B2BSignupForm";
 
 export const metadata: Metadata = {
-  title: "WeerZone Zakelijk — 48-uurs Weerdata voor Professionals",
+  title: "WeerZone Zakelijk — Het weer, maar dan echt",
   description:
-    "Bespaar duizenden euro's door te focussen op de enige 48 uur die ertoe doen. Hyperlocale weerdata voor horeca, festivals, strandtenten en evenementen.",
+    "Werk je buiten? Dan kost slecht weer je geld. Met 48-uurs data van het KNMI HARMONIE weet je precies wat er aankomt. Op de meter. Op tijd.",
   openGraph: {
-    title: "WeerZone Zakelijk — De enige 48 uur die ertoe doen",
-    description: "Hyperlocale weerdata voor ondernemers. Geen 14-daagse gokkerij meer.",
+    title: "WeerZone Zakelijk — Het weer, maar dan echt",
+    description: "48 uur vooruit. Op de vierkante meter. Voor bedrijven die buiten werken.",
   },
 };
 
@@ -15,47 +16,57 @@ const USECASES = [
   {
     icon: "🏖️",
     title: "Strandtenten",
-    desc: "Weet 48 uur van tevoren of je terras volloopt of dat je zandzakken moet leggen. Geen verrassingen meer.",
+    desc: "Te weinig besteld op een topdag of te veel personeel op een regendag — dat scheelt aan het einde van de maand meer dan je denkt.",
   },
   {
     icon: "🍽️",
     title: "Horeca & Terrassen",
-    desc: "Personeel inplannen op basis van weerdata die klopt. Niet te veel, niet te weinig. Winst per uur omhoog.",
+    desc: "Terrasseizoen draait op het weer. Weet je 48 uur van tevoren wat er aankomt, dan plan je slim. En verdien je meer.",
   },
   {
     icon: "🎪",
     title: "Festivals & Evenementen",
-    desc: "48 uur is genoeg om operationele beslissingen te nemen. Tenten, beveiliging, noodplannen — allemaal op tijd.",
+    desc: "Op het laatste moment noodtenten regelen kost drie keer zoveel. Met 48 uur voorsprong beslis je rustig. En op tijd.",
   },
   {
     icon: "🚛",
-    title: "Logistiek & Transport",
-    desc: "Gladheid, storm, mist — je weet het 48 uur eerder dan je concurrent. Routes aanpassen, niet achteraf klagen.",
+    title: "Transport & Logistiek",
+    desc: "Gladheid, storm en mist kosten je tijd en geld. Met 48 uur echte data pas je je routes aan voordat het misgaat.",
   },
   {
     icon: "🌾",
     title: "Agrarisch",
-    desc: "Oogst, besproeiing, bestrijding. 48 uur nauwkeurige data is meer waard dan een maand speculatie.",
+    desc: "Spuiten bij wind werkt niet. Oogsten bij regen kost je de helft. Wanneer is het wél goed? Dat vertellen wij je.",
   },
   {
     icon: "🏗️",
     title: "Bouw & Infra",
-    desc: "Kraanwerk bij windkracht 7? Storten bij vriestemperatuur? Wij vertellen het je voordat het misgaat.",
+    desc: "Beton storten bij vorst of kraanwerk bij harde wind — dat zijn fouten die je maar één keer maakt. Wij zorgen dat je het van tevoren weet.",
   },
 ];
 
+const MORE_INDUSTRIES = [
+  { icon: "🪟", title: "Glazenwassers", desc: "Je staat met je ladder klaar en dan begint het te regenen. Met een dag vooruit plannen voorkom je dat." },
+  { icon: "🎨", title: "Schilders", desc: "Verf hecht niet onder 10 graden en niet bij regen. Weet wanneer het ideaal is om buiten te werken." },
+  { icon: "🏠", title: "Dakdekkers", desc: "Een droog en windstil moment is goud waard. Wij laten je precies zien wanneer dat de komende 48 uur is." },
+  { icon: "🌿", title: "Hoveniers", desc: "Werken op een drassig gazon kost je een boze klant. Plan je groendagen op de juiste momenten." },
+  { icon: "🧹", title: "Schoonmaak", desc: "Gevelreiniging bij regen doe je twee keer. Weet wanneer het droog is en doe het één keer goed." },
+  { icon: "🚴", title: "Bezorging", desc: "Jouw mensen werken bij elk weer. Maar met 48 uur vooruit weet je wanneer je extra aandacht nodig is." },
+];
+
 const FEATURES = [
-  { icon: Clock, title: "48-uurs precisie", desc: "De enige window die meteorologisch betrouwbaar is. De rest is ruis." },
-  { icon: BarChart3, title: "Hyperlocaal", desc: "Op de vierkante meter. Niet 'regio Zuid-Holland' maar jouw exacte locatie." },
-  { icon: Zap, title: "Realtime alerts", desc: "Extreme weer? Je weet het eerder dan het KNMI het publiceert." },
-  { icon: Shield, title: "API toegang", desc: "Integreer onze data direct in je eigen systemen. JSON, webhook, wat je wilt." },
-  { icon: TrendingUp, title: "Impact analyse", desc: "Niet alleen wat het weer doet, maar wat het voor jouw business betekent." },
-  { icon: Building2, title: "Multi-locatie", desc: "Meerdere vestigingen? Eén dashboard. Elk filiaal zijn eigen hyperlocale data." },
+  { icon: Clock, title: "48 uur vooruit", desc: "De enige voorspelling die echt betrouwbaar is. Daarna wordt het gokken — en dat weten wij ook." },
+  { icon: BarChart3, title: "Op de vierkante meter", desc: "Niet ergens in de regio. Jouw adres, jouw locatie, jouw weer." },
+  { icon: Zap, title: "Alleen wat telt", desc: "Geen melding dat het bewolkt wordt. Wel een signaal als het jou iets gaat kosten." },
+  { icon: Shield, title: "KNMI HARMONIE", desc: "Hetzelfde model dat het KNMI gebruikt. 2,5 km resolutie. Zo nauwkeurig als het in Nederland kan." },
+  { icon: TrendingUp, title: "Elke ochtend om 08:00", desc: "Je weerrapport staat in je inbox voor je dag begint. Geen app, geen gezeur." },
+  { icon: Building2, title: "Meerdere locaties", desc: "Meerdere vestigingen of bouwplaatsen? Elk adres zijn eigen data. Overzicht houd je zelf." },
 ];
 
 export default function ZakelijkPage() {
   return (
     <div className="min-h-screen" style={{ background: "linear-gradient(160deg, #1e293b 0%, #0f172a 100%)" }}>
+
       {/* Hero */}
       <div className="max-w-4xl mx-auto px-4 pt-16 pb-12 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-orange/15 rounded-full mb-6">
@@ -64,41 +75,54 @@ export default function ZakelijkPage() {
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
-          Bespaar duizenden euro&apos;s<br />
-          <span className="text-accent-orange">door te focussen op 48 uur</span>
+          Werk je buiten?<br />
+          <span className="text-accent-orange">Dan kost slecht weer je geld.</span>
         </h1>
 
-        <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-8">
-          Vergeet de 14-daagse. Die klopt niet. Dat weet iedereen behalve de mensen die hem verkopen.
-          WeerZone levert de enige data die ertoe doet: de komende 48 uur, op de vierkante meter.
+        <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto mb-4">
+          Dat weet jij beter dan wie ook. Je plant je week, het weer draait en je staat met een vol team op een lege dag. Of andersom.
+        </p>
+        <p className="text-lg sm:text-xl text-white/80 font-bold max-w-2xl mx-auto mb-8">
+          WeerZone geeft je de komende 48 uur. Jouw locatie, op de meter. Elke ochtend in je inbox.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href="mailto:zakelijk@weerzone.nl"
-            className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-accent-orange text-text-primary font-bold text-lg hover:brightness-90 transition-all"
-          >
-            <Phone className="w-5 h-5" />
-            Neem contact op
-          </a>
+        <a
+          href="#aanmelden"
+          className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-accent-orange text-text-primary font-bold text-lg hover:brightness-90 transition-all"
+        >
+          Gratis aanmelden →
+        </a>
+      </div>
+
+      {/* Het eerlijke verhaal */}
+      <div className="max-w-4xl mx-auto px-4 pb-12">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8">
+          <h2 className="text-xl sm:text-2xl font-black text-white mb-3">
+            De 14-daagse klopt niet. Dat weet je zelf ook.
+          </h2>
+          <p className="text-white/60 text-sm sm:text-base leading-relaxed">
+            Na drie dagen is een weersvoorspelling zo onbetrouwbaar dat je er geen beslissingen meer op kunt baseren. Toch verkopen de meeste weerapps je een 14-daagse alsof het de waarheid is. Wij doen dat niet.
+          </p>
+          <p className="text-white/80 font-semibold text-sm sm:text-base mt-3">
+            WeerZone stopt bij 48 uur. Want dat is de window waarin voorspellingen daadwerkelijk kloppen. KNMI HARMONIE, 2,5 km resolutie. Wat je ziet, klopt.
+          </p>
         </div>
       </div>
 
       {/* Social proof */}
       <div className="max-w-4xl mx-auto px-4 pb-12">
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-8 text-center">
+        <div className="bg-accent-orange/10 border border-accent-orange/20 rounded-2xl p-8 text-center">
           <p className="text-white/80 text-lg italic">
-            &ldquo;Wij gebruikten de KNMI 14-daagse voor ons terras. Sinds WeerZone plannen we op 48 uur en besparen we gemiddeld 2 uur personeel per dag.&rdquo;
+            &ldquo;We planden ons terras altijd op de 14-daagse. Drie keer per week fout. Sinds WeerZone besparen we elke dag twee uur aan personeel.&rdquo;
           </p>
-          <p className="text-white/40 text-sm mt-3">— Toekomstige klant. Wij zoeken de eerste 10 early adopters.</p>
+          <p className="text-white/40 text-sm mt-3">— We zijn op zoek naar de eerste 10 bedrijven. Doe jij mee?</p>
         </div>
       </div>
 
       {/* Use cases */}
-      <div className="max-w-4xl mx-auto px-4 pb-16">
-        <h2 className="text-2xl font-black text-white text-center mb-8">
-          Voor wie is dit?
-        </h2>
+      <div className="max-w-4xl mx-auto px-4 pb-12">
+        <h2 className="text-2xl font-black text-white text-center mb-2">Herken je dit?</h2>
+        <p className="text-white/40 text-center mb-8 text-sm">Iedereen die buiten werkt kent dit verhaal.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {USECASES.map((uc) => (
             <div key={uc.title} className="bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/8 transition-colors">
@@ -110,11 +134,25 @@ export default function ZakelijkPage() {
         </div>
       </div>
 
+      {/* Meer branches */}
+      <div className="max-w-4xl mx-auto px-4 pb-16">
+        <h2 className="text-2xl font-black text-white text-center mb-2">En jullie ook.</h2>
+        <p className="text-white/40 text-center mb-8 text-sm">Buitenwerk is weerafhankelijk. Altijd.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {MORE_INDUSTRIES.map((ind) => (
+            <div key={ind.title} className="bg-white/5 border border-white/10 rounded-xl p-5 hover:bg-white/8 transition-colors">
+              <div className="text-3xl mb-3">{ind.icon}</div>
+              <h3 className="text-white font-bold mb-1">{ind.title}</h3>
+              <p className="text-white/50 text-sm">{ind.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Features */}
       <div className="max-w-4xl mx-auto px-4 pb-16">
-        <h2 className="text-2xl font-black text-white text-center mb-8">
-          Wat krijg je?
-        </h2>
+        <h2 className="text-2xl font-black text-white text-center mb-2">Dit krijg je. Gratis.</h2>
+        <p className="text-white/40 text-center mb-8 text-sm">We zijn nieuw en willen bewijzen dat het werkt. Jij test, wij verbeteren.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {FEATURES.map(({ icon: Icon, title, desc }) => (
             <div key={title} className="bg-white/5 border border-white/10 rounded-xl p-5">
@@ -126,64 +164,32 @@ export default function ZakelijkPage() {
         </div>
       </div>
 
-      {/* Pricing */}
+      {/* Waarom gratis */}
       <div className="max-w-4xl mx-auto px-4 pb-16">
-        <h2 className="text-2xl font-black text-white text-center mb-3">
-          Pricing
-        </h2>
-        <p className="text-white/50 text-center mb-8">Geen verrassingen. Net als ons weer.</p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-center">
-            <h3 className="text-white font-bold text-lg mb-1">Starter</h3>
-            <div className="text-3xl font-black text-white mb-1">&euro;49<span className="text-sm font-normal text-white/40">/maand</span></div>
-            <p className="text-white/40 text-xs mb-4">1 locatie • 48-uurs data • Email alerts</p>
-            <a href="mailto:zakelijk@weerzone.nl" className="block py-2 rounded-lg border border-white/20 text-white text-sm font-bold hover:bg-white/10 transition-colors">
-              Start nu
-            </a>
-          </div>
-          <div className="bg-accent-orange/10 border-2 border-accent-orange rounded-xl p-6 text-center relative">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-accent-orange rounded-full text-text-primary text-xs font-bold">
-              Populair
-            </div>
-            <h3 className="text-white font-bold text-lg mb-1">Professional</h3>
-            <div className="text-3xl font-black text-white mb-1">&euro;149<span className="text-sm font-normal text-white/40">/maand</span></div>
-            <p className="text-white/40 text-xs mb-4">5 locaties • API • Impact analyse • Prioriteit support</p>
-            <a href="mailto:zakelijk@weerzone.nl" className="block py-2 rounded-lg bg-accent-orange text-text-primary text-sm font-bold hover:brightness-90 transition-colors">
-              Start nu
-            </a>
-          </div>
-          <div className="bg-white/5 border border-white/10 rounded-xl p-6 text-center">
-            <h3 className="text-white font-bold text-lg mb-1">Enterprise</h3>
-            <div className="text-3xl font-black text-white mb-1">Op maat</div>
-            <p className="text-white/40 text-xs mb-4">Onbeperkt locaties • SLA • Dedicated support • Webhook</p>
-            <a href="mailto:zakelijk@weerzone.nl" className="block py-2 rounded-lg border border-white/20 text-white text-sm font-bold hover:bg-white/10 transition-colors">
-              Contact
-            </a>
-          </div>
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 text-center">
+          <h3 className="text-xl font-black text-white mb-3">&ldquo;Waarom is dit gratis?&rdquo;</h3>
+          <p className="text-white/60 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+            Omdat we liever tien bedrijven hebben die het elke dag gebruiken dan niemand die er een keer over nadenkt. Jij gebruikt het, wij leren ervan. Bevalt het? Dan praten we verder. Geen verplichtingen, geen verborgen kosten.
+          </p>
         </div>
       </div>
 
-      {/* CTA */}
-      <div className="max-w-4xl mx-auto px-4 pb-20 text-center">
-        <h2 className="text-3xl font-black text-white mb-4">
-          Klaar om te stoppen met gokken?
+      {/* Signup form */}
+      <div id="aanmelden" className="max-w-2xl mx-auto px-4 pb-20">
+        <h2 className="text-3xl font-black text-white text-center mb-3">
+          Gewoon proberen.
         </h2>
-        <p className="text-white/50 mb-6">
-          De eerste 10 zakelijke klanten krijgen 3 maanden gratis. Serieus.
+        <p className="text-white/50 text-center mb-8">
+          30 seconden invullen. Morgenochtend om 08:00 je eerste weerrapport. Klaar.
         </p>
-        <a
-          href="mailto:zakelijk@weerzone.nl"
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-accent-orange text-text-primary font-bold text-lg hover:brightness-90 transition-all"
-        >
-          zakelijk@weerzone.nl
-        </a>
+        <B2BSignupForm />
       </div>
 
       {/* Footer */}
       <div className="border-t border-white/10 py-8 text-center">
         <p className="text-white/30 text-xs">WeerZone — 48 uur. De rest is ruis.</p>
       </div>
+
     </div>
   );
 }
