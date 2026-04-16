@@ -90,7 +90,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <main>
-        <WeatherDashboard />
+        <WeatherDashboard initialCity={DUTCH_CITIES[0]} />
       </main>
     </>
   );
