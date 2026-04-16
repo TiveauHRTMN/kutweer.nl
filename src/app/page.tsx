@@ -15,7 +15,7 @@ const jsonLd = {
   name: "WEERZONE",
   url: "https://weerzone.nl",
   description:
-    "WEERZONE.nl — Vergeet de 14-daagse. De komende 48 uur vooruit. De rest is ruis. KNMI HARMONIE data op de vierkante meter.",
+    "WEERZONE.nl — Vergeet de 14-daagse. De komende 48 uur vooruit. De rest is ruis. Puur KNMI HARMONIE op de vierkante meter.",
   potentialAction: {
     "@type": "SearchAction",
     target: "https://weerzone.nl/weer/{city}",
@@ -41,7 +41,7 @@ const faqLd = {
       name: "Wat is WEERZONE?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "WEERZONE vertelt je de werkelijkheid. We gebruiken de scherpste bronnen die er zijn (zoals KNMI HARMONIE) voor de enige voorspelling die ertoe doet: de komende 48 uur op je eigen postzegel nauwkeurig. De rest is ruis.",
+        text: "WEERZONE vertelt je de werkelijkheid. We gebruiken de krachtige KNMI HARMONIE data voor de enige voorspelling die ertoe doet: de komende 48 uur op je eigen postzegel nauwkeurig. De rest is ruis.",
       },
     },
     {
@@ -54,10 +54,10 @@ const faqLd = {
     },
     {
       "@type": "Question",
-      name: "Welke weermodellen gebruikt WEERZONE?",
+      name: "Welke bron gebruikt WEERZONE?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "We gebruiken de meest geavanceerde technieken van het KNMI en Duitsland die op je eigen postzegel nauwkeurig zijn. Wanneer de bronnen het eens zijn, weet je het zeker. Wanneer ze het oneens zijn, vertellen we je dat ook. Eerlijkheid boven alles.",
+        text: "Wij ontsluiten direct de rauwe KNMI HARMONIE data (het meest geavanceerde weermodel van Nederland). Waar andere apps gokken met globale data, gebruiken wij de bron die tot op de kilometer nauwkeurig is voor jouw straat. Eerlijkheid boven alles.",
       },
     },
     {

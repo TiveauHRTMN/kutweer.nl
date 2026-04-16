@@ -237,7 +237,7 @@ export function getKutweerScore(w: WeatherData): number {
 }
 
 const ROTATING_QUOTES = [
-  "Buienradar gokt, wij rekenen. 48 uur messcherp met HARMONIE, ICON en ICON-D2. De rest is koffiedik kijken.",
+  "Buienradar gokt, wij rekenen. 48 uur messcherp met KNMI HARMONIE data. De rest is ruis.",
   "Morgen wordt het beter? Dat zeiden ze gisteren ook. Geloof die 14-daagse fantasie-apps niet blind.",
   "\"Kans op zon\" is de laffe uitweg van Weerplaza. Wij vertellen je gewoon de realiteit op de kilometer nauwkeurig.",
   "48 uur. Meer heb je niet nodig. Een 14-daagse voorspelling is commerciële clickbait voor de massa.",
@@ -247,7 +247,7 @@ const ROTATING_QUOTES = [
   "Weerplaza, NOS, Buienradar... Stuk voor stuk bezig met nattevingerwerk. Wij vertellen je de feiten.",
   "Jas-aan-jas-uit-jas-aan weer. Typisch Nederlands. Volkomen ruk, maar wij waarschuwen tenminste eerlijk.",
   "\"Lokaal een bui\" is meteorologen-taal voor: we hebben geen flauw idee. Wij wel.",
-  "De gevestigde orde zit er weer naast? Logisch, die gebruiken achterhaalde modellen.",
+  "De gevestigde orde zit er weer naast? Logisch, die gebruiken achterhaalde data. Wij hebben de bron.",
   "WeerZone liegt niet. Geen valse hoop, geen 'misschien'. Keiharde data over jouw eigen postzegel.",
   "Iedereen is meteoroloog totdat ze kletsnat op de fiets staan. Vertrouw op de radar, niet je onderbuik.",
   "Wij beloven niks. Behalve dat de komende 48 uur klopt. De rest is commerciële ruis.",
@@ -255,7 +255,7 @@ const ROTATING_QUOTES = [
   "De enige weerdienst die niet bang is om je de waarheid te vertellen. Geen poespas.",
   "Regen voorspeld? Dan regent het ook. De rest draait eromheen om je humeur niet te verpesten.",
   "Weerplaza zit qua voorspellingen dichter bij een waarzegster dan bij de realiteit.",
-  "We zien nu zelfs elke druppel in jouw straat aankomen. Geen verrassingen meer.",
+  "KNMI HARMONIE is de enige bron die telt voor Nederland. De rest is vulling.",
 ];
 
 export function getRandomQuote(): string {
