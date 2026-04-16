@@ -90,9 +90,9 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         console.error("GPS Error:", err);
         setIsLocating(false);
       }, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
+        enableHighAccuracy: false,
+        timeout: 8000,
+        maximumAge: 5 * 60 * 1000
       });
     }
   };
