@@ -18,13 +18,6 @@ const INDUSTRIES: { value: B2BIndustry; label: string }[] = [
   { value: "bezorging",        label: "Bezorging" },
 ];
 
-const STATUS_COLORS: Record<string, string> = {
-  new:          "bg-blue-500/20 text-blue-300",
-  emailed:      "bg-yellow-500/20 text-yellow-300",
-  subscribed:   "bg-green-500/20 text-green-300",
-  unsubscribed: "bg-red-500/20 text-red-400",
-};
-
 interface Lead {
   id: string;
   business_name: string;
@@ -45,24 +38,27 @@ interface Stats {
   subscribed: number;
 }
 
-export default function B2BAdminPanel({
-  stats,
-  leads,
-  secret,
-}: {
-  stats: Stats;
-  leads: Lead[];
-  secret: string;
-}) {
-  // Discovery form
+function StatusBadge({ status }: { status: string }) {
+  const map: Record<string, string> = {
+    new:          "bg-blue-500/20 text-blue-300 border-blue-500/20",
+    emailed:      "bg-amber-500/20 text-amber-300 border-amber-500/20",
+    subscribed:   "bg-green-500/20 text-green-300 border-green-500/20",
+    unsubscribed: "bg-red-500/20 text-red-400 border-red-500/20",
+  };
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${map[status] ?? "bg-white/10 text-white/50 border-white/10"}`}>
+      {status}
+    </span>
+  );
+}
+
+export default function B2BAdminPanel({ stats, leads, secret }: { stats: Stats; leads: Lead[]; secret: string }) {
   const [industry, setIndustry] = useState<B2BIndustry>("glazenwasser");
   const [city, setCity]         = useState("Amsterdam");
-  const [discovering, setDiscovering] = useState(false);
-  const [discoverResult, setDiscoverResult] = useState<string | null>(null);
-
-  // Outreach
+  const [discovering, setDiscovering]     = useState(false);
+  const [discoverResult, setDiscoverResult] = useState<{ ok: boolean; msg: string } | null>(null);
   const [sendingOutreach, setSendingOutreach] = useState(false);
-  const [outreachResult, setOutreachResult]   = useState<string | null>(null);
+  const [outreachResult, setOutreachResult]   = useState<{ ok: boolean; msg: string } | null>(null);
 
   async function handleDiscover() {
     setDiscovering(true);
@@ -70,28 +66,23 @@ export default function B2BAdminPanel({
     try {
       const res = await fetch("/api/b2b/discover", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${secret}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${secret}` },
         body: JSON.stringify({ industry, city }),
       });
       const data = await res.json();
       if (!res.ok) {
-        setDiscoverResult(`❌ ${data.error}${data.hint ? ` — ${data.hint}` : ""}`);
+        setDiscoverResult({ ok: false, msg: data.error + (data.hint ? ` — ${data.hint}` : "") });
       } else {
-        setDiscoverResult(
-          `✅ ${data.found} bedrijven gevonden · ${data.saved} opgeslagen · ${data.noEmail} zonder e-mail`
-        );
+        setDiscoverResult({ ok: true, msg: `${data.found} bedrijven gevonden · ${data.saved} opgeslagen · ${data.noEmail} zonder e-mail` });
       }
     } catch {
-      setDiscoverResult("❌ Verbindingsfout");
+      setDiscoverResult({ ok: false, msg: "Verbindingsfout" });
     } finally {
       setDiscovering(false);
     }
   }
 
-  async function handleSendOutreach() {
+  async function handleOutreach() {
     setSendingOutreach(true);
     setOutreachResult(null);
     try {
@@ -100,146 +91,169 @@ export default function B2BAdminPanel({
       });
       const data = await res.json();
       if (!res.ok) {
-        setOutreachResult(`❌ ${data.error}`);
+        setOutreachResult({ ok: false, msg: data.error });
       } else {
-        setOutreachResult(
-          `✅ ${data.sent} e-mails verstuurd van ${data.total} leads${data.errors?.length ? ` · ${data.errors.length} fouten` : ""}`
-        );
+        setOutreachResult({ ok: true, msg: `${data.sent} e-mails verstuurd van ${data.total} leads` });
       }
     } catch {
-      setOutreachResult("❌ Verbindingsfout");
+      setOutreachResult({ ok: false, msg: "Verbindingsfout" });
     } finally {
       setSendingOutreach(false);
     }
   }
 
   return (
-    <div style={{ background: "linear-gradient(160deg, #1e293b 0%, #0f172a 100%)", minHeight: "100vh", padding: "32px 16px", fontFamily: "system-ui, -apple-system, sans-serif" }}>
-      <div style={{ maxWidth: 960, margin: "0 auto" }}>
+    <div className="min-h-screen" style={{ background: "linear-gradient(160deg, #1e293b 0%, #0f172a 100%)" }}>
+      <div className="max-w-5xl mx-auto px-4 py-12">
 
         {/* Header */}
-        <div style={{ marginBottom: 32 }}>
-          <p style={{ margin: "0 0 4px", fontSize: 11, color: "#f59e0b", fontWeight: 700, textTransform: "uppercase", letterSpacing: 2 }}>WeerZone</p>
-          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 900, color: "#ffffff" }}>B2B Outreach Dashboard</h1>
+        <div className="mb-10">
+          <p className="text-xs font-bold text-accent-orange uppercase tracking-widest mb-1">WeerZone</p>
+          <h1 className="text-3xl font-black text-white mb-1">B2B Outreach</h1>
+          <p className="text-white/40 text-sm">Leads beheren, bedrijven zoeken, outreach versturen.</p>
         </div>
 
         {/* Stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 32 }}>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
-            { label: "Totaal", value: stats.total, color: "#94a3b8" },
-            { label: "Nieuw",  value: stats.new,   color: "#60a5fa" },
-            { label: "Gemaild", value: stats.emailed, color: "#fbbf24" },
-            { label: "Ingeschreven", value: stats.subscribed, color: "#4ade80" },
+            { label: "Totaal",       value: stats.total,      color: "text-white" },
+            { label: "Nieuw",        value: stats.new,        color: "text-blue-400" },
+            { label: "Gemaild",      value: stats.emailed,    color: "text-amber-400" },
+            { label: "Ingeschreven", value: stats.subscribed, color: "text-green-400" },
           ].map(({ label, value, color }) => (
-            <div key={label} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 20px" }}>
-              <p style={{ margin: "0 0 4px", fontSize: 11, color: "#94a3b8", fontWeight: 700, textTransform: "uppercase" }}>{label}</p>
-              <p style={{ margin: 0, fontSize: 32, fontWeight: 900, color }}>{value}</p>
+            <div key={label} className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4">
+              <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-1">{label}</p>
+              <p className={`text-4xl font-black ${color}`}>{value}</p>
             </div>
           ))}
         </div>
 
-        {/* Discovery */}
-        <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 24, marginBottom: 24 }}>
-          <h2 style={{ margin: "0 0 16px", fontSize: 18, fontWeight: 800, color: "#ffffff" }}>🔍 Bedrijven zoeken</h2>
-          <p style={{ margin: "0 0 16px", fontSize: 13, color: "#94a3b8" }}>
-            Zoekt via Google Places naar bedrijven in de opgegeven stad, scrapet e-mailadressen van hun websites en slaat ze op als lead.
-            Vereist: <code style={{ background: "rgba(255,255,255,0.1)", padding: "1px 6px", borderRadius: 4, fontSize: 12 }}>GOOGLE_MAPS_API_KEY</code> in Vercel.
-          </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 
-          <div style={{ display: "flex", gap: 12, alignItems: "flex-end", flexWrap: "wrap" }}>
-            <div>
-              <p style={{ margin: "0 0 6px", fontSize: 12, color: "#94a3b8", fontWeight: 600 }}>Branche</p>
-              <select
-                value={industry}
-                onChange={(e) => setIndustry(e.target.value as B2BIndustry)}
-                style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", color: "#fff", fontSize: 14 }}
-              >
-                {INDUSTRIES.map((i) => (
-                  <option key={i.value} value={i.value} style={{ background: "#1e293b" }}>{i.label}</option>
-                ))}
-              </select>
+          {/* Discovery */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xl">🔍</span>
+              <h2 className="text-lg font-black text-white">Bedrijven zoeken</h2>
             </div>
-            <div>
-              <p style={{ margin: "0 0 6px", fontSize: 12, color: "#94a3b8", fontWeight: 600 }}>Stad</p>
-              <input
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="Amsterdam"
-                style={{ padding: "10px 14px", borderRadius: 10, background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", color: "#fff", fontSize: 14, width: 160 }}
-              />
+            <p className="text-white/40 text-sm mb-5">
+              Zoekt via Google Places, scrapet e-mailadressen van websites en slaat ze op als lead.
+              Vereist <code className="bg-white/10 px-1.5 py-0.5 rounded text-xs">GOOGLE_MAPS_API_KEY</code>.
+            </p>
+
+            <div className="space-y-3 mb-4">
+              <div>
+                <label className="block text-xs font-bold text-white/50 mb-1.5">Branche</label>
+                <select
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value as B2BIndustry)}
+                  className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/10 text-white text-sm focus:outline-none focus:border-accent-orange"
+                >
+                  {INDUSTRIES.map((i) => (
+                    <option key={i.value} value={i.value} className="bg-slate-900">{i.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-white/50 mb-1.5">Stad</label>
+                <input
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="Amsterdam"
+                  className="w-full px-3 py-2.5 rounded-xl bg-white/10 border border-white/10 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-accent-orange"
+                />
+              </div>
             </div>
+
             <button
               onClick={handleDiscover}
               disabled={discovering}
-              style={{ padding: "10px 24px", borderRadius: 10, background: "#f59e0b", color: "#1e293b", fontWeight: 800, fontSize: 14, border: "none", cursor: discovering ? "not-allowed" : "pointer", opacity: discovering ? 0.7 : 1 }}
+              className="w-full py-3 rounded-xl bg-accent-orange text-text-primary font-bold text-sm hover:brightness-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {discovering ? "Zoeken..." : "Zoek bedrijven →"}
             </button>
+
+            {discoverResult && (
+              <div className={`mt-3 px-4 py-3 rounded-xl text-sm font-medium ${discoverResult.ok ? "bg-green-500/10 text-green-300" : "bg-red-500/10 text-red-400"}`}>
+                {discoverResult.ok ? "✅" : "❌"} {discoverResult.msg}
+              </div>
+            )}
           </div>
 
-          {discoverResult && (
-            <p style={{ margin: "12px 0 0", fontSize: 13, color: "#ffffff", background: "rgba(255,255,255,0.08)", padding: "10px 14px", borderRadius: 8 }}>
-              {discoverResult}
+          {/* Outreach */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xl">📨</span>
+              <h2 className="text-lg font-black text-white">Outreach versturen</h2>
+            </div>
+            <p className="text-white/40 text-sm mb-5">
+              Stuurt branche-specifieke e-mails naar nieuwe leads. Max 10 per keer, max 3 pogingen per lead, minimaal 7 dagen tussen pogingen.
+              Draait ook automatisch via de cron <span className="text-white/60 font-semibold">ma–vr 09:00</span>.
             </p>
-          )}
-        </div>
 
-        {/* Outreach */}
-        <div style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 16, padding: 24, marginBottom: 24 }}>
-          <h2 style={{ margin: "0 0 8px", fontSize: 18, fontWeight: 800, color: "#ffffff" }}>📨 Outreach versturen</h2>
-          <p style={{ margin: "0 0 16px", fontSize: 13, color: "#94a3b8" }}>
-            Stuurt outreach-e-mails naar maximaal 10 nieuwe leads per keer. Elke lead krijgt maximaal 3 pogingen, minimaal 7 dagen tussentijd.
-            Dit draait ook automatisch via de cron (ma–vr 09:00).
-          </p>
-          <button
-            onClick={handleSendOutreach}
-            disabled={sendingOutreach}
-            style={{ padding: "10px 24px", borderRadius: 10, background: "#f59e0b", color: "#1e293b", fontWeight: 800, fontSize: 14, border: "none", cursor: sendingOutreach ? "not-allowed" : "pointer", opacity: sendingOutreach ? 0.7 : 1 }}
-          >
-            {sendingOutreach ? "Versturen..." : "Stuur outreach nu →"}
-          </button>
-          {outreachResult && (
-            <p style={{ margin: "12px 0 0", fontSize: 13, color: "#ffffff", background: "rgba(255,255,255,0.08)", padding: "10px 14px", borderRadius: 8 }}>
-              {outreachResult}
-            </p>
-          )}
-        </div>
+            <div className="bg-white/5 rounded-xl p-4 mb-4 space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-white/40">Wachten op outreach</span>
+                <span className="text-blue-400 font-bold">{stats.new} leads</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-white/40">Al gemaild</span>
+                <span className="text-amber-400 font-bold">{stats.emailed} leads</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-white/40">Ingeschreven</span>
+                <span className="text-green-400 font-bold">{stats.subscribed} leads</span>
+              </div>
+            </div>
 
-        {/* Leads table */}
-        <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, overflow: "hidden" }}>
-          <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-            <h2 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: "#ffffff" }}>Recente leads ({leads.length})</h2>
+            <button
+              onClick={handleOutreach}
+              disabled={sendingOutreach || stats.new === 0}
+              className="w-full py-3 rounded-xl bg-accent-orange text-text-primary font-bold text-sm hover:brightness-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {sendingOutreach ? "Versturen..." : `Stuur outreach naar ${stats.new} leads →`}
+            </button>
+
+            {outreachResult && (
+              <div className={`mt-3 px-4 py-3 rounded-xl text-sm font-medium ${outreachResult.ok ? "bg-green-500/10 text-green-300" : "bg-red-500/10 text-red-400"}`}>
+                {outreachResult.ok ? "✅" : "❌"} {outreachResult.msg}
+              </div>
+            )}
           </div>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        </div>
+
+        {/* Leads tabel */}
+        <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+          <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+            <h2 className="text-base font-black text-white">Leads</h2>
+            <span className="text-sm text-white/40">{leads.length} totaal</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
               <thead>
-                <tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                <tr className="border-b border-white/5">
                   {["Bedrijf", "E-mail", "Stad", "Branche", "Bron", "Status", "Pogingen"].map((h) => (
-                    <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 11, color: "#94a3b8", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>{h}</th>
+                    <th key={h} className="px-5 py-3 text-left text-xs font-bold text-white/30 uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {leads.length === 0 && (
+                {leads.length === 0 ? (
                   <tr>
-                    <td colSpan={7} style={{ padding: "32px 16px", textAlign: "center", color: "#94a3b8", fontSize: 14 }}>
+                    <td colSpan={7} className="px-5 py-12 text-center text-white/30 text-sm">
                       Nog geen leads. Gebruik de discovery hierboven om te beginnen.
                     </td>
                   </tr>
-                )}
-                {leads.map((lead, i) => (
-                  <tr key={lead.id} style={{ borderTop: "1px solid rgba(255,255,255,0.05)", background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.02)" }}>
-                    <td style={{ padding: "10px 16px", fontSize: 13, color: "#ffffff", fontWeight: 600 }}>{lead.business_name}</td>
-                    <td style={{ padding: "10px 16px", fontSize: 12, color: "#94a3b8" }}>{lead.email}</td>
-                    <td style={{ padding: "10px 16px", fontSize: 12, color: "#94a3b8" }}>{lead.city ?? "—"}</td>
-                    <td style={{ padding: "10px 16px", fontSize: 12, color: "#94a3b8" }}>{lead.industry}</td>
-                    <td style={{ padding: "10px 16px", fontSize: 11, color: "#64748b" }}>{lead.source}</td>
-                    <td style={{ padding: "10px 16px" }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 99, background: lead.status === "new" ? "rgba(96,165,250,0.15)" : lead.status === "emailed" ? "rgba(251,191,36,0.15)" : lead.status === "subscribed" ? "rgba(74,222,128,0.15)" : "rgba(248,113,113,0.15)", color: lead.status === "new" ? "#93c5fd" : lead.status === "emailed" ? "#fcd34d" : lead.status === "subscribed" ? "#86efac" : "#fca5a5" }}>
-                        {lead.status}
-                      </span>
-                    </td>
-                    <td style={{ padding: "10px 16px", fontSize: 12, color: "#64748b", textAlign: "center" }}>{lead.outreach_count}</td>
+                ) : leads.map((lead) => (
+                  <tr key={lead.id} className="border-b border-white/5 hover:bg-white/3 transition-colors">
+                    <td className="px-5 py-3.5 text-sm font-semibold text-white">{lead.business_name}</td>
+                    <td className="px-5 py-3.5 text-sm text-white/50">{lead.email}</td>
+                    <td className="px-5 py-3.5 text-sm text-white/40">{lead.city ?? "—"}</td>
+                    <td className="px-5 py-3.5 text-sm text-white/40">{lead.industry}</td>
+                    <td className="px-5 py-3.5 text-xs text-white/25">{lead.source}</td>
+                    <td className="px-5 py-3.5"><StatusBadge status={lead.status} /></td>
+                    <td className="px-5 py-3.5 text-sm text-white/30 text-center">{lead.outreach_count}</td>
                   </tr>
                 ))}
               </tbody>
@@ -247,9 +261,13 @@ export default function B2BAdminPanel({
           </div>
         </div>
 
-        <p style={{ marginTop: 24, textAlign: "center", fontSize: 11, color: "#475569" }}>
-          WeerZone B2B Admin · <a href="/zakelijk" style={{ color: "#f59e0b" }}>Bekijk /zakelijk pagina</a>
+        <p className="mt-6 text-center text-white/20 text-xs">
+          WeerZone B2B Admin ·{" "}
+          <a href="/zakelijk" className="text-accent-orange hover:underline">/zakelijk</a>
+          {" · "}
+          <a href="/" className="hover:text-white/40">Dashboard</a>
         </p>
+
       </div>
     </div>
   );
