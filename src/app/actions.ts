@@ -27,7 +27,8 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherData>
         const prompt = `
           Schrijf een volledig, nuchter Nederlands weerbericht (geen AI-jargon!) op basis van deze feiten.
           Focus op de komende 48 uur. Vertel wat mensen buiten gaan merken.
-          Schrijf precies 4 tot 5 zinnen.
+          VERPLICHT: minimaal 4 zinnen, maximaal 5 zinnen. Eén of twee zinnen is NIET toegestaan.
+          Begin met de situatie nu, dan verloop vandaag, dan morgen, dan korte conclusie.
           
           FEITEN NU:
           Lucht: ${getWeatherDescription(weather.current.weatherCode)}
@@ -46,12 +47,12 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherData>
           STIJLREGELS:
           1. GEEN woorden als 'analyse', 'data', 'verdict', 'verwachting', 'significant'.
           2. Praat als een nuchtere kenner. Recht door zee.
-          3. Maximaal 60 woorden.
+          3. Tussen de 50 en 90 woorden. Korter is geen optie.
         `.trim();
 
         const result = await model.generateContent({
           contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 400, temperature: 0.8, topP: 0.95 },
+          generationConfig: { maxOutputTokens: 2000, temperature: 0.8, topP: 0.95 },
         });
 
         const text = result.response.text().trim().replace(/^"|"$/g, '');

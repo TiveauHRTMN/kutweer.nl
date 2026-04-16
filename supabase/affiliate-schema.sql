@@ -41,6 +41,10 @@ ALTER TABLE affiliate_products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE pivot_rules ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Public read affiliate_products" ON affiliate_products;
+DROP POLICY IF EXISTS "Public insert analytics_events" ON analytics_events;
+DROP POLICY IF EXISTS "Public read pivot_rules" ON pivot_rules;
+
 CREATE POLICY "Public read affiliate_products" ON affiliate_products FOR SELECT TO anon USING (true);
 CREATE POLICY "Public insert analytics_events" ON analytics_events FOR INSERT TO anon WITH CHECK (true);
 CREATE POLICY "Public read pivot_rules" ON pivot_rules FOR SELECT TO anon USING (true);
