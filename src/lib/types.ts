@@ -68,6 +68,9 @@ export interface City {
 // ============================================================
 
 export const DUTCH_CITIES: City[] = [
+  // ── Het Meteorologische Hart (Default) ──
+  { name: "De Bilt", lat: 52.1011, lon: 5.1775 },
+
   // ── Top 10 grootste steden ──
   { name: "Amsterdam", lat: 52.3676, lon: 4.9041 },
   { name: "Rotterdam", lat: 51.9244, lon: 4.4777 },
@@ -102,7 +105,6 @@ export const DUTCH_CITIES: City[] = [
 
   // Centraal
   { name: "Schiphol", lat: 52.3017, lon: 4.7642 },
-  { name: "De Bilt", lat: 52.1011, lon: 5.1775 },
   { name: "Lelystad", lat: 52.4572, lon: 5.5206 },
   { name: "Deelen", lat: 52.0606, lon: 5.8731 },
   { name: "Hupsel", lat: 52.0694, lon: 6.6567 },

@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "WeerZone",
+  name: "WEERZONE",
   url: "https://weerzone.nl",
   description:
-    "Vergeet de 14-daagse. De komende 48 uur op de vierkante meter. KNMI HARMONIE + DWD ICON + ICON-D2. De enige weerdienst die niet liegt.",
+    "WEERZONE.nl — Vergeet de 14-daagse. De komende 48 uur vooruit. De rest is ruis. KNMI HARMONIE data op de vierkante meter.",
   potentialAction: {
     "@type": "SearchAction",
     target: "https://weerzone.nl/weer/{city}",
@@ -26,7 +26,7 @@ const jsonLd = {
 const orgLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "WeerZone",
+  name: "WEERZONE",
   url: "https://weerzone.nl",
   logo: "https://weerzone.nl/favicon-icon.png",
   sameAs: [],
@@ -38,15 +38,15 @@ const faqLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "Wat is WeerZone?",
+      name: "Wat is WEERZONE?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "WeerZone is de weerdienst die niet liegt. We combineren KNMI HARMONIE, DWD ICON en ICON-D2 — voor de enige voorspelling die ertoe doet: de komende 48 uur op de kilometer nauwkeurig. De rest is ruis.",
+        text: "WEERZONE is de weerdienst die niet liegt. We combineren KNMI HARMONIE en DWD ICON-D2 — voor de enige voorspelling die ertoe doet: de komende 48 uur op de kilometer nauwkeurig. De rest is ruis.",
       },
     },
     {
       "@type": "Question",
-      name: "Waarom voorspelt WeerZone maar 48 uur vooruit?",
+      name: "Waarom voorspelt WEERZONE maar 48 uur vooruit?",
       acceptedAnswer: {
         "@type": "Answer",
         text: "Omdat alles na 48 uur wetenschappelijk gezien onbetrouwbaar is. Die 14-daagse van je weer-app? Een random number generator met een zonnetje erop. Wij doen alleen wat bewezen klopt.",
@@ -54,18 +54,18 @@ const faqLd = {
     },
     {
       "@type": "Question",
-      name: "Welke weermodellen gebruikt WeerZone?",
+      name: "Welke weermodellen gebruikt WEERZONE?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "KNMI HARMONIE (het Nederlandse weermodel), DWD ICON en ICON-D2 (het ultra-high-resolution geneste model). Wanneer alle modellen het eens zijn, weet je het zeker. Wanneer ze het oneens zijn, vertellen we je dat ook. Eerlijkheid boven alles.",
+        text: "KNMI HARMONIE (het Nederlandse weermodel) en DWD ICON-D2 (het ultra-high-resolution geneste model). Wanneer de modellen het eens zijn, weet je het zeker. Wanneer ze het oneens zijn, vertellen we je dat ook. Eerlijkheid boven alles.",
       },
     },
     {
       "@type": "Question",
-      name: "Is WeerZone gratis?",
+      name: "Is WEERZONE gratis?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Het 48-uurs weerbericht is volledig gratis. Met een gratis account krijg je extra features: postcodespecifieke alerts, AI-kledingadvies en de 48-uurs Impact Analyse. Geen creditcard nodig.",
+        text: "Het 48-uurs weerbericht is volledig gratis. Met een gratis account krijg je extra features: postcodespecifieke alerts, AI-kledingadvies van Piet en de 48-uurs Impact Analyse. Geen creditcard nodig.",
       },
     },
   ],
