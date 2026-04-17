@@ -26,25 +26,26 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherData>
 
         const tomorrow = weather.daily[1];
         const prompt = `
-Je bent de weerverteller van WeerZone. Schrijf een uitgebreid, nuchter Nederlands weerbericht.
+Je bent de weerverteller van WeerZone. Stijl: Roddelpraat / VI / Powned — direct, brutaal, eerlijk, met mening. Geen gelul, wel netjes (geen scheldwoorden).
 
-LENGTE-EIS (HARDE REGEL):
-- Exact 4 of 5 volle zinnen.
-- Tussen de 55 en 90 woorden.
-- Eén of twee zinnen is een foute output en wordt afgewezen.
+LENGTE (HARD):
+- Exact 3 zinnen.
+- Samen 35-55 woorden totaal.
+- Korter of langer = fout.
 
-STRUCTUUR (in deze volgorde):
-1. Situatie nu (temp, lucht, gevoelstemp)
-2. Verloop vandaag/avond (regen, wind, wat mensen buiten merken)
-3. Morgen (wat te verwachten)
-4. Korte, nuchtere afsluiter
-
-VOORBEELD (qua lengte/toon — NIET kopiëren):
-"Het is 12° in de stad met een bewolkte lucht die maar weinig licht doorlaat. De wind trekt vanmiddag aan en dan voelt het eerder als een schrale 9° op de fiets. Later op de dag kan er nog een buitje vallen, dus neem voor de zekerheid een jasje mee. Morgen draait het door met 14° en wisselend bewolkt, regen blijft grotendeels weg. Kortom: typisch Nederlands aprilweer, niks schokkends."
+STRUCTUUR:
+1. Situatie nu + gevoel (met mening: lekker, ruk, meevaller, tegenvaller).
+2. Wat de komende uren te merken is (regen ja/nee, wind, wel/niet naar buiten).
+3. Korte dreun over morgen — één pittige conclusie.
 
 STIJL:
-- Geen AI-jargon: geen 'analyse', 'data', 'verdict', 'verwachting', 'significant', 'conform'.
-- Spreektaal, recht door zee, zoals een nuchtere kenner op een terras.
+- Schrijf alsof je op een terras zit met een biertje. Direct, scherp, met humor.
+- Mening hebben mag. Voorbeelden: "Prima hoor.", "Niks om over te zeuren.", "Tegenvaller.", "Daar zit je dan.", "Gewoon doen.", "Jas aan en bek dicht."
+- GEEN: 'analyse', 'verwachting', 'significant', 'conform', 'momenteel', 'gedurende', 'tikkeltje'.
+- GEEN scheldwoorden, wel attitude.
+
+VOORBEELD (qua toon/lengte — NIET kopiëren):
+"Elf graden met een grijze lucht, voelt buiten als een schamele 9. Droog blijft het wel, dus geen reden om binnen te blijven hangen. Morgen zakt het verder in met 8 graden en regen — tegenvallertje."
 
 FEITEN NU:
 Lucht: ${getWeatherDescription(weather.current.weatherCode)}
@@ -60,7 +61,7 @@ Max: ${tomorrow.tempMax}°, Min: ${tomorrow.tempMin}°
 Lucht: ${getWeatherDescription(tomorrow.weatherCode)}
 Regen: ${tomorrow.precipitationSum} mm
 
-Geef nu het volledige weerbericht (4-5 zinnen, 55-90 woorden).
+Geef nu het weerbericht (3 zinnen, 35-55 woorden, Roddelpraat-toon).
         `.trim();
 
         const result = await model.generateContent({
@@ -70,12 +71,12 @@ Geef nu het volledige weerbericht (4-5 zinnen, 55-90 woorden).
 
         const text = result.response.text().trim().replace(/^"|"$/g, '');
         const wordCount = text.split(/\s+/).filter(Boolean).length;
-        // Reject te korte output — dan opnieuw proberen
-        if (text && wordCount >= 40) {
+        // Accept 25-70 woorden (3 zinnen range)
+        if (text && wordCount >= 25 && wordCount <= 70) {
           weather.aiVerdict = text;
-          break; // Succes!
+          break;
         }
-        console.warn(`AI output te kort (${wordCount} woorden), retry...`);
+        console.warn(`AI output buiten range (${wordCount} woorden), retry...`);
         attempts++;
         if (attempts === 3) {
           weather.aiVerdict = text && wordCount > 10 ? text : getMainCommentary(weather);
