@@ -32,9 +32,9 @@ const RainRadar = dynamic(() => import("./RainRadar"), {
 
 // AdSense ad slot IDs — vul deze via env vars in Vercel
 // NEXT_PUBLIC_ADSENSE_SLOT_TOP / _MID / _BOTTOM
-const AD_SLOT_TOP = process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOP || "";
-const AD_SLOT_MID = process.env.NEXT_PUBLIC_ADSENSE_SLOT_MID || "";
-const AD_SLOT_BOTTOM = process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || "";
+const AD_SLOT_TOP = process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOP || "1623070441";
+const AD_SLOT_MID = process.env.NEXT_PUBLIC_ADSENSE_SLOT_MID || "5538476754";
+const AD_SLOT_BOTTOM = process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || "1260320399";
 
 interface DashboardProps {
   initialCity?: City;
