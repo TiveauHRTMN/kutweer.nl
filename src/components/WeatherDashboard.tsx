@@ -21,6 +21,13 @@ import WeatherBackground from "./WeatherBackground";
 import AffiliateCard from "./AffiliateCard";
 import EmailSubscribe from "./EmailSubscribe";
 import RainRadar from "./RainRadar";
+import AdSlot from "./AdSlot";
+
+// AdSense ad slot IDs — vul deze via env vars in Vercel
+// NEXT_PUBLIC_ADSENSE_SLOT_TOP / _MID / _BOTTOM
+const AD_SLOT_TOP = process.env.NEXT_PUBLIC_ADSENSE_SLOT_TOP || "";
+const AD_SLOT_MID = process.env.NEXT_PUBLIC_ADSENSE_SLOT_MID || "";
+const AD_SLOT_BOTTOM = process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || "";
 
 interface DashboardProps {
   initialCity?: City;
@@ -523,6 +530,13 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       })()}
 
 
+      {/* ===== AdSense Top ===== */}
+      {AD_SLOT_TOP && (
+        <div className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+          <AdSlot slot={AD_SLOT_TOP} format="auto" responsive minHeight={100} />
+        </div>
+      )}
+
       {/* ===== Affiliate Spot 1 — prominent boven de vouw ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
         <div className="flex justify-between items-end mb-2 px-1">
@@ -573,6 +587,13 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           </div>
         </div>
       </div>
+
+      {/* ===== AdSense Mid ===== */}
+      {AD_SLOT_MID && (
+        <div className="animate-fade-in" style={{ animationDelay: "0.45s" }}>
+          <AdSlot slot={AD_SLOT_MID} format="auto" responsive minHeight={100} />
+        </div>
+      )}
 
       {/* ===== 7. Misère-Score ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.45s" }}>
@@ -731,6 +752,13 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
         </div>
         <AffiliateCard weather={weather} />
       </div>
+
+      {/* ===== AdSense Bottom ===== */}
+      {AD_SLOT_BOTTOM && (
+        <div className="animate-fade-in" style={{ animationDelay: "0.92s" }}>
+          <AdSlot slot={AD_SLOT_BOTTOM} format="auto" responsive minHeight={100} />
+        </div>
+      )}
 
       {/* ===== 18. E-mail Weerrapport (Moved to top) ===== */}
 

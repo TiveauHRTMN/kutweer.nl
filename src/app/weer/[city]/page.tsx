@@ -4,6 +4,7 @@ import { DUTCH_CITIES } from "@/lib/types";
 import { fetchWeatherData } from "@/lib/weather";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import NearbyLinks from "@/components/NearbyLinks";
+import ZakelijkCTA from "@/components/ZakelijkCTA";
 
 function findCity(slug: string) {
   return DUTCH_CITIES.find(
@@ -194,6 +195,7 @@ export default async function CityWeatherPage({
       />
       <main>
         <WeatherDashboard initialCity={city} />
+        <ZakelijkCTA cityName={city.name} />
         <NearbyLinks currentCity={city.name} cities={nearby} />
       </main>
     </>

@@ -39,7 +39,17 @@
       "Bash(curl -s -X POST \"https://bhguergqkyiejyxsiwdu.supabase.co/rest/v1/subscribers\" -H \"apikey: sb_publishable_kSGZWyZvFqQuxDkkMSwJNQ_T7z6Gc2E\" -H \"Authorization: Bearer sb_publishable_kSGZWyZvFqQuxDkkMSwJNQ_T7z6Gc2E\" -H \"Content-Type: application/json\" -H \"Prefer: return=minimal\" -d '{\"email\":\"test@test.nl\"}')",
       "Bash(curl -s -X POST \"https://bhguergqkyiejyxsiwdu.supabase.co/rest/v1/subscribers\" -H \"apikey: sb_publishable_kSGZWyZvFqQuxDkkMSwJNQ_T7z6Gc2E\" -H \"Authorization: Bearer sb_publishable_kSGZWyZvFqQuxDkkMSwJNQ_T7z6Gc2E\" -H \"Content-Type: application/json\" -H \"Prefer: return=representation\" -d '{\"email\":\"rwnhrtmn@gmail.com\",\"city\":\"Amsterdam\",\"lat\":52.37,\"lon\":4.89,\"active\":true}')",
       "Bash(curl -s -X POST \"https://weerzone.nl/api/subscribe\" -H \"Content-Type: application/json\" -d '{\"email\":\"rwnhrtmn@gmail.com\",\"city\":\"Amsterdam\",\"lat\":52.37,\"lon\":4.89}')",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(curl -s \"https://weerzone.nl/api/b2b/discover?secret=weerzone-cron-2026-djaelito\" -m 60)",
+      "Bash(curl -s -H \"Authorization: Bearer weerzone-cron-2026-djaelito\" \"https://weerzone.nl/api/b2b/discover\" -m 90)",
+      "Bash(curl -s -H \"Authorization: Bearer weerzone-cron-2026-djaelito\" \"https://weerzone.nl/api/cron/weather-email\" -m 90)",
+      "Bash(curl -sv -H \"Authorization: Bearer weerzone-cron-2026-djaelito\" \"https://weerzone.nl/api/cron/weather-email\" -m 90)",
+      "Bash(curl -s https://weerzone.nl)",
+      "Bash(curl -sI https://weerzone.nl)",
+      "Bash(curl -sI https://weerzone.nl/ads.txt)",
+      "Bash(curl -s https://weerzone.nl/ads.txt)",
+      "Bash(curl -s \"https://weerzone.nl/ads.txt?bust=$\\(date +%s\\)\")",
+      "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://weerzone.nl/ads.txt?nocache=$\\(date +%s%N\\)\")"
     ]
   }
 }

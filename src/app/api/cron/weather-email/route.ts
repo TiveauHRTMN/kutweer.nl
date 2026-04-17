@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import { getSupabase } from "@/lib/supabase";
 import { getWeatherDescription, getWeatherEmoji } from "@/lib/weather";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { amazonProductUrl, amazonUrl } from "@/lib/affiliates";
 
 // Vercel Cron: elke ochtend om 06:30 NL tijd
 export const dynamic = "force-dynamic";
@@ -38,6 +39,113 @@ async function fetchWeather(lat: number, lon: number) {
   return res.json();
 }
 
+// ------------------------------------------------------------
+// Weer-afhankelijke Amazon productkeuze — 2 items per mail
+// ------------------------------------------------------------
+type AffiliatePick = { title: string; subtitle: string; href: string; emoji: string };
+
+function pickProducts(code: number, tempMax: number, tempMin: number, precip: number, wind: number): AffiliatePick[] {
+  const picks: AffiliatePick[] = [];
+
+  // Regen scenario
+  if (precip > 2 || (code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
+    picks.push({
+      emoji: "☔",
+      title: "Stormparaplu (winddicht)",
+      subtitle: "Waait niet binnenstebuiten — topper op Amazon",
+      href: amazonProductUrl("B07B8K47M2"),
+    });
+    picks.push({
+      emoji: "🧥",
+      title: "Lichte regenjas",
+      subtitle: "Compact, past in je tas. Voor wie niet verrast wil worden.",
+      href: amazonProductUrl("B0DLH9WJSG"),
+    });
+    return picks;
+  }
+
+  // Vorst / ijskoud
+  if (tempMin <= 0 || code === 71 || code === 73 || code === 75 || code === 77) {
+    picks.push({
+      emoji: "🧊",
+      title: "IJskrabber met handschoen",
+      subtitle: "Voor die sikkeneurige ochtenden. Koude handen tellen niet mee.",
+      href: amazonProductUrl("B09QGWXRY9"),
+    });
+    picks.push({
+      emoji: "🧦",
+      title: "Thermo-ondergoed",
+      subtitle: "Omdat 'gewoon een trui' niet afdoet bij -2°.",
+      href: amazonProductUrl("B0DB2TYZ3W"),
+    });
+    return picks;
+  }
+
+  // Hitte
+  if (tempMax >= 25) {
+    picks.push({
+      emoji: "☀️",
+      title: "Zonnebrand factor 30+",
+      subtitle: "Factor 8 is geen zonnebrand, dat is een marinade.",
+      href: amazonUrl("zonnebrand factor 50"),
+    });
+    picks.push({
+      emoji: "🧊",
+      title: "Koelbox (elektrisch)",
+      subtitle: "Bier op 4° is het enige wat telt bij 28 graden.",
+      href: amazonProductUrl("B0GLFFKWT4"),
+    });
+    return picks;
+  }
+
+  // Wind
+  if (wind >= 35) {
+    picks.push({
+      emoji: "🌬️",
+      title: "Windbreaker jas",
+      subtitle: "Fietsen wordt cardio op steroïden — kleed je er naar.",
+      href: amazonProductUrl("B0DLH9WJSG"),
+    });
+    picks.push({
+      emoji: "🧢",
+      title: "Muts met koord",
+      subtitle: "Waait niet af. Je hoofd zal je bedanken.",
+      href: amazonUrl("beanie muts wol"),
+    });
+    return picks;
+  }
+
+  // Default / mild weer
+  picks.push({
+    emoji: "🧥",
+    title: "Softshell jas",
+    subtitle: "Altijd een goede keuze in dit kikkerlandje.",
+    href: amazonProductUrl("B0836GND15"),
+  });
+  picks.push({
+    emoji: "🎒",
+    title: "Picknickdeken waterafstotend",
+    subtitle: "Voor als het park eindelijk weer open is.",
+    href: amazonProductUrl("B0GLFFKWT4"),
+  });
+  return picks;
+}
+
+function buildAffiliateHtml(products: AffiliatePick[]): string {
+  return products.map(p => `
+    <a href="${p.href}" target="_blank" rel="sponsored noopener" style="display:block;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;padding:16px 20px;margin-bottom:12px;text-decoration:none;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="font-size:32px;line-height:1;">${p.emoji}</div>
+        <div style="flex:1;">
+          <p style="margin:0;font-size:14px;font-weight:800;color:#1e293b;line-height:1.3;">${p.title}</p>
+          <p style="margin:4px 0 0;font-size:12px;color:#64748b;line-height:1.4;">${p.subtitle}</p>
+        </div>
+        <div style="color:#f97316;font-size:18px;font-weight:900;">→</div>
+      </div>
+    </a>
+  `).join("");
+}
+
 function buildEmailHtml(city: string, data: Record<string, unknown>, pietCommentary: string): string {
   const current = data.current as Record<string, number>;
   const daily = data.daily as Record<string, number[]>;
@@ -46,10 +154,13 @@ function buildEmailHtml(city: string, data: Record<string, unknown>, pietComment
   const emoji = getWeatherEmoji(code, true);
   const desc = getWeatherDescription(code);
   const wind = Math.round(current.wind_speed_10m);
-  
+
   const dailyTempMax = Math.round(Math.max(...daily.temperature_2m_max.slice(0, 2)));
   const dailyTempMin = Math.round(Math.min(...daily.temperature_2m_min.slice(0, 2)));
   const totalPrecip = daily.precipitation_sum[0] + daily.precipitation_sum[1];
+
+  const affiliateProducts = pickProducts(code, dailyTempMax, dailyTempMin, totalPrecip, wind);
+  const affiliateHtml = buildAffiliateHtml(affiliateProducts);
   
   return `
 <!DOCTYPE html>
@@ -97,6 +208,14 @@ function buildEmailHtml(city: string, data: Record<string, unknown>, pietComment
       <a href="https://weerzone.nl/weer/${city.toLowerCase().replace(/\s+/g, '-')}" style="display:inline-block;padding:16px 40px;background:#1e293b;color:#ffffff;font-weight:700;font-size:14px;border-radius:12px;text-decoration:none;letter-spacing:1px;box-shadow:0 4px 20px rgba(30,41,59,0.2);">
         BEKIJK VOLLEDIGE IMPACT →
       </a>
+    </div>
+
+    <!-- WEER-RELEVANTE PICKS (AFFILIATE) -->
+    <div style="background:#f8fafc;border-radius:24px;padding:28px 20px;margin:8px 0 24px;border:1px solid #e2e8f0;">
+      <p style="margin:0 0 4px;font-size:11px;color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;text-align:center;">Passend bij dit weer</p>
+      <p style="margin:0 0 20px;font-size:13px;color:#475569;text-align:center;font-weight:500;">Geen ruis, gewoon wat écht handig is vandaag.</p>
+      ${affiliateHtml}
+      <p style="margin:16px 0 0;font-size:10px;color:#94a3b8;text-align:center;line-height:1.5;">Affiliate links — jij betaalt niks extra, wij krijgen een kleine commissie.</p>
     </div>
 
     <!-- VIRAL SHARE -->
