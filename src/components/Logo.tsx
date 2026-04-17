@@ -29,7 +29,7 @@ export function LogoFull({ height = 32, className = "" }: { height?: number; cla
         width={width}
         height={height}
         className={className}
-        priority
+        fetchPriority="high"
       />
     </div>
   );
