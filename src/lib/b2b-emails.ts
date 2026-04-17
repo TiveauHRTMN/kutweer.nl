@@ -2,6 +2,96 @@
 // B2B outreach email templates per branche
 // ============================================================
 
+import { amazonProductUrl, amazonUrl } from "./affiliates";
+
+type GearItem = { emoji: string; title: string; desc: string; href: string };
+
+const GEAR: Record<string, GearItem[]> = {
+  glazenwasser: [
+    { emoji: "☂️", title: "Senz° stormparaplu", desc: "Als het tóch tegenzit onderweg — windproof tot 100 km/u.", href: amazonProductUrl("B07B8K47M2") },
+    { emoji: "🧤", title: "Waterdichte werkhandschoenen", desc: "Grip op natte ladders, warme vingers.", href: amazonUrl("waterdichte werkhandschoenen winter grip") },
+    { emoji: "🧥", title: "Regenpak heren/dames", desc: "Als de weersmelding tóch afwijkt.", href: amazonUrl("regenpak werk waterdicht heren") },
+  ],
+  bouw: [
+    { emoji: "🦺", title: "Thermo-werkkleding set", desc: "Blijven doorwerken bij vorst.", href: amazonProductUrl("B0DB2TYZ3W") },
+    { emoji: "🧤", title: "Gevoerde werkhandschoenen", desc: "Grip + warmte bij nul graden.", href: amazonUrl("werkhandschoenen gevoerd winter") },
+    { emoji: "❄️", title: "Antivries beton-dekzeil", desc: "Verse stort beschermen bij nachtvorst.", href: amazonUrl("thermo dekzeil bouw beton") },
+  ],
+  horeca: [
+    { emoji: "🔥", title: "Terrasverwarmer elektrisch", desc: "Gasten blijven zitten als de avond afkoelt.", href: amazonUrl("terrasverwarmer elektrisch heater") },
+    { emoji: "⛱️", title: "Zware parasolvoet 50kg", desc: "Houdt stand bij plotse windvlagen.", href: amazonUrl("parasolvoet 50kg gevuld zwaar") },
+    { emoji: "🌬️", title: "Ventilator staand horeca", desc: "Terras aangenaam bij 28°+.", href: amazonUrl("ventilator staand horeca krachtig") },
+  ],
+  evenementen: [
+    { emoji: "⛺", title: "Partytent stormverankering", desc: "Grondankers voor als Bft 6 opduikt.", href: amazonUrl("partytent grondankers stormset") },
+    { emoji: "🎪", title: "Waterdichte zijwanden", desc: "Droog podium, droge gasten.", href: amazonUrl("partytent zijwanden waterdicht") },
+    { emoji: "🔦", title: "Noodverlichting oplaadbaar", desc: "Voor als onweer het stroompunt raakt.", href: amazonUrl("led noodverlichting oplaadbaar event") },
+  ],
+  agrarisch: [
+    { emoji: "🌧️", title: "Regenmeter digitaal", desc: "Eigen perceel-data naast WeerZone.", href: amazonUrl("digitale regenmeter draadloos tuin") },
+    { emoji: "🌡️", title: "Bodemthermometer professioneel", desc: "Zaaien op het juiste moment.", href: amazonUrl("bodemthermometer professioneel landbouw") },
+    { emoji: "🧊", title: "Vliesdoek vorstbescherming", desc: "Gewassen sparen bij nachtvorst.", href: amazonUrl("vliesdoek vorstbescherming tuin xxl") },
+  ],
+  transport: [
+    { emoji: "❄️", title: "Strooizout 25kg", desc: "Eigen laadperron ijsvrij houden.", href: amazonUrl("strooizout 25kg bigbag") },
+    { emoji: "🪟", title: "Voorruit anti-vries dekzeil XL", desc: "5 minuten tijdwinst elke ochtend-shift.", href: amazonUrl("voorruit dekzeil xl vrachtwagen") },
+    { emoji: "🔦", title: "LED-mistlamp 12V/24V", desc: "Zicht als mist onverwacht ligt.", href: amazonUrl("led mistlamp vrachtwagen 24v") },
+  ],
+  sport: [
+    { emoji: "☔", title: "Stormparaplu XL trainer", desc: "Staf droog langs de lijn.", href: amazonProductUrl("B07B8K47M2") },
+    { emoji: "🧤", title: "Keeperstraining handschoenen koud", desc: "Grip bij vorst en vochtigheid.", href: amazonUrl("keepershandschoenen winter grip") },
+    { emoji: "🚰", title: "Bidon rack 12x (hitte)", desc: "Hydratatie bij 25°+ trainingen.", href: amazonUrl("bidonrek 12 teamsport") },
+  ],
+  schoonmaak: [
+    { emoji: "💨", title: "Bladblazer accu professional", desc: "Natte bladeren snel weg voor terras wassen.", href: amazonUrl("bladblazer accu professioneel") },
+    { emoji: "🪣", title: "Microvezel-set droog/nat", desc: "Schakelt mee met het weer.", href: amazonUrl("microvezel doeken set professioneel") },
+    { emoji: "🧤", title: "Nitril werkhandschoenen", desc: "Grip ook onder natte condities.", href: amazonUrl("nitril werkhandschoenen professional") },
+  ],
+  schildersbedrijf: [
+    { emoji: "🌡️", title: "Infrarood thermometer oppervlak", desc: "Meet of de gevel warm genoeg is (10°+).", href: amazonUrl("infrarood thermometer oppervlak") },
+    { emoji: "💧", title: "Vochtmeter hout/steen", desc: "Weet of de ondergrond écht droog is.", href: amazonUrl("vochtmeter hout professioneel") },
+    { emoji: "🛡️", title: "Afdekzeil professional zwaar", desc: "Onverwachte bui? Geen paniek.", href: amazonUrl("afdekzeil professioneel waterdicht zwaar") },
+  ],
+  dakdekker: [
+    { emoji: "🦺", title: "Valbeveiliging harnas set", desc: "Verplicht bij wind — deze set is compleet.", href: amazonUrl("valbeveiliging harnas set dak") },
+    { emoji: "☂️", title: "Senz° stormparaplu", desc: "Voor de weg heen en terug.", href: amazonProductUrl("B07B8K47M2") },
+    { emoji: "🧤", title: "Snijvaste werkhandschoenen", desc: "Grip op natte pannen, cut-resistant.", href: amazonUrl("snijvaste werkhandschoenen dak") },
+  ],
+  tuinonderhoud: [
+    { emoji: "✂️", title: "Accu-heggenschaar professioneel", desc: "Werkt door waar benzine natwerk faalt.", href: amazonUrl("accu heggenschaar professioneel makita") },
+    { emoji: "🥾", title: "Waterdichte werkschoenen S3", desc: "Drassig gras? Droge voeten.", href: amazonUrl("werkschoenen s3 waterdicht heren") },
+    { emoji: "🧊", title: "Vliesdoek vorstbescherming", desc: "Klant-planten beschermen bij nachtvorst.", href: amazonUrl("vliesdoek vorstbescherming tuin") },
+  ],
+  bezorging: [
+    { emoji: "🧥", title: "Windbreaker koeriersjas", desc: "Fietsen bij Bft 6 zonder trillen.", href: amazonProductUrl("B0DLH9WJSG") },
+    { emoji: "🧤", title: "Koerier-handschoenen touchscreen", desc: "Telefoon bedienen bij vorst.", href: amazonUrl("fietshandschoenen winter touchscreen") },
+    { emoji: "🎒", title: "Waterdichte koerierstas", desc: "Zendingen droog bij elke bui.", href: amazonUrl("waterdichte koerierstas rolltop") },
+  ],
+};
+
+function buildGearHtml(industry: string): string {
+  const items = GEAR[industry] || GEAR.bouw;
+  const rows = items.map(i => `
+    <a href="${i.href}" target="_blank" rel="sponsored noopener" style="display:block;padding:12px 14px;background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;margin-bottom:8px;text-decoration:none;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:24px;">${i.emoji}</span>
+        <div style="flex:1;">
+          <p style="margin:0;font-size:13px;font-weight:800;color:#1e293b;line-height:1.3;">${i.title}</p>
+          <p style="margin:2px 0 0;font-size:11px;color:#64748b;line-height:1.4;">${i.desc}</p>
+        </div>
+        <span style="color:#f59e0b;font-size:14px;font-weight:900;">→</span>
+      </div>
+    </a>
+  `).join("");
+  return `
+    <div style="background:#f8fafc;border-radius:12px;padding:18px;margin:20px 0;border:1px solid #e2e8f0;">
+      <p style="margin:0 0 4px;font-size:11px;color:#94a3b8;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;">Uitrusting die meewerkt</p>
+      <p style="margin:0 0 14px;font-size:12px;color:#64748b;">Branche-specifiek, getest door collega's. Amazon-partnerlinks.</p>
+      ${rows}
+    </div>
+  `;
+}
+
 export type B2BIndustry =
   | "glazenwasser"
   | "bouw"
@@ -163,21 +253,98 @@ export function getIndustryHook(industry: B2BIndustry): IndustryHook {
   return HOOKS[industry] ?? HOOKS.bouw;
 }
 
-export function getB2BSubject(industry: B2BIndustry, city?: string): string {
+export type OutreachStage = 1 | 2 | 3;
+
+// Lichte type-ref — full type woont in b2b-relevance
+interface WeatherSnippetLike {
+  city: string;
+  temp: number;
+  desc: string;
+  windMax: number;
+  rain48h: number;
+  tempMin: number;
+  tempMax: number;
+  event: { kind: string; label: string; urgencyHours: number } | null;
+}
+
+export function getB2BSubject(
+  industry: B2BIndustry,
+  city?: string,
+  stage: OutreachStage = 1,
+  snippet?: WeatherSnippetLike | null,
+): string {
   const hook = HOOKS[industry];
-  if (!hook) return "48-uurs weerdata voor jouw bedrijf — WeerZone";
   const location = city ? ` in ${city}` : "";
+
+  // Stage 1 met event → event-in-subject (hoogste open rate)
+  if (stage === 1 && snippet?.event) {
+    return `⚠️ ${snippet.event.label}${location} — voor ${industry}`;
+  }
+  if (stage === 2) return `Korte herinnering: ${hook?.headline ?? "WeerZone"}${location}`;
+  if (stage === 3) return `Laatste mail van mij${location}`;
+  if (!hook) return "48-uurs weerdata voor jouw bedrijf — WeerZone";
   return `${hook.headline}${location}`;
+}
+
+function buildWeatherSnippetHtml(snippet: WeatherSnippetLike | null | undefined): string {
+  if (!snippet) return "";
+  const eventPill = snippet.event
+    ? `<div style="margin-top:10px;padding:10px 14px;background:#fef2f2;border:1px solid #fecaca;border-radius:10px;">
+         <p style="margin:0;font-size:12px;color:#991b1b;font-weight:800;text-transform:uppercase;letter-spacing:1px;">⚠️ Alert voor ${snippet.city}</p>
+         <p style="margin:4px 0 0;font-size:13px;color:#7f1d1d;font-weight:700;line-height:1.4;">${snippet.event.label}</p>
+       </div>`
+    : "";
+  return `
+    <div style="background:#ecfeff;border:1px solid #a5f3fc;border-radius:12px;padding:16px 18px;margin:0 0 20px;">
+      <p style="margin:0 0 6px;font-size:10px;color:#0e7490;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;">Live 48-uurs voor ${snippet.city}</p>
+      <p style="margin:0;font-size:14px;color:#0c4a6e;line-height:1.5;">
+        Nu <strong>${Math.round(snippet.temp)}°</strong> · ${snippet.desc} ·
+        <strong>${Math.round(snippet.tempMin)}°/${Math.round(snippet.tempMax)}°</strong> ·
+        wind tot <strong>${Math.round(snippet.windMax)} km/u</strong> ·
+        neerslag <strong>${snippet.rain48h.toFixed(1)}mm</strong>
+      </p>
+      ${eventPill}
+    </div>
+  `;
+}
+
+function stageCopy(stage: OutreachStage, hook: IndustryHook, businessName: string, snippet: WeatherSnippetLike | null | undefined) {
+  if (stage === 2) {
+    return {
+      headline: `Nog even hierover, ${businessName}`,
+      intro: `Vorige week stuurde ik je een bericht over ${hook.headline.toLowerCase()}. Geen reactie — geen probleem, je hebt het druk.`,
+      body: `Waarom ik 'm opnieuw stuur: kijk even naar de data hierboven voor ${snippet?.city || "jouw regio"}. Dit is exactly wat je elke ochtend om 08:00 in je inbox krijgt — alleen dan mét 48u vooruit-knoppen zoals "plan wel/niet door".`,
+      proof: `Andere ${hook.bullets[0].toLowerCase()} — daar wordt WeerZone voor gebruikt. Geen dashboard-bagger, één mail per dag.`,
+    };
+  }
+  if (stage === 3) {
+    return {
+      headline: `Laatste mail — belofte`,
+      intro: `Ik heb je twee keer benaderd. Als WeerZone niks voor je is, prima — dan laat ik je met rust.`,
+      body: `Toch één ding: hierboven zie je de weersituatie voor ${snippet?.city || "jouw regio"} komende 48u. Dít zou je elke ochtend hebben. Geen account, geen app, gewoon een mail.`,
+      proof: `Als het relevant wordt, weet je me te vinden. Succes met ${new Date().toLocaleDateString("nl-NL", { month: "long" })}.`,
+    };
+  }
+  return {
+    headline: hook.headline,
+    intro: `Beste ${businessName},`,
+    body: `${hook.painPoint}\n\n${hook.solution}`,
+    proof: "",
+  };
 }
 
 export function getB2BEmailHtml(
   industry: B2BIndustry,
   businessName: string,
-  city?: string
+  city?: string,
+  snippet?: WeatherSnippetLike | null,
+  stage: OutreachStage = 1,
 ): string {
   const hook = getIndustryHook(industry);
   const location = city || "jouw regio";
   const unsubscribeUrl = "https://weerzone.nl/api/unsubscribe";
+  const copy = stageCopy(stage, hook, businessName, snippet);
+  const snippetHtml = buildWeatherSnippetHtml(snippet);
 
   const bulletsHtml = hook.bullets
     .map(
@@ -196,7 +363,7 @@ export function getB2BEmailHtml(
     <div style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);padding:32px 24px 28px;text-align:center;">
       <img src="https://weerzone.nl/logo-full.png" alt="WeerZone" style="height:32px;width:auto;margin-bottom:6px;opacity:0.9;" />
       <p style="color:rgba(255,255,255,0.5);font-size:9px;margin:0 0 24px;letter-spacing:2px;text-transform:uppercase;font-weight:700;">Data Intelligence · 48-uurs Impact Monitor</p>
-      <h1 style="color:#ffffff;font-size:24px;font-weight:900;margin:0;line-height:1.3;">${hook.headline}</h1>
+      <h1 style="color:#ffffff;font-size:24px;font-weight:900;margin:0;line-height:1.3;">${copy.headline}</h1>
     </div>
 
     <!-- ONE-LINER -->
@@ -206,13 +373,15 @@ export function getB2BEmailHtml(
 
     <!-- BODY -->
     <div style="background:#ffffff;padding:28px 24px;">
-      <p style="margin:0 0 16px;font-size:15px;color:#1e293b;font-weight:700;">Beste ${businessName},</p>
+      ${snippetHtml}
 
-      <p style="margin:0 0 16px;font-size:14px;color:#475569;line-height:1.6;">${hook.painPoint}</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#1e293b;font-weight:700;">${stage === 1 ? `Beste ${businessName},` : copy.intro}</p>
 
-      <p style="margin:0 0 16px;font-size:14px;color:#475569;line-height:1.6;">${hook.solution}</p>
+      <p style="margin:0 0 16px;font-size:14px;color:#475569;line-height:1.6;white-space:pre-line;">${stage === 1 ? hook.painPoint : copy.body}</p>
 
-      <!-- EXCLUSIVE OFFER BOX -->
+      ${stage === 1 ? `<p style="margin:0 0 16px;font-size:14px;color:#475569;line-height:1.6;">${hook.solution}</p>` : (copy.proof ? `<p style="margin:0 0 16px;font-size:14px;color:#475569;line-height:1.6;">${copy.proof}</p>` : "")}
+
+      ${stage === 1 ? `<!-- EXCLUSIVE OFFER BOX -->
       <div style="background:#fff7ed;border:2px dashed #f59e0b;border-radius:12px;padding:20px;margin:24px 0;text-align:center;">
         <p style="margin:0 0 8px;font-size:12px;color:#c2410c;font-weight:800;text-transform:uppercase;letter-spacing:1px;">Founding Member Actie 🚀</p>
         <p style="margin:0 0 16px;font-size:14px;color:#7c2d12;font-weight:600;line-height:1.4;">
@@ -232,14 +401,16 @@ export function getB2BEmailHtml(
       </div>
 
       <p style="margin:0 0 8px;font-size:14px;color:#475569;line-height:1.6;">Aanmelden duurt 30 seconden. Claim je plek voordat de 10 Founding Member-slots in ${location} vol zijn.</p>
+
+      ${buildGearHtml(industry)}` : ""}
     </div>
 
     <!-- CTA -->
     <div style="background:#ffffff;padding:0 24px 28px;text-align:center;">
       <a href="https://weerzone.nl/zakelijk" style="display:block;padding:16px;background:#f59e0b;color:#1e293b;font-weight:800;font-size:15px;border-radius:12px;text-decoration:none;text-align:center;box-shadow:0 4px 16px rgba(245,158,11,0.3);">
-        Gratis aanmelden →
+        ${stage === 3 ? "Zie wat je mist →" : stage === 2 ? "Aanmelden (30 sec) →" : "Gratis aanmelden →"}
       </a>
-      <p style="margin:20px 0 0;font-size:13px;color:#475569;"><strong>Team WeerZone</strong></p>
+      <p style="margin:20px 0 0;font-size:13px;color:#475569;"><strong>Tive · WeerZone</strong><br><span style="font-size:11px;color:#94a3b8;font-weight:400;">Reply werkt — ik lees mee.</span></p>
     </div>
 
     <!-- TRUST -->

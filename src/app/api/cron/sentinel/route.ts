@@ -3,6 +3,7 @@ import { getSupabase } from "@/lib/supabase";
 import { fetchWeatherData } from "@/lib/weather";
 import { Resend } from "resend";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { amazonProductUrl, amazonUrl } from "@/lib/affiliates";
 
 export const dynamic = "force-dynamic";
 
@@ -62,14 +63,61 @@ function buildAffiliateEmailHtml(city: string, anomaly: any, alertMsg: string) {
     RED: { bg: "#fef2f2", border: "#ef4444", text: "#991b1b", btn: "#ef4444" }
   }[level as "YELLOW" | "ORANGE" | "RED"];
 
-  const promos = {
-    HEAVY_RAIN: { title: "Houd je voeten droog", desc: "Forse neerslag op komst. Deze stormparaplu's zijn getest tot windkracht 10.", link: "https://www.bol.com/nl/nl/l/stormparaplu-s/20340/", btn: "Bekijk stormparaplu's" },
-    STORM: { title: "Zware windvlagen", desc: "Houd je tuinmeubels veilig. Check deze stevige buitenhoezen en verankering.", link: "https://www.bol.com/nl/nl/l/tuinmeubelhoezen/12975/", btn: "Bescherm je terras" },
-    HEAT: { title: "Hittegolf op komst", desc: "Zorg voor voldoende koeling en hydratatie. Mobiele airco's en ventilatoren nu leverbaar.", link: "https://www.bol.com/nl/nl/l/mobiele-airco-s/30349/", btn: "Bekijk koeling" },
-    COLD: { title: "Vorst aan de grond", desc: "Bescherm je planten en auto tegen de kou. Krabbers en vliesdoeken op voorraad.", link: "https://www.bol.com/nl/nl/l/ijskrabbers-en-sneeuwborstels/14066/", btn: "Winter-essentials" }
-  } as const;
-  
-  const promo = promos[anomaly.type as keyof typeof promos] || promos.HEAVY_RAIN;
+  type PromoItem = { title: string; price: string; href: string; emoji: string };
+  type PromoBlock = { title: string; desc: string; link: string; btn: string; extras: PromoItem[] };
+
+  const promos: Record<string, PromoBlock> = {
+    HEAVY_RAIN: {
+      title: "Houd je voeten droog",
+      desc: "Forse neerslag op komst. Deze Senz° stormparaplu is getest tot 100 km/u.",
+      link: amazonProductUrl("B07B8K47M2"),
+      btn: "Bekijk Senz° stormparaplu",
+      extras: [
+        { title: "Regenjas waterdicht", price: "vanaf €34", href: amazonUrl("regenjas waterdicht ademend"), emoji: "🧥" },
+        { title: "Waterdichte rugzakhoes", price: "vanaf €9", href: amazonUrl("regenhoes rugzak waterdicht"), emoji: "🎒" },
+      ],
+    },
+    STORM: {
+      title: "Zware windvlagen",
+      desc: "Zet je tuinmeubels vast. Stevige hoezen & verankering — voor de wind ze pakt.",
+      link: amazonUrl("tuinmeubel afdekhoes weerbestendig xl"),
+      btn: "Bescherm je terras",
+      extras: [
+        { title: "Senz° stormparaplu", price: "€29,95", href: amazonProductUrl("B07B8K47M2"), emoji: "☂️" },
+        { title: "Windbreaker jas", price: "vanaf €39", href: amazonUrl("windbreaker jas heren dames"), emoji: "🧥" },
+      ],
+    },
+    HEAT: {
+      title: "Hittegolf op komst",
+      desc: "Koeling & hydratatie. Mobiele airco, ventilator en koelbox — nu leverbaar.",
+      link: amazonUrl("mobiele airco slaapkamer stil"),
+      btn: "Bekijk mobiele airco",
+      extras: [
+        { title: "Ventilator stil", price: "vanaf €39", href: amazonUrl("ventilator staand stil slaapkamer"), emoji: "💨" },
+        { title: "Zonnebrand SPF 50", price: "vanaf €12", href: amazonUrl("zonnebrand spf 50 gezicht lichaam"), emoji: "🧴" },
+      ],
+    },
+    COLD: {
+      title: "Vorst aan de grond",
+      desc: "Bescherm je auto & planten. IJskrabber, thermo-ondergoed en vliesdoek op voorraad.",
+      link: amazonProductUrl("B09QGWXRY9"),
+      btn: "IJskrabber nu bestellen",
+      extras: [
+        { title: "Thermo-ondergoed set", price: "vanaf €24", href: amazonUrl("thermo ondergoed set heren dames"), emoji: "🧦" },
+        { title: "Autoruit anti-vries dekzeil", price: "vanaf €15", href: amazonUrl("voorruit dekzeil anti vries auto"), emoji: "❄️" },
+      ],
+    },
+  };
+
+  const promo = promos[anomaly.type as string] || promos.HEAVY_RAIN;
+
+  const extrasHtml = promo.extras.map(e => `
+    <a href="${e.href}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;text-decoration:none;margin-top:8px;">
+      <span style="font-size:22px;">${e.emoji}</span>
+      <span style="flex:1;font-size:13px;font-weight:700;color:#1e293b;">${e.title}</span>
+      <span style="font-size:12px;font-weight:800;color:#64748b;">${e.price} →</span>
+    </a>
+  `).join("");
 
   return `
 <!DOCTYPE html>
@@ -96,6 +144,8 @@ function buildAffiliateEmailHtml(city: string, anomaly: any, alertMsg: string) {
           <a href="${promo.link}" style="display:block;text-align:center;background:${colors.btn};color:#ffffff;font-weight:800;text-decoration:none;padding:18px;border-radius:12px;font-size:15px;">
             ${promo.btn.toUpperCase()} →
           </a>
+          <div style="margin-top:16px;">${extrasHtml}</div>
+          <p style="margin:16px 0 0;font-size:10px;color:#94a3b8;text-align:center;">Amazon-partnerlinks · als je via WeerZone bestelt steun je ons zonder extra kosten.</p>
         </div>
       </div>
 

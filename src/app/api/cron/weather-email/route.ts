@@ -47,87 +47,42 @@ type AffiliatePick = { title: string; subtitle: string; href: string; emoji: str
 function pickProducts(code: number, tempMax: number, tempMin: number, precip: number, wind: number): AffiliatePick[] {
   const picks: AffiliatePick[] = [];
 
-  // Regen scenario
+  // Regen
   if (precip > 2 || (code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
-    picks.push({
-      emoji: "☔",
-      title: "Stormparaplu (winddicht)",
-      subtitle: "Waait niet binnenstebuiten — topper op Amazon",
-      href: amazonProductUrl("B07B8K47M2"),
-    });
-    picks.push({
-      emoji: "🧥",
-      title: "Lichte regenjas",
-      subtitle: "Compact, past in je tas. Voor wie niet verrast wil worden.",
-      href: amazonProductUrl("B0DLH9WJSG"),
-    });
+    picks.push({ emoji: "☔", title: "Senz° stormparaplu", subtitle: "Winddicht tot 100 km/u — geen waaier-in-de-wind drama.", href: amazonProductUrl("B07B8K47M2") });
+    picks.push({ emoji: "🧥", title: "Lichte regenjas", subtitle: "Compact, past in je tas. Voor wie niet verrast wil worden.", href: amazonProductUrl("B0DLH9WJSG") });
+    picks.push({ emoji: "🎒", title: "Waterdichte rugzakhoes", subtitle: "Laptop droog, rug droog. Een tientje verzekering.", href: amazonUrl("regenhoes rugzak waterdicht") });
     return picks;
   }
 
   // Vorst / ijskoud
   if (tempMin <= 0 || code === 71 || code === 73 || code === 75 || code === 77) {
-    picks.push({
-      emoji: "🧊",
-      title: "IJskrabber met handschoen",
-      subtitle: "Voor die sikkeneurige ochtenden. Koude handen tellen niet mee.",
-      href: amazonProductUrl("B09QGWXRY9"),
-    });
-    picks.push({
-      emoji: "🧦",
-      title: "Thermo-ondergoed",
-      subtitle: "Omdat 'gewoon een trui' niet afdoet bij -2°.",
-      href: amazonProductUrl("B0DB2TYZ3W"),
-    });
+    picks.push({ emoji: "🧊", title: "IJskrabber met handschoen", subtitle: "Voor die sikkeneurige ochtenden. Koude handen tellen niet mee.", href: amazonProductUrl("B09QGWXRY9") });
+    picks.push({ emoji: "🧦", title: "Thermo-ondergoed", subtitle: "Omdat 'gewoon een trui' niet afdoet bij -2°.", href: amazonProductUrl("B0DB2TYZ3W") });
+    picks.push({ emoji: "❄️", title: "Autoruit anti-vries dekzeil", subtitle: "5 minuten tijdwinst elke ijzige ochtend.", href: amazonUrl("voorruit dekzeil anti vries auto") });
     return picks;
   }
 
   // Hitte
   if (tempMax >= 25) {
-    picks.push({
-      emoji: "☀️",
-      title: "Zonnebrand factor 30+",
-      subtitle: "Factor 8 is geen zonnebrand, dat is een marinade.",
-      href: amazonUrl("zonnebrand factor 50"),
-    });
-    picks.push({
-      emoji: "🧊",
-      title: "Koelbox (elektrisch)",
-      subtitle: "Bier op 4° is het enige wat telt bij 28 graden.",
-      href: amazonProductUrl("B0GLFFKWT4"),
-    });
+    picks.push({ emoji: "☀️", title: "Zonnebrand SPF 50", subtitle: "Factor 8 is geen zonnebrand, dat is een marinade.", href: amazonUrl("zonnebrand spf 50 gezicht lichaam") });
+    picks.push({ emoji: "🧊", title: "Koelbox (elektrisch)", subtitle: "Bier op 4° is het enige wat telt bij 28 graden.", href: amazonProductUrl("B0GLFFKWT4") });
+    picks.push({ emoji: "💨", title: "Ventilator stil (slaapkamer)", subtitle: "Slapen bij 26° lukt alleen met luchtstroom.", href: amazonUrl("ventilator staand stil slaapkamer") });
     return picks;
   }
 
   // Wind
   if (wind >= 35) {
-    picks.push({
-      emoji: "🌬️",
-      title: "Windbreaker jas",
-      subtitle: "Fietsen wordt cardio op steroïden — kleed je er naar.",
-      href: amazonProductUrl("B0DLH9WJSG"),
-    });
-    picks.push({
-      emoji: "🧢",
-      title: "Muts met koord",
-      subtitle: "Waait niet af. Je hoofd zal je bedanken.",
-      href: amazonUrl("beanie muts wol"),
-    });
+    picks.push({ emoji: "🌬️", title: "Windbreaker jas", subtitle: "Fietsen wordt cardio op steroïden — kleed je er naar.", href: amazonProductUrl("B0DLH9WJSG") });
+    picks.push({ emoji: "🧢", title: "Muts met koord", subtitle: "Waait niet af. Je hoofd zal je bedanken.", href: amazonUrl("beanie muts wol") });
+    picks.push({ emoji: "☂️", title: "Senz° stormparaplu", subtitle: "Als je tóch moet — deze overleeft het.", href: amazonProductUrl("B07B8K47M2") });
     return picks;
   }
 
-  // Default / mild weer
-  picks.push({
-    emoji: "🧥",
-    title: "Softshell jas",
-    subtitle: "Altijd een goede keuze in dit kikkerlandje.",
-    href: amazonProductUrl("B0836GND15"),
-  });
-  picks.push({
-    emoji: "🎒",
-    title: "Picknickdeken waterafstotend",
-    subtitle: "Voor als het park eindelijk weer open is.",
-    href: amazonProductUrl("B0GLFFKWT4"),
-  });
+  // Default / mild
+  picks.push({ emoji: "🧥", title: "Softshell jas", subtitle: "Altijd een goede keuze in dit kikkerlandje.", href: amazonProductUrl("B0836GND15") });
+  picks.push({ emoji: "🎒", title: "Picknickdeken waterafstotend", subtitle: "Voor als het park eindelijk weer open is.", href: amazonProductUrl("B0GLFFKWT4") });
+  picks.push({ emoji: "👟", title: "Waterproof wandelschoenen", subtitle: "Drassig gras, natte stoep — schoenen die het aankunnen.", href: amazonUrl("waterproof wandelschoenen heren dames") });
   return picks;
 }
 

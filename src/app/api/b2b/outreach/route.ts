@@ -1,12 +1,34 @@
 import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 import { Resend } from "resend";
-import { getB2BSubject, getB2BEmailHtml } from "@/lib/b2b-emails";
+import { getB2BSubject, getB2BEmailHtml, type OutreachStage } from "@/lib/b2b-emails";
 import type { B2BIndustry } from "@/lib/b2b-emails";
+import { fetchWeatherData } from "@/lib/weather";
+import { buildSnippet, geocodeCity, shouldSendStage1, type WeatherSnippet } from "@/lib/b2b-relevance";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 300;
 
 const MAX_PER_RUN = 10; // Rate limit: max 10 emails per cron-call
+const FROM_ADDRESS = "Tive van WeerZone <info@weerzone.nl>";
+
+async function buildContext(city: string | null, industry: B2BIndustry): Promise<WeatherSnippet | null> {
+  if (!city) return null;
+  const coords = await geocodeCity(city);
+  if (!coords) return null;
+  try {
+    const w = await fetchWeatherData(coords.lat, coords.lon);
+    return buildSnippet(w, city, industry);
+  } catch {
+    return null;
+  }
+}
+
+function stageFromCount(count: number): OutreachStage {
+  if (count >= 2) return 3;
+  if (count >= 1) return 2;
+  return 1;
+}
 
 export async function GET(req: Request) {
   // Auth check — alleen via cron of handmatig met secret
@@ -50,19 +72,39 @@ export async function GET(req: Request) {
   }
 
   let sent = 0;
+  let skipped = 0;
   const errors: string[] = [];
 
   for (const lead of leads) {
     try {
       const industry = lead.industry as B2BIndustry;
-      const subject = getB2BSubject(industry, lead.city);
-      const html = getB2BEmailHtml(industry, lead.business_name, lead.city);
+      const stage = stageFromCount(lead.outreach_count || 0);
+      const snippet = await buildContext(lead.city, industry);
+
+      // Stage 1: alleen sturen als weer relevant is OF lead al 14d oud
+      if (stage === 1) {
+        const ageDays = lead.created_at
+          ? Math.floor((Date.now() - new Date(lead.created_at).getTime()) / 86_400_000)
+          : 0;
+        if (snippet && !shouldSendStage1(snippet, ageDays)) {
+          skipped++;
+          continue;
+        }
+      }
+
+      const subject = getB2BSubject(industry, lead.city, stage, snippet);
+      const html = getB2BEmailHtml(industry, lead.business_name, lead.city, snippet, stage);
 
       const result = await resend.emails.send({
-        from: "WeerZone <info@weerzone.nl>",
+        from: FROM_ADDRESS,
         to: lead.email,
         subject,
         html,
+        tags: [
+          { name: "industry", value: industry },
+          { name: "stage", value: String(stage) },
+          { name: "event", value: snippet?.event?.kind || "none" },
+        ],
       });
 
       if (result.error) {
@@ -70,7 +112,6 @@ export async function GET(req: Request) {
         continue;
       }
 
-      // Update lead status
       await supabase
         .from("b2b_leads")
         .update({
@@ -88,6 +129,7 @@ export async function GET(req: Request) {
 
   return NextResponse.json({
     sent,
+    skipped,
     total: leads.length,
     errors: errors.slice(0, 5),
   });
@@ -137,14 +179,21 @@ export async function POST(req: Request) {
     if (resendKey) {
       const resend = new Resend(resendKey);
       const typedIndustry = industry as B2BIndustry;
-      const subject = getB2BSubject(typedIndustry, city);
-      const html = getB2BEmailHtml(typedIndustry, businessName, city);
+      const snippet = await buildContext(city || null, typedIndustry);
+      const subject = getB2BSubject(typedIndustry, city, 1, snippet);
+      const html = getB2BEmailHtml(typedIndustry, businessName, city, snippet, 1);
 
       const result = await resend.emails.send({
-        from: "WeerZone <info@weerzone.nl>",
+        from: FROM_ADDRESS,
         to: email.toLowerCase().trim(),
         subject,
         html,
+        tags: [
+          { name: "industry", value: typedIndustry },
+          { name: "stage", value: "1" },
+          { name: "event", value: snippet?.event?.kind || "none" },
+          { name: "source", value: "manual" },
+        ],
       });
 
       if (result.error) {
