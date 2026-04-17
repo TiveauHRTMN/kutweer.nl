@@ -30,11 +30,8 @@ export default function NavBar() {
   };
 
   return (
-    <nav
-      aria-label="Hoofdnavigatie"
-      className="sticky top-0 z-40 w-full px-3 pt-3 pb-2"
-    >
-      <ul className="max-w-3xl mx-auto flex items-center justify-between gap-1.5 sm:gap-2">
+    <nav aria-label="Hoofdnavigatie" className="w-full">
+      <ul className="flex items-center justify-between gap-1.5 sm:gap-2">
         <li className="flex-1">
           <button
             type="button"

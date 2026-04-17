@@ -20,6 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import WeatherBackground from "./WeatherBackground";
 import AffiliateCard from "./AffiliateCard";
 import EmailSubscribe from "./EmailSubscribe";
+import NavBar from "./NavBar";
 import RainRadar from "./RainRadar";
 import AdSlot from "./AdSlot";
 
@@ -169,6 +170,12 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
       {/* Email Promo — Prominent direct onder de header voor maximale conversie */}
       <div className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
         <EmailSubscribe city={city} />
+      </div>
+
+      {/* NavBar — onder logo + subscribe, zelfde breedte als de kaarten.
+          Zakelijk = B2B mail-funnel, Piet = dagelijkse 08:00-mail, Reed = extreem-weer-alert */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+        <NavBar />
       </div>
 
       {/* ===== 1. Main Weather Card — Kerninformatie ===== */}

@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import Script from "next/script";
 import CookieBanner from "@/components/CookieBanner";
 import InstallPrompt from "@/components/InstallPrompt";
-import NavBar from "@/components/NavBar";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -92,7 +91,6 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen">
         <Providers>
-          <NavBar />
           {children}
           <CookieBanner />
           <InstallPrompt />
