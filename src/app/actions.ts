@@ -3,6 +3,7 @@
 import { fetchWeatherData, getWeatherDescription } from "@/lib/weather";
 import type { WeatherData } from "@/lib/types";
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import { getMainCommentary } from "@/lib/commentary";
 
 export async function getWeather(lat: number, lon: number): Promise<WeatherData> {
   const weather = await fetchWeatherData(lat, lon);

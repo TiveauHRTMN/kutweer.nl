@@ -1,4 +1,5 @@
 import type { WeatherData } from "./types";
+import { getWeatherDescription } from "./weather";
 
 // ============================================================
 // Commentary engine — WeerZone: Roddelpraat-stijl, brutaal, provocerend
