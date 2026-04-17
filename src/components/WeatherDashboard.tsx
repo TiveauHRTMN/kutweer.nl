@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users } from "lucide-react";
 import { LogoFull } from "./Logo";
 import LoadingScreen from "./LoadingScreen";
-import { getWeather } from "@/app/actions";
+import { loadWeather } from "@/lib/weatherCache";
 import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData } from "@/lib/types";
 import {
   getMainCommentary,
@@ -17,12 +17,18 @@ import {
 import { getWeatherEmoji, getWeatherDescription, getWindBeaufort } from "@/lib/weather";
 import { getTemperatureComparison } from "@/lib/climate";
 import { motion, AnimatePresence } from "framer-motion";
-import WeatherBackground from "./WeatherBackground";
 import AffiliateCard from "./AffiliateCard";
 import EmailSubscribe from "./EmailSubscribe";
 import NavBar from "./NavBar";
-import RainRadar from "./RainRadar";
 import AdSlot from "./AdSlot";
+import dynamic from "next/dynamic";
+
+// Lazy-load zware visuele componenten — scheelt initial JS
+const WeatherBackground = dynamic(() => import("./WeatherBackground"), { ssr: false });
+const RainRadar = dynamic(() => import("./RainRadar"), {
+  ssr: false,
+  loading: () => <div className="card p-4 text-center text-xs text-text-secondary">Radar laadt…</div>,
+});
 
 // AdSense ad slot IDs — vul deze via env vars in Vercel
 // NEXT_PUBLIC_ADSENSE_SLOT_TOP / _MID / _BOTTOM
@@ -72,15 +78,27 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
   };
 
   useEffect(() => {
+    let cancelled = false;
     async function load() {
-      setLoading(true);
-      const data = await getWeather(city.lat, city.lon);
-      setWeather(data);
-      setLoading(false);
+      // Cache-first: als we dit al hebben binnen TTL → instant render
+      const data = await loadWeather(city.lat, city.lon, (verdict) => {
+        // AI komt later binnen, patch dan alleen aiVerdict
+        if (!cancelled) {
+          setWeather((prev) => (prev ? { ...prev, aiVerdict: verdict } : prev));
+        }
+      });
+      if (!cancelled) {
+        setWeather(data);
+        setLoading(false);
+      }
     }
+    setLoading(true);
     load();
     const interval = setInterval(load, 10 * 60000); // 10 min refresh
-    return () => clearInterval(interval);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [city]);
 
   const [isLocating, setIsLocating] = useState(false);

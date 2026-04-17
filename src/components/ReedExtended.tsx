@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapPin, AlertTriangle } from "lucide-react";
-import { getWeather } from "@/app/actions";
+import { loadWeather } from "@/lib/weatherCache";
 import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData } from "@/lib/types";
 
 type Alert = { icon: string; title: string; detail: string; severity: "red" | "orange" };
@@ -68,7 +68,9 @@ export default function ReedExtended() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    getWeather(city.lat, city.lon)
+    loadWeather(city.lat, city.lon, (verdict) => {
+      if (!cancelled) setWeather((prev) => (prev ? { ...prev, aiVerdict: verdict } : prev));
+    })
       .then((w) => !cancelled && (setWeather(w), setLoading(false)))
       .catch(() => !cancelled && setLoading(false));
     return () => { cancelled = true; };

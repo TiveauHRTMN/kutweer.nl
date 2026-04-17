@@ -5,13 +5,24 @@ import type { WeatherData } from "@/lib/types";
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { getMainCommentary } from "@/lib/commentary";
 
+/**
+ * SNELLE weer-fetch. Geen AI. Open-Meteo cached 5 min (via fetch revalidate).
+ * Client rendert hiermee meteen. getAiVerdict draait apart op de achtergrond.
+ */
 export async function getWeather(lat: number, lon: number): Promise<WeatherData> {
-  const weather = await fetchWeatherData(lat, lon);
-  const apiKey = process.env.GEMINI_API_KEY;
+  return await fetchWeatherData(lat, lon);
+}
 
-  if (apiKey) {
-    let attempts = 0;
-    while (attempts < 3) {
+/**
+ * Gemini-verdict apart, zodat de UI niet op hem wacht. Valideert op
+ * afgemaakte zinnen — truncated output wordt geweigerd.
+ */
+export async function getAiVerdict(weather: WeatherData): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return getMainCommentary(weather);
+
+  let attempts = 0;
+  while (attempts < 3) {
       try {
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ 
@@ -80,27 +91,18 @@ Geef nu het weerbericht (4 zinnen: nu → rest vandaag → vanavond/vannacht →
         // Accept: 40-90 woorden EN eindigt op . ! of ? (niet afgekapt)
         const endsCleanly = /[.!?]["')\]]?\s*$/.test(text);
         if (text && wordCount >= 40 && wordCount <= 90 && endsCleanly) {
-          weather.aiVerdict = text;
-          break;
+          return text;
         }
         console.warn(`AI output ongeldig (${wordCount}w, endsCleanly=${endsCleanly}), retry...`);
         attempts++;
-        if (attempts === 3) {
-          // Val terug op deterministische commentary — géén halve Gemini-tekst tonen
-          weather.aiVerdict = getMainCommentary(weather);
-        }
       } catch (e) {
         attempts++;
         console.error(`AI Verdict attempt ${attempts} failed:`, e);
-          if (attempts === 3) {
-            weather.aiVerdict = getMainCommentary(weather);
-          }
-        await new Promise(r => setTimeout(r, 500)); // Wacht even voor de volgende poging
+        await new Promise(r => setTimeout(r, 500));
       }
     }
-  }
-
-  return weather;
+  // Alle pogingen mislukt — deterministische fallback (géén halve output tonen)
+  return getMainCommentary(weather);
 }
 
 export async function findBusinessLeads(query: string) {
