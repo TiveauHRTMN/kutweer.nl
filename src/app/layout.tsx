@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import CookieBanner from "@/components/CookieBanner";
 import InstallPrompt from "@/components/InstallPrompt";
 import { Providers } from "./providers";
 import "./globals.css";
+
+const ADSENSE_CLIENT = "ca-pub-6187487207780127";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -82,6 +85,13 @@ export default function RootLayout({
     <html lang="nl" className={`${inter.variable} antialiased`}>
       <head>
         <meta name="theme-color" content="#4a9ee8" />
+        <meta name="google-adsense-account" content={ADSENSE_CLIENT} />
+        <Script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
       </head>
       <body className="min-h-screen">
         <Providers>
