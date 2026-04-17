@@ -49,7 +49,20 @@
       "Bash(curl -sI https://weerzone.nl/ads.txt)",
       "Bash(curl -s https://weerzone.nl/ads.txt)",
       "Bash(curl -s \"https://weerzone.nl/ads.txt?bust=$\\(date +%s\\)\")",
-      "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://weerzone.nl/ads.txt?nocache=$\\(date +%s%N\\)\")"
+      "Bash(curl -s -H \"Cache-Control: no-cache\" -H \"Pragma: no-cache\" \"https://weerzone.nl/ads.txt?nocache=$\\(date +%s%N\\)\")",
+      "Bash(curl -s https://weerzone.nl/)",
+      "Bash(curl -sI https://weerzone.nl/)",
+      "Bash(curl -s https://weerzone.nl/ -o /tmp/wz.html)",
+      "Read(//tmp/**)",
+      "Bash(git ls-remote *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://api.github.com/repos/TiveauHRTMN/weerzone.nl)",
+      "Bash(curl -s https://api.github.com/repos/TiveauHRTMN/weerzone.nl)",
+      "Bash(curl -s https://api.github.com/repos/tiveauhrtmn/kutweer.nl)",
+      "Bash(curl -s https://api.github.com/repos/tiveauhrtmn/kutweer)",
+      "Bash(curl -s https://api.github.com/repos/TiveauHRTMN/weerzone.nl/commits/master)",
+      "Bash(npx vercel *)",
+      "Bash(curl -s https://weerzone.nl/ -o /tmp/wz3.html)",
+      "Bash(curl -s https://weerzone.nl/weer/amsterdam -o /tmp/ams.html)"
     ]
   }
 }

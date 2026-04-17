@@ -64,10 +64,10 @@ export default function NavBar({ activeCity, isLocating }: Props) {
           </a>
         </li>
         <li className="flex-1">
-          <a href="mailto:info@weerzone.nl" className="nav-item w-full">
+          <Link href="/contact" className="nav-item w-full">
             <Mail className="w-3.5 h-3.5 shrink-0" />
             <span className="label">Contact</span>
-          </a>
+          </Link>
         </li>
       </ul>
     </nav>

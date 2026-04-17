@@ -124,11 +124,12 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
   }, [city]);
 
   // Navbar "Locatie"-knop vuurt dit event af
+  const locateRef = useRef(handleLocationClick);
+  locateRef.current = handleLocationClick;
   useEffect(() => {
-    const fn = () => handleLocationClick();
+    const fn = () => locateRef.current();
     window.addEventListener("wz:locate", fn);
     return () => window.removeEventListener("wz:locate", fn);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading || !weather) {
@@ -506,7 +507,20 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           alerts.push({ icon: "🧊", title: "IJzel mogelijk", detail: `Regen bij vriestemperatuur. Extreem glad op de weg. Blijf thuis als het kan.`, severity: "red" });
         }
 
-        if (alerts.length === 0) return null;
+        if (alerts.length === 0) {
+          // Lege Reed-sectie zodat #reed anchor altijd bestaat en de navbar-knop werkt
+          return (
+            <div id="reed" className="animate-fade-in scroll-mt-24" style={{ animationDelay: "0.3s" }}>
+              <div className="card p-4 flex items-center gap-3 border border-green-500/30 bg-green-50/70">
+                <div className="text-2xl shrink-0">✅</div>
+                <div>
+                  <p className="text-sm font-bold text-green-700 uppercase tracking-wider">Reed — geen extremen</p>
+                  <p className="text-sm text-text-primary mt-0.5">Geen storm, onweer, hitte of vorst op komst. Rustig weekje.</p>
+                </div>
+              </div>
+            </div>
+          );
+        }
 
         return (
           <div id="reed" className="animate-fade-in space-y-2 scroll-mt-24" style={{ animationDelay: "0.3s" }}>
