@@ -308,26 +308,55 @@ function buildWeatherSnippetHtml(snippet: WeatherSnippetLike | null | undefined)
   `;
 }
 
+// ============================================================
+// Steve-persona (afgeleid van Steve Jobs):
+// - Korte declaratieve zinnen.
+// - Geen marketing-taal. Geen "oplossingen", geen "synergy".
+// - Minachting voor ruis, 14-daagse voorspellingen, dashboards.
+// - "Het werkt gewoon." Herhaal kernbelofte.
+// - One more thing → altijd als subtiele close.
+// ============================================================
+
+export const STEVE_PROMPT = `
+Role: Steve van WeerZone Zakelijk.
+Persona: Afgeleid van Steve Jobs. Minimalistisch. Declaratief. Geen marketing-BS.
+
+STIJL:
+- Korte zinnen. Veel punten. Pauzes zijn macht.
+- Geen jargon. Geen "oplossingen", "synergy", "optimaliseren".
+- Spreek de lezer direct aan.
+- Minachting voor complexiteit en ruis.
+- Herhaal de kernbelofte: 48 uur. De rest is ruis.
+- Sluit af met één scherpe zin. Geen call-to-actions-stapels.
+
+REGELS:
+- Max 60 woorden.
+- Geen emoji's in tekstbody.
+- Geen bullet-lists in outreach-tekst (die zitten al in de template).
+`.trim();
+
 function stageCopy(stage: OutreachStage, hook: IndustryHook, businessName: string, snippet: WeatherSnippetLike | null | undefined) {
+  const city = snippet?.city || "jouw regio";
+
   if (stage === 2) {
     return {
-      headline: `Nog even hierover, ${businessName}`,
-      intro: `Vorige week stuurde ik je een bericht over ${hook.headline.toLowerCase()}. Geen reactie — geen probleem, je hebt het druk.`,
-      body: `Waarom ik 'm opnieuw stuur: kijk even naar de data hierboven voor ${snippet?.city || "jouw regio"}. Dit is exactly wat je elke ochtend om 08:00 in je inbox krijgt — alleen dan mét 48u vooruit-knoppen zoals "plan wel/niet door".`,
-      proof: `Andere ${hook.bullets[0].toLowerCase()} — daar wordt WeerZone voor gebruikt. Geen dashboard-bagger, één mail per dag.`,
+      headline: `Eén ding.`,
+      intro: `${businessName},`,
+      body: `Vorige week stuurde ik een mail. Geen reactie. Prima.\n\nKijk omhoog. Dat is ${city}. 48 uur vooruit. Elke ochtend. Zo simpel.\n\nGeen dashboard. Geen app. Geen 14-daagse fantasie. Eén mail.`,
+      proof: `Het werkt. Dat is alles.`,
     };
   }
   if (stage === 3) {
     return {
-      headline: `Laatste mail — belofte`,
-      intro: `Ik heb je twee keer benaderd. Als WeerZone niks voor je is, prima — dan laat ik je met rust.`,
-      body: `Toch één ding: hierboven zie je de weersituatie voor ${snippet?.city || "jouw regio"} komende 48u. Dít zou je elke ochtend hebben. Geen account, geen app, gewoon een mail.`,
-      proof: `Als het relevant wordt, weet je me te vinden. Succes met ${new Date().toLocaleDateString("nl-NL", { month: "long" })}.`,
+      headline: `Laatste keer.`,
+      intro: `${businessName},`,
+      body: `Drie keer is genoeg. Hierboven zie je ${city}. Nu. Straks. Morgen.\n\nDit krijg je elke ochtend. Of niet. Jij kiest.`,
+      proof: `One more thing — je weet waar ik zit.`,
     };
   }
   return {
     headline: hook.headline,
-    intro: `Beste ${businessName},`,
+    intro: `${businessName},`,
     body: `${hook.painPoint}\n\n${hook.solution}`,
     proof: "",
   };
