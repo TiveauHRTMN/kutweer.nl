@@ -72,7 +72,7 @@ export default function ZakelijkPage() {
       <div className="max-w-4xl mx-auto px-4 pt-16 pb-12 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-accent-orange/15 rounded-full mb-6">
           <Building2 className="w-4 h-4 text-accent-orange" />
-          <span className="text-xs font-bold text-accent-orange uppercase tracking-wider">WEERZONE Zakelijk</span>
+          <span className="text-xs font-bold text-accent-orange uppercase tracking-wider">Steve · WEERZONE Zakelijk</span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
@@ -187,6 +187,32 @@ export default function ZakelijkPage() {
           30 seconden invullen. Morgenochtend om 08:00 je eerste weerrapport. Klaar.
         </p>
         <B2BSignupForm />
+      </div>
+
+      {/* Meet Steve + triade */}
+      <div className="max-w-4xl mx-auto px-4 pb-16">
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8">
+          <p className="text-xs font-bold text-accent-orange uppercase tracking-wider mb-3">Wie schrijft je?</p>
+          <h3 className="text-xl sm:text-2xl font-black text-white mb-3">
+            Steve. Kort. Zakelijk. Geen ruis.
+          </h3>
+          <p className="text-white/60 text-sm sm:text-base leading-relaxed mb-4">
+            Steve is de stem achter WEERZONE Zakelijk. Eén mail als het telt, stilte als het niet telt. Reply werkt — hij leest mee.
+          </p>
+          <p className="text-white/50 text-sm leading-relaxed">
+            Niet zakelijk? WEERZONE heeft er nog twee:
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+            <Link href="/piet" className="bg-white/5 hover:bg-white/8 border border-white/10 rounded-xl p-4 transition-colors">
+              <p className="text-white font-bold text-sm mb-1">Piet · 48 uur</p>
+              <p className="text-white/50 text-xs">Dagelijks weerbericht voor thuis. Nuchter, kort, zonder drama.</p>
+            </Link>
+            <Link href="/reed" className="bg-white/5 hover:bg-white/8 border border-white/10 rounded-xl p-4 transition-colors">
+              <p className="text-white font-bold text-sm mb-1">Reed · Waarschuwing</p>
+              <p className="text-white/50 text-xs">Alleen een mail als het weer écht gevaarlijk wordt. Code geel, oranje, rood.</p>
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Footer */}
