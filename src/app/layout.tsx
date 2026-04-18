@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import CookieBanner from "@/components/CookieBanner";
 import InstallPrompt from "@/components/InstallPrompt";
+import FounderBanner from "@/components/FounderBanner";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -99,6 +100,7 @@ export default function RootLayout({
           {children}
           <CookieBanner />
           <InstallPrompt />
+          <FounderBanner />
         </Providers>
       </body>
     </html>

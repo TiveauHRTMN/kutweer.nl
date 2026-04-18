@@ -14,6 +14,12 @@
   --accent-green: #16a34a;
   --accent-red: #ef4444;
   --accent-cyan: #0891b2;
+  /* Persona-kleuren (Piet/Reed/Steve) — zichtbaar in navbar-badge, mail-header, dashboard-accenten */
+  --persona-piet: #22c55e;   /* groen — dagelijkse brief, natuur */
+  --persona-reed: #ef4444;   /* rood — alerts, urgentie */
+  --persona-steve: #3b82f6;  /* blauw — zakelijk, vertrouwen */
+  --persona-gradient-pro: linear-gradient(90deg, #22c55e, #ef4444);
+  --persona-gradient-all: linear-gradient(90deg, #22c55e, #ef4444, #3b82f6);
   --gradient-line: linear-gradient(90deg, #f59e0b, #fbbf24, #0891b2);
   --card-border: rgba(255, 255, 255, 0.6);
   --card-radius: 18px;
@@ -32,6 +38,9 @@
   --color-accent-green: var(--accent-green);
   --color-accent-red: var(--accent-red);
   --color-accent-cyan: var(--accent-cyan);
+  --color-persona-piet: var(--persona-piet);
+  --color-persona-reed: var(--persona-reed);
+  --color-persona-steve: var(--persona-steve);
   --color-bg-primary: var(--bg-primary);
   --color-bg-secondary: var(--bg-secondary);
   --color-bg-card: var(--bg-card);
