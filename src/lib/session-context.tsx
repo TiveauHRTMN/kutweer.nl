@@ -5,6 +5,12 @@ import type { User } from "@supabase/supabase-js";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { PERSONA_ORDER, type PersonaTier } from "@/lib/personas";
 
+// Founders/architects die altijd alle premium-features mogen zien,
+// ongeacht of er een formeel abonnement in de DB staat.
+const FOUNDER_EMAILS = new Set<string>([
+  "rwnhrtmn@gmail.com",
+]);
+
 interface SessionState {
   user: User | null;
   tier: PersonaTier | null;   // actieve tier (trialing|active) of null
@@ -44,7 +50,11 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       .eq("user_id", u.id)
       .in("status", ["trialing", "active"])
       .maybeSingle();
-    const t = (sub?.tier ?? null) as PersonaTier | null;
+    let t = (sub?.tier ?? null) as PersonaTier | null;
+    // Founder-bypass: eigenaar krijgt altijd de hoogste tier.
+    if (!t && u.email && FOUNDER_EMAILS.has(u.email.toLowerCase())) {
+      t = "steve";
+    }
     setTier(t && PERSONA_ORDER.includes(t) ? t : null);
     setLoading(false);
   }
