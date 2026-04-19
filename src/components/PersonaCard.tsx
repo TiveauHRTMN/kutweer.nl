@@ -89,7 +89,7 @@ export default function PersonaCard({ tier, onSelect, compact = false, highlight
         className="w-full py-3 rounded-xl font-bold text-white text-sm transition-all hover:brightness-110 active:scale-[0.98]"
         style={{ background: p.color }}
       >
-        Claim je founder-plek — gratis tot 1 juni
+        Ja, zet me erop →
       </button>
     </div>
   );

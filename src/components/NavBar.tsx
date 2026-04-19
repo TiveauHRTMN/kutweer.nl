@@ -25,9 +25,6 @@ export default function NavBar({ activeCity, isLocating }: Props) {
   const { tier } = useSession();
   const hasSub = !!tier;
 
-  const pietHref = "/piet";
-  const reedHref = "/reed";
-
   const handleLocateClick = () => {
     if (!hasSub) {
       window.dispatchEvent(new CustomEvent("wz:open-persona-modal"));
@@ -35,6 +32,15 @@ export default function NavBar({ activeCity, isLocating }: Props) {
     }
     window.dispatchEvent(new CustomEvent("wz:locate"));
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Gate voor premium-routes (/piet = 48 uur, /reed = alerts).
+  // Non-subs krijgen de persona-modal te zien in plaats van door te klikken.
+  const handleLockedClick = (e: React.MouseEvent) => {
+    if (!hasSub) {
+      e.preventDefault();
+      window.dispatchEvent(new CustomEvent("wz:open-persona-modal"));
+    }
   };
 
   const locateLabel = isLocating
@@ -71,14 +77,30 @@ export default function NavBar({ activeCity, isLocating }: Props) {
         </li>
         <li className="nav-divider" aria-hidden="true" />
         <li className="flex-1">
-          <Link href={pietHref} className="nav-item w-full">
-            <span className="label">48 uur</span>
+          <Link
+            href="/piet"
+            onClick={handleLockedClick}
+            className={`nav-item w-full ${!hasSub ? "opacity-70" : ""}`}
+            aria-label={hasSub ? "48 uur op de meter" : "48 uur — op slot voor founders"}
+          >
+            <span className="label flex items-center gap-1 justify-center">
+              {!hasSub && <Lock className="w-3 h-3 shrink-0" aria-hidden />}
+              48 uur
+            </span>
           </Link>
         </li>
         <li className="nav-divider" aria-hidden="true" />
         <li className="flex-1">
-          <Link href={reedHref} className="nav-item w-full">
-            <span className="label">Alerts</span>
+          <Link
+            href="/reed"
+            onClick={handleLockedClick}
+            className={`nav-item w-full ${!hasSub ? "opacity-70" : ""}`}
+            aria-label={hasSub ? "Alerts" : "Alerts — op slot voor founders"}
+          >
+            <span className="label flex items-center gap-1 justify-center">
+              {!hasSub && <Lock className="w-3 h-3 shrink-0" aria-hidden />}
+              Alerts
+            </span>
           </Link>
         </li>
         <li className="nav-divider" aria-hidden="true" />

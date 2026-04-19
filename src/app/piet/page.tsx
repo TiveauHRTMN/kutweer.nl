@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PietExtended from "@/components/PietExtended";
+import PremiumGate from "@/components/PremiumGate";
 
 export const metadata: Metadata = {
   title: "Piet — 48 uur weer-update",
@@ -30,7 +31,9 @@ export default function PietPage() {
           </p>
         </header>
 
-        <PietExtended />
+        <PremiumGate>
+          <PietExtended />
+        </PremiumGate>
       </div>
     </main>
   );

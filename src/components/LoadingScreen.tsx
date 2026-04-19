@@ -2,18 +2,40 @@
 
 import { LogoFull } from "./Logo";
 
+/**
+ * Loading-scherm tijdens initieel weerfetch. Onder het logo staat kort
+ * de belofte: kent jouw straat, jouw hond, jouw drempel. Alleen het woord
+ * WEERZONE krijgt de persona-gradient — de rest blijft wit.
+ */
 export default function LoadingScreen() {
+  const weerzoneStyle = {
+    background: "linear-gradient(90deg, #22c55e, #ef4444, #3b82f6)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
+  } as const;
+
   return (
     <div
-      className="flex flex-col items-center justify-center min-h-screen px-8"
+      className="flex flex-col items-center justify-center min-h-screen px-8 text-center"
       style={{ background: "linear-gradient(160deg, #4a9ee8 0%, #5aafe8 40%, #3b8dd4 100%)" }}
     >
       <LogoFull
-        height={220}
+        height={180}
         className="animate-pulse drop-shadow-[0_4px_40px_rgba(255,255,255,0.3)]"
       />
-      <p className="mt-6 text-white/50 text-sm font-semibold tracking-wider uppercase animate-[fadeInUp_0.8s_ease_0.3s_forwards] opacity-0">
-        Weer ophalen...
+
+      <h1 className="mt-8 text-white font-black text-2xl sm:text-3xl leading-tight max-w-md animate-[fadeInUp_0.8s_ease_0.2s_forwards] opacity-0 drop-shadow">
+        Kent jouw straat.<br />
+        Kent jouw hond.<br />
+        Kent jouw drempel.
+      </h1>
+      <p className="mt-4 text-white/85 text-sm sm:text-base max-w-sm animate-[fadeInUp_0.8s_ease_0.5s_forwards] opacity-0">
+        Eén weerbericht per ochtend. <span style={weerzoneStyle} className="font-black">WEERZONE</span> — de rest is ruis.
+      </p>
+
+      <p className="mt-10 text-white/45 text-xs font-semibold tracking-[0.2em] uppercase animate-[fadeInUp_0.8s_ease_0.9s_forwards] opacity-0">
+        Weer ophalen…
       </p>
     </div>
   );

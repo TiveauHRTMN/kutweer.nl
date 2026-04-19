@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ReedExtended from "@/components/ReedExtended";
+import PremiumGate from "@/components/PremiumGate";
 
 export const metadata: Metadata = {
   title: "Reed — extreem weer alerts",
@@ -30,7 +31,9 @@ export default function ReedPage() {
           </p>
         </header>
 
-        <ReedExtended />
+        <PremiumGate>
+          <ReedExtended />
+        </PremiumGate>
       </div>
     </main>
   );

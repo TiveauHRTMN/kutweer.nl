@@ -54,22 +54,21 @@ export default function PremiumGate({ children }: { children: React.ReactNode })
           </div>
           <h3 className="text-lg font-black text-text-primary mb-1 flex items-center justify-center gap-2">
             <Lock className="w-4 h-4 text-text-muted" />
-            48 uur op de meter
+            48 uur op de meter — op slot
           </h3>
           <p className="text-sm text-text-secondary mb-4">
-            Uurdetail, radar, fiets- en werkramen-scores — voor Piet, Reed en
-            Steve. Tijdelijk gratis als founder. Later een vaste lage prijs
-            voor altijd.
+            Uurdetail, radar, fiets- en werkramen-scores horen bij Piet, Reed
+            en Steve. Zolang we in opbouw zijn kost dat niks.
           </p>
           <button
             type="button"
             onClick={openModal}
             className="inline-block rounded-full px-6 py-2.5 bg-accent-orange text-white font-black text-sm hover:bg-accent-orange/90 transition-colors"
           >
-            Claim je founder-plek
+            Ja, zet me erop →
           </button>
           <p className="text-[10px] text-text-muted uppercase tracking-wider mt-3">
-            Gratis tot 1 juni · geen creditcard
+            Gratis · geen creditcard
           </p>
         </div>
       </div>

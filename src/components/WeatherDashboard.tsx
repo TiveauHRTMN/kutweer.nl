@@ -604,11 +604,28 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
 
       {/* ===== Affiliate Spot 1 — prominent boven de vouw ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
-        <div className="flex justify-between items-end mb-2 px-1">
-          <h3 className="section-title">Op basis van het weer in {city.name}</h3>
-          <span className="text-[10px] font-bold text-accent-orange/70 uppercase tracking-wider">Aanbevolen</span>
+        <div
+          className="rounded-2xl p-4 sm:p-5 shadow-xl border-2 border-accent-orange/40"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(255,180,0,0.18) 0%, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.95) 100%)",
+          }}
+        >
+          <div className="flex justify-between items-center mb-3">
+            <div>
+              <span className="inline-block text-[10px] font-black uppercase tracking-[0.2em] text-accent-orange bg-accent-orange/10 px-2 py-0.5 rounded-full mb-1">
+                Vandaag nodig in {city.name}
+              </span>
+              <h3 className="text-lg sm:text-xl font-black text-text-primary leading-tight">
+                Het weer zegt: nú kopen
+              </h3>
+            </div>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider shrink-0">
+              Amazon · affiliate
+            </span>
+          </div>
+          <AffiliateCard weather={weather} />
         </div>
-        <AffiliateCard weather={weather} />
       </div>
 
 
@@ -812,13 +829,30 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
 
       {/* ===== Affiliate Spot 2 — onderaan ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.9s" }}>
-        <div className="flex justify-between items-end mb-2 px-1">
-          <h3 className="section-title">
-            {weather.current.precipitation > 0 || weather.daily[0].precipitationSum > 5 ? "Het regent — of je bereidt je voor" : "Mooi weer? Maak er wat van"}
-          </h3>
-          <span className="text-[10px] font-bold text-accent-orange/70 uppercase tracking-wider">Aanbevolen</span>
+        <div
+          className="rounded-2xl p-4 sm:p-5 shadow-xl border-2 border-accent-orange/40"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(255,180,0,0.18) 0%, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.95) 100%)",
+          }}
+        >
+          <div className="flex justify-between items-center mb-3">
+            <div>
+              <span className="inline-block text-[10px] font-black uppercase tracking-[0.2em] text-accent-orange bg-accent-orange/10 px-2 py-0.5 rounded-full mb-1">
+                Amazon-tip
+              </span>
+              <h3 className="text-lg sm:text-xl font-black text-text-primary leading-tight">
+                {weather.current.precipitation > 0 || weather.daily[0].precipitationSum > 5
+                  ? "Voor als je straks de deur uit moet"
+                  : "Dit weer vraagt erom"}
+              </h3>
+            </div>
+            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider shrink-0">
+              affiliate
+            </span>
+          </div>
+          <AffiliateCard weather={weather} />
         </div>
-        <AffiliateCard weather={weather} />
       </div>
 
       {/* ===== AdSense Bottom ===== */}

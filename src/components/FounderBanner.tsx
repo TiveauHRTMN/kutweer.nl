@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { X, Sparkles } from "lucide-react";
 import PersonaModal from "./PersonaModal";
-import { daysUntilLaunch } from "@/lib/personas";
 import { useSession } from "@/lib/session-context";
 
 const STORAGE_KEY = "wz-founder-banner-dismissed";
@@ -17,7 +16,6 @@ const IDLE_MS = 10_000;
 export default function FounderBanner() {
   const [visible, setVisible] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const days = daysUntilLaunch();
   const { tier } = useSession();
 
   useEffect(() => {
@@ -45,35 +43,36 @@ export default function FounderBanner() {
     <>
       {visible && (
         <div
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-xl animate-[slideup_0.4s_ease-out]"
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-1.5rem)] max-w-2xl animate-[slideup_0.4s_ease-out]"
           style={{
             animation: "slideup 0.4s ease-out",
           }}
         >
           <div
-            className="relative rounded-2xl p-4 pr-12 shadow-2xl backdrop-blur-md border border-white/60 bg-white/95 cursor-pointer hover:bg-white transition-colors"
+            className="relative rounded-3xl p-5 sm:p-6 pr-14 shadow-2xl backdrop-blur-md border border-white/70 bg-white/97 cursor-pointer hover:bg-white transition-colors"
             onClick={open}
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div
-                className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white"
+                className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center text-white shadow-lg"
                 style={{ background: "linear-gradient(135deg, #22c55e 0%, #ef4444 50%, #3b82f6 100%)" }}
               >
-                <Sparkles className="w-5 h-5" />
+                <Sparkles className="w-7 h-7" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-black text-text-primary">
-                  Tijdelijk gratis — nog {days} dagen
+                <p className="text-lg sm:text-xl font-black text-text-primary leading-tight">
+                  Binnenkort niet meer gratis
                 </p>
-                <p className="text-xs text-text-secondary">
-                  Claim je founder-plek · Piet · Reed · Steve
+                <p className="text-sm text-text-secondary mt-1">
+                  Piet schrijft je ochtendbrief. Reed waarschuwt. Steve beslist.
+                  Zolang we in opbouw zijn: gratis.
                 </p>
               </div>
             </div>
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); dismiss(); }}
-              className="absolute top-3 right-3 w-7 h-7 rounded-full hover:bg-black/5 flex items-center justify-center transition-colors"
+              className="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-black/5 flex items-center justify-center transition-colors"
               aria-label="Sluiten"
             >
               <X className="w-4 h-4 text-text-muted" />
