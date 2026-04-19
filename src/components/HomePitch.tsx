@@ -14,7 +14,7 @@ export default function HomePitch() {
       {/* Lead */}
       <div className="text-center mb-10">
         <p className="text-xs font-black tracking-[0.2em] uppercase text-white/70 mb-4">
-          Een abonnement op <span className="text-white">WEERZONE</span>
+          Een abonnement op <span style={{ color: "#FFB400" }}>WEERZONE</span>
         </p>
         <h2 className="text-3xl sm:text-5xl font-black text-white leading-[1.05] mb-5 drop-shadow">
           Geen reclame.<br />
@@ -63,7 +63,7 @@ export default function HomePitch() {
                 <span className="text-xs text-text-muted">/mnd — als je nu aanmeldt</span>
               </div>
               <p className="text-[11px] text-text-muted mt-1">
-                Normaal {formatPrice(p.priceCents)}/mnd vanaf 1 juni
+                Normaal {formatPrice(p.priceCents)}/mnd, binnenkort
               </p>
               <div
                 className="mt-4 text-center rounded-xl py-2.5 text-white font-bold text-sm group-hover:brightness-110"

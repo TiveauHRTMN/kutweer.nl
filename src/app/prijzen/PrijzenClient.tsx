@@ -9,7 +9,7 @@ import { displaySubCount } from "@/lib/social-proof";
 const FAQS = [
   {
     q: "Waarom is het nu gratis?",
-    a: "Tot 1 juni 2026 zijn we in opbouw. Je kunt je nu aanmelden zonder te betalen en zonder creditcard. De eerste 25 aanmeldingen per abonnement houden hun prijs, ook als we daarna live gaan.",
+    a: "We zijn nog in opbouw. Je kunt je nu aanmelden zonder te betalen en zonder creditcard. Vroege aanmelders houden hun introductieprijs, ook als we binnenkort live gaan.",
   },
   {
     q: "Hoe werkt het precies?",
@@ -28,7 +28,7 @@ const FAQS = [
     a: "Omdat een voorspelling verder dan 48 uur onbetrouwbaar wordt. Wij kiezen ervoor om ons te houden aan wat met het KNMI HARMONIE-model accuraat te zeggen is — 48 uur op een raster van 2,5 km.",
   },
   {
-    q: "Hoe gaat de betaling vanaf 1 juni?",
+    q: "Hoe gaat de betaling straks?",
     a: "Via Mollie: iDEAL, creditcard of Bancontact. Je kunt per maand of per jaar betalen (bij een jaarabonnement op Piet of Reed krijg je twee maanden korting). Opzeggen kan op elk moment vanuit je account.",
   },
   {
@@ -63,9 +63,7 @@ export default function PrijzenClient() {
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-4 drop-shadow">
             Een abonnement op{" "}
-            <span style={{ background: "linear-gradient(90deg, #ffffff, #f59e0b, #ffffff)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              WEERZONE
-            </span>
+            <span style={{ color: "#FFB400" }}>WEERZONE</span>
           </h1>
 
           <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto mb-3">
@@ -74,7 +72,7 @@ export default function PrijzenClient() {
             Opzeggen kan maandelijks.
           </p>
           <p className="text-sm text-white/80 max-w-xl mx-auto">
-            Tijdelijk gratis tot 1 juni 2026. Vroege aanmelders houden hun introductieprijs.
+            Tijdelijk gratis. Vroege aanmelders houden hun introductieprijs, ook zodra we binnenkort live gaan.
           </p>
 
           <div className="inline-flex items-center justify-center gap-1.5 mt-5 px-5 py-2.5 rounded-full bg-white/90 backdrop-blur shadow-sm text-xs sm:text-sm">

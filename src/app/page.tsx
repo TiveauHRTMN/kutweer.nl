@@ -66,7 +66,7 @@ const faqLd = {
       name: "Is het gratis?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "De 48-uurs voorspelling op de homepage is gratis en met advertenties. Een abonnement (Piet, Reed of Steve) is tot 1 juni 2026 gratis. De eerste 25 aanmeldingen per abonnement houden hun prijs. Abonnees krijgen de mails en het dashboard zonder reclame.",
+        text: "De 48-uurs voorspelling op de homepage is gratis en met advertenties. Een abonnement (Piet, Reed of Steve) is tijdelijk gratis. Vroege aanmelders houden hun introductieprijs. Abonnees krijgen de mails en het dashboard zonder reclame.",
       },
     },
   ],

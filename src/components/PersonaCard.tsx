@@ -56,7 +56,7 @@ export default function PersonaCard({ tier, onSelect, compact = false, highlight
           <span className="text-3xl font-black text-text-primary">
             {formatPrice(p.priceCents)}
           </span>
-          <span className="text-sm text-text-muted">/mnd vanaf 1 juni</span>
+          <span className="text-sm text-text-muted">/mnd, binnenkort</span>
         </div>
         <div className="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/5">
           <span className="text-xs font-bold text-text-primary">
