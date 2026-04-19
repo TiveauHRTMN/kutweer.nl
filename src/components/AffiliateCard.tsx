@@ -5,6 +5,7 @@ import type { WeatherData } from "@/lib/types";
 import { matchProducts, markSeen } from "@/lib/amazon-matcher";
 import { productHref, parseEmojiImage, type CatalogProduct } from "@/lib/amazon-catalog";
 import { getConditionTag } from "@/lib/affiliate-orchestrator";
+import { useSession } from "@/lib/session-context";
 
 type LiveShape = {
   title?: string;
@@ -75,6 +76,7 @@ export default function AffiliateCard({ weather }: Props) {
   const [sessionId] = useState(() => Math.random().toString(36).slice(2));
   const impressionFired = useRef<Set<string>>(new Set());
   const tag = getConditionTag(weather);
+  const { tier, loading } = useSession();
 
   // Live-data ophalen (PA-API cache via /api/amazon/live)
   const [live, setLive] = useState<Map<string, LiveShape>>(new Map());
@@ -152,6 +154,8 @@ export default function AffiliateCard({ weather }: Props) {
   }
 
   if (!hero) return null;
+  // Abonnees: geen Amazon-cards op hun dashboard.
+  if (loading || tier) return null;
 
   // Contextregel — waarom deze selectie
   const reason = (() => {

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { PERSONAS, formatPrice, type PersonaTier } from "@/lib/personas";
+import { isFounderEmail, FOUNDER_TIER } from "@/lib/founders";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,9 @@ export default async function AppDashboard() {
     .in("status", ["trialing", "active"])
     .maybeSingle();
 
-  const tier = (sub?.tier ?? null) as PersonaTier | null;
+  let tier = (sub?.tier ?? null) as PersonaTier | null;
+  const isFounder = isFounderEmail(user.email);
+  if (!tier && isFounder) tier = FOUNDER_TIER;
   const persona = tier ? PERSONAS[tier] : null;
 
   return (
@@ -48,14 +51,22 @@ export default async function AppDashboard() {
                 {persona.description}
               </p>
               <div className="rounded-2xl bg-black/[0.03] p-5 mb-6">
-                <p className="text-sm text-text-secondary mb-1">Jouw introductieprijs</p>
-                <p className="text-2xl font-black text-text-primary">
-                  {formatPrice(persona.founderPriceCents)}
-                  <span className="text-sm font-normal text-text-muted">
-                    {" "}/ maand, voor altijd
-                  </span>
+                <p className="text-sm text-text-secondary mb-1">
+                  {isFounder ? "Founder-toegang (architect)" : "Jouw introductieprijs"}
                 </p>
-                {sub?.trial_end && (
+                <p className="text-2xl font-black text-text-primary">
+                  {isFounder ? (
+                    <>Volledige toegang <span className="text-sm font-normal text-text-muted"> — alle personas</span></>
+                  ) : (
+                    <>
+                      {formatPrice(persona.founderPriceCents)}
+                      <span className="text-sm font-normal text-text-muted">
+                        {" "}/ maand, voor altijd
+                      </span>
+                    </>
+                  )}
+                </p>
+                {!isFounder && sub?.trial_end && (
                   <p className="text-xs text-text-muted mt-2">
                     Gratis proefperiode tot{" "}
                     {new Date(sub.trial_end).toLocaleDateString("nl-NL", {

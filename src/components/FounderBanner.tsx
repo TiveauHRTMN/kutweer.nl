@@ -16,18 +16,26 @@ const IDLE_MS = 10_000;
 export default function FounderBanner() {
   const [visible, setVisible] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const { tier } = useSession();
+  const { tier, loading } = useSession();
 
   useEffect(() => {
-    // Check of gebruiker 'm al weggeklikt heeft deze sessie
     if (typeof window === "undefined") return;
+
+    // Abonnee? Banner direct uit — ook als hij al getoond werd.
+    if (tier) {
+      setVisible(false);
+      return;
+    }
+
+    // Nog aan het ophalen? Wacht — anders flitst de banner voor abonnees.
+    if (loading) return;
+
+    // Al weggeklikt in deze sessie?
     if (sessionStorage.getItem(STORAGE_KEY) === "1") return;
-    // Abonnees hoeven de banner niet te zien
-    if (tier) return;
 
     const timer = setTimeout(() => setVisible(true), IDLE_MS);
     return () => clearTimeout(timer);
-  }, [tier]);
+  }, [tier, loading]);
 
   const dismiss = () => {
     setVisible(false);

@@ -12,6 +12,7 @@ import type { WeatherData } from "@/lib/types";
 import { matchProducts } from "@/lib/amazon-matcher";
 import { productHref, parseEmojiImage } from "@/lib/amazon-catalog";
 import { getConditionTag } from "@/lib/affiliate-orchestrator";
+import { useSession } from "@/lib/session-context";
 
 interface Props {
   weather: WeatherData;
@@ -22,6 +23,7 @@ const DISMISS_KEY = "wz_sticky_amazon_dismissed";
 export default function AmazonStickyBar({ weather }: Props) {
   const [dismissed, setDismissed] = useState(true); // default true → pas tonen na mount
   const [sessionId] = useState(() => Math.random().toString(36).slice(2));
+  const { tier, loading } = useSession();
 
   useEffect(() => {
     try {
@@ -35,6 +37,8 @@ export default function AmazonStickyBar({ weather }: Props) {
   const { products } = useMemo(() => matchProducts(weather, 1), [weather]);
   const pick = products[0];
 
+  // Abonnees: geen ads — zoals beloofd in de FAQ.
+  if (loading || tier) return null;
   if (dismissed || !pick) return null;
 
   const emoji = parseEmojiImage(pick.image);

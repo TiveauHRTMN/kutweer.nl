@@ -10,6 +10,7 @@ import type { WeatherData } from "@/lib/types";
 import { matchProducts } from "@/lib/amazon-matcher";
 import { productHref } from "@/lib/amazon-catalog";
 import { getConditionTag } from "@/lib/affiliate-orchestrator";
+import { useSession } from "@/lib/session-context";
 
 interface Props {
   weather: WeatherData;
@@ -28,8 +29,11 @@ function tipIntro(weather: WeatherData): string {
 export default function PietInlineTip({ weather }: Props) {
   const { products } = useMemo(() => matchProducts(weather, 1), [weather]);
   const [sessionId] = useState(() => Math.random().toString(36).slice(2));
+  const { tier, loading } = useSession();
   const pick = products[0];
   if (!pick) return null;
+  // Abonnees: geen affiliate-tip in de commentary.
+  if (loading || tier) return null;
 
   const tag = getConditionTag(weather);
 

@@ -4,13 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { PERSONA_ORDER, type PersonaTier } from "@/lib/personas";
-
-// Founders/architects die altijd alle premium-features mogen zien,
-// ongeacht of er een formeel abonnement in de DB staat.
-const FOUNDER_EMAILS = new Set<string>([
-  "rwnhrtmn@gmail.com",
-  "info@weerzone.nl",
-]);
+import { isFounderEmail, FOUNDER_TIER } from "@/lib/founders";
 
 interface SessionState {
   user: User | null;
@@ -53,8 +47,8 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       .maybeSingle();
     let t = (sub?.tier ?? null) as PersonaTier | null;
     // Founder-bypass: eigenaar krijgt altijd de hoogste tier.
-    if (!t && u.email && FOUNDER_EMAILS.has(u.email.toLowerCase())) {
-      t = "steve";
+    if (!t && isFounderEmail(u.email)) {
+      t = FOUNDER_TIER;
     }
     setTier(t && PERSONA_ORDER.includes(t) ? t : null);
     setLoading(false);

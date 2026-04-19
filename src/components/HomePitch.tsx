@@ -9,21 +9,12 @@ import { PERSONAS, PERSONA_ORDER, formatPrice } from "@/lib/personas";
  * Server component.
  */
 export default function HomePitch() {
-  // Alleen "WEERZONE" krijgt de persona-gradient. De rest van de tekst
-  // blijft wit, zodat het niet op een regenboog-banner lijkt.
-  const weerzoneStyle = {
-    background: "linear-gradient(90deg, #22c55e, #ef4444, #3b82f6)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-  } as const;
-
   return (
     <section className="px-4 py-14 sm:py-20 max-w-5xl mx-auto">
       {/* Lead */}
       <div className="text-center mb-10">
-        <p className="text-xs font-black tracking-[0.2em] uppercase text-white/60 mb-4">
-          Een abonnement op <span style={weerzoneStyle}>WEERZONE</span>
+        <p className="text-xs font-black tracking-[0.2em] uppercase text-white/70 mb-4">
+          Een abonnement op <span className="text-white">WEERZONE</span>
         </p>
         <h2 className="text-3xl sm:text-5xl font-black text-white leading-[1.05] mb-5 drop-shadow">
           Geen reclame.<br />
