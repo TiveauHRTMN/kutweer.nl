@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { fetchWeatherData } from "@/lib/weather";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { amazonUrl } from "@/lib/affiliates";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -12,17 +13,47 @@ const BUFFER_CHANNELS = {
   tiktok: "69e51f4f031bfa423c1f673b", // weerzonenl
 };
 
+interface AffiliatePick {
+  product: string;
+  keyword: string;
+  tag: "regen" | "zon" | "wind" | "kou" | "neutraal";
+}
+
+/**
+ * Kies Amazon-affiliate product op basis van weerdata.
+ */
+function pickAffiliate(w: {
+  temp: number; rain: number; wind: number; maxTemp: number; minTemp: number;
+}): AffiliatePick {
+  if (w.rain > 5) return { product: "Stormparaplu", keyword: "stormparaplu+windproof", tag: "regen" };
+  if (w.wind > 40) return { product: "Softshell windjas", keyword: "softshell+jas+windproof", tag: "wind" };
+  if (w.maxTemp > 25) return { product: "Zonnebrand SPF 50+", keyword: "zonnebrand+spf+50+waterproof", tag: "zon" };
+  if (w.minTemp < 3) return { product: "IJskrabber", keyword: "ijskrabber+met+handschoen", tag: "kou" };
+  if (w.maxTemp < 10) return { product: "Thermo-handschoenen", keyword: "thermo+handschoenen+dames+heren", tag: "kou" };
+  return { product: "3-in-1 regenjas", keyword: "3in1+regenjas", tag: "neutraal" };
+}
+
+function buildDeterministicCaption(args: {
+  ochtend: number; middag: number; avond: number; nacht: number;
+  rainDay: number; affiliate: AffiliatePick; affiliateUrl: string;
+}): string {
+  const { ochtend, middag, avond, nacht, rainDay, affiliate, affiliateUrl } = args;
+  const condTag = `#${affiliate.tag === "neutraal" ? "weer" : affiliate.tag}`;
+  const droog = rainDay < 1;
+  const regen = rainDay >= 1 ? `${rainDay.toFixed(1)}mm regen.` : "Droog.";
+  return (
+    `Ochtend ${ochtend}° · middag ${middag}° · avond ${avond}° · nacht ${nacht}°. ${droog ? "Droog." : regen}\n\n` +
+    `Echte voorspelling op jouw postcode → weerzone.nl\n\n` +
+    `Tip: ${affiliate.product} → ${affiliateUrl}\n\n` +
+    `#weer #weerzone #nederland ${condTag}`
+  );
+}
+
 const CAPTION_PROMPT = `
 Je bent Piet — de brutale, nuchtere Nederlandse weerman van WEERZONE.
-Schrijf een korte social-post (X + TikTok) op basis van de weerdata hieronder.
-
-STRIKT:
-- Max 220 tekens (X-limiet, laat ruimte voor URL + hashtags)
-- Nederlands, nuchter, brutaal maar niet grof
-- Noem ochtend + middag + avond kort (één zin)
-- Eindig met: "👉 weerzone.nl"
-- Voeg 3-4 hashtags toe: #weer #weerzone #nederland en één contextueel (#regen/#zon/#wind/#kou)
-- Geen emoji-overload, max 2 emoji's in de hele post
+Herschrijf onderstaande template in jouw stem. Max 260 tekens vóór de link.
+Behoud de perioden (ochtend/middag/avond/nacht), de call-to-action naar weerzone.nl,
+de Amazon-tip-link en de hashtags. Geen emoji-overload (max 2).
 `;
 
 interface WeatherLite {
@@ -31,32 +62,64 @@ interface WeatherLite {
   hourly?: { temperature_2m?: number[]; weather_code?: number[] };
 }
 
-async function generateCaption(weather: WeatherLite): Promise<string> {
+async function generateCaption(weather: WeatherLite): Promise<{
+  caption: string;
+  affiliate: AffiliatePick;
+  affiliateUrl: string;
+}> {
+  const ochtend = Math.round(weather.hourly?.temperature_2m?.[8] ?? weather.current.temperature);
+  const middag = Math.round(
+    weather.hourly?.temperature_2m?.[13] ?? weather.daily.temperature_2m_max[0],
+  );
+  const avond = Math.round(weather.hourly?.temperature_2m?.[19] ?? weather.current.temperature);
+  const nacht = Math.round(
+    weather.hourly?.temperature_2m?.[25] ?? weather.daily.temperature_2m_min[0],
+  );
+
+  const affiliate = pickAffiliate({
+    temp: weather.current.temperature,
+    rain: weather.current.precipitation,
+    wind: weather.current.windSpeed,
+    maxTemp: weather.daily.temperature_2m_max[0],
+    minTemp: weather.daily.temperature_2m_min[0],
+  });
+  const affiliateUrl = amazonUrl(affiliate.keyword);
+
+  const deterministicCaption = buildDeterministicCaption({
+    ochtend,
+    middag,
+    avond,
+    nacht,
+    rainDay: weather.daily.precipitation_sum?.[0] ?? 0,
+    affiliate,
+    affiliateUrl,
+  });
+
+  // Gemini poging voor variatie; val anders terug op de deterministische versie.
   const key = process.env.GEMINI_API_KEY;
-  if (!key) {
-    return "Landelijk weerbericht van Piet. 48 uur, geen ruis. 👉 weerzone.nl #weer #weerzone #nederland";
-  }
+  if (!key) return { caption: deterministicCaption, affiliate, affiliateUrl };
+
   try {
     const genAI = new GoogleGenerativeAI(key);
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
-    const summary = {
-      nu_temp: Math.round(weather.current.temperature),
-      nu_wind_kmu: Math.round(weather.current.windSpeed),
-      nu_regen_mm: weather.current.precipitation,
-      ochtend_temp: Math.round(weather.hourly?.temperature_2m?.[8] ?? weather.current.temperature),
-      middag_temp: Math.round(weather.hourly?.temperature_2m?.[13] ?? weather.daily.temperature_2m_max[0]),
-      avond_temp: Math.round(weather.hourly?.temperature_2m?.[19] ?? weather.current.temperature),
-      morgen_max: Math.round(weather.daily.temperature_2m_max[1] ?? weather.daily.temperature_2m_max[0]),
-    };
     const res = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: `${CAPTION_PROMPT}\n\nDATA:\n${JSON.stringify(summary)}` }] }],
-      generationConfig: { maxOutputTokens: 300, temperature: 0.8 },
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: `${CAPTION_PROMPT}\n\nTEMPLATE:\n${deterministicCaption}` }],
+        },
+      ],
+      generationConfig: { maxOutputTokens: 400, temperature: 0.8 },
     });
     const text = res.response.text()?.trim();
-    return text || "Landelijk weerbericht. 👉 weerzone.nl #weer #weerzone";
+    // Safety: alleen gebruiken als Gemini de link + URL behouden heeft
+    if (text && text.includes("weerzone.nl") && text.includes(affiliateUrl)) {
+      return { caption: text, affiliate, affiliateUrl };
+    }
+    return { caption: deterministicCaption, affiliate, affiliateUrl };
   } catch (e) {
     console.error("Gemini caption error:", e);
-    return "Landelijk weerbericht van Piet. 👉 weerzone.nl #weer #weerzone #nederland";
+    return { caption: deterministicCaption, affiliate, affiliateUrl };
   }
 }
 
@@ -125,7 +188,9 @@ export async function GET(req: Request) {
     const weather = await fetchWeatherData(52.11, 5.18);
     if (!weather) throw new Error("Weather fetch failed");
 
-    const caption = await generateCaption(weather as unknown as WeatherLite);
+    const { caption, affiliate, affiliateUrl } = await generateCaption(
+      weather as unknown as WeatherLite,
+    );
 
     const base = process.env.NEXT_PUBLIC_BASE_URL || "https://weerzone.nl";
     const bust = Date.now();
@@ -137,6 +202,8 @@ export async function GET(req: Request) {
         dry_run: true,
         caption,
         caption_length: caption.length,
+        affiliate,
+        affiliate_url: affiliateUrl,
         images: [slide1, slide2],
       });
     }
@@ -151,6 +218,8 @@ export async function GET(req: Request) {
       status: "done",
       caption,
       caption_length: caption.length,
+      affiliate,
+      affiliate_url: affiliateUrl,
       images: [slide1, slide2],
       results: {
         x:

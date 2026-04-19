@@ -19,20 +19,46 @@ function getGradient(code: number): { bg: string; text: string } {
   return { bg: "linear-gradient(160deg,#2563eb 0%,#4a9ee8 55%,#7ec0f0 100%)", text: "#ffffff" };
 }
 
-function oneLiner(temp: number, rain: number, wind: number, code: number): string {
-  if (code >= 95) return "Bliksem, donder, drama. Netflix kan inpakken.";
-  if (rain > 15) return "Noach bouwde voor minder een boot. Succes.";
-  if (rain > 5) return "Pak je paraplu of zwem naar je werk.";
-  if (wind > 40) return "Kapsel? Vergeet het. Draag een helm.";
-  if (wind > 25) return "Stevig doorwaaien vandaag.";
-  if (temp > 30) return "Zelfs je airco heeft het warm.";
-  if (temp > 25) return "Barbecue-weer. Je buren ruiken het al.";
-  if (temp < 0) return "Je adem bevriest. Net als je motivatie.";
-  if (temp < 5) return "Trek een extra trui aan, watje.";
-  if (code <= 1 && temp > 15) return "Perfecte dag. Maar morgen is het weer voorbij.";
-  if (code <= 1) return "Zon! Niet wennen, het is Nederland.";
-  if (code >= 45) return "Stille mist. Mysterieus, vooral koud.";
-  return "Gewoon Nederlands weer. Niet zeuren, gewoon gaan.";
+/**
+ * Piets beknopte 48-uurs update — deterministisch, data-gedreven.
+ * Max ~14 woorden, één zin, Piet-stem.
+ */
+function pietBrief(args: {
+  ochtendTemp: number; middagTemp: number; avondTemp: number;
+  rainDay: number; windMax: number; tomorrowMax: number; todayMax: number;
+  code: number;
+}): string {
+  const { ochtendTemp, middagTemp, avondTemp, rainDay, windMax, tomorrowMax, todayMax, code } = args;
+  const tempDelta = tomorrowMax - todayMax;
+
+  if (code >= 95) return "Onweer op komst — binnen blijven is vandaag een carrièremove.";
+  if (rainDay > 10) return `${rainDay.toFixed(0)}mm regen vandaag. Droog blijven is een illusie.`;
+  if (rainDay > 3) return "Wisselvallig — tussen de buien door een sprintje maken.";
+  if (windMax > 40) return "Harde wind — zet alles vast wat niet van jou is.";
+  if (windMax > 25) return "Stevig doorwaaien, maar droog. Jas dicht en door.";
+  if (middagTemp > 25) return `Warm rond middag (${middagTemp}°). Drinken en smeren.`;
+  if (middagTemp > 20) return `Lekker dagje — middag naar ${middagTemp}°, avond nog ${avondTemp}°.`;
+  if (ochtendTemp < 0) return `Start onder nul (${ochtendTemp}°). Krabber uit de schuur.`;
+  if (ochtendTemp < 5) return `Frisse start (${ochtendTemp}°), middag loopt naar ${middagTemp}°.`;
+  if (code <= 1) return `Zon van ochtend tot avond, ${ochtendTemp}° → ${middagTemp}° → ${avondTemp}°.`;
+  if (Math.abs(tempDelta) >= 4) {
+    return tempDelta > 0
+      ? `Stijgend — ${middagTemp}° nu, morgen naar ${tomorrowMax}°.`
+      : `Kouder morgen (${tomorrowMax}°), geniet dus van vandaag.`;
+  }
+  return `Gewoon Nederlands weer: ${ochtendTemp}° → ${middagTemp}° → ${avondTemp}°.`;
+}
+
+function morgenLabel(code: number): string {
+  if (code >= 95) return "onweer";
+  if (code >= 80) return "buien";
+  if (code >= 61) return "regen";
+  if (code >= 51) return "motregen";
+  if (code >= 71) return "sneeuw";
+  if (code >= 45) return "mist";
+  if (code >= 2) return "wisselend bewolkt";
+  if (code >= 1) return "vrijwel onbewolkt";
+  return "zonnig";
 }
 
 async function fetchWeather(lat: number, lon: number) {
@@ -206,18 +232,16 @@ export async function GET(req: NextRequest) {
   const emoji = getWeatherEmoji(code, true);
   const desc = getWeatherDescription(code);
   const { bg, text } = getGradient(code);
-  const line = oneLiner(temp, rainSum, wind, code);
   const muted = text === "#ffffff" ? "rgba(255,255,255,0.75)" : "rgba(15,23,42,0.7)";
   const panel = text === "#ffffff" ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.08)";
 
-  // 5 perioden: ochtend (08), middag (13), avond (19), nacht (01 morgen), morgen (13 morgen)
+  // 4 perioden: ochtend (08), middag (13), avond (19), nacht (01 morgen)
   // Open-Meteo hourly met timezone=Europe/Amsterdam start op 00:00 vandaag, 48u lang
   const periods = [
     { key: "Ochtend", idx: 8, isDay: true },
     { key: "Middag", idx: 13, isDay: true },
     { key: "Avond", idx: 19, isDay: true },
     { key: "Nacht", idx: 25, isDay: false },
-    { key: "Morgen", idx: 37, isDay: true },
   ].map((p) => ({
     label: p.key,
     temp: Math.round(w.hourly.temperature_2m[p.idx] ?? temp),
@@ -225,6 +249,23 @@ export async function GET(req: NextRequest) {
     rainPct: Math.round(w.hourly.precipitation_probability?.[p.idx] ?? 0),
     isDay: p.isDay,
   }));
+
+  // Piet's 48u update + morgen-heads-up
+  const tomorrowMax = Math.round(w.daily.temperature_2m_max[1] ?? tMax);
+  const tomorrowMin = Math.round(w.daily.temperature_2m_min[1] ?? tMin);
+  const tomorrowCode = w.daily.weather_code[1] ?? code;
+  const windMaxApprox = wind;
+  const brief = pietBrief({
+    ochtendTemp: periods[0].temp,
+    middagTemp: periods[1].temp,
+    avondTemp: periods[2].temp,
+    rainDay: rainSum,
+    windMax: windMaxApprox,
+    tomorrowMax,
+    todayMax: tMax,
+    code,
+  });
+  const morgenEmoji = getWeatherEmoji(tomorrowCode, true);
 
   return new ImageResponse(
     (
@@ -298,24 +339,33 @@ export async function GET(req: NextRequest) {
           </div>
         </div>
 
-        {/* One-liner */}
+        {/* Piets beknopte 48u update */}
         <div
           style={{
             background: panel,
             borderRadius: "24px",
-            padding: "24px 32px",
+            padding: "26px 36px",
             display: "flex",
             justifyContent: "center",
             marginTop: "8px",
           }}
         >
-          <div style={{ fontSize: "30px", fontWeight: 600, fontStyle: "italic", textAlign: "center", display: "flex", lineHeight: 1.25 }}>
-            &ldquo;{line}&rdquo;
+          <div
+            style={{
+              fontSize: "30px",
+              fontWeight: 600,
+              fontStyle: "italic",
+              textAlign: "center",
+              display: "flex",
+              lineHeight: 1.3,
+            }}
+          >
+            &ldquo;{brief}&rdquo;
           </div>
         </div>
 
-        {/* 5-periode strip: ochtend/middag/avond/nacht/morgen */}
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", gap: "10px" }}>
+        {/* 4-periode strip: ochtend/middag/avond/nacht */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", gap: "14px" }}>
           {periods.map((p) => {
             const pEmoji = getWeatherEmoji(p.code, p.isDay);
             return (
@@ -324,7 +374,7 @@ export async function GET(req: NextRequest) {
                 style={{
                   background: panel,
                   borderRadius: "20px",
-                  padding: "16px 8px",
+                  padding: "18px 10px",
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
@@ -333,7 +383,7 @@ export async function GET(req: NextRequest) {
               >
                 <div
                   style={{
-                    fontSize: "18px",
+                    fontSize: "19px",
                     fontWeight: 700,
                     letterSpacing: "2px",
                     textTransform: "uppercase",
@@ -343,8 +393,8 @@ export async function GET(req: NextRequest) {
                 >
                   {p.label}
                 </div>
-                <div style={{ fontSize: "54px", lineHeight: 1, marginTop: "6px", display: "flex" }}>{pEmoji}</div>
-                <div style={{ fontSize: "40px", fontWeight: 300, marginTop: "6px", letterSpacing: "-1px", display: "flex" }}>
+                <div style={{ fontSize: "62px", lineHeight: 1, marginTop: "8px", display: "flex" }}>{pEmoji}</div>
+                <div style={{ fontSize: "46px", fontWeight: 300, marginTop: "6px", letterSpacing: "-1px", display: "flex" }}>
                   {p.temp}°
                 </div>
                 <div style={{ fontSize: "16px", fontWeight: 600, marginTop: "2px", opacity: 0.7, display: "flex" }}>
@@ -353,6 +403,41 @@ export async function GET(req: NextRequest) {
               </div>
             );
           })}
+        </div>
+
+        {/* Morgen heads-up */}
+        <div
+          style={{
+            marginTop: "18px",
+            background: panel,
+            borderRadius: "20px",
+            padding: "16px 28px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "20px",
+              fontWeight: 800,
+              letterSpacing: "3px",
+              textTransform: "uppercase",
+              opacity: 0.75,
+              display: "flex",
+            }}
+          >
+            Morgen →
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
+            <div style={{ fontSize: "44px", display: "flex" }}>{morgenEmoji}</div>
+            <div style={{ fontSize: "30px", fontWeight: 600, display: "flex" }}>
+              {tomorrowMin}° / {tomorrowMax}°
+            </div>
+            <div style={{ fontSize: "22px", fontWeight: 500, opacity: 0.8, display: "flex", textTransform: "capitalize" }}>
+              · {morgenLabel(tomorrowCode)}
+            </div>
+          </div>
         </div>
       </div>
     ),
