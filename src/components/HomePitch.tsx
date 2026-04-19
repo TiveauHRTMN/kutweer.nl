@@ -23,17 +23,17 @@ export default function HomePitch() {
       {/* Lead */}
       <div className="text-center mb-10">
         <p className="text-xs font-black tracking-[0.2em] uppercase text-white/60 mb-4">
-          Kies wie jou wakker belt
+          Een abonnement op <span style={weerzoneStyle}>WEERZONE</span>
         </p>
         <h2 className="text-3xl sm:text-5xl font-black text-white leading-[1.05] mb-5 drop-shadow">
-          Drie karakters.<br />
-          Eén <span style={weerzoneStyle}>WEERZONE</span>.
+          Geen reclame.<br />
+          Eén mail per ochtend.
         </h2>
         <p className="text-white/85 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-          Piet schrijft je ochtendbrief. Reed waarschuwt alleen als het écht
-          telt. Steve beslist voor je bedrijf. Alle drie kennen je locatie op
-          de meter, je leven in grote lijnen, en je drempels tot op de
-          millimeter.
+          Piet schrijft je weerbericht. Reed waarschuwt als het over jouw
+          grens gaat. Steve vertaalt het weer naar een beslissing voor je
+          zaak. Jij vertelt bij aanmelden waar je woont en wat voor jou
+          telt. De rest is aan ons.
         </p>
       </div>
 
@@ -69,16 +69,16 @@ export default function HomePitch() {
                 <span className="text-2xl font-black text-text-primary">
                   {formatPrice(p.founderPriceCents)}
                 </span>
-                <span className="text-xs text-text-muted">/mnd — voor altijd, als je er nu bij bent</span>
+                <span className="text-xs text-text-muted">/mnd — als je nu aanmeldt</span>
               </div>
               <p className="text-[11px] text-text-muted mt-1">
-                Normaal {formatPrice(p.priceCents)}/mnd zodra we live zijn
+                Normaal {formatPrice(p.priceCents)}/mnd vanaf 1 juni
               </p>
               <div
                 className="mt-4 text-center rounded-xl py-2.5 text-white font-bold text-sm group-hover:brightness-110"
                 style={{ background: p.color }}
               >
-                Ja, zet me erop →
+                Aanmelden →
               </div>
             </Link>
           );
@@ -88,14 +88,14 @@ export default function HomePitch() {
       {/* Schaarste + CTA */}
       <div className="text-center">
         <p className="text-white/80 text-sm mb-4">
-          Slechts <strong className="text-white">{FOUNDER_SLOTS} vroege plekken per persona</strong>.
-          Die prijs staat dan vast — ook als we volgend jaar het tarief verdubbelen.
+          De eerste <strong className="text-white">{FOUNDER_SLOTS} aanmeldingen per persona</strong>{" "}
+          houden deze prijs, ook na 1 juni.
         </p>
         <Link
           href="/prijzen"
           className="inline-block px-6 py-3 rounded-full bg-white text-text-primary font-black text-sm shadow-xl hover:bg-accent-orange hover:text-white transition-colors"
         >
-          Vergelijk alle drie →
+          Bekijk de drie abonnementen →
         </Link>
       </div>
     </section>

@@ -16,7 +16,7 @@ const jsonLd = {
   name: "WEERZONE",
   url: "https://weerzone.nl",
   description:
-    "WEERZONE.nl — De 14-daagse is gokken. Wij niet. 48 uur vooruit, KNMI HARMONIE, op jouw vierkante meter. Eén mail per ochtend, verder nergens last van.",
+    "WEERZONE.nl — Een abonnement op een eerlijk weerbericht. Elke ochtend één mail op jouw postcode, 48 uur vooruit, zonder reclame.",
   potentialAction: {
     "@type": "SearchAction",
     target: "https://weerzone.nl/weer/{city}",
@@ -42,7 +42,7 @@ const faqLd = {
       name: "Wat is WEERZONE?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "WEERZONE is een weerbericht dat jou kent. Elke ochtend één mail, 48 uur vooruit, op je eigen GPS-punt. Geen 14-daagse, geen code-geel-spam, geen ruis.",
+        text: "WEERZONE is een abonnement op een eerlijk weerbericht. Elke ochtend één mail op je postcode, 48 uur vooruit. Zonder reclame, zonder 14-daagse gokwerk.",
       },
     },
     {
@@ -66,7 +66,7 @@ const faqLd = {
       name: "Is het gratis?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "De 48-uurs voorspelling op de homepage is gratis. De dagelijkse persoonlijke mail (Piet, Reed of Steve) is tot 1 juni 2026 gratis voor founders. Daarna vanaf €2,99 per maand, met jouw founder-tarief voor altijd vastgeklikt.",
+        text: "De 48-uurs voorspelling op de homepage is gratis en met advertenties. Een abonnement (Piet, Reed of Steve) is tot 1 juni 2026 gratis. De eerste 25 aanmeldingen per abonnement houden hun prijs. Abonnees krijgen de mails en het dashboard zonder reclame.",
       },
     },
   ],
@@ -91,8 +91,10 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <main>
-        <WeatherDashboard initialCity={DUTCH_CITIES[0]} />
-        <HomePitch />
+        <WeatherDashboard
+          initialCity={DUTCH_CITIES[0]}
+          beforeFooter={<HomePitch />}
+        />
       </main>
     </>
   );

@@ -61,11 +61,11 @@ export default function FounderBanner() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-lg sm:text-xl font-black text-text-primary leading-tight">
-                  Binnenkort niet meer gratis
+                  Nu nog gratis aanmelden
                 </p>
                 <p className="text-sm text-text-secondary mt-1">
-                  Piet schrijft je ochtendbrief. Reed waarschuwt. Steve beslist.
-                  Zolang we in opbouw zijn: gratis.
+                  Elke ochtend een weermail van Piet, Reed of Steve. Zonder
+                  reclame. Zolang we in opbouw zijn: geen kosten.
                 </p>
               </div>
             </div>

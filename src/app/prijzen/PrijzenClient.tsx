@@ -7,28 +7,32 @@ import PersonaCard from "@/components/PersonaCard";
 
 const FAQS = [
   {
-    q: "Wat is dat 'founder'-verhaal precies?",
-    a: "Simpel: iedereen die vóór 1 juni 2026 instapt betaalt de founder-prijs. Voor altijd. Ook als we over twee jaar de normale prijs verdubbelen — jij blijft op jouw tarief zitten, zolang je abonnement doorloopt.",
-  },
-  {
-    q: "Kan ik wisselen tussen Piet, Reed en Steve?",
-    a: "Ja, gewoon. Upgrade of downgrade kan maandelijks via je account. De founder-lock gaat mee: je betaalt de founder-prijs van je nieuwe tier, niet het nieuwe volle tarief.",
-  },
-  {
     q: "Waarom is het nu gratis?",
-    a: "Tot 1 juni 2026 bouwen we door. Wie nu meedoet helpt ons uitvinden wat wel en niet werkt. Wisselgeld: gratis tot de launch, daarna de founder-prijs vastgeklikt. Geen creditcard vooraf, geen automatische incasso-verrassing.",
+    a: "Tot 1 juni 2026 zijn we in opbouw. Je kunt je nu aanmelden zonder te betalen en zonder creditcard. De eerste 25 aanmeldingen per abonnement houden hun prijs, ook als we daarna live gaan.",
   },
   {
-    q: "En die 14-daagse dan?",
-    a: "Daar doen we niet aan. Alles voorbij 48 uur is gokken met een zonnetje erop — geen app die beweert dat 'ie het zaterdag over twaalf dagen al weet, spreekt de waarheid. Wij houden ons bij wat bewezen klopt: 48 uur vooruit op jouw GPS-punt.",
+    q: "Hoe werkt het precies?",
+    a: "Je kiest een abonnement (Piet, Reed of Steve), vult je postcode in en een paar vragen over wat voor jou belangrijk is. Vanaf de volgende ochtend krijg je elke dag voor 7:00 een mail. Het dashboard is daarnaast altijd bereikbaar.",
   },
   {
-    q: "Hoe ga ik betalen vanaf 1 juni?",
-    a: "Via Mollie. iDEAL, creditcard, Bancontact. Maand of jaar (jaar = twee maanden gratis op Piet en Reed). Opzeggen? Eén klik in je account. Geen belcentrum, geen formulier, geen drempel.",
+    q: "Wat is het verschil tussen Piet, Reed en Steve?",
+    a: "Piet schrijft een dagelijkse weermail voor thuis. Reed stuurt daarnaast alleen bericht als het weer over jouw drempel gaat (wind, regen, vorst). Steve doet hetzelfde voor bedrijven, inclusief advies per vestiging over openen, sluiten, inkopen of annuleren.",
   },
   {
-    q: "Wat kan WEERZONE wat Buienradar niet kan?",
-    a: "Buienradar kent je niet. Weeronline ook niet. Wij wél: dat je hond om half acht uit moet, dat je kelder bij 40 mm onderloopt, dat je strandtent bij windkracht 6 dichtgaat. Dat verschil zit in één mail, elke ochtend — niet in een pushmelding die je negeert.",
+    q: "Kan ik wisselen van abonnement?",
+    a: "Ja. Je kunt maandelijks upgraden of downgraden via je account. Als je nu bij de eerste aanmeldingen zit, behoud je de lage aanmeldprijs van je nieuwe abonnement.",
+  },
+  {
+    q: "Waarom maar 48 uur vooruit?",
+    a: "Omdat een voorspelling verder dan 48 uur onbetrouwbaar wordt. Wij kiezen ervoor om ons te houden aan wat met het KNMI HARMONIE-model accuraat te zeggen is — 48 uur op een raster van 2,5 km.",
+  },
+  {
+    q: "Hoe gaat de betaling vanaf 1 juni?",
+    a: "Via Mollie: iDEAL, creditcard of Bancontact. Je kunt per maand of per jaar betalen (bij een jaarabonnement op Piet of Reed krijg je twee maanden korting). Opzeggen kan op elk moment vanuit je account.",
+  },
+  {
+    q: "Wat is het verschil met Buienradar of Weerplaza?",
+    a: "Een abonnement op WEERZONE is reclamevrij en is afgestemd op jouw situatie: je postcode en de voorkeuren die je bij aanmelden hebt doorgegeven. Op de gratis homepage staan advertenties; die verdwijnen zodra je een abonnement hebt.",
   },
 ];
 
@@ -57,19 +61,19 @@ export default function PrijzenClient() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight mb-4 drop-shadow">
-            Drie personen. <br />
+            Een abonnement op{" "}
             <span style={{ background: "linear-gradient(90deg, #22c55e, #ef4444, #3b82f6)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              Één eerlijk weerbericht.
+              WEERZONE
             </span>
           </h1>
 
           <p className="text-base sm:text-lg text-white/90 max-w-2xl mx-auto mb-3">
-            Piet voor thuis. Reed voor als het misgaat. Steve voor je bedrijf.
-            Alle drie kennen je locatie op de meter, je leven in grote lijnen, en
-            je drempels tot op de millimeter.
+            Piet voor thuis, Reed voor waarschuwingen, Steve voor je zaak.
+            Elke ochtend een korte weermail op jouw postcode. Geen reclame.
+            Opzeggen kan maandelijks.
           </p>
           <p className="text-sm text-white/80 max-w-xl mx-auto">
-            Slechts <strong>{FOUNDER_SLOTS}</strong> founder-plekken per persona. Wie er vroeg bij is, betaalt die prijs voor altijd.
+            De eerste <strong>{FOUNDER_SLOTS}</strong> aanmeldingen per abonnement houden hun prijs — ook na 1 juni.
           </p>
         </div>
 
@@ -88,34 +92,34 @@ export default function PrijzenClient() {
         {/* Hoe werkt het */}
         <div className="bg-white/90 backdrop-blur rounded-3xl p-6 sm:p-10 mb-12 shadow-xl">
           <h2 className="text-2xl sm:text-3xl font-black text-text-primary mb-6 text-center">
-            Zo ziet morgenochtend eruit
+            Zo werkt het
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-accent-orange/15 text-accent-orange flex items-center justify-center mx-auto mb-3 font-black text-lg">
                 1
               </div>
-              <h3 className="font-black text-text-primary mb-1">Kies je type</h3>
+              <h3 className="font-black text-text-primary mb-1">Kies een abonnement</h3>
               <p className="text-sm text-text-secondary">
-                Piet, Reed of Steve. Alle drie gratis tot 1 juni. Geen creditcard.
+                Piet, Reed of Steve. Geen creditcard nodig. Opzeggen kan altijd.
               </p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-accent-orange/15 text-accent-orange flex items-center justify-center mx-auto mb-3 font-black text-lg">
                 2
               </div>
-              <h3 className="font-black text-text-primary mb-1">Vertel wie je bent</h3>
+              <h3 className="font-black text-text-primary mb-1">Vul je profiel in</h3>
               <p className="text-sm text-text-secondary">
-                Locatie, hond, fiets, kelder, bedrijf — hoe meer je kwijt wil, hoe scherper de brief.
+                Postcode en een paar vragen (hond, fiets, kelder, vestiging). Alleen wat je kwijt wilt.
               </p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 rounded-full bg-accent-orange/15 text-accent-orange flex items-center justify-center mx-auto mb-3 font-black text-lg">
                 3
               </div>
-              <h3 className="font-black text-text-primary mb-1">Morgen om zeven uur</h3>
+              <h3 className="font-black text-text-primary mb-1">Morgen om 7:00</h3>
               <p className="text-sm text-text-secondary">
-                Je eerste brief in je inbox. Dashboard altijd bij de hand.
+                Je eerste mail in je inbox. Het dashboard staat altijd klaar.
               </p>
             </div>
           </div>
@@ -124,7 +128,7 @@ export default function PrijzenClient() {
         {/* FAQ */}
         <div className="bg-white/90 backdrop-blur rounded-3xl p-6 sm:p-10 mb-12 shadow-xl">
           <h2 className="text-2xl sm:text-3xl font-black text-text-primary mb-6 text-center">
-            Vragen die je waarschijnlijk hebt
+            Veelgestelde vragen
           </h2>
           <div className="space-y-4 max-w-3xl mx-auto">
             {FAQS.map((f) => (

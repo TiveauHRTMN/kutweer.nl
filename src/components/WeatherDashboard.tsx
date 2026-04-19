@@ -41,6 +41,8 @@ const AD_SLOT_BOTTOM = process.env.NEXT_PUBLIC_ADSENSE_SLOT_BOTTOM || "126032039
 
 interface DashboardProps {
   initialCity?: City;
+  /** Optionele content die nét vóór de footer gerenderd wordt (bijv. HomePitch op /). */
+  beforeFooter?: React.ReactNode;
 }
 
 function getSavedCity(): City | null {
@@ -59,7 +61,7 @@ function getSavedCity(): City | null {
   return null;
 }
 
-export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
+export default function WeatherDashboard({ initialCity, beforeFooter }: DashboardProps = {}) {
   const [city, setCity] = useState<City>(initialCity || getSavedCity() || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0]);
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -897,6 +899,8 @@ export default function WeatherDashboard({ initialCity }: DashboardProps = {}) {
           </button>
         </div>
       </div>
+
+      {beforeFooter}
 
       {/* ===== Footer ===== */}
       <footer className="pt-12 pb-4 text-center animate-fade-in" style={{ animationDelay: "1.0s" }}>
