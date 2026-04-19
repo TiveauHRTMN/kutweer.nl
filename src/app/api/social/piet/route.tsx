@@ -66,6 +66,11 @@ export async function GET(req: NextRequest) {
 
   // ----- SLIDE 2: logo + CTA (geen weerdata nodig) -----
   if (slide === 2) {
+    const origin = req.nextUrl.origin.startsWith("http://localhost")
+      ? req.nextUrl.origin
+      : "https://weerzone.nl";
+    const logoUrl = `${origin}/logo-full.png`;
+
     return new ImageResponse(
       (
         <div
@@ -96,57 +101,28 @@ export async function GET(req: NextRequest) {
             }}
           />
 
-          {/* Logo: globe + zon */}
-          <div
+          {/* Echte logo */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={logoUrl}
+            alt="WEERZONE"
+            width={720}
+            height={240}
             style={{
-              width: "240px",
-              height: "240px",
-              borderRadius: "50%",
-              background: "linear-gradient(135deg,#4BA3E3 0%,#1A6FA0 100%)",
-              border: "6px solid rgba(255,255,255,0.25)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+              maxWidth: "720px",
+              width: "720px",
+              height: "auto",
+              objectFit: "contain",
               marginBottom: "40px",
+              filter: "drop-shadow(0 12px 32px rgba(0,0,0,0.3))",
             }}
-          >
-            <div style={{ fontSize: "140px", fontWeight: 900, color: "white", display: "flex" }}>W</div>
-            <div
-              style={{
-                position: "absolute",
-                top: "-30px",
-                right: "-36px",
-                width: "110px",
-                height: "110px",
-                borderRadius: "50%",
-                background: "radial-gradient(circle,#FFE566 0%,#FFB340 100%)",
-                boxShadow: "0 0 50px 16px rgba(255,180,0,0.5)",
-                display: "flex",
-              }}
-            />
-          </div>
-
-          <div
-            style={{
-              fontSize: "110px",
-              fontWeight: 900,
-              color: "white",
-              letterSpacing: "-3px",
-              display: "flex",
-              textShadow: "0 4px 16px rgba(0,0,0,0.25)",
-            }}
-          >
-            WEERZONE
-          </div>
+          />
 
           <div
             style={{
               fontSize: "34px",
               fontWeight: 600,
               color: "rgba(255,255,255,0.9)",
-              marginTop: "16px",
               display: "flex",
             }}
           >
