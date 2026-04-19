@@ -9,6 +9,7 @@ import { PERSONA_ORDER, type PersonaTier } from "@/lib/personas";
 // ongeacht of er een formeel abonnement in de DB staat.
 const FOUNDER_EMAILS = new Set<string>([
   "rwnhrtmn@gmail.com",
+  "info@weerzone.nl",
 ]);
 
 interface SessionState {
