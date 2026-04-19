@@ -39,12 +39,14 @@ async function fetchWeather(lat: number, lon: number) {
   const res = await fetch(
     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
       `&current=temperature_2m,weather_code,wind_speed_10m,precipitation,apparent_temperature` +
+      `&hourly=temperature_2m,weather_code,precipitation_probability` +
       `&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum` +
       `&timezone=Europe/Amsterdam&forecast_days=2`,
     { cache: "no-store" },
   );
   return res.json() as Promise<{
     current: { temperature_2m: number; weather_code: number; wind_speed_10m: number; precipitation: number; apparent_temperature: number };
+    hourly: { temperature_2m: number[]; weather_code: number[]; precipitation_probability: number[] };
     daily: { temperature_2m_max: number[]; temperature_2m_min: number[]; weather_code: number[]; precipitation_sum: number[] };
   }>;
 }
@@ -84,7 +86,7 @@ export async function GET(req: NextRequest) {
     : "https://weerzone.nl";
   const logoUrl = (await fetchLogoDataUrl(origin)) ?? `${origin}/logo-full.png`;
 
-  // ----- SLIDE 2: logo + CTA (geen weerdata nodig) -----
+  // ----- SLIDE 2: CTA-template (per mockup) -----
   if (slide === 2) {
     return new ImageResponse(
       (
@@ -95,115 +97,96 @@ export async function GET(req: NextRequest) {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            background: "linear-gradient(160deg,#2563eb 0%,#4a9ee8 55%,#1e5a8a 100%)",
+            justifyContent: "space-between",
+            background: "#4a9ee8",
             fontFamily: "system-ui, sans-serif",
-            position: "relative",
-            padding: "80px 72px",
+            padding: "110px 80px",
           }}
         >
-          {/* Logo groot bovenaan — zon zit rechts in het logo-canvas */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={logoUrl}
-            alt="WEERZONE"
-            width={936}
-            height={260}
-            style={{
-              width: "936px",
-              height: "auto",
-              objectFit: "contain",
-              filter: "drop-shadow(0 12px 32px rgba(0,0,0,0.25))",
-            }}
-          />
-
-          {/* Strong CTA headline */}
+          {/* Top copy */}
           <div
             style={{
-              marginTop: "90px",
-              fontSize: "96px",
-              fontWeight: 900,
+              fontSize: "40px",
+              fontWeight: 500,
               color: "#ffffff",
-              letterSpacing: "-3px",
-              lineHeight: 1.05,
               textAlign: "center",
-              display: "flex",
-              textShadow: "0 4px 16px rgba(0,0,0,0.25)",
-            }}
-          >
-            Stop met Buienradar.
-          </div>
-
-          <div
-            style={{
-              marginTop: "28px",
-              fontSize: "44px",
-              fontWeight: 600,
-              color: "rgba(255,255,255,0.92)",
-              textAlign: "center",
-              display: "flex",
-              lineHeight: 1.25,
-              maxWidth: "900px",
-            }}
-          >
-            48 uur. Eén mail. Geen reclame.
-          </div>
-
-          {/* URL block */}
-          <div
-            style={{
-              marginTop: "80px",
-              background: "rgba(255,255,255,0.97)",
-              borderRadius: "36px",
-              padding: "44px 72px",
+              lineHeight: 1.35,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              boxShadow: "0 24px 60px rgba(0,0,0,0.28)",
             }}
           >
-            <div
-              style={{
-                fontSize: "26px",
-                color: "#64748b",
-                fontWeight: 700,
-                letterSpacing: "3px",
-                textTransform: "uppercase",
-                display: "flex",
-              }}
-            >
-              Meld je aan op
-            </div>
-            <div
-              style={{
-                fontSize: "96px",
-                color: "#0f172a",
-                fontWeight: 900,
-                marginTop: "8px",
-                letterSpacing: "-2px",
-                display: "flex",
-              }}
-            >
-              weerzone.nl
+            <div style={{ display: "flex" }}>Vergeet Buienradar, Weerplaza,</div>
+            <div style={{ display: "flex" }}>of welke andere site dan ook!</div>
+            <div style={{ display: "flex", marginTop: "4px" }}>
+              Er is geen website nauwkeuriger dan&nbsp;
+              <span style={{ fontWeight: 900, display: "flex" }}>Weerzone</span>
+              .
             </div>
           </div>
 
-          {/* Badge */}
+          {/* Middle: logo + .nl */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginTop: "-20px" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={logoUrl}
+              alt="weerzone"
+              width={820}
+              height={228}
+              style={{
+                width: "820px",
+                height: "auto",
+                objectFit: "contain",
+                filter: "drop-shadow(0 10px 24px rgba(0,0,0,0.25))",
+              }}
+            />
+            <div
+              style={{
+                color: "#ffffff",
+                fontSize: "72px",
+                fontWeight: 900,
+                marginLeft: "-14px",
+                letterSpacing: "-2px",
+                display: "flex",
+                textShadow: "0 4px 12px rgba(0,0,0,0.2)",
+              }}
+            >
+              .nl
+            </div>
+          </div>
+
+          {/* Yellow CTA */}
           <div
             style={{
-              marginTop: "40px",
-              background: "#FFB400",
-              color: "#0f172a",
-              fontSize: "30px",
+              fontSize: "58px",
               fontWeight: 900,
-              padding: "16px 44px",
-              borderRadius: "999px",
-              letterSpacing: "2px",
-              textTransform: "uppercase",
+              color: "#FFD60A",
+              letterSpacing: "-1px",
               display: "flex",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.28)",
+              textShadow: "0 3px 10px rgba(0,0,0,0.18)",
             }}
           >
-            Tijdelijk gratis
+            Meld je nu aan. Tijdelijk gratis!
+          </div>
+
+          {/* Bottom copy */}
+          <div
+            style={{
+              fontSize: "38px",
+              fontWeight: 500,
+              color: "#ffffff",
+              textAlign: "center",
+              lineHeight: 1.35,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ display: "flex" }}>Of je nu een particulier bent, of een bedrijf.</div>
+            <div style={{ display: "flex", marginTop: "4px" }}>
+              <span style={{ fontWeight: 900, display: "flex" }}>Weerzone</span>
+              &nbsp;is er voor jou, tot op de millimeter.
+            </div>
           </div>
         </div>
       ),
@@ -217,7 +200,6 @@ export async function GET(req: NextRequest) {
   const feels = Math.round(w.current.apparent_temperature);
   const code = w.current.weather_code;
   const wind = Math.round(w.current.wind_speed_10m);
-  const rain = w.current.precipitation;
   const tMax = Math.round(w.daily.temperature_2m_max[0]);
   const tMin = Math.round(w.daily.temperature_2m_min[0]);
   const rainSum = w.daily.precipitation_sum[0] ?? 0;
@@ -227,6 +209,22 @@ export async function GET(req: NextRequest) {
   const line = oneLiner(temp, rainSum, wind, code);
   const muted = text === "#ffffff" ? "rgba(255,255,255,0.75)" : "rgba(15,23,42,0.7)";
   const panel = text === "#ffffff" ? "rgba(255,255,255,0.12)" : "rgba(15,23,42,0.08)";
+
+  // 5 perioden: ochtend (08), middag (13), avond (19), nacht (01 morgen), morgen (13 morgen)
+  // Open-Meteo hourly met timezone=Europe/Amsterdam start op 00:00 vandaag, 48u lang
+  const periods = [
+    { key: "Ochtend", idx: 8, isDay: true },
+    { key: "Middag", idx: 13, isDay: true },
+    { key: "Avond", idx: 19, isDay: true },
+    { key: "Nacht", idx: 25, isDay: false },
+    { key: "Morgen", idx: 37, isDay: true },
+  ].map((p) => ({
+    label: p.key,
+    temp: Math.round(w.hourly.temperature_2m[p.idx] ?? temp),
+    code: w.hourly.weather_code[p.idx] ?? code,
+    rainPct: Math.round(w.hourly.precipitation_probability?.[p.idx] ?? 0),
+    isDay: p.isDay,
+  }));
 
   return new ImageResponse(
     (
@@ -271,7 +269,7 @@ export async function GET(req: NextRequest) {
         {/* Centerpiece */}
         <div
           style={{
-            marginTop: "40px",
+            marginTop: "20px",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -279,14 +277,23 @@ export async function GET(req: NextRequest) {
             justifyContent: "center",
           }}
         >
-          <div style={{ fontSize: "220px", lineHeight: 1, display: "flex" }}>{emoji}</div>
-          <div style={{ fontSize: "280px", fontWeight: 900, lineHeight: 1, letterSpacing: "-8px", marginTop: "12px", display: "flex" }}>
+          <div style={{ fontSize: "200px", lineHeight: 1, display: "flex" }}>{emoji}</div>
+          <div
+            style={{
+              fontSize: "300px",
+              fontWeight: 200,
+              lineHeight: 1,
+              letterSpacing: "-10px",
+              marginTop: "8px",
+              display: "flex",
+            }}
+          >
             {temp}°
           </div>
-          <div style={{ fontSize: "32px", fontWeight: 600, marginTop: "12px", opacity: 0.9, display: "flex" }}>
+          <div style={{ fontSize: "32px", fontWeight: 500, marginTop: "16px", opacity: 0.9, display: "flex" }}>
             {desc} · voelt als {feels}°
           </div>
-          <div style={{ fontSize: "28px", fontWeight: 700, marginTop: "6px", color: muted, display: "flex" }}>
+          <div style={{ fontSize: "26px", fontWeight: 500, marginTop: "4px", color: muted, display: "flex" }}>
             {tMin}° / {tMax}° vandaag
           </div>
         </div>
@@ -296,46 +303,56 @@ export async function GET(req: NextRequest) {
           style={{
             background: panel,
             borderRadius: "24px",
-            padding: "28px 36px",
+            padding: "24px 32px",
             display: "flex",
             justifyContent: "center",
+            marginTop: "8px",
           }}
         >
-          <div style={{ fontSize: "34px", fontWeight: 700, fontStyle: "italic", textAlign: "center", display: "flex", lineHeight: 1.25 }}>
+          <div style={{ fontSize: "30px", fontWeight: 600, fontStyle: "italic", textAlign: "center", display: "flex", lineHeight: 1.25 }}>
             &ldquo;{line}&rdquo;
           </div>
         </div>
 
-        {/* Stats row */}
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "28px", gap: "20px" }}>
-          {[
-            { label: "Wind", value: `${wind}`, unit: "km/u" },
-            { label: "Regen", value: `${rain}`, unit: "mm" },
-            { label: "Max", value: `${tMax}`, unit: "°" },
-          ].map((s) => (
-            <div
-              key={s.label}
-              style={{
-                background: panel,
-                borderRadius: "20px",
-                padding: "22px 16px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                flex: 1,
-              }}
-            >
-              <div style={{ fontSize: "22px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", opacity: 0.7, display: "flex" }}>
-                {s.label}
+        {/* 5-periode strip: ochtend/middag/avond/nacht/morgen */}
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", gap: "10px" }}>
+          {periods.map((p) => {
+            const pEmoji = getWeatherEmoji(p.code, p.isDay);
+            return (
+              <div
+                key={p.label}
+                style={{
+                  background: panel,
+                  borderRadius: "20px",
+                  padding: "16px 8px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  flex: 1,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: 700,
+                    letterSpacing: "2px",
+                    textTransform: "uppercase",
+                    opacity: 0.75,
+                    display: "flex",
+                  }}
+                >
+                  {p.label}
+                </div>
+                <div style={{ fontSize: "54px", lineHeight: 1, marginTop: "6px", display: "flex" }}>{pEmoji}</div>
+                <div style={{ fontSize: "40px", fontWeight: 300, marginTop: "6px", letterSpacing: "-1px", display: "flex" }}>
+                  {p.temp}°
+                </div>
+                <div style={{ fontSize: "16px", fontWeight: 600, marginTop: "2px", opacity: 0.7, display: "flex" }}>
+                  {p.rainPct}%
+                </div>
               </div>
-              <div style={{ fontSize: "50px", fontWeight: 900, marginTop: "4px", display: "flex" }}>
-                {s.value}
-                <span style={{ fontSize: "22px", fontWeight: 600, marginLeft: "4px", alignSelf: "flex-end", paddingBottom: "10px", display: "flex" }}>
-                  {s.unit}
-                </span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     ),
