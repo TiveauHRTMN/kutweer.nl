@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { Mail, Users } from "lucide-react";
 import { useSession } from "@/lib/session-context";
-import { displaySubCount, displayFoundersLeft } from "@/lib/social-proof";
-import { FOUNDER_SLOTS } from "@/lib/personas";
+import { displaySubCount } from "@/lib/social-proof";
 import type { City } from "@/lib/types";
 
 interface Props {
@@ -23,7 +22,6 @@ export default function EmailSubscribe({ city: _city }: Props) {
   if (loading || tier) return null;
 
   const subCount = displaySubCount(0);
-  const foundersLeft = displayFoundersLeft(0);
 
   return (
     <div className="card p-5 space-y-3 relative overflow-hidden">
@@ -43,15 +41,10 @@ export default function EmailSubscribe({ city: _city }: Props) {
         zonder reclame. Geen creditcard vooraf. Opzeggen kan altijd.
       </p>
 
-      <div className="flex items-center gap-3 text-[11px] text-text-secondary pt-1 border-t border-black/5">
-        <span className="flex items-center gap-1.5">
-          <Users className="w-3.5 h-3.5 text-accent-orange" />
-          <strong className="text-text-primary">{subCount.toLocaleString("nl-NL")}</strong> Nederlanders
-        </span>
-        <span className="text-black/20">·</span>
-        <span>
-          Nog <strong className="text-accent-orange">{foundersLeft}</strong> van {FOUNDER_SLOTS} founder-plekken
-        </span>
+      <div className="flex items-center gap-1.5 text-[11px] text-text-secondary pt-1 border-t border-black/5">
+        <Users className="w-3.5 h-3.5 text-accent-orange" />
+        <strong className="text-text-primary">{subCount.toLocaleString("nl-NL")}</strong>
+        <span>Nederlanders ontvangen dit al</span>
       </div>
 
       <Link

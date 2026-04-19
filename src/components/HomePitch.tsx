@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PERSONAS, PERSONA_ORDER, formatPrice, FOUNDER_SLOTS } from "@/lib/personas";
+import { PERSONAS, PERSONA_ORDER, formatPrice } from "@/lib/personas";
 
 /**
  * Korte pitch onder de homepage-dashboard. De dashboard is de demo,
@@ -88,8 +88,7 @@ export default function HomePitch() {
       {/* Schaarste + CTA */}
       <div className="text-center">
         <p className="text-white/80 text-sm mb-4">
-          De eerste <strong className="text-white">{FOUNDER_SLOTS} aanmeldingen per persona</strong>{" "}
-          houden deze prijs, ook na 1 juni.
+          Tijdelijk gratis. Vroege aanmelders houden hun introductieprijs.
         </p>
         <Link
           href="/prijzen"

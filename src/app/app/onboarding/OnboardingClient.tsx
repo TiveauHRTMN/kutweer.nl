@@ -363,7 +363,7 @@ export default function OnboardingClient() {
         <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl font-black text-white drop-shadow mb-2">
             {step === "sent" && "Check je inbox"}
-            {step === "tier" && "Word founder"}
+            {step === "tier" && "Kies je abonnement"}
             {step === "auth" && "Even vastleggen"}
             {step === "profile" && tier && (
               <>
@@ -442,7 +442,7 @@ function TierGrid({ onPick }: { onPick: (t: PersonaTier) => void }) {
               <span className="font-black" style={{ color: p.color }}>
                 {formatPrice(p.founderPriceCents)}
               </span>
-              <span className="text-text-muted"> /mnd founder</span>
+              <span className="text-text-muted"> /mnd introductieprijs</span>
             </p>
           </button>
         );

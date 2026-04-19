@@ -60,7 +60,7 @@ export default function NavBar({ activeCity, isLocating }: Props) {
             aria-label={
               hasSub
                 ? (activeCity ? `Locatie: ${activeCity} — wijzig` : "Bepaal mijn locatie")
-                : "Locatie vergrendeld — word founder om GPS te gebruiken"
+                : "Locatie vergrendeld — meld je aan om GPS te gebruiken"
             }
           >
             <span className="label truncate max-w-[64px] sm:max-w-[140px] flex items-center gap-1 justify-center">
@@ -81,7 +81,7 @@ export default function NavBar({ activeCity, isLocating }: Props) {
             href="/piet"
             onClick={handleLockedClick}
             className={`nav-item w-full ${!hasSub ? "opacity-70" : ""}`}
-            aria-label={hasSub ? "48 uur op de meter" : "48 uur — op slot voor founders"}
+            aria-label={hasSub ? "48 uur op de meter" : "48 uur — alleen voor abonnees"}
           >
             <span className="label flex items-center gap-1 justify-center">
               {!hasSub && <Lock className="w-3 h-3 shrink-0" aria-hidden />}
@@ -95,7 +95,7 @@ export default function NavBar({ activeCity, isLocating }: Props) {
             href="/reed"
             onClick={handleLockedClick}
             className={`nav-item w-full ${!hasSub ? "opacity-70" : ""}`}
-            aria-label={hasSub ? "Alerts" : "Alerts — op slot voor founders"}
+            aria-label={hasSub ? "Alerts" : "Alerts — alleen voor abonnees"}
           >
             <span className="label flex items-center gap-1 justify-center">
               {!hasSub && <Lock className="w-3 h-3 shrink-0" aria-hidden />}

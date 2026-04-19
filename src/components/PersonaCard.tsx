@@ -60,7 +60,7 @@ export default function PersonaCard({ tier, onSelect, compact = false, highlight
         </div>
         <div className="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/5">
           <span className="text-xs font-bold text-text-primary">
-            Founders: {formatPrice(p.founderPriceCents)}/mnd · voor altijd
+            Introductieprijs: {formatPrice(p.founderPriceCents)}/mnd · vastgezet
           </span>
         </div>
       </div>

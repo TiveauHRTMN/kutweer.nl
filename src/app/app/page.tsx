@@ -48,7 +48,7 @@ export default async function AppDashboard() {
                 {persona.description}
               </p>
               <div className="rounded-2xl bg-black/[0.03] p-5 mb-6">
-                <p className="text-sm text-text-secondary mb-1">Founder-prijs</p>
+                <p className="text-sm text-text-secondary mb-1">Jouw introductieprijs</p>
                 <p className="text-2xl font-black text-text-primary">
                   {formatPrice(persona.founderPriceCents)}
                   <span className="text-sm font-normal text-text-muted">

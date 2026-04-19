@@ -72,7 +72,10 @@
       "Bash(find C:/Users/rwnhr/kutweer/src -name \"*.ts\" -exec grep -l \"@anthropic-ai\\\\|Anthropic\\\\|claude-\" {} \\\\;)",
       "Bash(xargs grep *)",
       "Bash(xargs head *)",
-      "Bash(xargs ls *)"
+      "Bash(xargs ls *)",
+      "Bash(curl -s --max-time 10 https://weerzone.nl/robots.txt)",
+      "Bash(curl -s --max-time 10 https://weerzone.nl/sitemap.xml)",
+      "Bash(curl -s --max-time 10 \"https://weerzone.nl/api/amazon/live\")"
     ]
   }
 }

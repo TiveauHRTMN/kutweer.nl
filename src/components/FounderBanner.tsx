@@ -65,7 +65,7 @@ export default function FounderBanner() {
                 </p>
                 <p className="text-sm text-text-secondary mt-1">
                   Elke ochtend een weermail van Piet, Reed of Steve. Zonder
-                  reclame. Zolang we in opbouw zijn: geen kosten.
+                  reclame. Tijdelijk gratis.
                 </p>
               </div>
             </div>
