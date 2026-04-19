@@ -76,7 +76,15 @@
       "Bash(curl -s --max-time 10 https://weerzone.nl/robots.txt)",
       "Bash(curl -s --max-time 10 https://weerzone.nl/sitemap.xml)",
       "Bash(curl -s --max-time 10 \"https://weerzone.nl/api/amazon/live\")",
-      "Bash(curl -sI https://weerzone.nl/logo-full.png)"
+      "Bash(curl -sI https://weerzone.nl/logo-full.png)",
+      "mcp__mcp-registry__search_mcp_registry",
+      "Bash(curl -sL https://developers.buffer.com/guides/integrations/claude.html -o /tmp/buf1.html -w \"HTTP:%{http_code}\\\\n\")",
+      "Bash(curl -sL https://developers.buffer.com/ -o /tmp/buf2.html -w \"HTTP:%{http_code}\\\\n\")",
+      "Bash(curl -sL https://developers.buffer.com/guides/integrations/claude.html)",
+      "Bash(curl -sL https://developers.buffer.com/)",
+      "Bash(curl -sL https://developers.buffer.com/__TRACKED_VAR__)",
+      "Bash(curl -sL https://developers.buffer.com/reference.html)",
+      "Bash(curl -sL https://developers.buffer.com/guides/api-limits.html)"
     ]
   }
 }

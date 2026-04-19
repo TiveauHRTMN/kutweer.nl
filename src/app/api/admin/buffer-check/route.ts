@@ -66,18 +66,27 @@ export async function GET(req: Request) {
     classicResults.error = (e as Error).message;
   }
 
-  // --- 2. Nieuwe GraphQL API (Bearer-token) ---
-  // https://buffer.com/developers/api
+  // --- 2. Nieuwe GraphQL API (Bearer-token, api.buffer.com) ---
+  // https://developers.buffer.com
   const graphqlResults: Record<string, unknown> = {};
   try {
-    const res = await fetch("https://graphql.buffer.com", {
+    const res = await fetch("https://api.buffer.com", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: `query { account { channels { id service serviceUsername } } }`,
+        query: `query GetChannels {
+          account {
+            id
+            organizations {
+              id
+              name
+              channels { id name service type }
+            }
+          }
+        }`,
       }),
       cache: "no-store",
     });
@@ -96,19 +105,19 @@ export async function GET(req: Request) {
   // Verdict
   const classicOk =
     classicResults.ok === true && typeof classicResults.count === "number";
+  const graphqlBody = graphqlResults.body as { data?: { account?: unknown }; errors?: unknown } | undefined;
   const graphqlOk =
-    graphqlResults.ok === true &&
-    !!(graphqlResults.body as { data?: unknown } | undefined)?.data;
+    graphqlResults.ok === true && !!graphqlBody?.data?.account && !graphqlBody?.errors;
 
   return NextResponse.json({
     ok: classicOk || graphqlOk,
     token: tokenInfo,
     classic_api: classicResults,
     graphql_api: graphqlResults,
-    verdict: classicOk
-      ? "Klassieke API werkt — gebruik api.bufferapp.com/1/… endpoints"
-      : graphqlOk
-        ? "GraphQL API werkt — gebruik graphql.buffer.com"
-        : "Token werkt met geen van beide APIs — check of je een 'Access Token' (OAuth) of 'Personal API Token' hebt, en of hij geldig is",
+    verdict: graphqlOk
+      ? "✅ Nieuwe GraphQL API werkt via api.buffer.com — zie graphql_api.body.data.account.organizations voor channels"
+      : classicOk
+        ? "Klassieke API werkt — gebruik api.bufferapp.com/1/…"
+        : "❌ Token werkt met geen van beide APIs. Haal een Personal API Key via https://publish.buffer.com/settings/api",
   });
 }
