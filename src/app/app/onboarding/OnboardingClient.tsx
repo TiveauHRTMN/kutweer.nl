@@ -10,6 +10,7 @@ import {
   type PersonaTier,
 } from "@/lib/personas";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { sendWelcomeEmail, sendBrandedMagicLink } from "@/app/actions";
 
 type Step = "tier" | "auth" | "sent" | "profile";
 
@@ -104,24 +105,94 @@ export default function OnboardingClient() {
         setCheckingSession(false);
         return;
       }
-      setUserId(data.user.id);
+      
+      const user = data.user;
+      setUserId(user.id);
+      setEmail(user.email ?? "");
 
-      // Actieve subscription?
-      const { data: sub } = await supabase
+      // NIEUWE ROBUUSTE LOGICA: Check LocalStorage voor "pending" data
+      const pendingRaw = localStorage.getItem("pending_onboarding");
+      let pendingData = null;
+      try { pendingData = pendingRaw ? JSON.parse(pendingRaw) : null; } catch (e) { console.error(e); }
+
+      // Check ook metadata als fallback
+      const meta = user.user_metadata;
+      const metaTier = (pendingData?.chosen_tier || meta?.chosen_tier) as PersonaTier | null;
+      
+      // Actieve subscriptions ophalen
+      const { data: subs } = await supabase
         .from("subscriptions")
         .select("tier, status")
-        .eq("user_id", data.user.id)
-        .in("status", ["trialing", "active"])
-        .maybeSingle();
+        .eq("user_id", user.id)
+        .in("status", ["trialing", "active"]);
 
-      const activeTier = (sub?.tier ?? null) as PersonaTier | null;
+      const activeSubs = subs || [];
+      const tierRanking: Record<string, number> = { steve: 3, reed: 2, piet: 1, free: 0 };
+      const bestSub = activeSubs.sort((a, b) => (tierRanking[b.tier] ?? 0) - (tierRanking[a.tier] ?? 0))[0];
 
-      // Als er al een sub is: check of prefs compleet zijn
+      // FLOW: Hebben we pending data die nog verwerkt moet worden?
+      if (metaTier && !activeSubs.some(s => s.tier === metaTier)) {
+        setLoading(true);
+        try {
+          // Gegevens ophalen uit localStorage (voorkeur) of metadata
+          const fullNameMeta = pendingData?.full_name || meta?.full_name || "";
+          const postcodeMeta = pendingData?.postcode || meta?.postcode || "";
+          const latMeta = pendingData?.lat || meta?.lat;
+          const lonMeta = pendingData?.lon || meta?.lon;
+          const prefsMeta = pendingData?.prefs || meta?.prefs || {};
+
+          // 1. Abonnement
+          await createSubscription(metaTier, user.id, user.email ?? "");
+          
+          // 2. Profiel & Locatie
+          await supabase.from("user_profile").upsert({
+            id: user.id,
+            email: user.email ?? "",
+            full_name: fullNameMeta,
+            postcode: postcodeMeta,
+            primary_lat: latMeta,
+            primary_lon: lonMeta,
+          });
+
+          if (latMeta && lonMeta) {
+            await supabase.from("user_locations").insert({
+              user_id: user.id,
+              label: "Thuis",
+              lat: latMeta,
+              lon: lonMeta,
+              is_primary: true,
+              persona_scope: [metaTier],
+            });
+          }
+
+          // 3. Prefs
+          await supabase.from("persona_preferences").upsert({
+            user_id: user.id,
+            persona: metaTier,
+            prefs: prefsMeta,
+            onboarding_stage: 1,
+          });
+
+          // Klaar! Opschonen en vliegen.
+          localStorage.removeItem("pending_onboarding");
+          router.replace("/app");
+          return;
+        } catch (err: any) {
+          console.error("Auto-onboarding failed:", err);
+          setError("Automatische activatie mislukt. Probeer het formulier hieronder.");
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      const activeTier = (metaTier || (bestSub?.tier ?? null)) as PersonaTier | null;
+
       if (activeTier) {
+        setTier(activeTier);
         const { data: prefs } = await supabase
           .from("persona_preferences")
           .select("onboarding_stage")
-          .eq("user_id", data.user.id)
+          .eq("user_id", user.id)
           .eq("persona", activeTier)
           .maybeSingle();
 
@@ -129,22 +200,13 @@ export default function OnboardingClient() {
           router.replace("/app");
           return;
         }
-        setTier(activeTier);
-        setStep("profile");
+        
+        // Als we wel een sub hebben maar geen prefs: toon formulier
+        setStep("auth"); // Nu "details" step
         setCheckingSession(false);
         return;
       }
 
-      // Nog geen sub. Als queryTier: subscription aanmaken → profile-step
-      if (queryTier && PERSONA_ORDER.includes(queryTier)) {
-        await createSubscription(queryTier, data.user.id);
-        setTier(queryTier);
-        setStep("profile");
-        setCheckingSession(false);
-        return;
-      }
-
-      // Ingelogd zonder sub zonder query-tier → laat ze kiezen
       setStep("tier");
       setCheckingSession(false);
     })();
@@ -154,21 +216,23 @@ export default function OnboardingClient() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function createSubscription(chosen: PersonaTier, uid: string) {
-    // Check first — partial unique index (user_id, tier) WHERE status IN (...)
-    // ondersteunt ON CONFLICT niet zonder exacte predicate-match.
+  async function createSubscription(chosen: PersonaTier, uid: string, userEmail: string) {
+    // Gebruik upsert om conflicten met gecancelde subs te voorkomen
+    const trialEnd = new Date("2026-06-01T00:00:00+02:00").toISOString();
+    const founderPrice = PERSONAS[chosen].founderPriceCents;
+    
+    // Check first if there's already an active one to avoid double welcome emails
     const { data: existing } = await supabase
       .from("subscriptions")
       .select("id")
       .eq("user_id", uid)
       .eq("tier", chosen)
-      .in("status", ["trialing", "active", "past_due"])
+      .in("status", ["trialing", "active"])
       .maybeSingle();
+      
     if (existing) return;
 
-    const trialEnd = new Date("2026-06-01T00:00:00+02:00").toISOString();
-    const founderPrice = PERSONAS[chosen].founderPriceCents;
-    await supabase.from("subscriptions").insert({
+    const { error: subError } = await supabase.from("subscriptions").insert({
       user_id: uid,
       tier: chosen,
       status: "trialing",
@@ -176,23 +240,80 @@ export default function OnboardingClient() {
       is_founder: true,
       founder_price_cents: founderPrice,
     });
+
+    if (subError) {
+      // Als de fout is dat het al bestaat (23505), dan is dat prima
+      if (subError.code === "23505") {
+        console.log("Subscription already exists, continuing...");
+      } else {
+        console.error("Subscription create failed:", subError);
+        throw new Error(`Abonnement aanmaken mislukt: ${subError.message}`);
+      }
+    }
+
+    // Stuur de branded welkomstmail via Resend
+    if (userEmail) {
+      await sendWelcomeEmail(userEmail, chosen);
+    }
   }
 
   // ---------- Magic link + OAuth ----------
 
-  async function handleMagicLink(e: React.FormEvent) {
+  async function handleUnifiedSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!tier || !email) return;
     setLoading(true);
     setError(null);
-    const redirectTo = `${window.location.origin}/auth/callback?next=/app/onboarding&tier=${tier}`;
-    const { error: otpError } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: redirectTo, data: { chosen_tier: tier } },
-    });
-    setLoading(false);
-    if (otpError) return setError(otpError.message);
-    setStep("sent");
+
+    const prefs = prefsForTier(tier);
+
+    if (userId) {
+      // Ingelogd: Direct opslaan
+      try {
+        await createSubscription(tier, userId, email);
+        await supabase.from("user_profile").upsert({
+          id: userId,
+          email,
+          full_name: fullName.trim(),
+          postcode: postcode.trim().toUpperCase(),
+          primary_lat: gpsCoords?.lat,
+          primary_lon: gpsCoords?.lon,
+        });
+        await supabase.from("persona_preferences").upsert({
+          user_id: userId,
+          persona: tier,
+          prefs,
+          onboarding_stage: 1,
+        });
+        router.replace("/app");
+      } catch (err: any) {
+        setError(err.message);
+        setLoading(false);
+      }
+    } else {
+      // Niet ingelogd: Gegevens EERST lokaal opslaan (voor robuustheid)
+      const dataToSave = {
+        chosen_tier: tier,
+        full_name: fullName.trim(),
+        postcode: postcode.trim().toUpperCase(),
+        lat: gpsCoords?.lat,
+        lon: gpsCoords?.lon,
+        prefs,
+      };
+      localStorage.setItem("pending_onboarding", JSON.stringify(dataToSave));
+
+      // NIEUW: Branded mail sturen via Server Action (Resend) i.p.v. Supabase Auto-mail
+      try {
+        console.log("Starting branded magic link flow for:", email);
+        await sendBrandedMagicLink(email, tier, fullName.trim());
+        setLoading(false);
+        setStep("sent");
+      } catch (err: any) {
+        console.error("Magic link error:", err);
+        setError(`E-mail verzenden mislukt: ${err.message}`);
+        setLoading(false);
+      }
+    }
   }
 
   async function handleGoogleOAuth() {
@@ -376,33 +497,40 @@ export default function OnboardingClient() {
           </h1>
         </div>
 
-        {step === "tier" && <TierGrid onPick={(t) => { setTier(t); setStep("auth"); }} />}
-
-        {step === "auth" && tier && (
-          <AuthCard
-            tier={tier}
-            email={email}
-            setEmail={setEmail}
-            loading={loading}
-            error={error}
-            onMagicLink={handleMagicLink}
-            onGoogle={handleGoogleOAuth}
-            onBack={() => { setTier(null); setStep("tier"); }}
+        {step === "tier" && (
+          <TierGrid
+            onPick={async (t) => {
+              setTier(t);
+              if (userId) {
+                // User is al ingelogd: subscription aanmaken en direct naar profiel
+                setLoading(true);
+                try {
+                  await createSubscription(t, userId, email);
+                  setStep("profile");
+                } catch (err: any) {
+                  setError(err.message);
+                } finally {
+                  setLoading(false);
+                }
+              } else {
+                setStep("auth");
+              }
+            }}
           />
         )}
 
-        {step === "sent" && <SentCard email={email} tier={tier} />}
-
-        {step === "profile" && tier && (
-          <ProfileForm
+        {step === "auth" && tier && (
+          <UnifiedForm
             tier={tier}
+            email={email}
+            setEmail={setEmail}
             fullName={fullName}
             setFullName={setFullName}
             postcode={postcode}
             setPostcode={setPostcode}
-            gpsCoords={gpsCoords}
             gpsStatus={gpsStatus}
             onGps={captureGps}
+            gpsCoords={gpsCoords}
             piet={pietPrefs}
             setPiet={setPietPrefs}
             reed={reedPrefs}
@@ -411,9 +539,12 @@ export default function OnboardingClient() {
             setSteve={setStevePrefs}
             loading={loading}
             error={error}
-            onSubmit={handleSubmitProfile}
+            onSubmit={handleUnifiedSubmit}
+            onBack={() => { setStep("tier"); }}
           />
         )}
+
+        {step === "sent" && <SentCard email={email} tier={tier} />}
       </div>
     </main>
   );
@@ -451,66 +582,171 @@ function TierGrid({ onPick }: { onPick: (t: PersonaTier) => void }) {
   );
 }
 
-function AuthCard(props: {
+function UnifiedForm(props: {
   tier: PersonaTier;
   email: string;
   setEmail: (v: string) => void;
+  fullName: string;
+  setFullName: (v: string) => void;
+  postcode: string;
+  setPostcode: (v: string) => void;
+  gpsStatus: string;
+  onGps: () => void;
+  gpsCoords: any;
+  piet: any;
+  setPiet: any;
+  reed: any;
+  setReed: any;
+  steve: any;
+  setSteve: any;
   loading: boolean;
   error: string | null;
-  onMagicLink: (e: React.FormEvent) => void;
-  onGoogle: () => void;
+  onSubmit: (e: React.FormEvent) => void;
   onBack: () => void;
 }) {
-  const { tier, email, setEmail, loading, error, onMagicLink, onGoogle, onBack } = props;
+  const { tier, email, setEmail, fullName, setFullName, postcode, setPostcode, gpsStatus, onGps, gpsCoords, loading, error, onSubmit, onBack } = props;
+  const p = PERSONAS[tier];
+
   return (
-    <div className="bg-white/95 backdrop-blur rounded-3xl p-6 sm:p-8 shadow-xl">
-      <form onSubmit={onMagicLink} className="space-y-4">
-        <label className="block">
-          <span className="text-sm font-bold text-text-primary">E-mailadres</span>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="jij@voorbeeld.nl"
-            className="mt-1 w-full rounded-xl border border-black/10 px-4 py-3 text-[#1e293b] bg-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-accent-orange"
-          />
-          <span className="text-xs text-text-muted mt-1 block">
-            Elke e-mailprovider werkt (Gmail, Outlook, eigen domein…)
-          </span>
-        </label>
+    <div className="bg-white/95 backdrop-blur rounded-3xl p-6 sm:p-8 shadow-xl max-w-2xl mx-auto border-t-4" style={{ borderColor: p.color }}>
+      <form onSubmit={onSubmit} className="space-y-6">
+        {/* Email Sectie */}
+        <section className="space-y-4">
+          <h3 className="text-lg font-black text-text-primary flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs text-white" style={{ background: p.color }}>1</span>
+            Je account
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="E-mailadres">
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="jij@voorbeeld.nl"
+                className={INPUT_CLASS}
+              />
+            </Field>
+            <Field label="Hoe heet je?">
+              <input
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Je naam"
+                className={INPUT_CLASS}
+              />
+            </Field>
+          </div>
+        </section>
+
+        {/* Locatie Sectie */}
+        <section className="space-y-4 border-t border-black/5 pt-6">
+          <h3 className="text-lg font-black text-text-primary flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs text-white" style={{ background: p.color }}>2</span>
+            Je locatie
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Postcode">
+              <input
+                type="text"
+                value={postcode}
+                onChange={(e) => setPostcode(e.target.value)}
+                placeholder="1012 AB"
+                className={INPUT_CLASS}
+              />
+            </Field>
+            <Field label="Of deel GPS">
+              <button
+                type="button"
+                onClick={onGps}
+                className={`${INPUT_CLASS} flex items-center justify-between text-left`}
+                disabled={gpsStatus === "ok"}
+              >
+                <span className="truncate text-xs">
+                  {gpsStatus === "ok" ? "Gevonden! ✅" : "Klik voor GPS 📍"}
+                </span>
+              </button>
+            </Field>
+          </div>
+        </section>
+
+        {/* Persona Opties */}
+        <section className="space-y-4 border-t border-black/5 pt-6">
+          <h3 className="text-lg font-black text-text-primary flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs text-white" style={{ background: p.color }}>3</span>
+            {p.name}&apos;s vragen
+          </h3>
+          
+          {tier === 'piet' && <PietFields piet={props.piet} setPiet={props.setPiet} />}
+          {tier === 'reed' && <ReedFields reed={props.reed} setReed={props.setReed} />}
+          {tier === 'steve' && <SteveFields steve={props.steve} setSteve={props.setSteve} />}
+        </section>
 
         {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg p-3">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-full px-6 py-3 font-black text-white disabled:opacity-60 flex items-center justify-center gap-2 bg-[#f59e0b] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all"
+          className="w-full rounded-full px-6 py-4 font-black text-white disabled:opacity-60 flex items-center justify-center gap-2 shadow-lg hover:brightness-110 active:scale-[0.98] transition-all text-lg"
+          style={{ background: p.color }}
         >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Verzend e-mail</>}
+          {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Aanmelden via e-mail →</>}
+        </button>
+
+        <button
+          type="button"
+          onClick={onBack}
+          className="block mx-auto text-xs text-text-muted hover:text-text-primary underline"
+        >
+          Terug naar overzicht
         </button>
       </form>
+    </div>
+  );
+}
 
-      <div className="flex items-center gap-3 my-5">
-        <div className="flex-1 h-px bg-black/10" />
-        <span className="text-xs text-text-muted uppercase tracking-wider">of</span>
-        <div className="flex-1 h-px bg-black/10" />
+function PietFields({ piet, setPiet }: any) {
+  return (
+    <div className="space-y-3">
+      <Field label="Heb je een hond (naam)?">
+        <input type="text" value={piet.hondNaam} onChange={(e) => setPiet({ ...piet, hondNaam: e.target.value })} placeholder="Laat leeg indien nee" className={INPUT_CLASS} />
+      </Field>
+      <div className="grid grid-cols-2 gap-2">
+        <CheckRow label="Fiets veel" checked={piet.fiets} onChange={(v) => setPiet({ ...piet, fiets: v })} />
+        <CheckRow label="Heeft tuin" checked={piet.tuin} onChange={(v) => setPiet({ ...piet, tuin: v })} />
       </div>
+    </div>
+  );
+}
 
-      <button
-        onClick={onGoogle}
-        disabled={loading}
-        className="w-full rounded-full px-6 py-3 font-bold text-text-primary border border-black/15 hover:bg-black/[0.03] disabled:opacity-60 flex items-center justify-center gap-2"
-      >
-        <GoogleIcon /> Doorgaan met Google
-      </button>
+function ReedFields({ reed, setReed }: any) {
+  return (
+    <div className="space-y-3">
+      <CheckRow label="Kritieke apparatuur in kelder" checked={reed.kelderGevoelig} onChange={(v) => setReed({ ...reed, kelderGevoelig: v })} />
+      <CheckRow label="Plat dak / Kwetsbare gevel" checked={reed.platDak} onChange={(v) => setReed({ ...reed, platDak: v })} />
+    </div>
+  );
+}
 
-      <button
-        onClick={onBack}
-        className="block mx-auto mt-5 text-xs text-text-muted hover:text-text-primary underline"
-      >
-        Andere persona kiezen
-      </button>
+function SteveFields({ steve, setSteve }: any) {
+  return (
+    <div className="space-y-4">
+      <Field label="Naam van je zaak / bedrijf">
+        <input 
+          type="text" 
+          value={steve.branche} 
+          onChange={(e) => setSteve({ ...steve, branche: e.target.value })} 
+          placeholder="Bijv. Strandtent Blijburg of Bouwbedrijf Jansen" 
+          className={INPUT_CLASS} 
+        />
+      </Field>
+      <div className="bg-accent-cyan/5 border border-accent-cyan/20 rounded-xl p-3">
+        <p className="text-[10px] text-accent-cyan font-bold uppercase tracking-wider mb-1">AI Intelligence</p>
+        <p className="text-xs text-text-secondary leading-snug">
+          Steve analyseert je bedrijfstype automatisch om de juiste weerdrempels (wind, regen, temperatuur) te bepalen. Je hoeft zelf niets in te stellen.
+        </p>
+      </div>
     </div>
   );
 }

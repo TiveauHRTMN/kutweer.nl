@@ -141,10 +141,11 @@ drop policy if exists "user_locations self" on public.user_locations;
 create policy "user_locations self" on public.user_locations
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
--- subscriptions: eigen rij read (schrijven via service-role / webhook)
+-- subscriptions: eigen rij read+write (met check op user_id)
 drop policy if exists "subscriptions self read" on public.subscriptions;
-create policy "subscriptions self read" on public.subscriptions
-  for select using (auth.uid() = user_id);
+drop policy if exists "subscriptions self all" on public.subscriptions;
+create policy "subscriptions self all" on public.subscriptions
+  for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 -- persona_preferences: eigen rijen read+write
 drop policy if exists "persona_preferences self" on public.persona_preferences;

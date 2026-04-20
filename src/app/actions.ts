@@ -4,6 +4,11 @@ import { fetchWeatherData, getWeatherDescription } from "@/lib/weather";
 import type { WeatherData } from "@/lib/types";
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 import { getMainCommentary } from "@/lib/commentary";
+import { Resend } from "resend";
+import { getWelcomeEmailHtml } from "@/lib/welcome-email";
+import { getBrandedMagicLinkHtml } from "@/lib/magic-link-email";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import type { PersonaTier } from "@/lib/personas";
 
 /**
  * SNELLE weer-fetch. Geen AI. Open-Meteo cached 5 min (via fetch revalidate).
@@ -23,20 +28,20 @@ export async function getAiVerdict(weather: WeatherData): Promise<string> {
 
   let attempts = 0;
   while (attempts < 3) {
-      try {
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ 
-          model: "gemini-3-flash-preview",
-          safetySettings: [
-            { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-            { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-            { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-            { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-          ]
-        });
+    try {
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({
+        model: "gemini-3-flash-preview",
+        safetySettings: [
+          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        ]
+      });
 
-        const tomorrow = weather.daily[1];
-        const prompt = `
+      const tomorrow = weather.daily[1];
+      const prompt = `
 Je bent de weerverteller van WEERZONE. Stijl: Roddelpraat / VI / Powned — direct, brutaal, eerlijk, met mening. Geen gelul, wel netjes (geen scheldwoorden).
 
 LENGTE (HARD):
@@ -81,26 +86,26 @@ Regen: ${tomorrow.precipitationSum} mm
 Geef nu het weerbericht (4 zinnen: nu → rest vandaag → vanavond/vannacht → morgen, 50-75 woorden, Roddelpraat-toon).
         `.trim();
 
-        const result = await model.generateContent({
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 2000, temperature: 0.8, topP: 0.95 },
-        });
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 2000, temperature: 0.8, topP: 0.95 },
+      });
 
-        const text = result.response.text().trim().replace(/^"|"$/g, '');
-        const wordCount = text.split(/\s+/).filter(Boolean).length;
-        // Accept: 40-90 woorden EN eindigt op . ! of ? (niet afgekapt)
-        const endsCleanly = /[.!?]["')\]]?\s*$/.test(text);
-        if (text && wordCount >= 40 && wordCount <= 90 && endsCleanly) {
-          return text;
-        }
-        console.warn(`AI output ongeldig (${wordCount}w, endsCleanly=${endsCleanly}), retry...`);
-        attempts++;
-      } catch (e) {
-        attempts++;
-        console.error(`AI Verdict attempt ${attempts} failed:`, e);
-        await new Promise(r => setTimeout(r, 500));
+      const text = result.response.text().trim().replace(/^"|"$/g, '');
+      const wordCount = text.split(/\s+/).filter(Boolean).length;
+      // Accept: 40-90 woorden EN eindigt op . ! of ? (niet afgekapt)
+      const endsCleanly = /[.!?]["')\]]?\s*$/.test(text);
+      if (text && wordCount >= 40 && wordCount <= 90 && endsCleanly) {
+        return text;
       }
+      console.warn(`AI output ongeldig (${wordCount}w, endsCleanly=${endsCleanly}), retry...`);
+      attempts++;
+    } catch (e) {
+      attempts++;
+      console.error(`AI Verdict attempt ${attempts} failed:`, e);
+      await new Promise(r => setTimeout(r, 500));
     }
+  }
   // Alle pogingen mislukt — deterministische fallback (géén halve output tonen)
   return getMainCommentary(weather);
 }
@@ -134,7 +139,7 @@ export async function findBusinessLeads(query: string) {
     }
 
     const data = await response.json();
-    
+
     // Transformeren naar een cleaner formaat
     return (data.places || []).map((place: any) => ({
       name: place.displayName?.text || "Onbekend",
@@ -147,4 +152,95 @@ export async function findBusinessLeads(query: string) {
     console.error("Lead finding error:", error);
     return [];
   }
+}
+
+/**
+ * Verstuurt de branded Weerzone welkomstmail via Resend.
+ */
+export async function sendWelcomeEmail(email: string, tier: PersonaTier, city?: string) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn("RESEND_API_KEY not set, skipping welcome email.");
+    return;
+  }
+
+  try {
+    const resend = new Resend(apiKey);
+    const html = getWelcomeEmailHtml(email, tier, city);
+
+    await resend.emails.send({
+      from: "WEERZONE <info@weerzone.nl>",
+      to: email,
+      subject: "BOEM! 🚀 Je bent nu officieel de baas over het weer bij WEERZONE!",
+      html,
+    });
+    console.log(`Welcome email sent to ${email} for tier ${tier}`);
+  } catch (err) {
+    console.error("Failed to send welcome email:", err);
+  }
+}
+
+/**
+ * Genereert een Supabase inloglink en verstuurt deze in een branded WeerZone mail.
+ * We dwingen 'email_confirm' af om te voorkomen dat Supabase zelf ook nog een mail stuurt.
+ */
+export async function sendBrandedMagicLink(email: string, tier: PersonaTier, fullName: string) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) throw new Error("RESEND_API_KEY is missing");
+
+  const admin = createSupabaseAdminClient();
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://weerzone.nl";
+  const redirectTo = `${siteUrl}/auth/callback?next=/app/onboarding&tier=${tier}`;
+
+  // 1. Zorg dat de gebruiker bestaat en GEMARKEERD IS ALS BEVESTIGD.
+  // Dit is de truc: als de gebruiker al bevestigd is ("email_confirm: true"), 
+  // dan vindt Supabase het niet nodig om zelf nog een mail te sturen.
+  const { error: userError } = await admin.auth.admin.createUser({
+    email,
+    email_confirm: true,
+    user_metadata: { full_name: fullName, chosen_tier: tier },
+  });
+
+  // Als de gebruiker al bestaat, updaten we hem alleen naar confirmed
+  // en zetten chosen_tier zodat de DB-trigger / metadata-fallback de juiste
+  // persona kent — ook als iemand eerder een andere persona koos.
+  if (userError && userError.message.includes("already registered")) {
+    const { data: list } = await admin.auth.admin.listUsers();
+    const existingUser = list.users.find(u => u.email === email);
+    if (existingUser) {
+      await admin.auth.admin.updateUserById(existingUser.id, {
+        email_confirm: true,
+        user_metadata: {
+          ...(existingUser.user_metadata ?? {}),
+          full_name: fullName,
+          chosen_tier: tier,
+        },
+      });
+    }
+  }
+
+  // 2. Genereer de link (nu zal Supabase STIL blijven)
+  const { data, error } = await admin.auth.admin.generateLink({
+    type: "magiclink",
+    email,
+    options: { redirectTo },
+  });
+
+  if (error) {
+    console.error("Failed to generate magic link:", error);
+    throw new Error(`Inloglink genereren mislukt: ${error.message}`);
+  }
+
+  // 3. Verstuur de branded mail via Resend
+  const resend = new Resend(apiKey);
+  const html = getBrandedMagicLinkHtml(tier, data.properties.action_link, fullName);
+
+  await resend.emails.send({
+    from: "WEERZONE <info@weerzone.nl>",
+    to: email,
+    subject: `Activeer je WEERZONE account voor ${tier.toUpperCase()} 🚀`,
+    html,
+  });
+
+  console.log(`Branded Magic Link sent (and Supabase silenced) for ${email}`);
 }

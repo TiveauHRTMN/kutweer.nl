@@ -39,13 +39,20 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
       return;
     }
-    const { data: sub } = await supabase
+    const { data: subs } = await supabase
       .from("subscriptions")
       .select("tier, status")
       .eq("user_id", u.id)
-      .in("status", ["trialing", "active"])
-      .maybeSingle();
-    let t = (sub?.tier ?? null) as PersonaTier | null;
+      .in("status", ["trialing", "active"]);
+
+    const activeSubs = subs || [];
+    const tierRanking: Record<string, number> = { steve: 3, reed: 2, piet: 1, free: 0 };
+    const sortedSubs = activeSubs.sort((a, b) => 
+      (tierRanking[b.tier] ?? 0) - (tierRanking[a.tier] ?? 0)
+    );
+    
+    let t = (sortedSubs[0]?.tier ?? null) as PersonaTier | null;
+    
     // Founder-bypass: eigenaar krijgt altijd de hoogste tier.
     if (!t && isFounderEmail(u.email)) {
       t = FOUNDER_TIER;

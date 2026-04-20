@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
-import { Lock, Mail, MapPin, Zap, Shield, TrendingUp } from "lucide-react";
+import { Lock, Mail, MapPin, Zap, Shield, TrendingUp, Loader2 } from "lucide-react";
+import { sendBrandedMagicLink } from "@/app/actions";
+import type { PersonaTier } from "@/lib/personas";
 
 interface AuthGateProps {
   children: React.ReactNode;
@@ -69,16 +71,13 @@ function LoginPrompt() {
     }
 
     try {
-      const { error: authError } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          data: { postcode: postcode.trim().toUpperCase() },
-        },
-      });
-      if (authError) throw authError;
+      // Gebruik onze nieuwe branded server action!
+      // We gebruiken 'piet' als default voor de algemene login layout
+      await sendBrandedMagicLink(email, "piet", "");
       setSent(true);
-    } catch {
-      setError("Er ging iets mis. Probeer het opnieuw.");
+    } catch (err: any) {
+      console.error("AuthGate login error:", err);
+      setError(err.message || "Er ging iets mis. Probeer het opnieuw.");
     }
   };
 

@@ -14,14 +14,21 @@ export default async function AppDashboard() {
 
   if (!user) redirect("/app/onboarding");
 
-  // Actieve subscription ophalen
-  const { data: sub } = await supabase
+  // Actieve subscriptions ophalen
+  const { data: subs } = await supabase
     .from("subscriptions")
     .select("tier, status, trial_end, is_founder")
     .eq("user_id", user.id)
-    .in("status", ["trialing", "active"])
-    .maybeSingle();
+    .in("status", ["trialing", "active"]);
 
+  // We kunnen meerdere subs hebben (bv Piet van de trigger + Steve van onboarding).
+  // We pakken de "hoogste".
+  const tierRanking: Record<string, number> = { steve: 3, reed: 2, piet: 1, free: 0 };
+  const sortedSubs = (subs || []).sort((a, b) => 
+    (tierRanking[b.tier] ?? 0) - (tierRanking[a.tier] ?? 0)
+  );
+  
+  const sub = sortedSubs[0];
   let tier = (sub?.tier ?? null) as PersonaTier | null;
   const isFounder = isFounderEmail(user.email);
   if (!tier && isFounder) tier = FOUNDER_TIER;

@@ -85,7 +85,14 @@
       "Bash(curl -sL https://developers.buffer.com/__TRACKED_VAR__)",
       "Bash(curl -sL https://developers.buffer.com/reference.html)",
       "Bash(curl -sL https://developers.buffer.com/guides/api-limits.html)",
-      "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")"
+      "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
+      "Bash(find /c/Users/rwnhr/kutweer/src -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) -exec grep -l \"signInWithOtp\\\\|exchangeCodeForSession\" {} \\\\;)",
+      "Bash(find /c/Users/rwnhr/kutweer/src -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) -exec grep -l \"persona_preferences\\\\|onboarding_stage\" {} \\\\;)",
+      "Bash(find /c/Users/rwnhr/kutweer/src -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) -exec grep -l \"emailRedirectTo\\\\|signInWithOtp\" {} \\\\;)",
+      "Bash(ls C:\\\\\\\\Users\\\\\\\\rwnhr\\\\\\\\kutweer\\\\\\\\supabase)",
+      "Bash(ls C:\\\\\\\\Users\\\\\\\\rwnhr\\\\\\\\kutweer\\\\\\\\src\\\\\\\\lib)",
+      "Bash(grep -rE \"RESEND_API_KEY|SUPABASE_SERVICE_ROLE\" C:\\\\\\\\Users\\\\\\\\rwnhr\\\\\\\\kutweer\\\\\\\\src --include=\"*.ts\" -l)",
+      "Bash(ls \"C:\\\\\\\\Users\\\\\\\\rwnhr\\\\\\\\kutweer\\\\\\\\src\\\\\\\\app\\\\\\\\api\\\\\\\\auth\")"
     ]
   }
 }

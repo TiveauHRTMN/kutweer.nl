@@ -11,6 +11,7 @@ import type { PersonaTier } from "@/lib/personas";
  */
 export const FOUNDER_EMAILS: ReadonlySet<string> = new Set([
   "rwnhrtmn@gmail.com",
+  "iamrowanonl@gmail.com",
   "info@weerzone.nl",
 ]);
 
