@@ -1,27 +1,20 @@
-import { Suspense } from "react";
 import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import OnboardingClient from "./OnboardingClient";
 
-export const dynamic = "force-dynamic";
 export const metadata = {
-  title: "Jouw instellingen",
+  title: "Aanmelden",
   robots: { index: false, follow: false },
 };
 
-export default async function OnboardingPage() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/app/signup");
-  }
-
-  return (
-    <Suspense fallback={null}>
-      <OnboardingClient email={user.email ?? ""} />
-    </Suspense>
-  );
+/**
+ * Oude magic-link onboarding is vervangen door /app/signup (wachtwoord + Google).
+ * We forwarden eventuele ?tier= zodat oude links blijven werken.
+ */
+export default async function OnboardingRedirect({
+  searchParams,
+}: {
+  searchParams: Promise<{ tier?: string }>;
+}) {
+  const params = await searchParams;
+  const tier = params?.tier;
+  redirect(tier ? `/app/signup?tier=${encodeURIComponent(tier)}` : "/app/signup");
 }
