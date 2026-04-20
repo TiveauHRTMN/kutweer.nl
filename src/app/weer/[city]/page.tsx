@@ -27,8 +27,8 @@ export async function generateMetadata({
   const city = findCity(slug);
   if (!city) return {};
 
-  const title = `Vergeet volgende week. Dit gebeurt er de komende 48 uur in ${city.name}`;
-  const description = `Weer ${city.name} — de komende 48 uur op de vierkante meter. KNMI HARMONIE + DWD ICON gecombineerd. Temperatuur, neerslag, wind. Geen 14-daagse ruis, gewoon de waarheid.`;
+  const title = `Weer ${city.name} — De komende 48 uur weersverwachting`;
+  const description = `Actueel weer in ${city.name}. Bekijk de meest nauwkeurige 48-uurs voorspelling (KNMI HARMONIE) op de 2,5 km² nauwkeurig. Geen 14-daagse gokwerk, gewoon de feiten voor ${city.name}.`;
 
   return {
     title,

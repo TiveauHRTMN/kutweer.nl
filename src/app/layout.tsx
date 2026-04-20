@@ -31,15 +31,17 @@ export const metadata: Metadata = {
     apple: "/favicon-icon.png",
   },
   title: {
-    default: "WEERZONE | 48 uur. De rest is ruis.",
+    default: "WEERZONE | 48 uur weersverwachting. De rest is ruis.",
     template: "%s | WEERZONE",
   },
   description:
-    "WEERZONE.nl — Vergeet de 14-daagse. De komende 48 uur vooruit. De rest is ruis. KNMI HARMONIE data op de vierkante meter.",
+    "WEERZONE.nl — Het eerlijke weerbericht. Vergeet de 14-daagse gok. Komende 48 uur uiterst nauwkeurig dankzij KNMI HARMONIE data op de vierkante meter.",
   keywords: [
     "weer", "weer nederland", "weerbericht", "weersverwachting", "weer vandaag",
-    "weer morgen", "48 uur weer", "weer komende 48 uur", "fietsweer", "regen verwachting",
+    "weer morgen", "48 uur weer", "weer komende 48 uur", "regen verwachting",
     "WEERZONE", "nauwkeurig weer", "KNMI", "KNMI HARMONIE", "weerzone.nl",
+    "buienradar alternatief", "weerbericht nederland", "actueel weer",
+    "neerslagverwachting", "zonkracht vandaag", "weerstation nederland",
   ],
   openGraph: {
     title: "WEERZONE | 48 uur vooruit. De rest is ruis.",

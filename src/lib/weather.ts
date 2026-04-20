@@ -39,6 +39,7 @@ const DAILY_PARAMS = [
 interface RawModelHourly {
   time: string[];
   temperature_2m: number[];
+  apparent_temperature?: number[];
   weather_code: number[];
   precipitation: number[];
   wind_speed_10m: number[];
@@ -54,7 +55,7 @@ async function fetchModel(
   const params = new URLSearchParams({
     latitude: lat.toString(),
     longitude: lon.toString(),
-    hourly: HOURLY_PARAMS,
+    hourly: HOURLY_PARAMS + ",apparent_temperature",
     timezone: "Europe/Amsterdam",
     forecast_days: "2",
     forecast_hours: "48",
@@ -75,13 +76,14 @@ async function fetchModel(
 
 function blendHourly(
   harmonieData: RawModelHourly | null,
-  fallbackData: { time: string[]; temperature_2m: number[]; weather_code: number[]; precipitation: number[]; wind_speed_10m: number[]; cape?: number[] }
+  fallbackData: { time: string[]; temperature_2m: number[]; apparent_temperature: number[]; weather_code: number[]; precipitation: number[]; wind_speed_10m: number[]; cape?: number[] }
 ): { hourly: HourlyForecast[]; agreement: number } {
   const times = fallbackData.time;
 
   const hourly: HourlyForecast[] = times.map((time, i) => {
     // Gebruik Harmonie data indien beschikbaar, anders fallback op generic
     const temperature = Math.round(harmonieData?.temperature_2m?.[i] ?? fallbackData.temperature_2m[i]);
+    const apparentTemperature = Math.round(harmonieData?.apparent_temperature?.[i] ?? fallbackData.apparent_temperature[i]);
     const precipitation = harmonieData?.precipitation?.[i] ?? fallbackData.precipitation[i];
     const weatherCode = harmonieData?.weather_code?.[i] ?? fallbackData.weather_code[i];
     const windSpeed = Math.round(harmonieData?.wind_speed_10m?.[i] ?? fallbackData.wind_speed_10m[i]);
@@ -89,6 +91,7 @@ function blendHourly(
     return {
       time,
       temperature,
+      apparentTemperature,
       weatherCode,
       precipitation,
       windSpeed,
@@ -124,15 +127,29 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
     const data = genericRes;
     const { hourly, agreement } = blendHourly(harmonieData, data.hourly);
 
-    // RAIN ACCURACY FIX: Voor de Nederlandse polder (bijv. Nieuwe Niedorp) 
-    // kan de 'current' API soms regen overslaan die de hourly (Harmonie) wel ziet.
+    // 5. SYNC CURRENT WITH HARMONIE (Belangrijk voor consistentie!)
+    // Omdat de 'current' API van Open-Meteo het Harmonie model niet direct ondersteunt,
+    // halen we de huidige waarden uit de eerste slot van de Harmonie data.
+    let currentTemp = Math.round(data.current.temperature_2m);
+    let currentFeels = Math.round(data.current.apparent_temperature);
     let currentPrecip = data.current.precipitation;
     let currentCode = data.current.weather_code;
-    
-    if (currentPrecip === 0 && hourly[0].precipitation > 0) {
+    let currentWind = Math.round(data.current.wind_speed_10m);
+
+    if (harmonieData) {
+      // Gebruik de eerste uurwaarde van Harmonie voor de 'Nu' status
+      currentTemp = hourly[0].temperature;
+      currentFeels = hourly[0].apparentTemperature;
       currentPrecip = hourly[0].precipitation;
-      if (currentCode === 0 || currentCode === 1 || currentCode === 3) {
-        currentCode = hourly[0].weatherCode; // Update code naar regen/bui
+      currentCode = hourly[0].weatherCode;
+      currentWind = hourly[0].windSpeed;
+    } else {
+      // Fallback: Rain Accuracy Fix voor generic model
+      if (currentPrecip === 0 && hourly[0].precipitation > 0) {
+        currentPrecip = hourly[0].precipitation;
+        if (currentCode === 0 || currentCode === 1 || currentCode === 3) {
+          currentCode = hourly[0].weatherCode;
+        }
       }
     }
 
@@ -151,10 +168,10 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
 
     return {
       current: {
-        temperature: Math.round(data.current.temperature_2m),
-        feelsLike: Math.round(data.current.apparent_temperature),
+        temperature: currentTemp,
+        feelsLike: currentFeels,
         humidity: data.current.relative_humidity_2m,
-        windSpeed: Math.round(data.current.wind_speed_10m),
+        windSpeed: currentWind,
         windDirection: degreesToDirection(data.current.wind_direction_10m),
         windGusts: Math.round(data.current.wind_gusts_10m),
         precipitation: currentPrecip,
@@ -173,9 +190,9 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
         windSpeedMax: Math.round(data.daily.wind_speed_10m_max[i]),
         sunHours: Number((data.daily.sunshine_duration[i] / 3600).toFixed(1)),
       })),
-      sunrise: data.daily.sunrise[0],
-      sunset: data.daily.sunset[0],
-      uvIndex: data.daily.uv_index_max[0],
+      sunrise: data.daily?.sunrise?.[0],
+      sunset: data.daily?.sunset?.[0],
+      uvIndex: data.daily?.uv_index_max?.[0] ?? 0,
       models: {
         agreement,
         label: "KNMI HARMONIE Geverifieerd",

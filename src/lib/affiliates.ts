@@ -21,10 +21,14 @@ export const AFFILIATE_CONFIG = {
     enabled: false, // zet op true zodra Booking.com je goedkeurt (status: Pending)
   },
   amazon: {
-    // Amazon Associates NL: https://partnernet.amazon.nl
-    // Na aanmelding krijg je een tracking-tag (bijv. "weerzone-21")
     tag: "tiveaubusines-21", // WEERZONE Amazon Associates tag
     enabled: true, // LIVE — commissie actief na 3 bestellingen
+  },
+  temu: {
+    // Temu Affiliate Program: https://www.temu.com/affiliate
+    // Vaak via een direct partner-id of een netwerk zoals Impact
+    id: "e3xei993714", // WEERZONE Temu Partner ID
+    enabled: true, // LIVE — Temu links actief voor TikTok
   },
   thuisbezorgd: {
     // Thuisbezorgd via Awin: https://www.awin.com
@@ -69,6 +73,15 @@ export function amazonProductUrl(asin: string): string {
     return `https://www.amazon.nl/dp/${asin}`;
   }
   return `https://www.amazon.nl/dp/${asin}?tag=${AFFILIATE_CONFIG.amazon.tag}&linkCode=ll1`;
+}
+
+export function temuUrl(keywords: string): string {
+  const searchK = encodeURIComponent(keywords);
+  if (!AFFILIATE_CONFIG.temu.enabled || !AFFILIATE_CONFIG.temu.id) {
+    return `https://www.temu.com/search_result.html?search_key=${searchK}`;
+  }
+  // Temu tracking format (voorbeeld, afhankelijk van netwerk)
+  return `https://www.temu.com/search_result.html?search_key=${searchK}&refer_page_el_sn=200021&_x_sessn_id=${AFFILIATE_CONFIG.temu.id}`;
 }
 
 export function thuisbezorgdUrl(): string {

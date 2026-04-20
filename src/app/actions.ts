@@ -244,3 +244,70 @@ export async function sendBrandedMagicLink(email: string, tier: PersonaTier, ful
 
   console.log(`Branded Magic Link sent (and Supabase silenced) for ${email}`);
 }
+
+/**
+ * Registreer een nieuwe gebruiker met e-mail + wachtwoord — pre-confirmed.
+ *
+ * We doen admin.createUser met email_confirm:true zodat Supabase geen
+ * bevestigingsmail stuurt. De client krijgt { ok:true } terug en kan dan
+ * direct signInWithPassword aanroepen (client-side, zodat de sessie-cookies
+ * via de browser-client worden gezet).
+ *
+ * chosen_tier + full_name gaan in user_metadata. De DB-trigger
+ * handle_new_user (zie migratie 20260420_fix_chosen_tier.sql) maakt dan
+ * automatisch de juiste subscription aan.
+ */
+export async function registerUser(args: {
+  email: string;
+  password: string;
+  tier: PersonaTier;
+  fullName: string;
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  const { email, password, tier, fullName } = args;
+
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    return { ok: false, error: "Vul een geldig e-mailadres in." };
+  }
+  if (!password || password.length < 8) {
+    return { ok: false, error: "Kies een wachtwoord van minimaal 8 tekens." };
+  }
+
+  const admin = createSupabaseAdminClient();
+  const { error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { full_name: fullName, chosen_tier: tier },
+  });
+
+  if (error) {
+    if (error.message.toLowerCase().includes("already")) {
+      return {
+        ok: false,
+        error:
+          "Dit e-mailadres heeft al een account. Log in of gebruik 'wachtwoord vergeten'.",
+      };
+    }
+    return { ok: false, error: error.message };
+  }
+
+  // Optioneel: welkomstmail. We bouwen 'm niet in het kritieke pad zodat
+  // een Resend-storing de registratie niet tegenhoudt.
+  try {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (apiKey) {
+      const resend = new Resend(apiKey);
+      const html = getWelcomeEmailHtml(email, tier);
+      await resend.emails.send({
+        from: "WEERZONE <info@weerzone.nl>",
+        to: email,
+        subject: `Welkom bij WEERZONE — ${tier.toUpperCase()}`,
+        html,
+      });
+    }
+  } catch (e) {
+    console.error("Welcome email failed (non-fatal):", e);
+  }
+
+  return { ok: true };
+}

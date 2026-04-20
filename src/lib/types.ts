@@ -29,6 +29,7 @@ export interface WeatherData {
 export interface HourlyForecast {
   time: string;
   temperature: number;
+  apparentTemperature: number;
   weatherCode: number;
   precipitation: number;
   windSpeed: number;

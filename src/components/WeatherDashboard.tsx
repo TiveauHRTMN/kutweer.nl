@@ -46,6 +46,8 @@ interface DashboardProps {
   initialCity?: City;
   /** Optionele content die nét vóór de footer gerenderd wordt (bijv. HomePitch op /). */
   beforeFooter?: React.ReactNode;
+  /** Optionele H1 override voor SEO (ninja-style) */
+  titleOverride?: string;
 }
 
 function getSavedCity(): City | null {
@@ -223,11 +225,11 @@ export default function WeatherDashboard({ initialCity, beforeFooter }: Dashboar
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent-orange mb-1">
                 Hyper Fidelity Weather
               </span>
-              <div className="text-sm font-black text-text-primary flex items-center gap-2">
-                {city.name} 
+              <h1 className="text-sm font-black text-text-primary flex items-center gap-2">
+                {titleOverride || `Weer in ${city.name}`}
                 <span className="w-1 h-1 rounded-full bg-text-muted" />
                 <span className="font-medium text-text-secondary">{new Date().toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
-              </div>
+              </h1>
             </div>
             <div className="px-2.5 py-1 rounded bg-black text-white text-[9px] font-black uppercase tracking-widest border border-white/20">
               OFFICIAL

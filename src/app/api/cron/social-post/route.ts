@@ -13,6 +13,8 @@ const BUFFER_CHANNELS = {
   tiktok: "69e51f4f031bfa423c1f673b", // weerzonenl
 };
 
+import { amazonUrl, temuUrl, AFFILIATE_CONFIG } from "@/lib/affiliates";
+
 interface AffiliatePick {
   product: string;
   keyword: string;
@@ -45,57 +47,50 @@ function buildDeterministicCaption(args: {
     `Ochtend ${ochtend}° · middag ${middag}° · avond ${avond}° · nacht ${nacht}°. ${droog ? "Droog." : regen}\n\n` +
     `Echte voorspelling op jouw postcode → weerzone.nl\n\n` +
     `Tip bij dit weer (advertentie): ${affiliate.product} → ${affiliateUrl}\n\n` +
-    `#weer #weerzone #nederland ${condTag} #ad`
+    `#weer #weerzone #nederland #weerbericht #knmi #buienradar #vandaag ${condTag} #ad`
   );
 }
 
 const CAPTION_PROMPT = `
-Je bent Piet — de brutale, nuchtere Nederlandse weerman van WEERZONE.
+Je bent Piet van WEERZONE. STIJL: Professioneel, scherp, direct. Premium uitstraling.
 Herschrijf onderstaande template in jouw stem. Max 260 tekens vóór de link.
+Geen overbodige ruis, focus op de 48-uurs impact.
 Behoud de perioden (ochtend/middag/avond/nacht), de call-to-action naar weerzone.nl,
-de Amazon-tip-link en de hashtags. Geen emoji-overload (max 2).
+de Amazon-tip-link en de hashtags. Gebruik maximaal 2 relevante emoji.
 `;
 
 interface WeatherLite {
   current: { temperature: number; weatherCode: number; windSpeed: number; precipitation: number };
-  daily: { temperature_2m_max: number[]; temperature_2m_min: number[]; precipitation_sum?: number[] };
-  hourly?: { temperature_2m?: number[]; weather_code?: number[] };
+  daily: Array<{ tempMax: number; tempMin: number; precipitationSum: number }>;
+  hourly?: Array<{ temperature: number; weatherCode: number; precipitation: number }>;
 }
 
-async function generateCaption(weather: WeatherLite): Promise<{
-  caption: string;
-  affiliate: AffiliatePick;
-  affiliateUrl: string;
-}> {
-  const ochtend = Math.round(weather.hourly?.temperature_2m?.[8] ?? weather.current.temperature);
-  const middag = Math.round(
-    weather.hourly?.temperature_2m?.[13] ?? weather.daily.temperature_2m_max[0],
-  );
-  const avond = Math.round(weather.hourly?.temperature_2m?.[19] ?? weather.current.temperature);
-  const nacht = Math.round(
-    weather.hourly?.temperature_2m?.[25] ?? weather.daily.temperature_2m_min[0],
-  );
+export async function generatePlatformCaption(weather: WeatherLite, platform: 'x' | 'tiktok') {
+  const isTikTok = platform === 'tiktok';
+  const ochtend = Math.round(weather.hourly?.[8]?.temperature ?? weather.current?.temperature ?? 10);
+  const middag = Math.round(weather.hourly?.[13]?.temperature ?? weather.daily?.[0]?.tempMax ?? 15);
+  const avond = Math.round(weather.hourly?.[19]?.temperature ?? weather.current?.temperature ?? 10);
+  const nacht = Math.round(weather.hourly?.[25]?.temperature ?? weather.daily?.[0]?.tempMin ?? 5);
 
   const affiliate = pickAffiliate({
-    temp: weather.current.temperature,
-    rain: weather.current.precipitation,
-    wind: weather.current.windSpeed,
-    maxTemp: weather.daily.temperature_2m_max[0],
-    minTemp: weather.daily.temperature_2m_min[0],
+    temp: weather.current?.temperature ?? 10,
+    rain: weather.current?.precipitation ?? 0,
+    wind: weather.current?.windSpeed ?? 10,
+    maxTemp: weather.daily?.[0]?.tempMax ?? 15,
+    minTemp: weather.daily?.[0]?.tempMin ?? 5,
   });
-  const affiliateUrl = amazonUrl(affiliate.keyword);
+
+  const useTemu = AFFILIATE_CONFIG.temu.enabled && isTikTok;
+  const affiliateUrl = useTemu ? temuUrl(affiliate.keyword) : amazonUrl(affiliate.keyword);
 
   const deterministicCaption = buildDeterministicCaption({
-    ochtend,
-    middag,
-    avond,
-    nacht,
-    rainDay: weather.daily.precipitation_sum?.[0] ?? 0,
+    ochtend, middag, avond, nacht,
+    rainDay: weather.daily?.[0]?.precipitationSum ?? 0,
     affiliate,
     affiliateUrl,
   });
 
-  // Gemini poging voor variatie; val anders terug op de deterministische versie.
+  // Gemini voor variatie
   const key = process.env.GEMINI_API_KEY;
   if (!key) return { caption: deterministicCaption, affiliate, affiliateUrl };
 
@@ -103,22 +98,15 @@ async function generateCaption(weather: WeatherLite): Promise<{
     const genAI = new GoogleGenerativeAI(key);
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-exp" });
     const res = await model.generateContent({
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: `${CAPTION_PROMPT}\n\nTEMPLATE:\n${deterministicCaption}` }],
-        },
-      ],
+      contents: [{ role: "user", parts: [{ text: `${CAPTION_PROMPT}\n\nTEMPLATE:\n${deterministicCaption}` }] }],
       generationConfig: { maxOutputTokens: 400, temperature: 0.8 },
     });
     const text = res.response.text()?.trim();
-    // Safety: alleen gebruiken als Gemini de link + URL behouden heeft
     if (text && text.includes("weerzone.nl") && text.includes(affiliateUrl)) {
       return { caption: text, affiliate, affiliateUrl };
     }
     return { caption: deterministicCaption, affiliate, affiliateUrl };
-  } catch (e) {
-    console.error("Gemini caption error:", e);
+  } catch {
     return { caption: deterministicCaption, affiliate, affiliateUrl };
   }
 }
@@ -188,9 +176,10 @@ export async function GET(req: Request) {
     const weather = await fetchWeatherData(52.11, 5.18);
     if (!weather) throw new Error("Weather fetch failed");
 
-    const { caption, affiliate, affiliateUrl } = await generateCaption(
-      weather as unknown as WeatherLite,
-    );
+    const [xData, tiktokData] = await Promise.all([
+      generatePlatformCaption(weather as unknown as WeatherLite, 'x'),
+      generatePlatformCaption(weather as unknown as WeatherLite, 'tiktok'),
+    ]);
 
     const base = process.env.NEXT_PUBLIC_BASE_URL || "https://weerzone.nl";
     const bust = Date.now();
@@ -200,26 +189,22 @@ export async function GET(req: Request) {
     if (dryRun) {
       return NextResponse.json({
         dry_run: true,
-        caption,
-        caption_length: caption.length,
-        affiliate,
-        affiliate_url: affiliateUrl,
+        x: xData,
+        tiktok: tiktokData,
         images: [slide1, slide2],
       });
     }
 
     // Post parallel naar X en TikTok
     const [xResult, tiktokResult] = await Promise.allSettled([
-      createBufferPost(BUFFER_CHANNELS.x, caption, [slide1, slide2]),
-      createBufferPost(BUFFER_CHANNELS.tiktok, caption, [slide1, slide2]),
+      createBufferPost(BUFFER_CHANNELS.x, xData.caption, [slide1, slide2]),
+      createBufferPost(BUFFER_CHANNELS.tiktok, tiktokData.caption, [slide1, slide2]),
     ]);
 
     return NextResponse.json({
       status: "done",
-      caption,
-      caption_length: caption.length,
-      affiliate,
-      affiliate_url: affiliateUrl,
+      x: xData,
+      tiktok: tiktokData,
       images: [slide1, slide2],
       results: {
         x:

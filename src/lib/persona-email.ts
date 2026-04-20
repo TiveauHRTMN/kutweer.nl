@@ -51,7 +51,7 @@ export function buildPersonaEmailHtml(
 
   <div style="padding:28px 24px 8px 24px;">
     <p style="margin:0 0 16px 0;font-size:16px;font-weight:700;">${escapeHtml(brief.greeting)}</p>
-    <p style="margin:0 0 20px 0;font-size:16px;line-height:1.6;">${escapeHtml(brief.verdict)}</p>
+    <p style="margin:0 0 20px 0;font-size:16px;line-height:1.6;">${escapeHtml(brief.verdict).replace(/\n/g, "<br>")}</p>
 
     ${
       bullets

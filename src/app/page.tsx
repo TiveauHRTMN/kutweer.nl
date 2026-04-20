@@ -94,6 +94,7 @@ export default function Home() {
       <main>
         <WeatherDashboard
           initialCity={DUTCH_CITIES[0]}
+          titleOverride="WEERZONE | De eerlijke 48-uurs weersverwachting"
           beforeFooter={
             <>
               <TrustSection />

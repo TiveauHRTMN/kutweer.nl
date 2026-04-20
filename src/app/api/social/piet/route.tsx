@@ -33,14 +33,18 @@ function pietBrief(args: {
   ochtendTemp: number; middagTemp: number; avondTemp: number;
   rainDay: number; windMax: number; tomorrowMax: number; todayMax: number;
   code: number;
+  uvIndex?: number;
 }): string {
-  const { ochtendTemp, middagTemp, avondTemp, rainDay, windMax, tomorrowMax, todayMax, code } = args;
-  if (code >= 95) return "Bliksem en donder. Blijf binnen, tenzij je een bliksemafleider bent.";
-  if (rainDay > 5) return `${rainDay.toFixed(0)}mm neerslag. Je gaat nat, accepteer het maar.`;
-  if (windMax > 40) return "Het waait uit je verschoning. Zet je pruik vast.";
-  if (middagTemp > 25) return "Tropisch warm. Smeren, drinken en niet te veel bewegen.";
-  if (code <= 1) return `Vandaag is de dag. Zon van ${ochtendTemp}° naar ${middagTemp}°. Pak die terras-uren.`;
-  return `Ochtend ${ochtendTemp}°, middag ${middagTemp}°. Gewoon Nederlands. Niet zeuren.`;
+  const { ochtendTemp, middagTemp, rainDay, windMax, code, uvIndex } = args;
+  
+  if (code >= 95) return "Zwaar onweer op komst. Zoek tijdig de veiligheid van een gebouw op.";
+  if (uvIndex && uvIndex >= 8) return "Extreem hoge zonkracht vandaag. Bescherming is cruciaal tussen 12:00 en 15:00.";
+  if (rainDay > 10) return `Forse neerslag verwacht (${rainDay.toFixed(0)}mm). Houd rekening met wateroverlast en beperkt zicht.`;
+  if (windMax > 60) return "Code geel: Zware windstoten gemeten. Wees uiterst alert in het verkeer.";
+  if (middagTemp > 28) return `Tropische temperaturen van ${middagTemp}°. Pas je tempo aan en blijf gehydrateerd.`;
+  if (code <= 1) return `Optimale condities. Van ${ochtendTemp}° naar ${middagTemp}° met ononderbroken zonnige perioden.`;
+  
+  return `Ochtend ${ochtendTemp}°, middag ${middagTemp}°. Stabiel weerbeeld met een scherp en helder Hollands karakter.`;
 }
 
 async function fetchWeather(lat: number, lon: number) {
@@ -48,8 +52,8 @@ async function fetchWeather(lat: number, lon: number) {
     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
       `&current=temperature_2m,weather_code,wind_speed_10m,precipitation,apparent_temperature` +
       `&hourly=temperature_2m,weather_code,precipitation_probability` +
-      `&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum` +
-      `&timezone=Europe/Amsterdam&forecast_days=2`,
+      `&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum,uv_index_max` +
+      `&timezone=Europe/Amsterdam&forecast_days=2&models=knmi_seamless`,
     { cache: "no-store" },
   );
   return res.json();
@@ -143,7 +147,8 @@ export async function GET(req: NextRequest) {
     windMax: w.current.wind_speed_10m,
     tomorrowMax: w.daily.temperature_2m_max[1],
     todayMax: w.daily.temperature_2m_max[0],
-    code
+    code,
+    uvIndex: w.daily.uv_index_max[0]
   });
 
   return new ImageResponse(

@@ -4,15 +4,43 @@ import PietExtended from "@/components/PietExtended";
 import PremiumGate from "@/components/PremiumGate";
 
 export const metadata: Metadata = {
-  title: "Piet — 48 uur weer-update",
+  title: "Piet’s Dagelijkse Weer-Update — 48 uur vooruit",
   description:
-    "Piet van WEERZONE — de uitgebreide 48 uur weer-update voor jouw locatie. Elke ochtend vers in je mailbox. Hier lees je de webversie.",
+    "De scherpste 48-uurs weersverwachting van Nederland door Piet van WEERZONE. Geen 14-daagse gokwerk, maar KNMI HARMONIE data op de vierkante meter.",
   alternates: { canonical: "https://weerzone.nl/piet" },
+  openGraph: {
+    title: "Piet’s Weer-Update | WEERZONE",
+    description: "48 uur vooruit. De rest is ruis. Ontvang Piet's update elke ochtend vers in je inbox.",
+    images: ["/og-image.png"],
+  }
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "Piet's Dagelijkse Weer-Update",
+  description: "Een scherpe, data-gedreven analyse van het weer in Nederland voor de komende 48 uur.",
+  author: {
+    "@type": "Person",
+    name: "Piet",
+    jobTitle: "Weerman bij WEERZONE",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "WEERZONE",
+    logo: "https://weerzone.nl/favicon-icon.png",
+  },
+  datePublished: new Date().toISOString().split('T')[0],
 };
 
 export default function PietPage() {
   return (
-    <main className="min-h-screen bg-[#4a9ee8] text-white px-4 py-8 pb-20">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <main className="min-h-screen bg-[#4a9ee8] text-white px-4 py-8 pb-20">
       <div className="max-w-2xl mx-auto">
         <nav className="text-xs text-white/50 mb-5">
           <Link href="/" className="hover:text-white">WEERZONE</Link>

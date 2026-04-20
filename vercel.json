@@ -5,6 +5,10 @@
       "schedule": "0 7 * * *"
     },
     {
+      "path": "/api/cron/piet-briefing",
+      "schedule": "0 7 * * *"
+    },
+    {
       "path": "/api/cron/weather-image",
       "schedule": "0 6 * * *"
     },
