@@ -136,7 +136,7 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
     let currentCode = data.current.weather_code;
     let currentWind = Math.round(data.current.wind_speed_10m);
 
-    if (harmonieData) {
+    if (harmonieData && hourly.length > 0) {
       // Gebruik de eerste uurwaarde van Harmonie voor de 'Nu' status
       currentTemp = hourly[0].temperature;
       currentFeels = hourly[0].apparentTemperature;
@@ -145,7 +145,7 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
       currentWind = hourly[0].windSpeed;
     } else {
       // Fallback: Rain Accuracy Fix voor generic model
-      if (currentPrecip === 0 && hourly[0].precipitation > 0) {
+      if (currentPrecip === 0 && hourly?.[0]?.precipitation > 0) {
         currentPrecip = hourly[0].precipitation;
         if (currentCode === 0 || currentCode === 1 || currentCode === 3) {
           currentCode = hourly[0].weatherCode;
@@ -170,14 +170,14 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
       current: {
         temperature: currentTemp,
         feelsLike: currentFeels,
-        humidity: data.current.relative_humidity_2m,
+        humidity: data.current?.relative_humidity_2m ?? 50,
         windSpeed: currentWind,
-        windDirection: degreesToDirection(data.current.wind_direction_10m),
-        windGusts: Math.round(data.current.wind_gusts_10m),
+        windDirection: degreesToDirection(data.current?.wind_direction_10m ?? 0),
+        windGusts: Math.round(data.current?.wind_gusts_10m ?? 0),
         precipitation: currentPrecip,
         weatherCode: currentCode,
-        isDay: data.current.is_day === 1,
-        cloudCover: data.current.cloud_cover,
+        isDay: data.current?.is_day === 1,
+        cloudCover: data.current?.cloud_cover ?? 0,
       },
       minutely,
       hourly,
