@@ -72,7 +72,7 @@ export function amazonProductUrl(asin: string): string {
   if (!AFFILIATE_CONFIG.amazon.enabled || !AFFILIATE_CONFIG.amazon.tag) {
     return `https://www.amazon.nl/dp/${asin}`;
   }
-  return `https://www.amazon.nl/dp/${asin}?tag=${AFFILIATE_CONFIG.amazon.tag}&linkCode=ll1`;
+  return `https://www.amazon.nl/dp/${asin}?tag=${AFFILIATE_CONFIG.amazon.tag}`;
 }
 
 export function temuUrl(keywords: string): string {
