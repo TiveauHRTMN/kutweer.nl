@@ -1,9 +1,23 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
-import { DUTCH_CITIES } from "@/lib/types";
-import { getWeatherDescription, getWeatherEmoji } from "@/lib/weather";
 
 export const runtime = "edge";
+
+// Lokale helpers om Edge-crashes te voorkomen
+const getEmoji = (code: number) => {
+  if (code === 0) return "☀️";
+  if (code <= 3) return "🌤️";
+  if (code >= 95) return "⛈️";
+  if (code >= 71) return "❄️";
+  if (code >= 51) return "🌧️";
+  return "☁️";
+};
+
+const getDesc = (code: number) => {
+  if (code === 0) return "Onbewolkt";
+  if (code <= 3) return "Licht bewolkt";
+  return "Bewolkt";
+};
 
 type Format = "ig" | "tiktok" | "x";
 const SIZES: Record<Format, { width: number; height: number }> = {
@@ -137,8 +151,8 @@ export async function GET(req: NextRequest) {
   };
   const temp = Math.round(w.current.temperature_2m);
   const code = w.current.weather_code;
-  const desc = "Licht Bewolkt";
-  const emoji = "🌤️";
+  const desc = getDesc(code);
+  const emoji = getEmoji(code);
   const theme = getPremiumTheme(code);
 
   const periods = [
