@@ -64,5 +64,6 @@ export default function PietPage() {
         </PremiumGate>
       </div>
     </main>
+    </>
   );
 }

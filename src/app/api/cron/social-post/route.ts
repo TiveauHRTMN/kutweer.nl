@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchWeatherData } from "@/lib/weather";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { amazonUrl } from "@/lib/affiliates";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
