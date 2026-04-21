@@ -3,7 +3,8 @@ import { NextRequest } from "next/server";
 import { PersonaTier } from "@/lib/personas";
 import { matchProducts } from "@/lib/amazon-matcher";
 
-
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 type Format = "ig" | "tiktok" | "x";
 const SIZES: Record<Format, { width: number; height: number }> = {
