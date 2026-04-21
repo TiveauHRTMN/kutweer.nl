@@ -108,8 +108,3 @@ export default function WeerIndexPage() {
     </>
   );
 }
-        </div>
-      </main>
-    </>
-  );
-}
