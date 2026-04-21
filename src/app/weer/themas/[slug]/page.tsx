@@ -48,8 +48,9 @@ export async function generateStaticParams() {
   return Object.keys(THEMES).map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const theme = THEMES[params.slug];
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const theme = THEMES[slug];
   if (!theme) return {};
 
   return {
@@ -61,8 +62,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function ThemePage({ params }: { params: { slug: string } }) {
-  const theme = THEMES[params.slug];
+export default async function ThemePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const theme = THEMES[slug];
   if (!theme) notFound();
 
   // Gebruik De Bilt als landelijke referentie voor de themapagina
@@ -91,7 +93,7 @@ export default async function ThemePage({ params }: { params: { slug: string } }
               <div className="w-1 h-12 bg-accent-orange rounded-full" />
               <p className="text-sm text-text-muted">
                 Deze pagina is hyper-gespecialiseerd op basis van het KNMI Harmonie model. 
-                Geen gemiddelden, maar pure data voor jouw {params.slug.replace("-", " ")}.
+                Geen gemiddelden, maar pure data voor jouw {slug.replace("-", " ")}.
               </p>
             </div>
           </div>
