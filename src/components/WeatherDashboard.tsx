@@ -439,9 +439,12 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
                   onClick={() => setHourlyMetric(key)}
                   aria-label={`Toon ${label}`}
                   className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${hourlyMetric === key ? 'bg-white text-text-primary shadow-sm ring-1 ring-black/5' : 'text-text-muted hover:text-text-primary'}`}
-                >
-                  {icon}
-                <          <div className="horizontal-scroll no-scrollbar py-2 -mx-2 px-2">
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="horizontal-scroll no-scrollbar py-2 -mx-2 px-2">
             {weather.hourly.slice(0, 16).map((hour, idx) => {
               const h = new Date(hour.time).getHours();
               const isNow = idx === 0;
