@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Inter, Outfit, Manrope } from "next/font/google";
+import { Inter } from "next/font/google";
 import CookieBanner from "@/components/CookieBanner";
 import InstallPrompt from "@/components/InstallPrompt";
 import FounderBanner from "@/components/FounderBanner";
@@ -16,19 +16,7 @@ const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
-});
-
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -124,7 +112,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="nl" className={`${inter.variable} ${outfit.variable} ${manrope.variable} antialiased`}>
+    <html lang="nl" className={`${inter.variable} antialiased`}>
       <head>
         <meta name="theme-color" content="#4a9ee8" />
       </head>

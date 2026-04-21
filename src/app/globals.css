@@ -66,7 +66,7 @@
   --wz-shadow-lg: 0 20px 50px rgba(15,26,44,.14), 0 6px 16px rgba(15,26,44,.06);
   --wz-shadow-brand: 0 12px 30px rgba(59,127,240,.28);
 
-  --font-wz: var(--font-manrope), 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-wz: var(--font-inter), 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme inline {
