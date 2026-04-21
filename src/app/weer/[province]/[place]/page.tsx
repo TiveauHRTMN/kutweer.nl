@@ -63,12 +63,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+const TOP_CITIES = [
+  "Amsterdam", "Rotterdam", "Utrecht", "Den Haag", "Eindhoven", 
+  "Groningen", "Tilburg", "Almere", "Breda", "Nijmegen", 
+  "Apeldoorn", "Enschede", "Haarlem", "Arnhem", "Amersfoort", 
+  "Zwolle", "Zoetermeer", "Leiden", "Dordrecht", "'s-Hertogenbosch"
+];
+
 export default async function PlaceWeatherPage({ params }: PageProps) {
   const { province, place: slug } = await params;
   const place = findPlace(province, slug);
   if (!place) notFound();
 
   const provLabel = PROVINCE_LABELS[province as Province] || province;
+  const nearby = nearbyPlaces(place, 12);
+  const isTopCity = TOP_CITIES.includes(place.name);
 
   // Structured data: WeatherForecast (voor Google rich results)
   const weatherForecastLd = {
@@ -109,37 +118,29 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
     },
   };
 
-  // FAQ structured data — voor featured snippets
-  const faqLd = {
+  // FAQ Schema voor Top Cities (SEO Boost)
+  const faqLd = isTopCity ? {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: [
       {
         "@type": "Question",
-        name: `Wat is het weer in ${place.name} vandaag?`,
+        name: `Wat is de weersverwachting voor ${place.name} de komende 48 uur?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: `Bekijk het actuele weer in ${place.name} op WEERZONE. Per uur bijgewerkt met data van KNMI HARMONIE en DWD ICON.`,
+          text: `In ${place.name} tonen wij een per uur bijgewerkte verwachting voor de komende 48 uur op basis van het messcherpe KNMI HARMONIE model. Bekijk temperatuur, wind en regen op de vierkante meter.`,
         },
       },
       {
         "@type": "Question",
-        name: `Gaat het regenen in ${place.name}?`,
+        name: `Wanneer gaat het regenen in ${place.name}?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: `De neerslagverwachting voor ${place.name} vind je per uur op WEERZONE. Twee weermodellen tonen wanneer het droog of nat wordt.`,
-        },
-      },
-      {
-        "@type": "Question",
-        name: `Hoe warm wordt het in ${place.name} morgen?`,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: `De temperatuur voor morgen in ${place.name} vind je op WEERZONE, inclusief gevoelstemperatuur, wind en neerslagkans.`,
+          text: `De neerslagverwachting voor ${place.name} vind je per uur op WEERZONE. Onze data toont exact wanneer buien beginnen en eindigen.`,
         },
       },
     ],
-  };
+  } : null;
 
   // Breadcrumb
   const breadcrumbLd = {
@@ -152,13 +153,6 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
       { "@type": "ListItem", position: 4, name: place.name, item: `https://weerzone.nl/weer/${province}/${slug}` },
     ],
   };
-
-  // Nearby places voor interne links
-  const nearby = nearbyPlaces(place, 5).map((p) => ({
-    name: p.name,
-    lat: p.lat,
-    lon: p.lon,
-  }));
 
   const city = { name: place.name, lat: place.lat, lon: place.lon };
   
@@ -197,7 +191,7 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
         </section>
 
         <ZakelijkCTA cityName={place.name} />
-        <NearbyLinks currentCity={place.name} cities={nearby} />
+        <NearbyLinks currentCity={place.name} places={nearbyPlaces(place, 8)} />
       </main>
     </>
   );

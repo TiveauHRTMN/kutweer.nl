@@ -9,6 +9,7 @@
 // ============================================================
 
 import { amazonProductUrl, amazonUrl } from "./affiliates";
+import { PersonaTier } from "./personas";
 
 export type WeatherTag =
   | "rain_now"        // regent nu
@@ -48,6 +49,7 @@ export interface CatalogProduct {
   priceHint: string;          // "€29,95" — is hint, niet live
   oldPrice?: string;
   tags: WeatherTag[];
+  personas: PersonaTier[];    // Piet, Reed, Steve
   baseScore: number;          // 1-10 default
   badge?: string;             // "Bestseller", "Deal"
 }
@@ -66,6 +68,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "https://m.media-amazon.com/images/I/61zPZGagoSL._AC_UL320_.jpg",
     priceHint: "€29,95",
     tags: ["windy", "storm"],
+    personas: ["reed", "steve"],
     baseScore: 5,
     badge: "Anti-storm",
   },
@@ -77,6 +80,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:☂️:#1a1a1a",
     priceHint: "€7,95",
     tags: ["rain_now", "rain_soon", "commute"],
+    personas: ["piet"],
     baseScore: 10,
     badge: "Scherpe deal",
   },
@@ -88,6 +92,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🧥:#4a9ee8",
     priceHint: "vanaf €34",
     tags: ["rain_now", "rain_soon", "rain_heavy", "commute"],
+    personas: ["piet", "reed"],
     baseScore: 7,
   },
   {
@@ -98,6 +103,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🧥:#2d6fb8",
     priceHint: "vanaf €39",
     tags: ["rain_now", "rain_soon", "rain_heavy", "commute"],
+    personas: ["piet", "reed"],
     baseScore: 7,
   },
   {
@@ -108,6 +114,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:☂️:#ffc440",
     priceHint: "vanaf €24,95",
     tags: ["rain_now", "rain_soon", "rain_heavy"],
+    personas: ["piet"],
     baseScore: 5,
   },
   {
@@ -118,6 +125,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🌧️:#94a3b8",
     priceHint: "€8,95",
     tags: ["rain_now", "rain_soon", "commute", "festival"],
+    personas: ["piet", "steve"],
     baseScore: 10,
     badge: "Impulskoop",
   },
@@ -129,6 +137,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🎒:#6a93c0",
     priceHint: "€8,99",
     tags: ["rain_now", "rain_soon", "commute"],
+    personas: ["piet", "steve"],
     baseScore: 6,
   },
 
@@ -142,6 +151,7 @@ export const CATALOG: CatalogProduct[] = [
     priceHint: "€29,99",
     oldPrice: "€39,99",
     tags: ["cold", "freezing", "extreme_cold", "winter"],
+    personas: ["piet", "reed"],
     baseScore: 8,
     badge: "Must-have",
   },
@@ -153,6 +163,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "https://m.media-amazon.com/images/I/71Zccm+HmPL._AC_UL320_.jpg",
     priceHint: "€9,99",
     tags: ["freezing", "extreme_cold", "winter", "commute"],
+    personas: ["piet", "steve"],
     baseScore: 7,
   },
   {
@@ -163,6 +174,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🧼:#7dd3fc",
     priceHint: "€6,49",
     tags: ["freezing", "extreme_cold", "winter", "commute"],
+    personas: ["piet", "steve"],
     baseScore: 10,
     badge: "Geen gekrab",
   },
@@ -174,6 +186,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🧤:#334e7e",
     priceHint: "vanaf €12,95",
     tags: ["cold", "freezing", "winter"],
+    personas: ["piet"],
     baseScore: 5,
   },
   {
@@ -185,6 +198,7 @@ export const CATALOG: CatalogProduct[] = [
     priceHint: "€49,99",
     oldPrice: "€64,99",
     tags: ["cold", "windy", "autumn", "spring"],
+    personas: ["piet", "reed", "steve"],
     baseScore: 7,
     badge: "Deal",
   },
@@ -196,6 +210,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🔥:#c4452c",
     priceHint: "vanaf €34,95",
     tags: ["cold", "freezing", "extreme_cold", "indoor", "winter", "evening"],
+    personas: ["piet"],
     baseScore: 8,
     badge: "Bespaart gas",
   },
@@ -207,6 +222,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🔥:#f59e0b",
     priceHint: "€12,99",
     tags: ["cold", "freezing", "extreme_cold", "commute", "winter"],
+    personas: ["piet", "reed"],
     baseScore: 10,
     badge: "Warmhouder",
   },
@@ -220,6 +236,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🧴:#ff9a3c",
     priceHint: "vanaf €9,99",
     tags: ["uv_high", "uv_extreme", "hot", "heatwave", "summer"],
+    personas: ["piet", "reed"],
     baseScore: 7,
     badge: "UV-beschermer",
   },
@@ -231,6 +248,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:💄:#fca5a5",
     priceHint: "€4,95",
     tags: ["uv_high", "uv_extreme", "hot", "sun"],
+    personas: ["piet"],
     baseScore: 10,
     badge: "Bescherming",
   },
@@ -242,6 +260,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "https://m.media-amazon.com/images/I/41Hyv0IGKpL._AC_UL320_.jpg",
     priceHint: "€16,99",
     tags: ["hot", "heatwave", "warm", "summer"],
+    personas: ["piet", "steve"],
     baseScore: 7,
   },
   {
@@ -252,6 +271,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:💨:#77c8ff",
     priceHint: "vanaf €19,95",
     tags: ["hot", "heatwave", "summer", "indoor"],
+    personas: ["piet", "steve"],
     baseScore: 8,
     badge: "Populair",
   },
@@ -263,6 +283,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🕶️:#1a1a1a",
     priceHint: "vanaf €14,95",
     tags: ["uv_high", "uv_extreme", "warm", "hot", "summer", "spring"],
+    personas: ["piet"],
     baseScore: 6,
   },
   {
@@ -273,6 +294,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "https://m.media-amazon.com/images/I/71tONXZG4VL._AC_UL320_.jpg",
     priceHint: "€34,95",
     tags: ["hot", "heatwave", "summer", "dry_spell", "weekend"],
+    personas: ["piet", "steve"],
     baseScore: 6,
   },
   {
@@ -283,6 +305,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:⛱️:#ff7a4c",
     priceHint: "vanaf €29,95",
     tags: ["heatwave", "hot", "summer", "garden"],
+    personas: ["piet", "steve"],
     baseScore: 5,
   },
 
@@ -295,6 +318,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🌬️:#5a8fc9",
     priceHint: "vanaf €24,99",
     tags: ["windy", "storm", "autumn", "spring"],
+    personas: ["reed", "piet"],
     baseScore: 6,
   },
 
@@ -307,6 +331,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "https://m.media-amazon.com/images/I/71tONXZG4VL._AC_UL320_.jpg",
     priceHint: "€24,99",
     tags: ["perfect", "dry_spell", "warm", "weekend", "spring", "summer"],
+    personas: ["piet"],
     baseScore: 5,
     badge: "Prachtweer",
   },
@@ -318,6 +343,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🔥:#3a3a3a",
     priceHint: "vanaf €9,99",
     tags: ["dry_spell", "warm", "hot", "summer", "weekend", "evening"],
+    personas: ["piet", "steve"],
     baseScore: 6,
   },
   {
@@ -328,6 +354,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🪑:#83b577",
     priceHint: "vanaf €29,95",
     tags: ["garden", "spring", "summer", "dry_spell", "weekend", "perfect"],
+    personas: ["piet"],
     baseScore: 5,
   },
   {
@@ -338,6 +365,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🚲:#1a7a4a",
     priceHint: "vanaf €24,95",
     tags: ["rain_now", "rain_soon", "commute", "autumn"],
+    personas: ["piet", "steve"],
     baseScore: 5,
   },
 
@@ -350,6 +378,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:⚡:#ffd84a",
     priceHint: "vanaf €17,99",
     tags: ["thunder", "storm"],
+    personas: ["reed", "steve"],
     baseScore: 7,
   },
   {
@@ -360,6 +389,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:📖:#b58a4a",
     priceHint: "vanaf €14,99",
     tags: ["indoor", "rain_heavy", "storm", "evening"],
+    personas: ["piet"],
     baseScore: 4,
   },
   {
@@ -370,6 +400,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:👓:#e2e8f0",
     priceHint: "€3,99",
     tags: ["cold", "fog", "commute", "indoor"],
+    personas: ["piet", "steve"],
     baseScore: 10,
     badge: "Glashelder",
   },
@@ -381,6 +412,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🍵:#6b8e4a",
     priceHint: "vanaf €14,95",
     tags: ["cold", "freezing", "indoor", "autumn", "winter", "evening"],
+    personas: ["piet"],
     baseScore: 5,
   },
   {
@@ -391,6 +423,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🔋:#10b981",
     priceHint: "€24,99",
     tags: ["storm", "indoor", "commute"],
+    personas: ["reed", "steve"],
     baseScore: 6,
   },
 
@@ -403,6 +436,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🔦:#ffc440",
     priceHint: "vanaf €19,95",
     tags: ["fog", "autumn", "winter", "commute", "evening"],
+    personas: ["piet", "reed"],
     baseScore: 6,
   },
 
@@ -415,6 +449,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🤧:#9bd17a",
     priceHint: "vanaf €8,99",
     tags: ["allergy", "spring", "dry_spell", "warm"],
+    personas: ["piet"],
     baseScore: 6,
   },
 
@@ -427,6 +462,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🌨️:#a8cfe8",
     priceHint: "vanaf €14,95",
     tags: ["snow", "freezing", "winter"],
+    personas: ["piet", "reed"],
     baseScore: 6,
   },
   {
@@ -437,6 +473,7 @@ export const CATALOG: CatalogProduct[] = [
     image: "emoji:🧂:#e6e6e6",
     priceHint: "vanaf €12,95",
     tags: ["snow", "freezing", "extreme_cold", "winter"],
+    personas: ["reed", "steve"],
     baseScore: 5,
   },
 ];

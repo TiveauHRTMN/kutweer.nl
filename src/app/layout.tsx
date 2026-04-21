@@ -6,6 +6,8 @@ import FounderBanner from "@/components/FounderBanner";
 import GlobalPersonaModal from "@/components/GlobalPersonaModal";
 import PaperclipAssistant from "@/components/PaperclipAssistant";
 import { Providers } from "./providers";
+import PostHogPageView from "@/components/PostHogPageView";
+import { Suspense } from "react";
 import "./globals.css";
 
 const ADSENSE_CLIENT = "ca-pub-6187487207780127";
@@ -116,6 +118,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen">
         <Providers>
+          <Suspense fallback={null}>
+            <PostHogPageView />
+          </Suspense>
           {children}
           <CookieBanner />
           <InstallPrompt />

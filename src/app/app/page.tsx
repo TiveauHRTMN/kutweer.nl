@@ -107,6 +107,28 @@ export default async function AppDashboard() {
               </Link>
             </>
           )}
+          {isFounder && (
+            <div className="mt-12 pt-12 border-t border-black/5">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-2 h-2 bg-accent-cyan rounded-full animate-pulse" />
+                <h2 className="text-sm font-black uppercase tracking-widest text-text-primary">Architect Console</h2>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Link href="/admin/agents" className="group p-5 rounded-2xl bg-slate-900 text-white hover:bg-slate-800 transition-all">
+                  <div className="text-xs font-bold text-white/40 uppercase tracking-widest mb-1">Agent Cockpit</div>
+                  <div className="text-sm font-bold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2">
+                    Beheer AI Medewerkers →
+                  </div>
+                </Link>
+                <Link href="/admin/performance" className="group p-5 rounded-2xl bg-slate-100 text-text-primary hover:bg-slate-200 transition-all border border-black/5">
+                  <div className="text-xs font-bold text-text-muted uppercase tracking-widest mb-1">Performance</div>
+                  <div className="text-sm font-bold group-hover:translate-x-1 transition-transform inline-flex items-center gap-2">
+                    Stats & Conversie →
+                  </div>
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </main>

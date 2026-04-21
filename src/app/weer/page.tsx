@@ -1,138 +1,113 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { DUTCH_CITIES } from "@/lib/types";
+import { ALL_PLACES, PROVINCE_LABELS, placeSlug, type Province } from "@/lib/places-data";
 
 export const metadata: Metadata = {
-  title: "Weer Nederland — 48 uur vooruit op de vierkante meter | WEERZONE",
+  title: "Weer in Nederland — 48 uur vooruit per provincie en stad | WEERZONE",
   description:
-    "Het weer in Nederland, stad voor stad. 48 uur messcherp met KNMI HARMONIE + DWD ICON. Geen 14-daagse ruis, gewoon de waarheid — per uur, per gemeente.",
+    "Bekijk het actuele weerbericht voor alle 12 provincies en meer dan 9.000 locaties in Nederland. Messcherpe 48-uurs voorspelling met KNMI HARMONIE data.",
   keywords: [
     "weer nederland",
-    "weer vandaag",
-    "weer morgen",
-    "48 uur weer",
-    "weerbericht nederland",
+    "weer per provincie",
     "weer per stad",
-    "knmi weer",
     "nauwkeurig weerbericht",
-    "weer nu",
+    "weerzone locaties",
   ],
   alternates: { canonical: "https://weerzone.nl/weer" },
-  openGraph: {
-    title: "Weer Nederland — WEERZONE",
-    description:
-      "Het weer per Nederlandse stad. 48 uur vooruit met KNMI HARMONIE. De rest is ruis.",
-    url: "https://weerzone.nl/weer",
-    type: "website",
-    locale: "nl_NL",
-    siteName: "WEERZONE",
-  },
 };
 
 export default function WeerIndexPage() {
-  const cities = [...DUTCH_CITIES].sort((a, b) => a.name.localeCompare(b.name, "nl"));
+  // Groepeer provincies
+  const provinces = Object.entries(PROVINCE_LABELS).map(([id, label]) => ({
+    id: id as Province,
+    label,
+  }));
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "Weer Nederland — alle steden",
-    url: "https://weerzone.nl/weer",
-    description: "Overzicht van het weer in alle Nederlandse steden op WEERZONE.",
-    isPartOf: { "@type": "WebSite", name: "WEERZONE", url: "https://weerzone.nl" },
-    hasPart: cities.map((c) => ({
-      "@type": "WebPage",
-      name: `Weer ${c.name}`,
-      url: `https://weerzone.nl/weer/${c.name.toLowerCase().replace(/\s+/g, "-")}`,
-    })),
-  };
-
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "WEERZONE", item: "https://weerzone.nl" },
-      { "@type": "ListItem", position: 2, name: "Weer Nederland", item: "https://weerzone.nl/weer" },
-    ],
-  };
+  // Pak een paar grote steden als 'quick links'
+  const quickLinks = [
+    { name: "Amsterdam", prov: "noord-holland" },
+    { name: "Rotterdam", prov: "zuid-holland" },
+    { name: "Utrecht", prov: "utrecht" },
+    { name: "Den Haag", prov: "zuid-holland" },
+    { name: "Eindhoven", prov: "noord-brabant" },
+    { name: "Groningen", prov: "groningen" },
+  ];
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          <nav className="text-xs text-white/50 mb-6">
+          <nav className="text-xs text-white/50 mb-6 font-bold uppercase tracking-widest">
             <Link href="/" className="hover:text-white">WEERZONE</Link>
             <span className="mx-2">/</span>
             <span className="text-white/80">Weer Nederland</span>
           </nav>
 
-          <header className="mb-10">
-            <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-4">
-              Het weer in Nederland — 48 uur vooruit, op de vierkante meter.
+          <header className="mb-12">
+            <h1 className="text-4xl sm:text-6xl font-black leading-tight mb-4 tracking-tighter">
+              Het weer in Nederland. <span className="text-accent-orange">Stad voor stad.</span>
             </h1>
-            <p className="text-white/70 text-lg leading-relaxed">
-              Geen 14-daagse bullshit. Geen gladde presentator die zegt dat het &ldquo;mogelijk gaat regenen&rdquo;.
-              WEERZONE combineert <strong className="text-white">KNMI HARMONIE</strong> en{" "}
-              <strong className="text-white">DWD ICON</strong> — de twee meest nauwkeurige modellen van
-              Noordwest-Europa — en laat je per uur zien wat er gebeurt in jouw stad.
+            <p className="text-white/70 text-lg leading-relaxed max-w-2xl">
+              Selecteer je provincie om de lokale weersverwachting voor jouw stad of dorp te bekijken op de vierkante meter nauwkeurig.
             </p>
           </header>
 
-          <section className="mb-10 space-y-4 text-white/75 leading-relaxed">
-            <h2 className="text-2xl font-bold text-white">Waarom maximaal 48 uur?</h2>
-            <p>
-              Weersverwachtingen verder dan twee dagen zijn statistisch onbetrouwbaar. De atmosfeer is
-              chaotisch — na ~48 uur loopt elk model uit de bocht. De 14-daagse die jij in de app ziet?
-              Dat is een gemiddelde van klimaatdata, geen voorspelling. Wij doen het andersom: korter,
-              maar messcherp.
-            </p>
-            <h2 className="text-2xl font-bold text-white">Per uur. Per stad. Per model.</h2>
-            <p>
-              Temperatuur, neerslag, wind, onweer (CAPE), UV, gevoelstemperatuur — alles per uur. En je
-              ziet óók of HARMONIE en ICON het eens zijn. Zijn ze het oneens? Dan weet je dat de
-              onzekerheid hoog is. Dat krijg je nergens anders te zien.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-white mb-4">Kies je stad</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {cities.map((c) => {
-                const slug = c.name.toLowerCase().replace(/\s+/g, "-");
-                return (
-                  <Link
-                    key={c.name}
-                    href={`/weer/${slug}`}
-                    className="block px-4 py-3 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-accent-orange/60 text-sm font-semibold transition-all"
-                  >
-                    Weer {c.name}
-                  </Link>
-                );
-              })}
+          {/* Quick Links */}
+          <section className="mb-12">
+            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 mb-4">Populaire Locaties</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {quickLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={`/weer/${link.prov}/${placeSlug(link.name)}`}
+                  className="px-4 py-3 rounded-xl bg-white/5 border border-white/10 hover:border-accent-orange/50 transition-all font-bold text-sm text-center"
+                >
+                  Weer {link.name}
+                </Link>
+              ))}
             </div>
           </section>
 
-          <section className="mt-12 pt-8 border-t border-white/10">
-            <h2 className="text-2xl font-bold text-white mb-4">Specials</h2>
-            <div className="grid sm:grid-cols-3 gap-3">
-              <Link href="/weer/onweer" className="block p-5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
-                <div className="text-2xl mb-2">⛈️</div>
-                <div className="font-bold">Onweer vandaag</div>
-                <div className="text-xs text-white/60 mt-1">CAPE-waarden per uur</div>
-              </Link>
-              <Link href="/weer/regen" className="block p-5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
-                <div className="text-2xl mb-2">🌧️</div>
-                <div className="font-bold">Regen vandaag</div>
-                <div className="text-xs text-white/60 mt-1">Wanneer wordt het droog?</div>
-              </Link>
-              <Link href="/weer/48-uur" className="block p-5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
-                <div className="text-2xl mb-2">⏱️</div>
-                <div className="font-bold">48 uur weer</div>
-                <div className="text-xs text-white/60 mt-1">Waarom geen 14-daagse</div>
-              </Link>
+          {/* Alle Provincies */}
+          <section className="mb-12">
+            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-white/40 mb-4">Browser per Provincie</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {provinces.map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/weer/${p.id}`}
+                  className="group flex items-center justify-between p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+                >
+                  <span className="font-black uppercase tracking-tight">{p.label}</span>
+                  <span className="text-accent-orange opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                </Link>
+              ))}
             </div>
           </section>
+
+          <section className="mt-20 pt-10 border-t border-white/10 grid sm:grid-cols-3 gap-6">
+            <div>
+              <h3 className="font-black uppercase text-xs tracking-widest text-accent-cyan mb-3">Nauwkeurigheid</h3>
+              <p className="text-xs text-white/50 leading-relaxed">
+                Wij gebruiken KNMI HARMONIE data op 2,5km resolutie. Dat is 10x scherper dan de meeste weer-apps.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-black uppercase text-xs tracking-widest text-accent-orange mb-3">Persona's</h3>
+              <p className="text-xs text-white/50 leading-relaxed">
+                Piet, Reed en Steve vertalen de data naar advies waar je wat aan hebt. Geen ruis.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-black uppercase text-xs tracking-widest text-white mb-3">9.000+ Locaties</h3>
+              <p className="text-xs text-white/50 leading-relaxed">
+                Van de kleinste gehuchten tot de grootste steden. WeerZone kent elk adres.
+              </p>
+            </div>
+          </section>
+        </div>
+      </main>
+    </>
+  );
+}
         </div>
       </main>
     </>

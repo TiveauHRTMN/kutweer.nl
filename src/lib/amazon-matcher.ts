@@ -7,6 +7,7 @@
 
 import type { WeatherData } from "./types";
 import { CATALOG, type CatalogProduct, type WeatherTag } from "./amazon-catalog";
+import type { PersonaTier } from "./personas";
 
 // ============================================================
 // 1. Weer + context → actieve tags met weight
@@ -169,7 +170,8 @@ export function markSeen(ids: string[]) {
 export function matchProducts(
   weather: WeatherData,
   n: number = 3,
-  now: Date = new Date()
+  now: Date = new Date(),
+  persona?: PersonaTier
 ): { products: CatalogProduct[]; ctx: WeatherContext } {
   const ctx = buildContext(weather, now);
   const seen = readSeen();
@@ -177,7 +179,13 @@ export function matchProducts(
   // score alle producten
   const scored = CATALOG
     .map(p => {
-      const raw = scoreProduct(p, ctx);
+      let raw = scoreProduct(p, ctx);
+      
+      // Persona boost: if product matches user's persona, give it a significant bump
+      if (persona && p.personas.includes(persona)) {
+        raw *= 1.5; 
+      }
+
       // zachte rotatie-penalty voor recent geziene producten
       const age = seen[p.id] ? Date.now() - seen[p.id] : Infinity;
       const rotationPenalty = age < 2 * 60 * 60 * 1000 ? 0.3 : age < SEEN_TTL_MS ? 0.7 : 1.0;

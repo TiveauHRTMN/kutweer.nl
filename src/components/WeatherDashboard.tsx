@@ -28,6 +28,7 @@ import EmailSubscribe from "./EmailSubscribe";
 import NavBar from "./NavBar";
 import AdSlot from "./AdSlot";
 import NLPulse from "./NLPulse";
+import LeadRescue from "./LeadRescue";
 import dynamic from "next/dynamic";
 
 // Lazy-load zware visuele componenten — scheelt initial JS
@@ -622,6 +623,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
           <AdSlot slot={AD_SLOT_TOP} format="auto" responsive minHeight={280} />
         </div>
       )}
+
+      {/* ===== 1. Lead Rescue — Alleen bij extreme misere ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
+        <LeadRescue weather={weather} city={city.name} />
+      </div>
 
       {/* ===== Affiliate Spot 1 — prominent boven de vouw ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>

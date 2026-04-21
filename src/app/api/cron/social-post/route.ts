@@ -14,40 +14,21 @@ const BUFFER_CHANNELS = {
 };
 
 import { amazonUrl, temuUrl, AFFILIATE_CONFIG } from "@/lib/affiliates";
-
-interface AffiliatePick {
-  product: string;
-  keyword: string;
-  tag: "regen" | "zon" | "wind" | "kou" | "neutraal";
-}
-
-/**
- * Kies Amazon-affiliate product op basis van weerdata.
- */
-function pickAffiliate(w: {
-  temp: number; rain: number; wind: number; maxTemp: number; minTemp: number;
-}): AffiliatePick {
-  if (w.rain > 5) return { product: "Stormparaplu", keyword: "stormparaplu windproof", tag: "regen" };
-  if (w.wind > 40) return { product: "Softshell windjas", keyword: "softshell jas windproof", tag: "wind" };
-  if (w.maxTemp > 25) return { product: "Zonnebrand SPF 50+", keyword: "zonnebrand spf 50 waterproof", tag: "zon" };
-  if (w.minTemp < 3) return { product: "IJskrabber", keyword: "ijskrabber met handschoen", tag: "kou" };
-  if (w.maxTemp < 10) return { product: "Thermo-handschoenen", keyword: "thermo handschoenen", tag: "kou" };
-  return { product: "3-in-1 regenjas", keyword: "3 in 1 regenjas", tag: "neutraal" };
-}
+import { matchProducts } from "@/lib/amazon-matcher";
+import { productHref } from "@/lib/amazon-catalog";
 
 function buildDeterministicCaption(args: {
   ochtend: number; middag: number; avond: number; nacht: number;
-  rainDay: number; affiliate: AffiliatePick; affiliateUrl: string;
+  rainDay: number; product: string; affiliateUrl: string;
 }): string {
-  const { ochtend, middag, avond, nacht, rainDay, affiliate, affiliateUrl } = args;
-  const condTag = `#${affiliate.tag === "neutraal" ? "weer" : affiliate.tag}`;
+  const { ochtend, middag, avond, nacht, rainDay, product, affiliateUrl } = args;
   const droog = rainDay < 1;
   const regen = rainDay >= 1 ? `${rainDay.toFixed(1)}mm regen.` : "Droog.";
   return (
     `Ochtend ${ochtend}° · middag ${middag}° · avond ${avond}° · nacht ${nacht}°. ${droog ? "Droog." : regen}\n\n` +
     `Echte voorspelling op jouw postcode → weerzone.nl\n\n` +
-    `Tip bij dit weer (advertentie): ${affiliate.product} → ${affiliateUrl}\n\n` +
-    `#weer #weerzone #nederland #weerbericht #knmi #buienradar #vandaag ${condTag} #ad`
+    `Tip bij dit weer (advertentie): ${product} → ${affiliateUrl}\n\n` +
+    `#weer #weerzone #nederland #weerbericht #knmi #buienradar #vandaag #ad`
   );
 }
 
@@ -72,18 +53,12 @@ REGELLIJST: Max 240 tekens. Vibe: 'Lekker man', 'Genieten'. Max 2 emoji (bijv. �
 `,
 };
 
-function getPersona(w: WeatherLite): "PIET" | "REED" | "STEVE" {
+function getPersona(w: WeatherLite): "piet" | "reed" | "steve" {
   const cur = w.current;
   const d0 = w.daily[0];
-  
-  // REED: Extreme wind, kou of onweer
-  if (cur.windSpeed > 60 || d0.tempMin < -5 || cur.weatherCode >= 80) return "REED";
-  
-  // STEVE: Beach/Terras weer
-  if (d0.tempMax > 23 && cur.precipitation < 1) return "STEVE";
-  
-  // PIET: De rest
-  return "PIET";
+  if (cur.windSpeed > 60 || d0.tempMin < -5 || cur.weatherCode >= 80) return "reed";
+  if (d0.tempMax > 23 && cur.precipitation < 1) return "steve";
+  return "piet";
 }
 
 interface WeatherLite {
@@ -94,10 +69,8 @@ interface WeatherLite {
 
 export async function generatePlatformCaption(weather: WeatherLite, platform: 'x' | 'tiktok') {
   if (!weather) throw new Error("No weather data provided to caption generator");
-  
   const isTikTok = platform === 'tiktok';
   
-  // Ultra-safe extraction
   const cur = weather.current || {};
   const d0 = weather.daily?.[0] || {};
   const h = weather.hourly || [];
@@ -107,45 +80,39 @@ export async function generatePlatformCaption(weather: WeatherLite, platform: 'x
   const avond = Math.round(h[19]?.temperature ?? cur.temperature ?? 10);
   const nacht = Math.round(h[25]?.temperature ?? d0.tempMin ?? 5);
 
-  const affiliate = pickAffiliate({
-    temp: cur.temperature ?? 10,
-    rain: cur.precipitation ?? 0,
-    wind: cur.windSpeed ?? 10,
-    maxTemp: d0.tempMax ?? 15,
-    minTemp: d0.tempMin ?? 5,
-  });
-
-  const useTemu = AFFILIATE_CONFIG.temu.enabled && isTikTok;
-  const affiliateUrl = useTemu ? temuUrl(affiliate.keyword) : amazonUrl(affiliate.keyword);
-
   const persona = getPersona(weather);
-  const personaPrompt = PERSONA_PROMPTS[persona];
+  const personaPrompt = PERSONA_PROMPTS[persona.toUpperCase() as keyof typeof PERSONA_PROMPTS];
+
+  // Match products
+  const { products } = matchProducts(weather as any, 1, new Date(), persona);
+  const deal = products[0];
+  const affiliateUrl = deal ? productHref(deal) : (isTikTok ? temuUrl("regenjas") : amazonUrl("regenjas"));
+  const productLabel = deal ? deal.title : "Waterdichte regenjas";
 
   const deterministicCaption = buildDeterministicCaption({
     ochtend, middag, avond, nacht,
     rainDay: d0.precipitationSum ?? 0,
-    affiliate,
+    product: productLabel,
     affiliateUrl,
   });
 
-  // Gemini voor variatie
   const key = process.env.GEMINI_API_KEY;
-  if (!key) return { caption: deterministicCaption, affiliate, affiliateUrl, persona };
+  if (!key) return { caption: deterministicCaption, affiliateUrl, persona };
 
   try {
     const genAI = new GoogleGenerativeAI(key);
-    const model = genAI.getGenerativeModel({ model: "gemini-3-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Use stable model name
     const res = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: `${personaPrompt}\n\nTEMPLATE:\n${deterministicCaption}` }] }],
       generationConfig: { maxOutputTokens: 400, temperature: 0.8 },
     });
     const text = res.response.text()?.trim();
-    if (text && text.includes("weerzone.nl") && text.includes(affiliateUrl)) {
-      return { caption: text, affiliate, affiliateUrl };
+    if (text && (text.includes("weerzone.nl") || text.includes("WEERZONE.NL"))) {
+      return { caption: text, affiliateUrl, persona };
     }
-    return { caption: deterministicCaption, affiliate, affiliateUrl };
+    return { caption: deterministicCaption, affiliateUrl, persona };
   } catch {
-    return { caption: deterministicCaption, affiliate, affiliateUrl };
+    return { caption: deterministicCaption, affiliateUrl, persona };
   }
 }
 
@@ -224,10 +191,13 @@ export async function GET(req: Request) {
     const base = process.env.NEXT_PUBLIC_BASE_URL || "https://weerzone.nl";
     const bust = Date.now();
     const citySlug = "debilt";
-    const xSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=1&format=x&t=${bust}`;
-    const xSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=2&format=x&t=${bust}`;
-    const ttSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=1&format=tiktok&t=${bust}`;
-    const ttSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=2&format=tiktok&t=${bust}`;
+    const xPersona = xData.persona;
+    const ttPersona = tiktokData.persona;
+
+    const xSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=1&format=x&persona=${xPersona}&t=${bust}`;
+    const xSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=2&format=x&persona=${xPersona}&t=${bust}`;
+    const ttSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=1&format=tiktok&persona=${ttPersona}&t=${bust}`;
+    const ttSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=2&format=tiktok&persona=${ttPersona}&t=${bust}`;
 
     if (dryRun) {
       return NextResponse.json({

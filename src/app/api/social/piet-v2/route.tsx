@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
+import { PersonaTier } from "@/lib/personas";
+import { matchProducts } from "@/lib/amazon-matcher";
 
 export const runtime = "edge";
 
@@ -23,15 +25,23 @@ const getDesc = (code: number) => {
   if (code === 0) return "Heerlijk Zonnig";
   if (code <= 3) return "Licht Bewolkt";
   if (code >= 51) return "Regenachtig";
+  if (code >= 95) return "Zwaar Onweer";
   return "Bewolkt";
+};
+
+const PERSONA_THEMES: Record<string, { bg: string, accent: string, text: string, name: string }> = {
+  piet: { bg: "#0ea5e9", accent: "#ffd60a", text: "#ffffff", name: "PIET REPORTER" },
+  reed: { bg: "#b91c1c", accent: "#000000", text: "#ffffff", name: "REED STORMCHASER" },
+  steve: { bg: "#1e3a8a", accent: "#3b82f6", text: "#ffffff", name: "STEVE PRO" },
 };
 
 async function fetchWeather(lat: number, lon: number) {
   const res = await fetch(
     `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
-      `&current=temperature_2m,weather_code` +
-      `&hourly=temperature_2m,weather_code` +
-      `&timezone=Europe/Amsterdam&forecast_days=1`,
+      `&current=temperature_2m,weather_code,wind_speed_10m,precipitation` +
+      `&hourly=temperature_2m,weather_code,precipitation` +
+      `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum` +
+      `&timezone=Europe/Amsterdam&forecast_days=2`,
     { cache: "no-store" },
   );
   return res.json();
@@ -44,28 +54,36 @@ export async function GET(req: NextRequest) {
   const format: Format = SIZES[formatParam] ? formatParam : "ig";
   const SIZE = SIZES[format];
   
-  const city = { name: "Landelijk", lat: 52.11, lon: 5.18 };
-  const dateStr = new Date().toLocaleDateString("nl-NL", { weekday: "long", day: "numeric", month: "long" });
+  const personaParam = (searchParams.get("persona") || "piet").toLowerCase() as PersonaTier;
+  const theme = PERSONA_THEMES[personaParam] || PERSONA_THEMES.piet;
+
+  const cityName = searchParams.get("city") || "Landelijk";
+  const lat = parseFloat(searchParams.get("lat") || "52.11");
+  const lon = parseFloat(searchParams.get("lon") || "5.18");
+
+  const dateStr = new Date().toLocaleDateString("nl-NL", { weekday: "long", day: "numeric", month: "long" }).toUpperCase();
 
   if (slide === 2) {
     return new ImageResponse(
       (
         <div style={{
           width: "100%", height: "100%", display: "flex", flexDirection: "column",
-          alignItems: "center", justifyContent: "center", background: "#0ea5e9",
-          padding: "100px", color: "white"
+          alignItems: "center", justifyContent: "center", background: theme.bg,
+          padding: "100px", color: theme.text, fontFamily: "sans-serif"
         }}>
-          <div style={{ display: "flex", fontSize: "80px", fontWeight: 900, marginBottom: "40px" }}>WEERZONE.NL</div>
-          <div style={{ fontSize: "50px", fontWeight: 800, textAlign: "center", lineHeight: 1.2, marginBottom: "40px" }}>
-            Vergeet de rest.<br/>Wij zijn er tot op de millimeter.
+          <div style={{ display: "flex", fontSize: "100px", fontWeight: 900, marginBottom: "40px", letterSpacing: "-2px" }}>WEERZONE.NL</div>
+          <div style={{ fontSize: "50px", fontWeight: 800, textAlign: "center", lineHeight: 1.2, marginBottom: "60px", opacity: 0.9 }}>
+            DE REST IS RUIS.<br/>WIJ ZIJN DE BRON.
           </div>
           <div style={{ 
-            background: "#ffd60a", color: "black", padding: "30px 60px", 
-            borderRadius: "99px", fontSize: "40px", fontWeight: 900,
-            border: "4px solid black"
+            background: theme.accent, color: theme.accent === "#000000" ? "#ffffff" : "#000000", padding: "40px 80px", 
+            borderRadius: "0px", fontSize: "40px", fontWeight: 900,
+            border: "6px solid black",
+            boxShadow: "20px 20px 0px rgba(0,0,0,0.3)"
           }}>
             MELD JE NU GRATIS AAN
           </div>
+          <div style={{ marginTop: "60px", fontSize: "24px", fontWeight: 700, opacity: 0.7 }}>{theme.name} · WEERZONE OFFICIAL</div>
         </div>
       ),
       { ...SIZE }
@@ -74,68 +92,110 @@ export async function GET(req: NextRequest) {
 
   // Real weather fetch
   try {
-    const w = await fetchWeather(city.lat, city.lon);
+    const w = await fetchWeather(lat, lon);
     const temp = Math.round(w.current.temperature_2m);
     const code = w.current.weather_code;
-    const desc = getDesc(code);
+    const desc = getDesc(code).toUpperCase();
     const emoji = getEmoji(code);
 
-    const brief = `Ochtend ${Math.round(w.hourly.temperature_2m[8])}°, middag ${Math.round(w.hourly.temperature_2m[13])}°. Authentiek Hollands weerbeeld.`;
+    // Weather data format for matcher
+    const weatherData = {
+      current: { 
+        temperature: w.current.temperature_2m, 
+        weatherCode: w.current.weather_code,
+        windSpeed: w.current.wind_speed_10m,
+        precipitation: w.current.precipitation,
+        humidity: 70, // fallback
+        feelsLike: w.current.temperature_2m // fallback
+      },
+      daily: w.daily.time.map((_: any, i: number) => ({
+        tempMax: w.daily.temperature_2m_max[i],
+        tempMin: w.daily.temperature_2m_min[i],
+        precipitationSum: w.daily.precipitation_sum[i],
+        windSpeedMax: 20 // fallback
+      })),
+      hourly: w.hourly.time.map((_: any, i: number) => ({
+        temperature: w.hourly.temperature_2m[i],
+        weatherCode: w.hourly.weather_code[i],
+        precipitation: w.hourly.precipitation[i]
+      })),
+      uvIndex: 5 // fallback
+    };
+
+    const { products } = matchProducts(weatherData as any, 1, new Date(), personaParam);
+    const deal = products[0];
 
     return new ImageResponse(
       (
         <div style={{
           width: "100%", height: "100%", display: "flex", flexDirection: "column",
-          background: "#0284c7", color: "white", padding: "80px 72px",
+          background: theme.bg, color: theme.text, padding: "80px 72px",
+          fontFamily: "sans-serif"
         }}>
           {/* Header */}
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "40px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "60px", alignItems: "center" }}>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: "20px", fontWeight: 800 }}>LANDELIJK WEERBERICHT</span>
-              <span style={{ fontSize: "30px", opacity: 0.8 }}>{dateStr}</span>
+              <span style={{ fontSize: "24px", fontWeight: 900, letterSpacing: "2px", color: theme.accent }}>{cityName.toUpperCase()}</span>
+              <span style={{ fontSize: "36px", fontWeight: 800 }}>{dateStr}</span>
             </div>
-            <span style={{ fontSize: "30px", fontWeight: 900 }}>WEERZONE.NL</span>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+              <span style={{ fontSize: "32px", fontWeight: 900 }}>WEERZONE</span>
+              <span style={{ fontSize: "16px", fontWeight: 700, opacity: 0.7 }}>{theme.name}</span>
+            </div>
           </div>
 
           {/* Main Content */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1, justifyContent: "center" }}>
-            <div style={{ fontSize: "150px" }}>{emoji}</div>
-            <div style={{ fontSize: "250px", fontWeight: 900, lineHeight: 1 }}>{temp}°</div>
-            <div style={{ fontSize: "50px", fontWeight: 700 }}>{desc}</div>
-          </div>
-
-          {/* Piet Commentary */}
-          <div style={{ 
-            background: "rgba(255,255,255,0.1)", padding: "40px", borderRadius: "30px",
-            marginBottom: "40px", display: "flex"
-          }}>
-            <div style={{ fontSize: "35px", fontWeight: 600, textAlign: "center", width: "100%" }}>
-              "{brief}"
+            <div style={{ display: "flex", alignItems: "center", gap: "40px" }}>
+              <div style={{ fontSize: "180px" }}>{emoji}</div>
+              <div style={{ fontSize: "280px", fontWeight: 900, lineHeight: 1, letterSpacing: "-10px" }}>{temp}°</div>
             </div>
+            <div style={{ 
+              fontSize: "60px", fontWeight: 900, background: "black", color: "white", 
+              padding: "10px 40px", marginTop: "-20px", transform: "rotate(-1deg)" 
+            }}>{desc}</div>
           </div>
 
-          {/* Table-like Periods */}
+          {/* Deal Sniper Integration */}
+          {deal && (
+            <div style={{ 
+              background: "white", color: "black", padding: "30px", borderRadius: "0px",
+              marginBottom: "50px", display: "flex", alignItems: "center", border: "5px solid black",
+              boxShadow: "15px 15px 0px rgba(0,0,0,0.2)"
+            }}>
+              <div style={{ fontSize: "60px", marginRight: "30px" }}>🛒</div>
+              <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                <span style={{ fontSize: "18px", fontWeight: 800, color: "#666" }}>TIP VAN {personaParam.toUpperCase()} — {deal.badge || 'DEAL'}</span>
+                <span style={{ fontSize: "32px", fontWeight: 900 }}>{deal.title}</span>
+                <span style={{ fontSize: "20px", fontWeight: 700 }}>{deal.subtitle}</span>
+              </div>
+              <div style={{ fontSize: "40px", fontWeight: 900, marginLeft: "20px" }}>{deal.priceHint}</div>
+            </div>
+          )}
+
+          {/* Forecast Grid */}
           <div style={{ display: "flex", gap: "20px", marginBottom: "40px" }}>
             {[8, 13, 19, 23].map((hour, i) => {
-              const labels = ["Ochtend", "Middag", "Avond", "Nacht"];
+              const labels = ["OCHTEND", "MIDDAG", "AVOND", "NACHT"];
               const hTemp = Math.round(w.hourly.temperature_2m[hour]);
               const hCode = w.hourly.weather_code[hour];
               return (
                 <div key={hour} style={{ 
-                  flex: 1, background: "rgba(255,255,255,0.05)", padding: "20px", 
-                  borderRadius: "20px", display: "flex", flexDirection: "column", alignItems: "center" 
+                  flex: 1, background: "rgba(0,0,0,0.2)", padding: "30px 20px", 
+                  borderRadius: "0px", display: "flex", flexDirection: "column", alignItems: "center",
+                  border: "2px solid rgba(255,255,255,0.2)"
                 }}>
-                  <span style={{ fontSize: "16px", opacity: 0.7 }}>{labels[i]}</span>
-                  <span style={{ fontSize: "40px", margin: "10px 0" }}>{getEmoji(hCode)}</span>
-                  <span style={{ fontSize: "30px", fontWeight: 800 }}>{hTemp}°</span>
+                  <span style={{ fontSize: "18px", fontWeight: 800, opacity: 0.8 }}>{labels[i]}</span>
+                  <span style={{ fontSize: "60px", margin: "15px 0" }}>{getEmoji(hCode)}</span>
+                  <span style={{ fontSize: "40px", fontWeight: 900 }}>{hTemp}°</span>
                 </div>
               );
             })}
           </div>
 
           {/* Footer */}
-          <div style={{ display: "flex", justifyContent: "center", opacity: 0.5, fontSize: "20px" }}>
-            48 UUR VOORUIT · DE REST IS RUIS
+          <div style={{ display: "flex", justifyContent: "center", opacity: 0.6, fontSize: "24px", fontWeight: 800, letterSpacing: "4px" }}>
+            WEERZONE.NL · DE REST IS RUIS
           </div>
         </div>
       ),
@@ -144,7 +204,7 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     return new ImageResponse(
       (
-        <div style={{ width: "100%", height: "100%", background: "#0284c7", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ width: "100%", height: "100%", background: theme.bg, color: theme.text, display: "flex", alignItems: "center", justifyContent: "center" }}>
            <h1>Weerzone — Laden...</h1>
         </div>
       ),
@@ -152,3 +212,4 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+

@@ -1,5 +1,6 @@
 import { WeatherData } from "@/lib/types";
 import { amazonUrl, amazonProductUrl, bookingUrl, thuisbezorgdUrl } from "@/lib/affiliates";
+import { trackEvent as postHogTrack } from "@/lib/analytics";
 
 // ============================================================
 // Condition tags
@@ -169,6 +170,14 @@ export async function trackEvent(
   sessionId?: string
 ): Promise<void> {
   try {
+    // Also track in PostHog for real-time visualization
+    postHogTrack(`affiliate_${eventType.toLowerCase()}`, {
+      condition_tag: tag,
+      weather_context: weatherContext,
+      platform,
+      session_id: sessionId
+    });
+
     const supabaseUrl =
       process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
     const supabaseKey =

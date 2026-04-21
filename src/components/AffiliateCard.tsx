@@ -104,6 +104,21 @@ export default function AffiliateCard({ weather }: Props) {
     }
   }, [deals, hero, sessionId, tag, weather.current.temperature]);
 
+  const handleProductClick = (productId: string) => {
+    fetch("/api/affiliate/track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eventType: "CLICK",
+        tag,
+        productId,
+        weatherContext: { temp: weather.current.temperature },
+        platform: "SITE",
+        sessionId,
+      }),
+    }).catch(() => {});
+  };
+
   if (!hero) return null;
   if (loading || tier) return null;
 
@@ -121,6 +136,7 @@ export default function AffiliateCard({ weather }: Props) {
         href={hero.url}
         target="_blank"
         rel="noopener noreferrer sponsored"
+        onClick={() => handleProductClick(hero.id)}
         className="block rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 relative group"
         style={{
           background: "white",
@@ -196,6 +212,7 @@ export default function AffiliateCard({ weather }: Props) {
               href={deal.url}
               target="_blank"
               rel="noopener noreferrer sponsored"
+              onClick={() => handleProductClick(deal.id)}
               className="group flex flex-col p-3 rounded-2xl bg-white border border-black/5 hover:border-orange-500/30 transition-all hover:shadow-lg"
             >
               <div className="flex justify-between items-start mb-2">
