@@ -9,9 +9,9 @@ export const contentType = "image/png";
 export default async function OgImage({
   params,
 }: {
-  params: Promise<{ city: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { city: slug } = await params;
+  const { slug } = await params;
   const cityObj = DUTCH_CITIES.find(
     (c) => c.name.toLowerCase().replace(/\s+/g, "-") === slug
   );

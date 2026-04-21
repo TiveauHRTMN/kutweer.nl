@@ -181,7 +181,7 @@ function riskMeterLevel(value: number, max: number): number {
 
 export function generateStaticParams() {
   return DUTCH_CITIES.map((city) => ({
-    city: slugify(city.name),
+    slug: slugify(city.name),
   }));
 }
 
@@ -190,9 +190,9 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ city: string }>;
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { city: slug } = await params;
+  const { slug } = await params;
   const city = findCity(slug);
   if (!city) return {};
 
@@ -237,9 +237,9 @@ export async function generateMetadata({
 export default async function CityAlertPage({
   params,
 }: {
-  params: Promise<{ city: string }>;
+  params: Promise<{ slug: string }>;
 }) {
-  const { city: slug } = await params;
+  const { slug } = await params;
   const city = findCity(slug);
   if (!city) notFound();
 
