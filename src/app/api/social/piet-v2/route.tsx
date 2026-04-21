@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
+import { PersonaTier } from "@/lib/personas";
+import { matchProducts } from "@/lib/amazon-matcher";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -42,7 +44,6 @@ async function fetchWeather(lat: number, lon: number) {
       `&timezone=Europe/Amsterdam&forecast_days=2`,
     { cache: "no-store" }
   );
-  if (!res.ok) throw new Error("Weather API unreachable");
   return res.json();
 }
 
@@ -52,66 +53,81 @@ export async function GET(req: NextRequest) {
     const formatParam = (searchParams.get("format") || "x").toLowerCase() as Format;
     const format: Format = SIZES[formatParam] ? formatParam : "x";
     const SIZE = SIZES[format];
-    
-    const personaParam = (searchParams.get("persona") || "piet").toLowerCase();
+    const personaParam = (searchParams.get("persona") || "piet").toLowerCase() as PersonaTier;
     const theme = PERSONA_THEMES[personaParam] || PERSONA_THEMES.piet;
-
     const cityName = searchParams.get("city") || "Nederland";
-    const lat = parseFloat(searchParams.get("lat") || "52.11");
-    const lon = parseFloat(searchParams.get("lon") || "5.18");
 
-    const w = await fetchWeather(lat, lon);
-    const temp = Math.round(w?.current?.temperature_2m ?? 0);
-    const code = w?.current?.weather_code ?? 0;
-    const desc = getDesc(code).toUpperCase();
+    const w = await fetchWeather(52.11, 5.18);
+    const temp = Math.round(w.current.temperature_2m);
+    const code = w.current.weather_code;
     const emoji = getEmoji(code);
+    const desc = getDesc(code);
+
+    // Weather data for matchers
+    const weatherData = {
+      current: { temperature: temp, weatherCode: code, precipitation: w.current.precipitation, windSpeed: 10, humidity: 70 },
+      daily: w.daily.time.map((_: any, i: number) => ({ tempMax: w.daily.temperature_2m_max[i], tempMin: w.daily.temperature_2m_min[i], precipitationSum: w.daily.precipitation_sum[i], windSpeedMax: 20 })),
+      hourly: w.hourly.time.map((_: any, i: number) => ({ temperature: w.hourly.temperature_2m[i], weatherCode: w.hourly.weather_code[i], precipitation: w.hourly.precipitation[i] }))
+    };
+    const { products } = matchProducts(weatherData as any, 1, new Date(), personaParam);
+    const deal = products[0];
 
     return new ImageResponse(
       (
-        <div style={{
-          height: "100%", width: "100%", display: "flex", flexDirection: "column",
-          backgroundColor: theme.bg, color: theme.text, padding: "80px",
-          fontFamily: "sans-serif"
-        }}>
-          {/* Header */}
-          <div style={{ display: "flex", width: "100%", justifyContent: "space-between", marginBottom: "60px" }}>
-             <div style={{ display: "flex", flexDirection: "column" }}>
-                <div style={{ fontSize: 40, fontWeight: 700, color: theme.accent }}>{String(cityName).toUpperCase()}</div>
-                <div style={{ fontSize: 30 }}>WEERZONE OFFICIAL</div>
-             </div>
-             <div style={{ fontSize: 50, fontWeight: 700 }}>WEERZONE</div>
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            background: `linear-gradient(135deg, ${theme.bg} 0%, #000000 100%)`,
+            fontFamily: "system-ui, sans-serif",
+            color: "white",
+            padding: "80px",
+          }}
+        >
+          {/* Brand Header */}
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "80px" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ fontSize: "48px", fontWeight: 900, color: theme.accent }}>{cityName.toUpperCase()}</div>
+              <div style={{ fontSize: "24px", fontWeight: 700, opacity: 0.8 }}>WEERZONE OFFICIAL</div>
+            </div>
+            <div style={{ fontSize: "60px", fontWeight: 900 }}>WEERZONE</div>
           </div>
 
-          {/* Main Body */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-             <div style={{ fontSize: 220 }}>{emoji}</div>
-             <div style={{ fontSize: 300, fontWeight: 700, marginTop: 20 }}>{temp}°</div>
-             <div style={{ 
-               fontSize: 80, fontWeight: 700, marginTop: 40, padding: "20px 60px", 
-               backgroundColor: "black", color: "white" 
-             }}>
-                {desc}
-             </div>
+          {/* Main Weather */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, justifyContent: "center" }}>
+            <div style={{ fontSize: "280px", display: "flex" }}>{emoji}</div>
+            <div style={{ fontSize: "320px", fontWeight: 900, marginBottom: "20px", display: "flex" }}>{temp}°</div>
+            <div style={{ 
+              fontSize: "80px", fontWeight: 900, background: theme.accent, color: "black", 
+              padding: "10px 60px", borderRadius: "12px", display: "flex"
+            }}>{desc.toUpperCase()}</div>
           </div>
 
-          {/* Deal Tip (Static fallback if matcher crashes edge) */}
-          <div style={{ display: "flex", backgroundColor: "white", color: "black", padding: "40px", border: "8px solid black" }}>
-             <div style={{ fontSize: 80, marginRight: 40 }}>🛍️</div>
-             <div style={{ display: "flex", flexDirection: "column" }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "#666" }}>TIP VAN DE DAG</div>
-                <div style={{ fontSize: 36, fontWeight: 700 }}>CHECK DE WEERZONE SHOP</div>
-             </div>
-          </div>
+          {/* Deal Tip */}
+          {deal && (
+            <div style={{ 
+              display: "flex", background: "rgba(255,255,255,0.1)", backdropFilter: "blur(20px)",
+              padding: "40px", borderRadius: "32px", border: "1px solid rgba(255,255,255,0.2)"
+            }}>
+              <div style={{ fontSize: "100px", marginRight: "40px", display: "flex" }}>🛒</div>
+              <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                <div style={{ fontSize: "24px", fontWeight: 800, color: theme.accent }}>TIP VAN {personaParam.toUpperCase()}</div>
+                <div style={{ fontSize: "40px", fontWeight: 900 }}>{deal.title}</div>
+              </div>
+            </div>
+          )}
 
           {/* Footer */}
-          <div style={{ marginTop: "60px", textAlign: "center", fontSize: "30px", opacity: 0.7 }}>
-             WWW.WEERZONE.NL · DE REST IS RUIS
+          <div style={{ marginTop: "80px", textAlign: "center", fontSize: "32px", opacity: 0.6, fontWeight: 700 }}>
+            DE REST IS RUIS · WWW.WEERZONE.NL
           </div>
         </div>
       ),
       { ...SIZE }
     );
   } catch (e: any) {
-    return new Response(`TECHNICAL ERROR: ${e.message}`, { status: 500 });
+    return new Response(`ERROR: ${e.message}`, { status: 500 });
   }
 }
