@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchWeatherData } from "@/lib/weather";
+import { ALL_PLACES } from "@/lib/places-data";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const dynamic = "force-dynamic";
@@ -51,11 +52,17 @@ function buildDeterministicCaption(args: {
 }
 
 const CAPTION_PROMPT = `
-Je bent Piet van WEERZONE. STIJL: Professioneel, scherp, direct. Premium uitstraling.
-Herschrijf onderstaande template in jouw stem. Max 260 tekens vóór de link.
-Geen overbodige ruis, focus op de 48-uurs impact.
-Behoud de perioden (ochtend/middag/avond/nacht), de call-to-action naar weerzone.nl,
-de Amazon-tip-link en de hashtags. Gebruik maximaal 2 relevante emoji.
+Je bent Piet van WEERZONE. 
+STIJL: Vandaag Inside / PowNed niveau. Brutaal, scherp, ongezouten mening, maar wél met absolute weer-expertise. 
+Je lult niet om de hete brij heen. Als het kudtweer is, zeg je het. Als het KNMI er naast zit, pak je ze aan.
+Focus op het landelijke nieuws (De Bilt), maar maak gerust een zijstapje naar "die mazzelaars in Limburg" of "die verzopen katten in de Randstad".
+
+REGELLIJST:
+1. Max 240 tekens voor de tekst (kort & krachtig).
+2. Geen "lieve" weerpraatjes. Wees de Johan Derksen van het weer.
+3. Behoud de exacte temperaturen uit de template, maar geef er je eigen brute draai aan.
+4. Call-to-action naar weerzone.nl moet blijven.
+5. Maximaal 2 emoji (niet te vrolijk).
 `;
 
 interface WeatherLite {
@@ -179,10 +186,12 @@ export async function GET(req: Request) {
   const dryRun = searchParams.get("dry") === "1";
 
   try {
-    // De Bilt — landelijk centrum van NL, gebruikt KNMI als referentie
-    const weather = await fetchWeatherData(52.11, 5.18);
+    // De Bilt — landelijk centrum van NL (Landelijke Nieuws focus)
+    const deBilt = { name: "De Bilt", lat: 52.11, lon: 5.18 };
+    const weather = await fetchWeatherData(deBilt.lat, deBilt.lon);
     if (!weather) throw new Error("Weather fetch failed");
 
+    // Stel de caption op (Piet Social 2.1: Brutaal & Landelijk)
     const [xData, tiktokData] = await Promise.all([
       generatePlatformCaption(weather as unknown as WeatherLite, 'x'),
       generatePlatformCaption(weather as unknown as WeatherLite, 'tiktok'),
@@ -190,10 +199,11 @@ export async function GET(req: Request) {
 
     const base = process.env.NEXT_PUBLIC_BASE_URL || "https://weerzone.nl";
     const bust = Date.now();
-    const xSlide1 = `${base}/api/social/piet-v2?city=debilt&slide=1&format=x&t=${bust}`;
-    const xSlide2 = `${base}/api/social/piet-v2?city=debilt&slide=2&format=x&t=${bust}`;
-    const ttSlide1 = `${base}/api/social/piet-v2?city=debilt&slide=1&format=tiktok&t=${bust}`;
-    const ttSlide2 = `${base}/api/social/piet-v2?city=debilt&slide=2&format=tiktok&t=${bust}`;
+    const citySlug = "debilt";
+    const xSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=1&format=x&t=${bust}`;
+    const xSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=2&format=x&t=${bust}`;
+    const ttSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=1&format=tiktok&t=${bust}`;
+    const ttSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=2&format=tiktok&t=${bust}`;
 
     if (dryRun) {
       return NextResponse.json({

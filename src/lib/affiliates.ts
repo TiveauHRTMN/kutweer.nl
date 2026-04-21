@@ -84,6 +84,102 @@ export function temuUrl(keywords: string): string {
   return `https://www.temu.com/search_result.html?search_key=${searchK}&refer_page_el_sn=200021&_x_sessn_id=${AFFILIATE_CONFIG.temu.id}`;
 }
 
+// ===========================================
+// Affiliate Sniper — Weather-based recommendations
+// ===========================================
+
+export interface WeatherRecommendation {
+  id: string;
+  category: string;
+  title: string;
+  keywords: string;
+  reason: string;
+  icon: "sun" | "rain" | "wind" | "thermometer" | "umbrella" | "burger";
+}
+
+export function getWeatherProducts(
+  temp: number,
+  uvIndex: number,
+  precip: number,
+  wind: number
+): WeatherRecommendation[] {
+  const recommendations: WeatherRecommendation[] = [];
+
+  // 1. Extreme Hitte / Zon
+  if (uvIndex >= 5 || temp > 25) {
+    recommendations.push({
+      id: "sun-1",
+      category: "Zonbescherming",
+      title: "Zonnebrandcrème SPF 50",
+      keywords: "zonnebrandcreme spf 50 factor",
+      reason: `Hoge UV-index (${uvIndex}). Bescherm je huid!`,
+      icon: "sun",
+    });
+    recommendations.push({
+      id: "sun-2",
+      category: "Cooling",
+      title: "Ventilator of Mobiele Airco",
+      keywords: "ventilator stille krachtige airco",
+      reason: `Warm weer (${temp.toFixed(1)}°C). Blijf koel binnen.`,
+      icon: "thermometer",
+    });
+  }
+
+  // 2. Regen / Onweer
+  if (precip > 0.5) {
+    recommendations.push({
+      id: "rain-1",
+      category: "Outdoor",
+      title: "Stormvaste Paraplu",
+      keywords: "stormparaplu sterk windvast",
+      reason: "Er valt neerslag. Wees voorbereid op wind en regen.",
+      icon: "umbrella",
+    });
+    recommendations.push({
+      id: "rain-2",
+      category: "Kleding",
+      title: "Kwaliteits Regenpak",
+      keywords: "regenpak heren dames ademend",
+      reason: "Blijf droog tijdens de komende buien.",
+      icon: "rain",
+    });
+  }
+
+  // 3. Kou / Winter
+  if (temp < 5) {
+    recommendations.push({
+      id: "cold-1",
+      category: "Auto",
+      title: "Ruitenontdooier Spray",
+      keywords: "ruitenontdooier spray auto",
+      reason: "Kans op bevroren ruiten. Bespaar tijd 's ochtends.",
+      icon: "thermometer",
+    });
+    recommendations.push({
+      id: "cold-2",
+      category: "Comfort",
+      title: "Warmte-onderdeken",
+      keywords: "elektrische onderdeken energiezuinig",
+      reason: `Koude nacht (${temp.toFixed(1)}°C). Slaap lekker warm.`,
+      icon: "thermometer",
+    });
+  }
+
+  // 4. Barbecue Weer (Typisch Nederlands: droog + temp > 18)
+  if (precip < 0.1 && temp > 18 && wind < 5) {
+    recommendations.push({
+      id: "bbq-1",
+      category: "Lifestyle",
+      title: "Complete Barbecue Set",
+      keywords: "weber barbecue gasskotel",
+      reason: "Ideaal weer om de BBQ aan te steken!",
+      icon: "burger",
+    });
+  }
+
+  return recommendations.slice(0, 3); // Max 3 per keer voor focus
+}
+
 export function thuisbezorgdUrl(): string {
   if (!AFFILIATE_CONFIG.thuisbezorgd.enabled || !AFFILIATE_CONFIG.thuisbezorgd.publisherId) {
     return "https://www.thuisbezorgd.nl";

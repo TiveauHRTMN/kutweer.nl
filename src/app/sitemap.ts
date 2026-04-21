@@ -42,6 +42,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/weer/onweer`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: `${baseUrl}/weer/regen`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: `${baseUrl}/weer/48-uur`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.85 },
+    { url: `${baseUrl}/weer/themas/bbq-weer`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/weer/themas/strandweer`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/weer/themas/hardloopweer`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
   );
 
   // Static pages
