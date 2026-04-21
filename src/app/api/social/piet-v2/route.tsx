@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { PersonaTier } from "@/lib/personas";
 import { matchProducts } from "@/lib/amazon-matcher";
@@ -126,15 +126,12 @@ export async function GET(req: NextRequest) {
       { ...SIZE }
     );
   } catch (e: any) {
-    return new ImageResponse(
-      (
-        <div style={{ height: "100%", width: "100%", background: "#1e3a8a", color: "white", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ fontSize: 60, fontWeight: 700 }}>WEERZONE.NL</div>
-          <div style={{ fontSize: 30, marginTop: 20 }}>Laden van gegevens...</div>
-        </div>
-      ),
-      { ...SIZE }
-    );
+    return NextResponse.json({ 
+      error: e.message, 
+      stack: e.stack,
+      cityName: cityName,
+      searchParams: Object.fromEntries(new URL(req.url).searchParams)
+    }, { status: 500 });
   }
 }
 
