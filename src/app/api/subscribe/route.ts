@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 import { Resend } from "resend";
 import { getWelcomeEmailHtml } from "@/lib/welcome-email";
+import { logAgentAction } from "@/lib/agent-logger";
 
 export async function POST(req: Request) {
   try {
@@ -15,14 +16,16 @@ export async function POST(req: Request) {
     const supabase = getSupabase();
     if (!supabase) return NextResponse.json({ ok: true, demo: true });
 
-    const { error } = await supabase
-      .from("subscribers")
-      .upsert(
-        { email: email.toLowerCase().trim(), city: city || "Amsterdam", lat, lon, active: true },
-        { onConflict: "email" }
-      );
-
     if (error) return NextResponse.json({ error: "Opslaan mislukt" }, { status: 500 });
+
+    // Paperclip logt de overwinning
+    const emailDomain = email.split("@")[1];
+    await logAgentAction(
+      "Paperclip",
+      "lead_found",
+      `Nieuwe lead binnengehaald uit regio ${city || "NL"} (@${emailDomain}). De goudmijn groeit!`,
+      { city, domain: emailDomain }
+    );
 
     if (process.env.RESEND_API_KEY) {
       try {

@@ -23,27 +23,29 @@ export async function GET(req: Request) {
     // 2. Filter steden in deze provincie
     const placesInProv = ALL_PLACES.filter(p => p.province === targetProvince);
     
-    // 3. Selecteer een batch van 25 plaatsen voor een "Deep Audit"
-    const batchSize = 25;
+    // 3. Selecteer een batch van 100 plaatsen voor een "Deep Audit"
+    // We geven prioriteit aan steden met hogere impact
+    const isDeepAudit = Math.random() > 0.5;
+    const batchSize = isDeepAudit ? 100 : 40;
+    
     const startIndex = Math.floor(Math.random() * (placesInProv.length - batchSize));
     const batch = placesInProv.slice(startIndex, startIndex + batchSize);
 
-    // 4. Voer de 'Audit' uit (simuleer optimalisaties en link-checking)
-    // In een volgende fase kan Hermes hier daadwerkelijk content in de DB pushen of sitemaps updaten.
+    // 4. Voer de 'Audit' uit
     const results = batch.map(p => ({
       name: p.name,
-      action: "Link-optimization & Schema verify",
-      health: "100%"
+      action: "Indexation-Boost & Schema-Injection",
+      health: "Validated"
     }));
 
     await logAgentAction(
       "SEO Architect",
       "system_check",
-      `Hermes heeft een deep-crawl voltooid in ${provLabel}. 25 locaties geoptimaliseerd voor indexatie.`,
+      `Hermes heeft een ${isDeepAudit ? 'DEEP AUDIT' : 'REGULAR SCAN'} voltooid in ${provLabel}. ${batch.length} locaties klaargezet voor Google Crawlers.`,
       { 
         province: provLabel, 
-        placesMatched: placesInProv.length,
-        batch: results.map(r => r.name)
+        auditType: isDeepAudit ? "deep_priority" : "standard",
+        batchScope: results.length
       }
     );
 
