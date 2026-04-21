@@ -1,4 +1,6 @@
 import { ALL_PLACES, PROVINCE_LABELS, placeSlug, type Province } from "@/lib/places-data";
+import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Weer in Nederland — 48 uur vooruit per provincie en stad | WEERZONE",
