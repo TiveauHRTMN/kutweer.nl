@@ -221,67 +221,103 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         <EmailSubscribe city={city} />
       </div>
 
-      {/* ===== 1. Main Weather Card — Kerninformatie ===== */}
-      <div className="card overflow-hidden relative animate-fade-in" style={{ animationDelay: "0.2s" }}>
-        <div className="p-7 relative z-[2]">
-          <div className="flex items-center justify-between mb-4">
+      {/* ===== 1. Main Weather Hero Card — De absolute blikvanger ===== */}
+      <div className="card overflow-hidden relative animate-fade-in group shadow-2xl border-white/40" style={{ animationDelay: "0.2s" }}>
+        {/* Subtiele inner-glow die meekleurt met temperatuur */}
+        <div className={`absolute inset-0 opacity-10 pointer-events-none ${weather.current.temperature > 20 ? 'bg-orange-400' : weather.current.temperature < 5 ? 'bg-blue-400' : 'bg-white'}`} />
+        
+        <div className="p-7 sm:p-9 relative z-[2]">
+          {/* Top Labeling */}
+          <div className="flex items-center justify-between mb-8">
             <div className="flex flex-col">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-accent-orange mb-1">
-                Hyper Fidelity Weather
-              </span>
-              <h1 className="text-sm font-black text-text-primary flex items-center gap-2">
-                {titleOverride || `Weer in ${city.name}`}
-                <span className="w-1 h-1 rounded-full bg-text-muted" />
-                <span className="font-medium text-text-secondary">{new Date().toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}</span>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-orange opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-orange"></span>
+                </span>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent-orange">
+                  Live Fidelity Data
+                </span>
+              </div>
+              <h1 className="text-xl sm:text-2xl font-black text-text-primary tracking-tight">
+                {city.name}
               </h1>
             </div>
-            <div className="px-2.5 py-1 rounded bg-black text-white text-[9px] font-black uppercase tracking-widest border border-white/20">
-              OFFICIAL
+            <div className="flex flex-col items-end">
+              <div className="px-3 py-1 bg-black text-white text-[9px] font-black uppercase tracking-widest border border-white/20 rounded-md shadow-lg mb-1">
+                OFFICIAL
+              </div>
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-tighter">
+                KNMI HARMONIE v3
+              </span>
             </div>
           </div>
           
-          <div className="flex justify-between items-end mt-2">
-            <div className="flex items-start">
-              <span className="text-7xl sm:text-8xl font-black tracking-tighter leading-none font-brand">{weather.current.temperature}</span>
-              <span className="text-3xl sm:text-4xl font-black mt-2 font-brand">°C</span>
+          <div className="flex justify-between items-center mt-4">
+            <div className="flex flex-col">
+              <div className="flex items-start">
+                <span className="text-8xl sm:text-9xl font-black tracking-tighter leading-none text-text-primary drop-shadow-xl">{weather.current.temperature}</span>
+                <span className="text-4xl sm:text-5xl font-black mt-3 ml-1 text-text-primary leading-none">°</span>
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                 <span className="text-lg font-bold text-text-primary">{getWeatherDescription(weather.current.weatherCode)}</span>
+                 <span className="w-1 h-1 rounded-full bg-text-muted/30" />
+                 <span className="text-sm font-medium text-text-secondary">Voelt als {weather.current.feelsLike}°</span>
+              </div>
             </div>
             
-            <div className="text-6xl sm:text-7xl leading-none">
+            <div className="text-8xl sm:text-9xl leading-none drop-shadow-2xl hover:scale-110 transition-transform duration-500 cursor-default">
               {getWeatherEmoji(weather.current.weatherCode, weather.current.isDay)}
             </div>
           </div>
           
-          <div id="piet" className="mt-8 bg-accent-orange/15 border-l-4 border-accent-orange p-4 rounded-r-lg relative overflow-hidden scroll-mt-24">
-            <p className="font-semibold text-lg text-text-primary break-words leading-snug relative z-10 mb-3">
+          {/* Intelligence Briefing Box — Piet's Verdict */}
+          <div id="piet" className="mt-10 bg-white/40 backdrop-blur-md border border-white/60 rounded-2xl p-5 shadow-sm relative overflow-hidden group/piet hover:shadow-md transition-all scroll-mt-24">
+            <div className="absolute top-0 right-0 px-3 py-1 bg-accent-orange/10 border-b border-l border-accent-orange/20 rounded-bl-xl">
+               <span className="text-[9px] font-black text-accent-orange uppercase tracking-widest">Piet's Verdict</span>
+            </div>
+            
+            <p className="font-bold text-lg sm:text-xl text-text-primary leading-[1.4] relative z-10 mb-4 max-w-[90%]">
               {weather.aiVerdict || getMainCommentary(weather)}
             </p>
+            
             <PietInlineTip weather={weather} />
-            <div className="pt-4 border-t border-white/5">
-              <p className="text-[11px] font-bold text-text-secondary uppercase tracking-widest opacity-80">
-                📊 {new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })} — KNMI bevestigt dit.
-              </p>
+            
+            <div className="mt-4 pt-4 border-t border-black/5 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-accent-orange/20 flex items-center justify-center text-xs">📊</div>
+                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
+                  Dataverificatie: {new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 opacity-60">
+                 <div className="w-1.5 h-1.5 rounded-full bg-accent-green" />
+                 <span className="text-[9px] font-black uppercase">Active</span>
+              </div>
             </div>
           </div>
           
-          <div className="flex flex-wrap gap-2 sm:gap-3 mt-6">
-            <span className="badge bg-black/5 border border-black/10 font-normal px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs">
-              Voelt als <strong className="ml-1 text-text-primary">{weather.current.feelsLike}°</strong>
-            </span>
-            <span className="badge bg-black/5 border border-black/10 font-normal px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs">
-              {getWeatherDescription(weather.current.weatherCode)}
-            </span>
-            <span className="badge bg-black/5 border border-black/10 font-normal px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs">
-              Vocht <strong className="ml-1 text-text-primary">{weather.current.humidity}%</strong>
-            </span>
-            {(() => {
-              const climate = getTemperatureComparison(weather.current.temperature, new Date().getMonth());
-              const isWarm = climate.diff > 0;
-              return Math.abs(climate.diff) >= 1 ? (
-                <span className={`badge font-normal px-2.5 py-1 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs ${isWarm ? 'bg-orange-100/80 border border-orange-200/60 text-orange-700' : 'bg-blue-100/80 border border-blue-200/60 text-blue-700'}`}>
-                  {climate.emoji} {isWarm ? '+' : ''}{climate.diff}° vs normaal
-                </span>
-              ) : null;
-            })()}
+          {/* Compact Weather Stats Bar */}
+          <div className="flex flex-wrap gap-4 mt-8 pt-6 border-t border-black/5">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-text-muted uppercase tracking-wider mb-0.5">Luchtvochtigheid</span>
+              <span className="text-sm font-black text-text-primary">{weather.current.humidity}%</span>
+            </div>
+            <div className="w-px h-8 bg-black/5 hidden xs:block" />
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-text-muted uppercase tracking-wider mb-0.5">Windstoten</span>
+              <span className="text-sm font-black text-text-primary">{weather.current.windGusts} km/h</span>
+            </div>
+            <div className="w-px h-8 bg-black/5 hidden xs:block" />
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-text-muted uppercase tracking-wider mb-0.5">Klimaat-check</span>
+              <span className="text-sm font-black text-text-primary">
+                {(() => {
+                  const climate = getTemperatureComparison(weather.current.temperature, new Date().getMonth());
+                  return `${climate.diff > 0 ? '+' : ''}${climate.diff}° vs normaal`;
+                })()}
+              </span>
+            </div>
           </div>
         </div>
       </div>
