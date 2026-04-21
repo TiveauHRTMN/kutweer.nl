@@ -1,10 +1,7 @@
 import { ImageResponse } from "next/og";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
-import { PersonaTier } from "@/lib/personas";
-import { matchProducts } from "@/lib/amazon-matcher";
-
-export const runtime = "nodejs";
+export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 type Format = "tiktok" | "x";
@@ -50,15 +47,16 @@ async function fetchWeather(lat: number, lon: number) {
 }
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const formatParam = (searchParams.get("format") || "x").toLowerCase() as Format;
-  const format: Format = SIZES[formatParam] ? formatParam : "x";
-  const SIZE = SIZES[format];
-  const personaParam = (searchParams.get("persona") || "piet").toLowerCase() as PersonaTier;
-  const theme = PERSONA_THEMES[personaParam] || PERSONA_THEMES.piet;
-  const cityName = searchParams.get("city") || "Nederland";
-
   try {
+    const { searchParams } = new URL(req.url);
+    const formatParam = (searchParams.get("format") || "x").toLowerCase() as Format;
+    const format: Format = SIZES[formatParam] ? formatParam : "x";
+    const SIZE = SIZES[format];
+    
+    const personaParam = (searchParams.get("persona") || "piet").toLowerCase();
+    const theme = PERSONA_THEMES[personaParam] || PERSONA_THEMES.piet;
+
+    const cityName = searchParams.get("city") || "Nederland";
     const lat = parseFloat(searchParams.get("lat") || "52.11");
     const lon = parseFloat(searchParams.get("lon") || "5.18");
 
@@ -68,23 +66,6 @@ export async function GET(req: NextRequest) {
     const desc = getDesc(code).toUpperCase();
     const emoji = getEmoji(code);
 
-    const weatherData = {
-      current: { temperature: temp, weatherCode: code, precipitation: w?.current?.precipitation ?? 0, windSpeed: 10, humidity: 70 },
-      daily: (w?.daily?.time ?? [0,0]).map((_: any, i: number) => ({ 
-        tempMax: w.daily.temperature_2m_max[i] ?? 10,
-        tempMin: w.daily.temperature_2m_min[i] ?? 5,
-        precipitationSum: w.daily.precipitation_sum[i] ?? 0,
-        windSpeedMax: 20
-      })),
-      hourly: (w?.hourly?.time ?? []).slice(0, 24).map((_: any, i: number) => ({
-        temperature: w.hourly.temperature_2m[i] ?? 10,
-        weatherCode: w.hourly.weather_code[i] ?? 0,
-        precipitation: w.hourly.precipitation[i] ?? 0
-      }))
-    };
-    const { products } = matchProducts(weatherData as any, 1, new Date(), personaParam);
-    const deal = products[0];
-
     return new ImageResponse(
       (
         <div style={{
@@ -92,6 +73,7 @@ export async function GET(req: NextRequest) {
           backgroundColor: theme.bg, color: theme.text, padding: "80px",
           fontFamily: "sans-serif"
         }}>
+          {/* Header */}
           <div style={{ display: "flex", width: "100%", justifyContent: "space-between", marginBottom: "60px" }}>
              <div style={{ display: "flex", flexDirection: "column" }}>
                 <div style={{ fontSize: 40, fontWeight: 700, color: theme.accent }}>{String(cityName).toUpperCase()}</div>
@@ -100,40 +82,36 @@ export async function GET(req: NextRequest) {
              <div style={{ fontSize: 50, fontWeight: 700 }}>WEERZONE</div>
           </div>
 
+          {/* Main Body */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-             <div style={{ fontSize: 200 }}>{emoji}</div>
+             <div style={{ fontSize: 220 }}>{emoji}</div>
              <div style={{ fontSize: 300, fontWeight: 700, marginTop: 20 }}>{temp}°</div>
-             <div style={{ fontSize: 80, fontWeight: 700, marginTop: 40, padding: "20px 60px", backgroundColor: "black" }}>
+             <div style={{ 
+               fontSize: 80, fontWeight: 700, marginTop: 40, padding: "20px 60px", 
+               backgroundColor: "black", color: "white" 
+             }}>
                 {desc}
              </div>
           </div>
 
-          {deal && (
-            <div style={{ display: "flex", backgroundColor: "white", color: "black", padding: "40px", border: "8px solid black" }}>
-               <div style={{ fontSize: 80, marginRight: 40 }}>🛍️</div>
-               <div style={{ display: "flex", flexDirection: "column" }}>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: "#666" }}>TIP: {String(deal.badge)}</div>
-                  <div style={{ fontSize: 36, fontWeight: 700 }}>{String(deal.title)}</div>
-               </div>
-            </div>
-          )}
+          {/* Deal Tip (Static fallback if matcher crashes edge) */}
+          <div style={{ display: "flex", backgroundColor: "white", color: "black", padding: "40px", border: "8px solid black" }}>
+             <div style={{ fontSize: 80, marginRight: 40 }}>🛍️</div>
+             <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ fontSize: 20, fontWeight: 700, color: "#666" }}>TIP VAN DE DAG</div>
+                <div style={{ fontSize: 36, fontWeight: 700 }}>CHECK DE WEERZONE SHOP</div>
+             </div>
+          </div>
 
-          <div style={{ marginTop: 60, textAlign: "center", fontSize: 30 }}>
+          {/* Footer */}
+          <div style={{ marginTop: "60px", textAlign: "center", fontSize: "30px", opacity: 0.7 }}>
              WWW.WEERZONE.NL · DE REST IS RUIS
           </div>
         </div>
       ),
       { ...SIZE }
     );
-  } catch (err: any) {
-    return new ImageResponse(
-      (
-        <div style={{ height: "100%", width: "100%", backgroundColor: "#1e3a8a", color: "white", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ fontSize: 60, fontWeight: 700 }}>WEERZONE.NL</div>
-          <div style={{ fontSize: 24, marginTop: 20 }}>Laden van gegevens...</div>
-        </div>
-      ),
-      { ...SIZE }
-    );
+  } catch (e: any) {
+    return new Response(`TECHNICAL ERROR: ${e.message}`, { status: 500 });
   }
 }
