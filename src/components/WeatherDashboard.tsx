@@ -388,29 +388,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         </div>
       </div>
 
-      {/* ===== 2. Data Bron — Waarom dit klopt ===== */}
-      <div className="animate-fade-in" style={{ animationDelay: "0.15s" }}>
-        <div className="card p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent-cyan/10 flex items-center justify-center">
-                <RefreshCw className="w-5 h-5 text-accent-cyan" />
-              </div>
-              <div>
-                <div className="text-[11px] font-black text-text-primary uppercase tracking-wider">
-                  KNMI HARMONIE LIVE
-                </div>
-                <div className="text-[10px] text-text-secondary">
-                  Gedetailleerde polderdata • 2.5km resolutie
-                </div>
-              </div>
-            </div>
-            <div className="px-2.5 py-1 bg-accent-green/10 rounded font-bold text-accent-green text-[10px] uppercase tracking-tighter border border-accent-green/20">
-              Geverifieerd
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* ===== PAPERCLIP: Hyper-Local Affiliate Injection ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
