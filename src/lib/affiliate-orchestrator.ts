@@ -140,9 +140,13 @@ const DEALS_CATALOG: Partial<Record<ConditionTag, Partial<AffiliateDeal>[]>> = {
 /**
  * Get the best deals based on weather and impulse potential
  */
-export function getRecommendedDeals(weather: WeatherData, city: string): AffiliateDeal[] {
+export function getRecommendedDeals(weather: WeatherData, city: string, context: "SITE" | "MAIL" = "SITE"): AffiliateDeal[] {
   const tag = getConditionTag(weather);
-  const deals = (DEALS_CATALOG[tag] || DEALS_CATALOG["PERFECT"]) as AffiliateDeal[];
+  let deals = (DEALS_CATALOG[tag] || DEALS_CATALOG["PERFECT"]) as AffiliateDeal[];
+  
+  if (context === "SITE") {
+    deals = deals.filter(d => d.platform !== "TEMU");
+  }
   
   return deals.map(deal => {
     // Dynamische scoring
