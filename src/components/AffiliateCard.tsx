@@ -157,25 +157,25 @@ export default function AffiliateCard({ weather }: Props) {
   // Abonnees: geen Amazon-cards op hun dashboard.
   if (loading || tier) return null;
 
-  // Contextregel — waarom deze selectie
+  // Contextregel — waarom deze selectie (Brutal Piet Style)
   const reason = (() => {
     const t = ctx.tags;
-    if (t.has("storm")) return `Wind tot ${Math.round(ctx.summary.windMax)} km/u`;
-    if (t.has("rain_now")) return "Het regent nu";
-    if (t.has("rain_heavy")) return `${ctx.summary.rain48h.toFixed(0)}mm regen komende 48u`;
-    if (t.has("rain_soon")) return "Regen op komst";
-    if (t.has("extreme_cold")) return `Tot ${Math.round(ctx.summary.temp)}° — strenge vorst`;
-    if (t.has("freezing")) return "Vorst verwacht";
-    if (t.has("heatwave")) return `${Math.round(ctx.summary.temp)}° — hittegolf`;
-    if (t.has("hot")) return `${Math.round(ctx.summary.temp)}° — tropisch warm`;
-    if (t.has("uv_extreme")) return `UV ${ctx.summary.uv.toFixed(1)} — extreem`;
-    if (t.has("uv_high")) return `UV ${ctx.summary.uv.toFixed(1)} — hoog`;
-    if (t.has("thunder")) return "Onweerskans";
-    if (t.has("snow")) return "Sneeuw verwacht";
-    if (t.has("fog")) return "Mist";
-    if (t.has("windy")) return `Wind tot ${Math.round(ctx.summary.windMax)} km/u`;
-    if (t.has("perfect")) return `${Math.round(ctx.summary.temp)}° en droog — prachtweer`;
-    return `${Math.round(ctx.summary.temp)}° — ${ctx.summary.season}`;
+    if (t.has("storm")) return `Reed's Alert: Windstoten tot ${Math.round(ctx.summary.windMax)} km/u. Blijf binnen of gebruik deze stormparaplu.`;
+    if (t.has("rain_now")) return "Het giet nu. Loop niet voor lul, trek een fatsoenlijke jas aan.";
+    if (t.has("rain_heavy")) return `${ctx.summary.rain48h.toFixed(0)}mm regen op komst. Je gaat verzinken zonder dit.`;
+    if (t.has("rain_soon")) return "Buienradar kleurt rood. Wees geen amateur, bereid je voor.";
+    if (t.has("extreme_cold")) return `Het is beestachtig koud (${Math.round(ctx.summary.temp)}°). Thermo-ondergoed is geen luxe nu.`;
+    if (t.has("freezing")) return "Vorst alert. Krabben is voor prutsers, gebruik spray.";
+    if (t.has("heatwave")) return `${Math.round(ctx.summary.temp)}° — Dit is geen weer, dit is een oven. Koel je kop.`;
+    if (t.has("hot")) return `${Math.round(ctx.summary.temp)}° — Tropisch. Vergeet je SPF niet, je huid is geen leer.`;
+    if (t.has("uv_extreme")) return `UV ${ctx.summary.uv.toFixed(1)}: Extreem risico. Smeren of verbranden. Beslis zelf.`;
+    if (t.has("uv_high")) return `UV ${ctx.summary.uv.toFixed(1)} is hoog. Bescherm je ogen en je huid.`;
+    if (t.has("thunder")) return "Onweer in de lucht. Bescherm je elektronica.";
+    if (t.has("snow")) return "Sneeuwpret of ellende? Zorg dat je grip hebt.";
+    if (t.has("fog")) return "Zicht is niks. Zorg voor fatsoenlijk licht op de weg.";
+    if (t.has("windy")) return `Wind tot ${Math.round(ctx.summary.windMax)} km/u. Lekker uitwaaien, mits je de juiste jas hebt.`;
+    if (t.has("perfect")) return `${Math.round(ctx.summary.temp)}° en droog. Prachtweer voor een terras, mits je een zonnebril hebt.`;
+    return `${Math.round(ctx.summary.temp)}° — ${ctx.summary.season === "summer" ? "Zomerweer" : "Nederlandse herrie"}.`;
   })();
 
   return (

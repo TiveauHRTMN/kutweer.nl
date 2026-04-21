@@ -918,6 +918,30 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         </div>
       </div>
 
+      {/* ===== 12. Populaire Thema's (SEO Booster) ===== */}
+      <div className="animate-fade-in" style={{ animationDelay: "0.8s" }}>
+        <div className="flex justify-between items-end mb-3 px-1">
+          <h3 className="section-title">Populair op WeerZone</h3>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { slug: "bbq-weer", icon: "🔥", label: "BBQ Weer" },
+            { slug: "strandweer", icon: "🏖️", label: "Strandweer" },
+            { slug: "hooikoorts", icon: "🤧", label: "Hooikoorts" },
+            { slug: "hardloopweer", icon: "🏃", label: "Hardlopen" },
+          ].map((theme) => (
+            <a
+              key={theme.slug}
+              href={`/weer/themas/${theme.slug}`}
+              className="card p-4 flex items-center gap-3 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <span className="text-2xl">{theme.icon}</span>
+              <span className="text-sm font-bold text-text-primary">{theme.label}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
       {beforeFooter}
 
       <AmazonStickyBar weather={weather} />

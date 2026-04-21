@@ -29,6 +29,18 @@ const THEMES: Record<string, Theme> = {
     title: "Hardloopweer | De ideale loopcondities",
     description: "Niet te warm, niet te koud. Wij checken de luchtvochtigheid en wind voor jouw perfecte run.",
     metaDescription: "Is het goed hardloopweer vandaag? Check de hardloop-index op WeerZone: wind, vochtigheid en temperatuur.",
+  },
+  "hooikoorts": {
+    slug: "hooikoorts",
+    title: "Hooikoorts Radar | Pollenbureau WeerZone",
+    description: "Droge wind uit het oosten? Wij vertellen je precies wanneer je binnen moet blijven om die rode ogen te voorkomen.",
+    metaDescription: "Actuele hooikoorts verwachting en pollenradar. WeerZone kijkt naar droogte en windrichting voor het beste advies.",
+  },
+  "wintersport-nl": {
+    slug: "wintersport-nl",
+    title: "Wintersport Nederland | Schaatsweer & Sneeuw",
+    description: "Komt de vorst eraan? Wij monitoren de watertemperatuur en sneeuwkansen voor de Nederlandse wintersporter.",
+    metaDescription: "Check de kans op natuurijs en sneeuw in Nederland. WeerZone kijkt dieper in de kaarten dan de rest.",
   }
 };
 

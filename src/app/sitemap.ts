@@ -45,6 +45,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${baseUrl}/weer/themas/bbq-weer`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: `${baseUrl}/weer/themas/strandweer`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
     { url: `${baseUrl}/weer/themas/hardloopweer`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/weer/themas/hooikoorts`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
+    { url: `${baseUrl}/weer/themas/wintersport-nl`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
   );
 
   // Static pages
