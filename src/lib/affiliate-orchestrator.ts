@@ -80,8 +80,8 @@ const DEALS_CATALOG: Partial<Record<ConditionTag, Partial<AffiliateDeal>[]>> = {
       originalPrice: 15.00,
       discount: 43,
       platform: "TEMU",
-      persona: "STEVE",
-      reason: "Je sneakers blijven fresh, ook in deze teringregen.",
+      persona: "PIET",
+      reason: "Gewoon over je schoenen trekken. Droge voeten, nuchter verstand.",
       badge: "FLASHSALE",
     }
   ],
@@ -104,8 +104,8 @@ const DEALS_CATALOG: Partial<Record<ConditionTag, Partial<AffiliateDeal>[]>> = {
       originalPrice: 45.00,
       discount: 73,
       platform: "TEMU",
-      persona: "STEVE",
-      reason: "Ziet er duur uit, kost niks. Ideaal voor het terras.",
+      persona: "PIET",
+      reason: "Goede glazen, geen onzinprijs. Smeer je overigens ook goed in [Plaats]!",
       badge: "90% VERKOCHT",
     }
   ],
@@ -130,8 +130,8 @@ const DEALS_CATALOG: Partial<Record<ConditionTag, Partial<AffiliateDeal>[]>> = {
       originalPrice: 19.95,
       discount: 35,
       platform: "TEMU",
-      persona: "STEVE",
-      reason: "Vandaag is de dag. Pak die rust.",
+      persona: "PIET",
+      reason: "Prachtig weer vandaag. Oprollen, naar buiten, en genieten maar.",
       badge: "WEEKEND-FAVORIET",
     }
   ]
