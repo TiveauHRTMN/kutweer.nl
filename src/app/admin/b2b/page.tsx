@@ -30,7 +30,7 @@ export default async function B2BAdminPage({ searchParams }: PageProps) {
     );
   }
 
-  const supabase = getSupabase();
+
 
   let leads: Array<{
     id: string;
