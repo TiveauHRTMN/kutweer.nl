@@ -401,6 +401,48 @@ export const ALL_PLACES: Place[] = [
   { name: "Ens", province: "flevoland", lat: 52.6367, lon: 5.8292, population: 3100 },
   { name: "Luttelgeest", province: "flevoland", lat: 52.7567, lon: 5.8617, population: 2300 },
   { name: "Rutten", province: "flevoland", lat: 52.8058, lon: 5.7000, population: 1700 },
+
+  // ── BATCH #8: LIMBURG & UTRECHT ──
+  // Limburg
+  { name: "Maastricht", province: "limburg", lat: 50.8514, lon: 5.6910, population: 122000, character: "urban" },
+  { name: "Venlo", province: "limburg", lat: 51.3700, lon: 6.1683, population: 102000, character: "urban" },
+  { name: "Roermond", province: "limburg", lat: 51.1928, lon: 5.9872, population: 59000 },
+  { name: "Sittard", province: "limburg", lat: 51.0000, lon: 5.8667, population: 37000 },
+  { name: "Geleen", province: "limburg", lat: 50.9667, lon: 5.8333, population: 32000 },
+  { name: "Heerlen", province: "limburg", lat: 50.8883, lon: 5.9794, population: 87000, character: "urban" },
+  { name: "Weert", province: "limburg", lat: 51.2536, lon: 5.7089, population: 50000 },
+  { name: "Kerkrade", province: "limburg", lat: 50.8658, lon: 6.0625, population: 46000 },
+  { name: "Venray", province: "limburg", lat: 51.5267, lon: 5.9750, population: 43000 },
+  { name: "Landgraaf", province: "limburg", lat: 50.9083, lon: 6.0300, population: 37000 },
+  { name: "Brunssum", province: "limburg", lat: 50.9467, lon: 5.9733, population: 28000 },
+  { name: "Stein", province: "limburg", lat: 50.9683, lon: 5.7658, population: 25000 },
+  { name: "Echt", province: "limburg", lat: 51.1033, lon: 5.8667, population: 19000 },
+  { name: "Horst", province: "limburg", lat: 51.4533, lon: 6.0500, population: 13000 },
+  { name: "Valkenburg", province: "limburg", lat: 50.8647, lon: 5.8311, population: 11000, character: "highland" },
+
+  // Utrecht
+  { name: "Utrecht", province: "utrecht", lat: 52.0907, lon: 5.1214, population: 362000, character: "urban" },
+  { name: "Amersfoort", province: "utrecht", lat: 52.1561, lon: 5.3878, population: 157000, character: "urban" },
+  { name: "Zeist", province: "utrecht", lat: 52.0883, lon: 5.2344, population: 65000 },
+  { name: "Nieuwegein", province: "utrecht", lat: 52.0289, lon: 5.0850, population: 64000, character: "urban" },
+  { name: "Veenendaal", province: "utrecht", lat: 52.0253, lon: 5.5553, population: 67000 },
+  { name: "Houten", province: "utrecht", lat: 52.0300, lon: 5.1667, population: 50000 },
+  { name: "Woerden", province: "utrecht", lat: 52.0850, lon: 4.8833, population: 52000 },
+  { name: "Maarssen", province: "utrecht", lat: 52.1383, lon: 5.0381, population: 40000 },
+  { name: "IJsselstein", province: "utrecht", lat: 52.0200, lon: 5.0417, population: 34000 },
+  { name: "Leusden", province: "utrecht", lat: 52.1333, lon: 5.4333, population: 30000 },
+  { name: "Baarn", province: "utrecht", lat: 52.2125, lon: 5.2917, population: 25000 },
+  { name: "Soest", province: "utrecht", lat: 52.1736, lon: 5.2917, population: 47000 },
+  { name: "Wijk bij Duurstede", province: "utrecht", lat: 51.9750, lon: 5.3417, population: 24000 },
+  { name: "Rhenen", province: "utrecht", lat: 51.9583, lon: 5.5667, population: 20000, character: "highland" },
+  { name: "Bunnik", province: "utrecht", lat: 52.0667, lon: 5.2000, population: 15000 },
+
+  // Gelderland (Missing hubs)
+  { name: "Nijkerk", province: "gelderland", lat: 52.2217, lon: 5.4850, population: 44000 },
+  { name: "Ermelo", province: "gelderland", lat: 52.3000, lon: 5.6167, population: 27000 },
+  { name: "Putten", province: "gelderland", lat: 52.2583, lon: 5.6067, population: 24500 },
+  { name: "Nunspeet", province: "gelderland", lat: 52.3783, lon: 5.7917, population: 28000 },
+  { name: "Elburg", province: "gelderland", lat: 52.4475, lon: 5.8333, population: 12500, character: "coastal" },
 ];
 
 // ============================================================

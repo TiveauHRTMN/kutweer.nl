@@ -23,6 +23,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import AffiliateCard from "./AffiliateCard";
 import AmazonStickyBar from "./AmazonStickyBar";
 import PietInlineTip from "./PietInlineTip";
+import { temuUrl } from "@/lib/affiliates";
 import EmailSubscribe from "./EmailSubscribe";
 import NavBar from "./NavBar";
 import AdSlot from "./AdSlot";
@@ -650,7 +651,31 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
 
 
 
-      {/* ===== 6. Vandaag & Morgen ===== */}
+      {/* ===== TEMU MOBILE SNIPER — Alleen bij warm/mooi weer (Impulskoopjes) ===== */}
+      {weather.current.temperature > 15 && weather.current.precipitation < 1 && (
+        <div className="animate-fade-in sm:hidden" style={{ animationDelay: "0.25s" }}>
+          <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-2xl p-4 shadow-lg border border-orange-400/30 overflow-hidden relative">
+            <div className="absolute top-0 right-0 p-2 opacity-20">
+              <span className="text-4xl">🎁</span>
+            </div>
+            <div className="relative z-10">
+              <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">Temu Daily Steal</span>
+              <h3 className="text-white font-black text-lg leading-tight mt-1">
+                {weather.current.temperature > 22 ? "Blijf koel voor een prikkie" : "Handig bij dit weer"}
+              </h3>
+              <p className="text-white/90 text-xs mt-1">Check de laatste hebbedingen voor vandaag. OP = OP.</p>
+              <a 
+                href={temuUrl(weather.current.temperature > 20 ? "mini fan usb cooling" : "portable gadget summer")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-3 bg-white text-orange-600 font-bold text-xs px-4 py-2 rounded-full shadow-md active:scale-95 transition-transform"
+              >
+                Bekijk aanbiedingen →
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
         <div className="flex justify-between items-end mb-3 px-1">
           <h3 className="section-title">Vandaag & Morgen</h3>
