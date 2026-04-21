@@ -400,3 +400,24 @@ export async function getProvinceVerdict(provinceLabel: string): Promise<string>
     return `In ${provinceLabel} vind je diverse microklimaten. Van de kust tot de zandgronden, wij brengen het per uur in kaart.`;
   }
 }
+
+/**
+ * Informeert Google dat de sitemap is bijgewerkt. 
+ * Cruciaal voor programmatic SEO om nieuwe pagina's snel te laten indexeren.
+ */
+export async function pingSearchConsole() {
+  const sitemapUrl = "https://weerzone.nl/sitemap.xml";
+  const googlePing = `https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`;
+  
+  try {
+    const res = await fetch(googlePing);
+    if (res.ok) {
+      console.log("✅ Google gepind voor sitemap update.");
+      return { success: true };
+    }
+    throw new Error("Ping failed");
+  } catch (error) {
+    console.error("❌ Google ping mislukt:", error);
+    return { success: false };
+  }
+}
