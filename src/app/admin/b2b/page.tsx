@@ -12,12 +12,19 @@ export default async function B2BAdminPage({ searchParams }: PageProps) {
   const { secret } = await searchParams;
   const cronSecret = process.env.CRON_SECRET;
 
-  if (cronSecret && secret !== cronSecret) {
+  // 1. Auth Check (Founder bypass)
+  const supabase = getSupabase();
+  const { data: { user } } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
+  const { isFounderEmail } = await import("@/lib/founders");
+  
+  const isAuthorized = (user && isFounderEmail(user.email)) || (cronSecret && secret === cronSecret);
+  
+  if (!isAuthorized && cronSecret) {
     return (
-      <div style={{ padding: 48, fontFamily: "system-ui", background: "#0f172a", minHeight: "100vh", color: "#fff" }}>
-        <h1 style={{ color: "#f59e0b", marginBottom: 8 }}>Toegang geweigerd</h1>
-        <p style={{ color: "#94a3b8" }}>
-          Voeg <code style={{ background: "rgba(255,255,255,0.1)", padding: "2px 8px", borderRadius: 4 }}>?secret=JOUW_CRON_SECRET</code> toe aan de URL.
+      <div style={{ padding: 48, fontFamily: "var(--font-inter), system-ui", background: "#020617", minHeight: "100vh", color: "#fff" }}>
+        <h1 style={{ color: "#ef4444", fontWeight: 900, fontSize: "2rem", marginBottom: 8, letterSpacing: "-0.05em" }}>TOEGANG GEWEIGERD</h1>
+        <p style={{ color: "rgba(255,255,255,0.4)", textTransform: "uppercase", fontSize: "0.75rem", letterSpacing: "0.2em", fontWeight: 700 }}>
+          Je bent niet ingelogd als founder of de secret ontbreekt.
         </p>
       </div>
     );
