@@ -24,7 +24,7 @@ export default function NLPulse() {
   if (stations.length === 0) return null;
 
   return (
-    <div className="relative group overflow-hidden bg-white/5 border-y border-white/5 h-5 flex items-center" style={{ isolation: "isolate" }}>
+    <div className="relative group overflow-hidden bg-transparent border-y border-white/5 h-4 flex items-center" style={{ isolation: "isolate" }}>
       {/* Live Indicator Fixed on Left - Now with subtle white glass blending */}
       <div className="absolute left-0 top-0 bottom-0 z-20 px-2 flex items-center gap-1 bg-gradient-to-r from-white/10 via-white/5 to-transparent pr-6 pointer-events-none">
         <div className="relative flex">
