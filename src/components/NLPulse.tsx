@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getStationsWeather } from "@/app/actions";
-import { Activity, Radio } from "lucide-react";
+import { Radio } from "lucide-react";
 
 export default function NLPulse() {
   const [stations, setStations] = useState<Array<{ name: string; temp: number }>>([]);
@@ -18,23 +18,23 @@ export default function NLPulse() {
   if (stations.length === 0) return null;
 
   return (
-    <div className="relative group overflow-hidden bg-black/40 backdrop-blur-xl border-y border-white/5 shadow-2xl h-9 flex items-center" style={{ isolation: "isolate" }}>
+    <div className="relative group overflow-hidden bg-black/40 backdrop-blur-xl border-y border-white/5 shadow-2xl h-8 sm:h-9 flex items-center" style={{ isolation: "isolate" }}>
       {/* Live Indicator Fixed on Left */}
-      <div className="absolute left-0 top-0 bottom-0 z-20 px-3 flex items-center gap-2 bg-gradient-to-r from-black/80 to-transparent pr-8 pointer-events-none">
+      <div className="absolute left-0 top-0 bottom-0 z-20 px-2 sm:px-3 flex items-center gap-1.5 sm:gap-2 bg-gradient-to-r from-black/90 via-black/80 to-transparent pr-8 sm:pr-10 pointer-events-none">
         <div className="relative flex">
-          <Radio className="w-3 h-3 text-accent-orange animate-pulse" />
+          <Radio className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-accent-orange animate-pulse" />
           <div className="absolute inset-0 bg-accent-orange/40 rounded-full blur-sm animate-pulse" />
         </div>
-        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white whitespace-nowrap">
-          Live <span className="hidden sm:inline">NL Pulse</span>
+        <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] text-white whitespace-nowrap">
+          Live <span className="hidden xs:inline">Pulse</span>
         </span>
       </div>
 
       {/* Scrolling Content */}
-      <div className="flex gap-12 text-[10px] font-extrabold uppercase tracking-widest text-white/90 animate-marquee hover:pause-marquee pl-24">
-        {/* Render stations four times for an extra long, seamless loop on large screens */}
+      <div className="flex gap-8 sm:gap-12 text-[9px] sm:text-[10px] font-extrabold uppercase tracking-widest text-white/90 animate-marquee hover:pause-marquee pl-16 sm:pl-28">
+        {/* Render stations four times for an extra long, seamless loop */}
         {[...stations, ...stations, ...stations, ...stations].map((s, i) => (
-          <div key={`${s.name}-${i}`} className="flex items-center gap-2.5 shrink-0 group/item transition-all hover:text-white">
+          <div key={`${s.name}-${i}`} className="flex items-center gap-2 sm:gap-2.5 shrink-0 group/item transition-all hover:text-white">
             <div className="relative flex">
                <span 
                  className={`w-1 h-1 rounded-full ${
@@ -48,7 +48,7 @@ export default function NLPulse() {
                )}
             </div>
             <div className="flex items-baseline gap-1">
-              <span className="text-white/60 group-hover/item:text-white/80 transition-colors">{s.name}</span>
+              <span className="text-white/60 group-hover/item:text-white/80 transition-colors whitespace-nowrap">{s.name}</span>
               <span className={`tabular-nums ${s.temp > 20 ? 'text-orange-400' : s.temp < 5 ? 'text-blue-400' : 'text-white'}`}>
                 {s.temp}°
               </span>
@@ -58,13 +58,18 @@ export default function NLPulse() {
       </div>
 
       {/* Right Fade Out */}
-      <div className="absolute right-0 top-0 bottom-0 z-20 w-16 bg-gradient-to-l from-black/60 to-transparent pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 z-20 w-12 sm:w-20 bg-gradient-to-l from-black/80 to-transparent pointer-events-none" />
 
       <style jsx>{`
         .animate-marquee {
           display: flex;
           width: max-content;
-          animation: marquee 80s linear infinite;
+          animation: marquee 70s linear infinite;
+        }
+        @media (max-width: 640px) {
+          .animate-marquee {
+             animation-duration: 50s; /* Iets sneller op mobiel ivm kortere tekst-breedte */
+          }
         }
         .hover\:pause-marquee:hover {
           animation-play-state: paused;
