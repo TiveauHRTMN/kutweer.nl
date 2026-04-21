@@ -19,6 +19,39 @@ export async function getWeather(lat: number, lon: number): Promise<WeatherData>
 }
 
 /**
+ * Haalt de actuele temperatuur op voor alle KNMI-landstations in één batch.
+ * Gebruikt voor de landelijke ticker.
+ */
+export async function getStationsWeather(): Promise<Array<{ name: string; temp: number }>> {
+  const { KNMI_STATIONS } = await import("@/lib/types");
+  
+  const lats = KNMI_STATIONS.map(s => s.lat).join(",");
+  const lons = KNMI_STATIONS.map(s => s.lon).join(",");
+  
+  try {
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&current=temperature_2m&timezone=Europe/Amsterdam`,
+      { next: { revalidate: 600 } } // 10 min cache
+    );
+    
+    if (!res.ok) throw new Error("Open-Meteo batch fetch failed");
+    
+    const data = await res.json();
+    
+    // Open-Meteo retourneert een array als we meerdere coördinaten sturen
+    const results = Array.isArray(data) ? data : [data];
+    
+    return KNMI_STATIONS.map((s, i) => ({
+      name: s.name.replace(" vliegbasis", "").replace(" Airport", ""),
+      temp: Math.round(results[i].current.temperature_2m)
+    }));
+  } catch (error) {
+    console.error("getStationsWeather error:", error);
+    return [];
+  }
+}
+
+/**
  * Gemini-verdict apart, zodat de UI niet op hem wacht. Valideert op
  * afgemaakte zinnen — truncated output wordt geweigerd.
  */

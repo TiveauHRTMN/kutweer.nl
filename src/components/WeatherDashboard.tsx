@@ -26,6 +26,7 @@ import PietInlineTip from "./PietInlineTip";
 import EmailSubscribe from "./EmailSubscribe";
 import NavBar from "./NavBar";
 import AdSlot from "./AdSlot";
+import NLPulse from "./NLPulse";
 import dynamic from "next/dynamic";
 
 // Lazy-load zware visuele componenten — scheelt initial JS
@@ -197,15 +198,8 @@ export default function WeatherDashboard({ initialCity, beforeFooter, titleOverr
         </div>
       </header>
 
-      {/* NL Pulse — Stille ticker voor landelijk gevoel */}
-      <div className="animate-fade-in overflow-hidden whitespace-nowrap py-1 border-y border-white/10 mb-2" style={{ animationDelay: "0.08s" }}>
-        <div className="flex animate-[pulse-soft_4s_ease-in-out_infinite] gap-6 text-[10px] font-black uppercase tracking-widest text-white/50 px-2 justify-center">
-          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-accent-green" /> DE BILT {weather.current.temperature}°</span>
-          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-white/30" /> AMSTERDAM {Math.round(weather.current.temperature + 0.4)}°</span>
-          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-white/30" /> ROTTERDAM {Math.round(weather.current.temperature - 0.2)}°</span>
-          <span className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-white/30" /> GRONINGEN {Math.round(weather.current.temperature - 1.2)}°</span>
-        </div>
-      </div>
+      {/* NL Pulse — Dynamische ticker voor alle landelijke meetstations */}
+      <NLPulse />
 
       {/* NavBar — één grote glass-bar in kaartstijl, GPS zit in "Locatie"-pill */}
       <div className="animate-fade-in" style={{ animationDelay: "0.12s" }}>

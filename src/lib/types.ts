@@ -139,6 +139,16 @@ export const DUTCH_CITIES: City[] = [
 ];
 
 /**
+ * Lijst van officiële KNMI-weerstations op land.
+ * Gebruikt voor de landelijke "Pulse" ticker.
+ */
+export const KNMI_STATIONS = DUTCH_CITIES.filter((c, i) => 
+  !c.name.includes("(Noordzee)") && 
+  c.name !== "Europlatform" &&
+  (i === 0 || i >= 11) // De Bilt + alle stations vanaf sectie "KNMI weerstations"
+);
+
+/**
  * Reverse geocode via OpenStreetMap Nominatim: geeft de werkelijke
  * plaatsnaam voor de opgegeven GPS-coördinaten. Gebruikt de exacte
  * locatie van de gebruiker — geen snapping naar KNMI-stations.

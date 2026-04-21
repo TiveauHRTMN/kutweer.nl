@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import WzLogo from "./WzLogo";
+import NLPulse from "../NLPulse";
 
 const LINKS: Array<{ key: string; label: string; href: string }> = [
   { key: "weer", label: "Weer", href: "/" },
@@ -35,6 +36,7 @@ export default function WzNavbar() {
         borderColor: "var(--wz-border)",
       }}
     >
+      <NLPulse />
       <div className="max-w-[1200px] mx-auto flex items-center justify-between gap-5 px-4 sm:px-8 py-3">
         <WzLogo />
 
