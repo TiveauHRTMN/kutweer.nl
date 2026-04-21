@@ -126,8 +126,10 @@ async function createBufferPost(channelId: string, text: string, imageUrls: stri
   const query = `
     mutation CreatePost($input: CreatePostInput!) {
       createPost(input: $input) {
-        post {
-          id
+        ... on PostActionSuccess {
+          post {
+            id
+          }
         }
       }
     }
@@ -138,7 +140,8 @@ async function createBufferPost(channelId: string, text: string, imageUrls: stri
       channelId,
       text,
       media: imageUrls.map(url => ({ url, type: "image" })),
-      schedulingType: "now"
+      schedulingType: "automatic",
+      mode: "shareNow"
     }
   };
 
