@@ -422,60 +422,81 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
                   className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${hourlyMetric === key ? 'bg-white text-text-primary shadow-sm ring-1 ring-black/5' : 'text-text-muted hover:text-text-primary'}`}
                 >
                   {icon}
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          <div className="horizontal-scroll pb-2">
-            {weather.hourly.slice(0, 12).map((hour, idx) => {
+                <          <div className="horizontal-scroll no-scrollbar py-2 -mx-2 px-2">
+            {weather.hourly.slice(0, 16).map((hour, idx) => {
               const h = new Date(hour.time).getHours();
               const isNow = idx === 0;
-              const maxPrecip = Math.max(...weather.hourly.slice(0, 12).map(hr => hr.precipitation), 1);
-              const maxWind = Math.max(...weather.hourly.slice(0, 12).map(hr => hr.windSpeed), 1);
-              const rainBarH = Math.max(2, (hour.precipitation / maxPrecip) * 24);
-              const windBarH = Math.max(2, (hour.windSpeed / maxWind) * 24);
+              const maxPrecip = Math.max(...weather.hourly.slice(0, 16).map(hr => hr.precipitation), 1);
+              const maxWind = Math.max(...weather.hourly.slice(0, 16).map(hr => hr.windSpeed), 1);
+              const rainBarH = Math.max(2, (hour.precipitation / maxPrecip) * 20);
+              const windBarH = Math.max(2, (hour.windSpeed / maxWind) * 20);
+              
+              // Dynamic background based on weather
+              const isSun = hour.weatherCode <= 1 && h > 6 && h < 21;
+              const isCloud = hour.weatherCode > 1 && hour.weatherCode < 45;
+              const isRain = hour.weatherCode >= 51;
+              
+              const bgClass = isNow 
+                ? 'bg-accent-orange/10 border-accent-orange/40 shadow-sm' 
+                : isSun 
+                  ? 'bg-orange-50/50 border-orange-100/50' 
+                  : isRain 
+                    ? 'bg-blue-50/50 border-blue-100/50' 
+                    : 'bg-black/[0.03] border-black/5';
+
               const confidenceColor = hour.confidence === "high" ? "bg-accent-green" : hour.confidence === "medium" ? "bg-accent-amber" : "bg-accent-red";
+              
               return (
                 <div
                   key={hour.time}
-                  className={`border border-black/5 rounded-2xl p-3 flex flex-col items-center justify-between min-w-[70px] gap-1 ${isNow ? 'bg-accent-orange/10 border-accent-orange/30' : 'bg-black/[0.02]'}`}
+                  className={`border rounded-2xl p-3 flex flex-col items-center justify-between min-w-[76px] h-[120px] transition-all hover:scale-105 active:scale-95 ${bgClass}`}
                 >
-                  <div className={`text-xs font-semibold ${isNow ? 'text-accent-orange' : 'text-text-secondary'}`}>
+                  <div className={`text-[10px] font-black uppercase tracking-wider ${isNow ? 'text-accent-orange' : 'text-text-muted'}`}>
                     {isNow ? 'Nu' : `${h.toString().padStart(2, '0')}:00`}
                   </div>
-                  <div className="text-2xl my-1">
+                  <div className="text-3xl drop-shadow-sm">
                     {getWeatherEmoji(hour.weatherCode, h > 6 && h < 21)}
                   </div>
+                  
                   {hourlyMetric === "temp" && (
-                    <div className="text-sm font-bold text-text-primary">{hour.temperature}°</div>
+                    <div className="flex flex-col items-center">
+                      <span className="text-sm font-black text-text-primary leading-none">{hour.temperature}°</span>
+                      <span className="text-[9px] font-bold text-text-muted/60 mt-0.5">Lucht</span>
+                    </div>
                   )}
+                  
                   {hourlyMetric === "rain" && (
-                    <div className="flex flex-col items-center gap-0.5">
-                      <div className="w-4 flex items-end justify-center" style={{ height: 24 }}>
-                        <div className="w-full rounded-t bg-accent-cyan/80" style={{ height: rainBarH }} />
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-1.5 rounded-full bg-accent-cyan/20 h-5 relative overflow-hidden">
+                        <div className="absolute bottom-0 w-full bg-accent-cyan rounded-full" style={{ height: `${(hour.precipitation / maxPrecip) * 100}%` }} />
                       </div>
-                      <span className="text-[10px] font-bold text-accent-cyan">{hour.precipitation > 0 ? hour.precipitation.toFixed(1) : '0'}</span>
+                      <span className="text-[10px] font-black text-accent-cyan leading-none">{hour.precipitation > 0 ? hour.precipitation.toFixed(1) : '0'}</span>
                     </div>
                   )}
+                  
                   {hourlyMetric === "wind" && (
-                    <div className="flex flex-col items-center gap-0.5">
-                      <div className="w-4 flex items-end justify-center" style={{ height: 24 }}>
-                        <div className="w-full rounded-t bg-black/20" style={{ height: windBarH }} />
-                      </div>
-                      <span className="text-[10px] font-bold text-text-secondary">{hour.windSpeed}</span>
+                    <div className="flex flex-col items-center gap-1">
+                      <Wind className="w-3 h-3 text-text-muted/60" />
+                      <span className="text-[10px] font-black text-text-primary leading-none">{hour.windSpeed}</span>
                     </div>
                   )}
-                  <div className={`w-1.5 h-1.5 rounded-full ${confidenceColor}`} title={`Vertrouwen: ${hour.confidence}`} />
+
+                  <div className="w-full h-1 bg-black/5 rounded-full mt-1 overflow-hidden">
+                    <div className={`h-full ${confidenceColor}`} style={{ width: hour.confidence === "high" ? "100%" : hour.confidence === "medium" ? "60%" : "30%" }} />
+                  </div>
                 </div>
               );
             })}
           </div>
           
-          <div className="flex items-center gap-4 mt-1 px-1">
-            <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-green" /><span className="text-[10px] whitespace-nowrap text-text-muted">Zeker</span></div>
-            <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-amber" /><span className="text-[10px] whitespace-nowrap text-text-muted">Redelijk</span></div>
-            <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-accent-red" /><span className="text-[10px] whitespace-nowrap text-text-muted">Onzeker</span></div>
+          <div className="flex items-center gap-4 mt-2 px-1">
+            <div className="flex items-center gap-1.5"><div className="w-2 h-0.5 rounded-full bg-accent-green" /><span className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Zeker</span></div>
+            <div className="flex items-center gap-1.5"><div className="w-2 h-0.5 rounded-full bg-accent-amber" /><span className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Redelijk</span></div>
+            <div className="flex items-center gap-1.5"><div className="w-2 h-0.5 rounded-full bg-accent-red" /><span className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Onzeker</span></div>
+          </div>
+        </div>
+      </div>
+xt-muted">Onzeker</span></div>
           </div>
         </div>
       </div>
