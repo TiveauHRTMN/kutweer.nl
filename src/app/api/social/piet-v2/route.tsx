@@ -99,53 +99,48 @@ export async function GET(req: NextRequest) {
       (
         <div style={{
           height: "100%", width: "100%", display: "flex", flexDirection: "column",
-          backgroundColor: theme.bg, color: theme.text, padding: isLandscape ? "40px 60px" : "80px 72px",
+          backgroundColor: theme.bg, color: theme.text, padding: "80px",
           fontFamily: "sans-serif"
         }}>
           {/* Header */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontSize: 32 * scale, fontWeight: 900, color: theme.accent }}>{cityName.toUpperCase()}</span>
-              <span style={{ fontSize: 24 * scale, fontWeight: 800, opacity: 0.8 }}>WEERZONE OFFICIAL</span>
-            </div>
-            <div style={{ fontSize: 40 * scale, fontWeight: 900 }}>WEERZONE</div>
+          <div style={{ display: "flex", width: "100%", justifyContent: "space-between", marginBottom: "60px" }}>
+             <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ fontSize: "40px", fontWeight: "bold", color: theme.accent }}>{cityName.toUpperCase()}</div>
+                <div style={{ fontSize: "30px", opacity: 0.8 }}>WEERZONE OFFICIAL</div>
+             </div>
+             <div style={{ fontSize: "50px", fontWeight: "bold" }}>WEERZONE</div>
           </div>
 
-          {/* Main */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexGrow: 1, justifyContent: "center" }}>
-            <div style={{ fontSize: 250 * scale, marginBottom: -20 * scale }}>{emoji}</div>
-            <div style={{ fontSize: 300 * scale, fontWeight: 900, letterSpacing: -10 * scale }}>{temp}°</div>
-            <div style={{ 
-              fontSize: 80 * scale, fontWeight: 900, background: "black", color: "white", 
-              padding: "10px 40px", transform: "rotate(-1deg)" 
-            }}>{desc}</div>
+          {/* Main Body */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+             <div style={{ fontSize: "200px" }}>{emoji}</div>
+             <div style={{ fontSize: "300px", fontWeight: "bold", marginTop: "20px" }}>{temp}°</div>
+             <div style={{ fontSize: "80px", fontWeight: "bold", marginTop: "40px", padding: "20px 60px", backgroundColor: "black" }}>
+                {desc}
+             </div>
           </div>
 
-          {/* Deal */}
+          {/* Bottom Deal Tip */}
           {deal && (
-            <div style={{ 
-              background: "white", color: "black", padding: 30 * scale, border: "6px solid black",
-              boxShadow: "15px 15px 0px rgba(0,0,0,0.2)", display: "flex", alignItems: "center"
-            }}>
-              <div style={{ fontSize: 70 * scale, marginRight: 30 * scale }}>🛒</div>
-              <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                <span style={{ fontSize: 20 * scale, fontWeight: 800, color: "#666" }}>PIET'S KEUZE — {deal.badge}</span>
-                <span style={{ fontSize: 36 * scale, fontWeight: 900 }}>{deal.title}</span>
-              </div>
-              <div style={{ fontSize: 40 * scale, fontWeight: 900, marginLeft: 20 * scale }}>NL</div>
+            <div style={{ display: "flex", backgroundColor: "white", color: "black", padding: "40px", border: "8px solid black" }}>
+               <div style={{ fontSize: "80px", marginRight: "40px" }}>🛍️</div>
+               <div style={{ display: "flex", flexDirection: "column" }}>
+                  <div style={{ fontSize: "20px", fontWeight: "bold", color: "#666" }}>TIP: {deal.badge}</div>
+                  <div style={{ fontSize: "36px", fontWeight: "bold" }}>{deal.title}</div>
+               </div>
             </div>
           )}
 
           {/* Footer */}
-          <div style={{ display: "flex", justifyContent: "center", marginTop: 40 * scale, opacity: 0.7, fontSize: 24 * scale, fontWeight: 800 }}>
-            DE REST IS RUIS · WWW.WEERZONE.NL
+          <div style={{ marginTop: "60px", textAlign: "center", fontSize: "30px", opacity: 0.7 }}>
+             WWW.WEERZONE.NL · DE REST IS RUIS
           </div>
         </div>
       ),
       { ...SIZE }
     );
   } catch (e: any) {
-    return new Response(`Error: ${e.message}`, { status: 500 });
+    return new Response(`Er ging iets mis: ${e.message}`, { status: 500 });
   }
 }
 
