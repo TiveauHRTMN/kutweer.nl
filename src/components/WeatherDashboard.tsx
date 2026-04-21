@@ -283,6 +283,25 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
             
             <PietInlineTip weather={weather} />
             
+            {/* Vandaag / Morgen mini-summary geïntegreerd in de Intelligence Box */}
+            <div className="flex gap-4 mt-4 pt-4 border-t border-black/5">
+              <div className="flex-1 flex items-center gap-3">
+                <span className="text-xl">{getWeatherEmoji(weather.daily[0].weatherCode)}</span>
+                <div className="flex flex-col">
+                   <span className="text-[9px] font-black text-text-muted uppercase tracking-widest">Vandaag</span>
+                   <span className="text-xs font-black text-text-primary">{weather.daily[0].tempMax}° <span className="text-text-muted/60 font-medium">/ {weather.daily[0].tempMin}°</span></span>
+                </div>
+              </div>
+              <div className="w-px h-6 bg-black/5" />
+              <div className="flex-1 flex items-center gap-3">
+                <span className="text-xl">{getWeatherEmoji(weather.daily[1].weatherCode)}</span>
+                <div className="flex flex-col">
+                   <span className="text-[9px] font-black text-text-muted uppercase tracking-widest">Morgen</span>
+                   <span className="text-xs font-black text-text-primary">{weather.daily[1].tempMax}° <span className="text-text-muted/60 font-medium">/ {weather.daily[1].tempMin}°</span></span>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-4 pt-4 border-t border-black/5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-full bg-accent-orange/20 flex items-center justify-center text-xs">📊</div>
@@ -749,44 +768,6 @@ xt-muted">Onzeker</span></div>
           </div>
         </div>
       )}
-      <div className="animate-fade-in" style={{ animationDelay: "0.4s" }}>
-        <div className="flex justify-between items-end mb-3 px-1">
-          <h3 className="section-title">Vandaag & Morgen</h3>
-        </div>
-        <div className="grid grid-cols-2 gap-4 text-left">
-          <div className="card p-4 border border-accent-orange flex flex-col justify-between h-full">
-            <div className="flex justify-between items-start mb-2">
-              <span className="font-bold text-accent-orange text-[13px] sm:text-base">Vandaag</span>
-              <span className="text-xl shrink-0">{getWeatherEmoji(weather.daily[0].weatherCode)}</span>
-            </div>
-            <div className="flex items-baseline gap-2 mt-auto">
-              <span className="text-3xl font-bold">{weather.daily[0].tempMax}°</span>
-              <span className="text-sm text-text-muted">{weather.daily[0].tempMin}°</span>
-            </div>
-            <div className="text-xs text-text-muted mt-2">
-              {weather.daily[0].precipitationSum > 0 ? `${weather.daily[0].precipitationSum}mm regen verwacht` : 'Geen regen verwacht'}
-              <br />
-              💨 Max {weather.daily[0].windSpeedMax} km/h
-            </div>
-          </div>
-          
-          <div className="card p-4 flex flex-col justify-between h-full">
-            <div className="flex justify-between items-start mb-2">
-              <span className="font-bold text-text-primary text-[13px] sm:text-base">Morgen</span>
-              <span className="text-xl shrink-0">{getWeatherEmoji(weather.daily[1].weatherCode)}</span>
-            </div>
-            <div className="flex items-baseline gap-2 mt-auto">
-              <span className="text-3xl font-bold">{weather.daily[1].tempMax}°</span>
-              <span className="text-sm text-text-muted">{weather.daily[1].tempMin}°</span>
-            </div>
-            <div className="text-xs text-text-muted mt-2">
-              {weather.daily[1].precipitationSum > 0 ? `${weather.daily[1].precipitationSum}mm regen verwacht` : 'Geen regen verwacht'}
-              <br />
-              💨 Max {weather.daily[1].windSpeedMax} km/h
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* ===== AdSense Mid ===== */}
       {AD_SLOT_MID && (
