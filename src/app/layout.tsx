@@ -89,7 +89,9 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "WEERZONE",
   },
-  verification: {},
+  verification: {
+    google: "NwNAWZ0Op3b4pguSizj32bSXRf4gpQRfTzhEPFyu2B8",
+  },
   other: {
     "google-adsense-account": ADSENSE_CLIENT,
   },

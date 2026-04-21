@@ -5,6 +5,7 @@ import { PROVINCE_LABELS, Province, ALL_PLACES, placeSlug } from "@/lib/places-d
 import WeatherDashboard from "@/components/WeatherDashboard";
 import NearbyLinks from "@/components/NearbyLinks";
 import ZakelijkCTA from "@/components/ZakelijkCTA";
+import { getLocationSEOContent, getProvinceVerdict } from "@/app/actions";
 import Link from "next/link";
 
 interface PageProps {
@@ -110,6 +111,19 @@ export default async function MergedSlugPage({ params }: PageProps) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
         <main>
           <WeatherDashboard initialCity={city} />
+
+          {/* AI Programmatic SEO Content */}
+          <section className="max-w-4xl mx-auto px-4 py-8 border-t border-white/5">
+            <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+              <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                <span className="text-accent-cyan">ℹ️</span> Weer in {city.name}: Lokaal karakter
+              </h2>
+              <div className="text-white/70 leading-relaxed italic">
+                {await getLocationSEOContent(city.name, "Nederland")}
+              </div>
+            </div>
+          </section>
+
           <ZakelijkCTA cityName={city.name} />
           <NearbyLinks currentCity={city.name} cities={nearby} />
         </main>
@@ -136,7 +150,10 @@ export default async function MergedSlugPage({ params }: PageProps) {
           </nav>
           <header className="mb-10">
             <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-4">Weer in {label}</h1>
-            <p className="text-white/70 text-lg">Overzicht van het weer in alle {places.length} plaatsen in {label}.</p>
+            <p className="text-white/70 text-lg mb-4">Overzicht van het weer in alle {places.length} plaatsen in {label}.</p>
+            <div className="p-4 rounded-xl bg-accent-cyan/10 border border-accent-cyan/20 text-accent-cyan text-sm italic">
+              &ldquo;{await getProvinceVerdict(label)}&rdquo;
+            </div>
           </header>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {places.map((p) => (

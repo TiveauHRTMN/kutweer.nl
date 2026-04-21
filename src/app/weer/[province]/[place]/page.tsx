@@ -4,6 +4,7 @@ import { ALL_PLACES, findPlace, placeSlug, nearbyPlaces, PROVINCE_LABELS, type P
 import WeatherDashboard from "@/components/WeatherDashboard";
 import NearbyLinks from "@/components/NearbyLinks";
 import ZakelijkCTA from "@/components/ZakelijkCTA";
+import { getLocationSEOContent } from "@/app/actions";
 import Link from "next/link";
 
 interface PageProps {
@@ -177,6 +178,19 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
         </nav>
 
         <WeatherDashboard initialCity={city} />
+
+        {/* AI Programmatic SEO Content */}
+        <section className="max-w-4xl mx-auto px-4 py-8 border-t border-white/5">
+          <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+            <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+              <span className="text-accent-cyan">ℹ️</span> Weer in {place.name}: Lokaal karakter
+            </h2>
+            <div className="text-white/70 leading-relaxed italic">
+              {await getLocationSEOContent(place.name, provLabel, place.character)}
+            </div>
+          </div>
+        </section>
+
         <ZakelijkCTA cityName={place.name} />
         <NearbyLinks currentCity={place.name} cities={nearby} />
       </main>

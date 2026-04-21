@@ -349,3 +349,54 @@ export async function registerUser(args: {
   return { ok: true };
 }
 
+/**
+ * Genereert een unieke weerkundige beschrijving voor een specifieke locatie.
+ * Gebruikt voor Programmatic SEO om 'thin content' te voorkomen.
+ */
+export async function getLocationSEOContent(placeName: string, province: string, character?: string): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return `Bekijk het actuele weer in ${placeName}. Vooruitzichten per uur van KNMI en DWD.`;
+
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+
+    const prompt = `
+      Je bent de SEO-copywriter van WEERZONE. Schrijf een KORTE, unieke tekst (max 2-3 zinnen) over de weerskenmerken van ${placeName} (${province}).
+      ${character ? `Houd rekening met het karakter: ${character}.` : ""}
+      - Gebruik geen clichés als "Welkom in". 
+      - Link het naar de geografische ligging van ${placeName}.
+      - Vertel bijvoorbeeld over de invloed van de zee (indien kust), de wind op de open vlakte, of de hitte in de stad (urban heat island).
+      - De tekst moet informatief en autoritair klinken voor iemand die het weer zoekt.
+    `.trim();
+
+    const result = await model.generateContent(prompt);
+    return result.response.text().trim();
+  } catch (error) {
+    console.error("getLocationSEOContent error:", error);
+    return `Het weer in ${placeName} (${province}) wordt beïnvloed door lokale geografische factoren. We tonen de meest recente data van HARMONIE en ICON.`;
+  }
+}
+/**
+ * Genereert een korte weerkundige samenvatting voor een hele provincie.
+ */
+export async function getProvinceVerdict(provinceLabel: string): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return `Bekijk de weersverwachting voor alle plaatsen in ${provinceLabel}.`;
+
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+
+    const prompt = `
+      Je bent de meteoroloog van WEERZONE. Schrijf een KORTE, krachtige samenvatting (1-2 zinnen) over wat ${provinceLabel} als provincie weerkundig uniek maakt.
+      Denk aan geografische kenmerken: de Zeeuwse stromen, de Limburgse heuvels, de Utrechtse Heuvelrug, of de Groningse open klei.
+      Geen introducties, begin direct met de essentie.
+    `.trim();
+
+    const result = await model.generateContent(prompt);
+    return result.response.text().trim();
+  } catch (error) {
+    return `In ${provinceLabel} vind je diverse microklimaten. Van de kust tot de zandgronden, wij brengen het per uur in kaart.`;
+  }
+}
