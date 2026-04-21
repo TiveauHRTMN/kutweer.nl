@@ -16,6 +16,13 @@ export async function POST(req: Request) {
     const supabase = getSupabase();
     if (!supabase) return NextResponse.json({ ok: true, demo: true });
 
+    const { error } = await supabase
+      .from("subscribers")
+      .upsert(
+        { email: email.toLowerCase().trim(), city: city || "Amsterdam", lat, lon, active: true },
+        { onConflict: "email" }
+      );
+
     if (error) return NextResponse.json({ error: "Opslaan mislukt" }, { status: 500 });
 
     // Paperclip logt de overwinning
