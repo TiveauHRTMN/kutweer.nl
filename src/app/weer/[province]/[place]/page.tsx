@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const provLabel = PROVINCE_LABELS[province as Province] || province;
   const title = `Weer ${place.name} — Actueel weerbericht vandaag en morgen`;
-  const description = `Weer in ${place.name} (${provLabel}). Bekijk de 48-uurs voorspelling op basis van KNMI HARMONIE en DWD ICON. Temperatuur, regen, wind en UV — per uur bijgewerkt.`;
+  const description = `Weer in ${place.name} (${provLabel}). De enige weerdienst die niet gokt. Bekijk de 48-uurs voorspelling snoeihard op basis van KNMI HARMONIE. Temperatuur, regen, wind en UV — per uur bijgewerkt.`;
 
   return {
     title,
@@ -84,7 +84,7 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
 
   // Hermes Disaster SEO: Dynamic Schema Injection
   let schemaTitle = `Weer ${place.name} — WEERZONE`;
-  let schemaDesc = `48 uur nauwkeurig weer voor ${place.name}, ${provLabel}. KNMI HARMONIE + DWD ICON.`;
+  let schemaDesc = `48 uur nauwkeurig weer voor ${place.name}, ${provLabel}. Hardste data via KNMI HARMONIE.`;
   
   if (initialWeather) {
     const { getMisereScore } = await import("@/lib/commentary");

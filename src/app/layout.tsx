@@ -41,11 +41,11 @@ export const metadata: Metadata = {
     apple: "/favicon-icon.png",
   },
   title: {
-    default: "WEERZONE | 48 uur weersverwachting. De rest is ruis.",
+    default: "WEERZONE | 48 uur snoeihard weerbericht. De rest is ruis.",
     template: "%s | WEERZONE",
   },
   description:
-    "WEERZONE.nl — Het eerlijke weerbericht. Vergeet de 14-daagse gok. Komende 48 uur uiterst nauwkeurig dankzij KNMI HARMONIE data op de vierkante meter.",
+    "WeerZone.nl — De weerdienst die niet gokt. Vergeet de 14-daagse onzin. Wij leveren de komende 48 uur puur de hardst mogelijke KNMI HARMONIE data, exact op jouw vierkante meter. De rest is ruis.",
   keywords: [
     "weer", "weer nederland", "weerbericht", "weersverwachting", "weer vandaag",
     "weer morgen", "48 uur weer", "weer komende 48 uur", "regen verwachting",

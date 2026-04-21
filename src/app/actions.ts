@@ -355,7 +355,7 @@ export async function registerUser(args: {
  */
 export async function getLocationSEOContent(placeName: string, province: string, character?: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return `Bekijk het actuele weer in ${placeName}. Vooruitzichten per uur van KNMI en DWD.`;
+  if (!apiKey) return `Bekijk het actuele weer in ${placeName}. Vooruitzichten per uur exclusief van het KNMI.`;
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);

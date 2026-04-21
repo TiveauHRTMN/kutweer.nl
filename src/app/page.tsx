@@ -17,8 +17,7 @@ const jsonLd = {
   "@type": "WebSite",
   name: "WEERZONE",
   url: "https://weerzone.nl",
-  description:
-    "WEERZONE.nl — Een abonnement op een eerlijk weerbericht. Elke ochtend één mail op jouw postcode, 48 uur vooruit, zonder reclame.",
+  description: "WeerZone.nl — De weerdienst die niet gokt. Vergeet de 14-daagse onzin. Wij leveren de komende 48 uur puur de hardst mogelijke KNMI HARMONIE data, exact op jouw vierkante meter. De rest is ruis.",
   potentialAction: {
     "@type": "SearchAction",
     target: "https://weerzone.nl/weer/{city}",

@@ -80,7 +80,7 @@ export default function PrivacyPage() {
           <section className="space-y-2">
             <h2 className="text-lg font-bold text-gray-900">Weer-data</h2>
             <p className="text-sm text-gray-700">
-              Weerdata komt van Open-Meteo (KNMI HARMONIE + DWD ICON modellen).
+              Weerdata komt van Open-Meteo (KNMI HARMONIE model).
               Open-Meteo verwerkt geen persoonsgegevens. De API-calls bevatten
               alleen coördinaten, geen identificerende informatie.
             </p>
