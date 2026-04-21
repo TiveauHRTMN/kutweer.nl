@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import { DUTCH_CITIES } from "@/lib/types";
 import { fetchWeatherData } from "@/lib/weather";
-import { PROVINCE_LABELS, type Province, placesByProvince } from "@/lib/places-data";
+import { PROVINCE_LABELS, type Province, placesByProvince, placeSlug } from "@/lib/places-data";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
@@ -87,7 +87,7 @@ export default async function ProvincePage({ params }: { params: { province: Pro
             {places.sort((a, b) => a.name.localeCompare(b.name)).map((place) => (
               <Link
                 key={place.name}
-                href={`/weer/${params.province}/${place.name.toLowerCase().replace(/['\s]+/g, "-")}`}
+                href={`/weer/${params.province}/${placeSlug(place.name)}`}
                 className="card p-4 hover:scale-[1.02] transition-transform active:scale-[0.98]"
               >
                 <span className="text-sm font-bold text-text-primary line-clamp-1">

@@ -476,6 +476,41 @@ export const CATALOG: CatalogProduct[] = [
     personas: ["reed", "steve"],
     baseScore: 5,
   },
+  // ==== VOORJAAR / TUIN ====
+  {
+    id: "hogedrukreiniger",
+    searchQuery: "hogedrukreiniger karcher",
+    title: "Kärcher Hogedrukreiniger — K2 Compact",
+    subtitle: "Tijd voor de voorjaarsschoonmaak. Je terras knapt er direct van op.",
+    image: "emoji:🚿:#00a3e0",
+    priceHint: "vanaf €89",
+    tags: ["spring", "garden", "dry_spell", "weekend"],
+    personas: ["piet", "steve"],
+    baseScore: 6,
+    badge: "Voorjaarstip",
+  },
+  {
+    id: "tuingereedschap-set",
+    searchQuery: "tuingereedschap set rvs",
+    title: "Tuingereedschap Set (3-delig) — RVS",
+    subtitle: "De grond is weer zacht. Tijd om die borders aan te pakken.",
+    image: "emoji:🌱:#4d7c0f",
+    priceHint: "€19,95",
+    tags: ["spring", "garden", "perfect", "dry_spell"],
+    personas: ["piet"],
+    baseScore: 7,
+  },
+  {
+    id: "automatische-tuinslang",
+    asin: "B0001E3S9E",
+    title: "Gardena Wandslangenbox — 15m",
+    subtitle: "Geen gedoe met knopen. Je tuin water geven was nog nooit zo relaxed.",
+    image: "https://m.media-amazon.com/images/I/71oO-9I-L1L._AC_UL320_.jpg",
+    priceHint: "€94,99",
+    tags: ["hot", "dry_spell", "garden", "summer"],
+    personas: ["reed", "steve"],
+    baseScore: 5,
+  },
 ];
 
 // ============================================================

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import type { WeatherData } from "@/lib/types";
 import { matchProducts, markSeen } from "@/lib/amazon-matcher";
 import { productHref, parseEmojiImage, type CatalogProduct } from "@/lib/amazon-catalog";
-import { getConditionTag, getRecommendedDeals, type AffiliateDeal } from "@/lib/affiliate-orchestrator";
+import { getConditionTag } from "@/lib/affiliate-orchestrator";
 import { useSession } from "@/lib/session-context";
 
 type LiveShape = {
@@ -78,14 +78,16 @@ export default function AffiliateCard({ weather }: Props) {
   const tag = getConditionTag(weather);
   const { tier, loading } = useSession();
 
-  // Get our hyper-dynamic deals
-  const deals = useMemo(() => getRecommendedDeals(weather, "de regio"), [weather]);
+  // Get our hyper-dynamic products via the AI Matcher
+  const { products: deals } = useMemo(() => 
+    matchProducts(weather, 3, new Date(), tier as any), 
+  [weather, tier]);
+  
   const [hero, ...minis] = deals;
 
   // impressions per product
   useEffect(() => {
     if (!hero) return;
-    const ids = deals.map(d => d.id);
     for (const d of deals) {
       if (impressionFired.current.has(d.id)) continue;
       impressionFired.current.add(d.id);
@@ -102,6 +104,8 @@ export default function AffiliateCard({ weather }: Props) {
         }),
       }).catch(() => {});
     }
+    // Mark as seen for rotation
+    markSeen(deals.map(d => d.id));
   }, [deals, hero, sessionId, tag, weather.current.temperature]);
 
   const handleProductClick = (productId: string) => {
@@ -133,7 +137,7 @@ export default function AffiliateCard({ weather }: Props) {
 
       {/* HERO DEAL */}
       <a
-        href={hero.url}
+        href={productHref(hero)}
         target="_blank"
         rel="noopener noreferrer sponsored"
         onClick={() => handleProductClick(hero.id)}
@@ -151,35 +155,44 @@ export default function AffiliateCard({ weather }: Props) {
 
         <div className="flex gap-4 p-4 pt-8">
           <div className="relative w-[110px] h-[110px] rounded-xl overflow-hidden bg-black/[0.02] shrink-0 border border-black/5">
-            <div className="w-full h-full flex items-center justify-center text-4xl bg-gradient-to-br from-gray-50 to-gray-100">
-               {hero.id.includes("rain") ? "☂️" : hero.id.includes("heat") ? "🕶️" : "📦"}
-            </div>
+            <ProductImage src={hero.image} alt={hero.title} size={110} />
             
             {/* Persona Badge */}
-            <div className="absolute -bottom-1 -left-1 bg-black text-white text-[9px] font-black px-2 py-1 rounded-tr-lg border-t border-r border-white/20">
-              {hero.persona}'S TIP
-            </div>
+            {hero.personas.length > 0 && (
+              <div className="absolute -bottom-1 -left-1 bg-black text-white text-[9px] font-black px-2 py-1 rounded-tr-lg border-t border-r border-white/20">
+                {hero.personas[0].toUpperCase()}'S TIP
+              </div>
+            )}
             
-            {/* Discount Stamp */}
-            <div className="absolute -top-1 -right-1 bg-red-600 text-white text-[11px] font-black w-10 h-10 flex items-center justify-center rounded-bl-xl shadow-xl rotate-6 group-hover:rotate-0 transition-transform">
-              -{hero.discount}%
-            </div>
+            {/* Price Hint Badge if no discount */}
+            {!hero.oldPrice && (
+              <div className="absolute -top-1 -right-1 bg-accent-orange text-white text-[11px] font-black px-2 py-1 rounded-bl-xl shadow-xl">
+                {hero.priceHint}
+              </div>
+            )}
+            
+            {/* Discount Stamp if oldPrice exists */}
+            {hero.oldPrice && (
+              <div className="absolute -top-1 -right-1 bg-red-600 text-white text-[11px] font-black w-10 h-10 flex items-center justify-center rounded-bl-xl shadow-xl rotate-6 group-hover:rotate-0 transition-transform">
+                SALE
+              </div>
+            )}
           </div>
 
           <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
             <div>
               <p className="text-[14px] font-black text-text-primary leading-tight line-clamp-2 uppercase tracking-tighter">
-                {hero.name}
+                {hero.title}
               </p>
               <p className="text-[11px] font-medium text-text-secondary italic mt-1.5 leading-tight">
-                "{hero.reason}"
+                "{hero.subtitle}"
               </p>
             </div>
             
             <div className="mt-3 flex items-end justify-between">
               <div className="flex flex-col">
-                <span className="text-[10px] text-text-muted line-through font-bold mb-[-4px]">€{hero.originalPrice.toFixed(2)}</span>
-                <span className="text-[20px] font-black text-red-600 tracking-tighter">€{hero.price.toFixed(2)}</span>
+                {hero.oldPrice && <span className="text-[10px] text-text-muted line-through font-bold mb-[-4px]">{hero.oldPrice}</span>}
+                <span className="text-[20px] font-black text-red-600 tracking-tighter">{hero.priceHint}</span>
               </div>
               <div className="flex flex-col items-end">
                  <span className="text-[8px] font-black text-emerald-600 uppercase mb-1">Morgen in huis</span>
@@ -199,7 +212,7 @@ export default function AffiliateCard({ weather }: Props) {
              </div>
              <span className="text-[8px] font-bold text-text-muted">+{Math.floor(Math.random() * 50) + 20} mensen kochten dit vandaag</span>
            </div>
-           <span className="text-[8px] font-black text-orange-600">BEPERKTE VOORRAAD</span>
+           <span className="text-[8px] font-black text-orange-600 uppercase">Beperkte Voorraad</span>
         </div>
       </a>
 
@@ -209,18 +222,18 @@ export default function AffiliateCard({ weather }: Props) {
           {minis.slice(0, 2).map((deal) => (
             <a
               key={deal.id}
-              href={deal.url}
+              href={productHref(deal)}
               target="_blank"
               rel="noopener noreferrer sponsored"
               onClick={() => handleProductClick(deal.id)}
               className="group flex flex-col p-3 rounded-2xl bg-white border border-black/5 hover:border-orange-500/30 transition-all hover:shadow-lg"
             >
               <div className="flex justify-between items-start mb-2">
-                <span className="bg-red-100 text-red-600 text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm">-{deal.discount}%</span>
-                <span className="text-[10px] font-black text-text-primary">€{deal.price.toFixed(2)}</span>
+                <span className="bg-red-100 text-red-600 text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm">DEAL</span>
+                <span className="text-[10px] font-black text-text-primary">{deal.priceHint}</span>
               </div>
               <p className="text-[10px] font-bold text-text-secondary leading-tight line-clamp-2 uppercase">
-                {deal.name}
+                {deal.title}
               </p>
               <div className="mt-2 text-[8px] font-black text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity">KOOP NU →</div>
             </a>
