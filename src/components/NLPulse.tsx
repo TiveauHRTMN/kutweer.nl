@@ -8,9 +8,15 @@ export default function NLPulse() {
   const [stations, setStations] = useState<Array<{ name: string; temp: number }>>([]);
 
   useEffect(() => {
-    getStationsWeather().then(setStations);
+    getStationsWeather().then(data => {
+      const sorted = [...data].sort((a, b) => a.name.localeCompare(b.name));
+      setStations(sorted);
+    });
     const interval = setInterval(() => {
-      getStationsWeather().then(setStations);
+      getStationsWeather().then(data => {
+        const sorted = [...data].sort((a, b) => a.name.localeCompare(b.name));
+        setStations(sorted);
+      });
     }, 10 * 60000); // 10 min refresh
     return () => clearInterval(interval);
   }, []);
