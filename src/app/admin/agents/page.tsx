@@ -39,9 +39,8 @@ export default async function AgentCockpit() {
     .order("created_at", { ascending: false })
     .limit(10);
 
-  const totalLeads = totalLeadsCount || 0;
   const arpuEstimate = 7.50; // Average across Piet, Reed and Steve tiers
-  const pipeValue = totalLeads * arpuEstimate;
+  const pipeValue = (totalLeads || 0) * arpuEstimate;
 
   const agents = [
     { name: "Hermes", role: "SEO & Spider Architect", status: "Active", color: "text-purple-400", bg: "bg-purple-400/10", mood: "Methodical", kpi: "Indexed Pages" },
