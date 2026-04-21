@@ -1,5 +1,5 @@
 import { WeatherData } from "@/lib/types";
-import { amazonUrl, amazonProductUrl, bookingUrl, thuisbezorgdUrl } from "@/lib/affiliates";
+import { amazonUrl, amazonProductUrl, bookingUrl, thuisbezorgdUrl, temuUrl } from "@/lib/affiliates";
 import { trackEvent as postHogTrack } from "@/lib/analytics";
 
 // ============================================================
@@ -153,6 +153,7 @@ export function getRecommendedDeals(weather: WeatherData, city: string): Affilia
     return {
       ...deal,
       score,
+      url: deal.url || (deal.platform === 'TEMU' ? temuUrl(deal.name) : amazonUrl(deal.name)),
       // Inject variables into reasoning
       reason: deal.reason.replace("[Plaats]", city)
     };
