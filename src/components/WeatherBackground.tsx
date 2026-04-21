@@ -96,6 +96,7 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
       {/* Sky gradient */}
       <motion.div
         className="fixed inset-0 z-0"
+        style={{ background: `linear-gradient(170deg, ${theme.bg1} 0%, ${theme.bg2} 100%)` }}
         animate={{ background: `linear-gradient(170deg, ${theme.bg1} 0%, ${theme.bg2} 100%)` }}
         transition={{ duration: 2, ease: "easeInOut" }}
       />

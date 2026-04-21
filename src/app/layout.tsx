@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter, Outfit, Manrope } from "next/font/google";
 import CookieBanner from "@/components/CookieBanner";
 import InstallPrompt from "@/components/InstallPrompt";
@@ -127,14 +128,14 @@ export default async function RootLayout({
     <html lang="nl" className={`${inter.variable} ${outfit.variable} ${manrope.variable} antialiased`}>
       <head>
         <meta name="theme-color" content="#4a9ee8" />
-        {/* AdSense loader — native script in head, voorkomt data-nscript warning */}
-        <script
-          async
+      </head>
+      <body className="min-h-screen">
+        <Script
+          id="adsense-loader"
+          strategy="lazyOnload"
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
           crossOrigin="anonymous"
         />
-      </head>
-      <body className="min-h-screen">
         <Providers>
           <Suspense fallback={null}>
             <PostHogPageView />

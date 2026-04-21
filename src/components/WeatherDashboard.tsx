@@ -37,7 +37,7 @@ import Footer from "./Footer";
 import dynamic from "next/dynamic";
 
 // Lazy-load zware visuele componenten — scheelt initial JS
-const WeatherBackground = dynamic(() => import("./WeatherBackground"), { ssr: false });
+const WeatherBackground = dynamic(() => import("./WeatherBackground"));
 const RainRadar = dynamic(() => import("./RainRadar"), {
   ssr: false,
   loading: () => <div className="card p-4 text-center text-xs text-text-secondary">Radar laadt…</div>,
