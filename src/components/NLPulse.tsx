@@ -17,7 +17,7 @@ export default function NLPulse() {
   if (stations.length === 0) return null;
 
   return (
-    <div className="overflow-hidden whitespace-nowrap py-1.5 bg-[#4a9ee8]/90 backdrop-blur-sm relative border-b border-white/10" style={{ isolation: "isolate" }}>
+    <div className="overflow-hidden whitespace-nowrap py-1 bg-black/10 backdrop-blur-md relative border-b border-white/5" style={{ isolation: "isolate" }}>
       <div className="flex gap-10 text-[9px] font-black uppercase tracking-widest text-white px-4 animate-marquee hover:pause-marquee">
         {/* Render stations twice for seamless loop */}
         {[...stations, ...stations].map((s, i) => (
