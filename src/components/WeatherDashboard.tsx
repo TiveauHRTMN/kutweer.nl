@@ -236,7 +236,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-orange"></span>
                 </span>
                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent-orange">
-                  Live Fidelity Data
+                  Actueel
                 </span>
               </div>
               <h1 className="text-xl sm:text-2xl font-black text-text-primary tracking-tight">
