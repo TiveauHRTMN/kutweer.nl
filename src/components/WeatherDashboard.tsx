@@ -212,7 +212,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
       </div>
 
       {/* NL Pulse — Dynamische ticker moved above weather core */}
-      <div className="min-h-[36px] overflow-hidden rounded-xl animate-fade-in" style={{ animationDelay: "0.13s" }}>
+      <div className="animate-fade-in" style={{ animationDelay: "0.13s" }}>
         <NLPulse />
       </div>
 
