@@ -78,15 +78,15 @@ function blendHourly(
   harmonieData: RawModelHourly | null,
   fallbackData: { time: string[]; temperature_2m: number[]; apparent_temperature: number[]; weather_code: number[]; precipitation: number[]; wind_speed_10m: number[]; cape?: number[] }
 ): { hourly: HourlyForecast[]; agreement: number } {
-  const times = fallbackData.time;
+  const times = fallbackData?.time ?? [];
 
   const hourly: HourlyForecast[] = times.map((time, i) => {
     // Gebruik Harmonie data indien beschikbaar, anders fallback op generic
-    const temperature = Math.round(harmonieData?.temperature_2m?.[i] ?? fallbackData.temperature_2m[i]);
-    const apparentTemperature = Math.round(harmonieData?.apparent_temperature?.[i] ?? fallbackData.apparent_temperature[i]);
-    const precipitation = harmonieData?.precipitation?.[i] ?? fallbackData.precipitation[i];
-    const weatherCode = harmonieData?.weather_code?.[i] ?? fallbackData.weather_code[i];
-    const windSpeed = Math.round(harmonieData?.wind_speed_10m?.[i] ?? fallbackData.wind_speed_10m[i]);
+    const temperature = Math.round(harmonieData?.temperature_2m?.[i] ?? fallbackData?.temperature_2m?.[i] ?? 0);
+    const apparentTemperature = Math.round(harmonieData?.apparent_temperature?.[i] ?? fallbackData?.apparent_temperature?.[i] ?? 0);
+    const precipitation = harmonieData?.precipitation?.[i] ?? fallbackData?.precipitation?.[i] ?? 0;
+    const weatherCode = harmonieData?.weather_code?.[i] ?? fallbackData?.weather_code?.[i] ?? 0;
+    const windSpeed = Math.round(harmonieData?.wind_speed_10m?.[i] ?? fallbackData?.wind_speed_10m?.[i] ?? 0);
 
     return {
       time,
@@ -95,7 +95,7 @@ function blendHourly(
       weatherCode,
       precipitation,
       windSpeed,
-      cape: Math.round(fallbackData.cape?.[i] ?? 0),
+      cape: Math.round(fallbackData?.cape?.[i] ?? 0),
       confidence: "high"
     };
   });
@@ -125,8 +125,13 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
     ]);
 
     const data = genericRes;
-    if (!data || !data.hourly || !data.daily) {
-      console.error("fetchWeatherData: Missing critical data fields", { hasData: !!data, hasHourly: !!data?.hourly, hasDaily: !!data?.daily });
+    if (!data || !data.hourly || !data.daily || !data.current) {
+      console.error("fetchWeatherData: Missing critical data fields", { 
+        hasData: !!data, 
+        hasHourly: !!data?.hourly, 
+        hasDaily: !!data?.daily,
+        hasCurrent: !!data?.current
+      });
       return null as any;
     }
     
