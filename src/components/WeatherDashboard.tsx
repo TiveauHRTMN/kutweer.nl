@@ -211,6 +211,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         <NavBar activeCity={city.name} isLocating={isLocating} />
       </div>
 
+      {/* NL Pulse — Dynamische ticker moved above weather core */}
+      <div className="min-h-[36px] overflow-hidden rounded-xl animate-fade-in" style={{ animationDelay: "0.13s" }}>
+        <NLPulse />
+      </div>
+
       {/* ===== CORE WEATHER SECTION — Hero & Cards grouped as one unit ===== */}
       <div className="flex flex-col gap-3 animate-fade-in" style={{ animationDelay: "0.15s" }}>
       <div className="card overflow-hidden relative animate-fade-in group shadow-2xl border-white/40" style={{ animationDelay: "0.2s" }}>
@@ -396,10 +401,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
 
       </div>
 
-      {/* NL Pulse — Dynamische ticker moved below weather core */}
-      <div className="min-h-[36px] overflow-hidden rounded-xl animate-fade-in" style={{ animationDelay: "0.3s" }}>
-        <NLPulse />
-      </div>
 
       {/* Email Promo — Moved below weather core */}
       <div className="animate-fade-in" style={{ animationDelay: "0.35s" }}>
