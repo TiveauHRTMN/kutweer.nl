@@ -19,7 +19,9 @@ import {
   getBbqScore,
   getStrandScore,
   getHooikoortsScore,
-  getHardloopScore,
+  getTerrasScore,
+  getWasScore,
+  getAutoWasScore,
 } from "@/lib/commentary";
 import { getWeatherEmoji, getWeatherDescription, getWindBeaufort } from "@/lib/weather";
 import { getTemperatureComparison } from "@/lib/climate";
