@@ -209,7 +209,8 @@ export async function GET(req: Request) {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const promptRes = await model.generateContent(`
           Geef een KORTE Engelse prompt voor een virale weerfoto in Nederland.
-          Locatie: De Bilt/Nederland. Weer: ${weather.current.temperature}°C, code ${weather.current.weatherCode}.
+          Gebaseerd op dit weerbericht: "${xData.caption}"
+          Locatie: De Bilt/Nederland.
           Stijl: National Geographic, dramatic lighting, 8k, awe-inspiring. 
           Geen tekst in beeld.
         `);

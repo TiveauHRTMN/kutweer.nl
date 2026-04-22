@@ -223,7 +223,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         <div className="absolute top-0 left-0 w-full h-40 sm:h-48 overflow-hidden z-[1]">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/90 z-10" />
           <img 
-            src={`https://visuals.weerzone.nl/gen?prompt=${encodeURIComponent(`A beautiful realistic landscape in ${city.name} during ${getWeatherDescription(weather.current.weatherCode).toLowerCase()} weather, professional photography, cinematic lighting, 8k`)}&v=2.1&seed=${new Date().getUTCHours()}`}
+            src={`https://visuals.weerzone.nl/gen?prompt=${encodeURIComponent(`Realistic professional photography matching this weather report: "${weather.aiVerdict || getWeatherDescription(weather.current.weatherCode)}", location ${city.name}, cinematic lighting, 8k`)}&v=2.1&seed=${new Date().getUTCHours()}`}
             alt="Local weather visual"
             className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[10s] ease-linear"
           />
