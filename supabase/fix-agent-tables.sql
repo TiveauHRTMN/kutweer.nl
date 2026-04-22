@@ -24,3 +24,13 @@ grant all on public.system_state to postgres;
 grant all on public.system_state to service_role;
 grant all on public.agent_activity to postgres;
 grant all on public.agent_activity to service_role;
+
+-- Amazon Products Cache
+create table if not exists public.amazon_products_cache (
+  asin text primary key,
+  data jsonb not null,
+  refreshed_at timestamptz default now()
+);
+
+grant all on public.amazon_products_cache to postgres;
+grant all on public.amazon_products_cache to service_role;

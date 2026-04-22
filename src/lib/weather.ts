@@ -125,17 +125,21 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
     ]);
 
     const data = genericRes;
-    if (!data) return null as any;
+    if (!data || !data.hourly || !data.daily) {
+      console.error("fetchWeatherData: Missing critical data fields", { hasData: !!data, hasHourly: !!data?.hourly, hasDaily: !!data?.daily });
+      return null as any;
+    }
+    
     const { hourly, agreement } = blendHourly(harmonieData, data.hourly);
 
     // 5. SYNC CURRENT WITH HARMONIE (Belangrijk voor consistentie!)
     // Omdat de 'current' API van Open-Meteo het Harmonie model niet direct ondersteunt,
     // halen we de huidige waarden uit de eerste slot van de Harmonie data.
-    let currentTemp = Math.round(data.current.temperature_2m);
-    let currentFeels = Math.round(data.current.apparent_temperature);
-    let currentPrecip = data.current.precipitation;
-    let currentCode = data.current.weather_code;
-    let currentWind = Math.round(data.current.wind_speed_10m);
+    let currentTemp = Math.round(data.current.temperature_2m ?? 0);
+    let currentFeels = Math.round(data.current.apparent_temperature ?? 0);
+    let currentPrecip = data.current.precipitation ?? 0;
+    let currentCode = data.current.weather_code ?? 0;
+    let currentWind = Math.round(data.current.wind_speed_10m ?? 0);
 
     if (harmonieData && hourly.length > 0) {
       // Gebruik de eerste uurwaarde van Harmonie voor de 'Nu' status
@@ -182,14 +186,14 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
       },
       minutely,
       hourly,
-      daily: data.daily.time.map((date: string, i: number) => ({
+      daily: (data.daily?.time ?? []).map((date: string, i: number) => ({
         date,
-        tempMax: Math.round(data.daily.temperature_2m_max[i]),
-        tempMin: Math.round(data.daily.temperature_2m_min[i]),
-        weatherCode: data.daily.weather_code[i],
-        precipitationSum: data.daily.precipitation_sum[i],
-        windSpeedMax: Math.round(data.daily.wind_speed_10m_max[i]),
-        sunHours: Number((data.daily.sunshine_duration[i] / 3600).toFixed(1)),
+        tempMax: Math.round(data.daily.temperature_2m_max?.[i] ?? 0),
+        tempMin: Math.round(data.daily.temperature_2m_min?.[i] ?? 0),
+        weatherCode: data.daily.weather_code?.[i] ?? 0,
+        precipitationSum: data.daily.precipitation_sum?.[i] ?? 0,
+        windSpeedMax: Math.round(data.daily.wind_speed_10m_max?.[i] ?? 0),
+        sunHours: Number(((data.daily.sunshine_duration?.[i] ?? 0) / 3600).toFixed(1)),
       })),
       sunrise: data.daily?.sunrise?.[0],
       sunset: data.daily?.sunset?.[0],
