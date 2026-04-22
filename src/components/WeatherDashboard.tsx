@@ -239,11 +239,8 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
                 {city.name}
               </h1>
             </div>
-            <div className="flex flex-col items-end">
-              <div className="px-3 py-1 bg-black text-white text-[9px] font-black uppercase tracking-widest border border-white/20 rounded-md shadow-lg mb-1">
-                OFFICIAL
-              </div>
-              <span className="text-[10px] font-bold text-text-muted uppercase tracking-tighter">
+            <div className="flex flex-col items-end opacity-40">
+              <span className="text-[9px] font-bold text-text-muted uppercase tracking-tighter">
                 KNMI HARMONIE v3
               </span>
             </div>
@@ -267,134 +264,102 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
             </div>
           </div>
           
-          {/* Intelligence Briefing Box — Piet's Verdict */}
-          <div id="piet" className="mt-10 bg-white/40 backdrop-blur-md border border-white/60 rounded-2xl p-5 shadow-sm relative overflow-hidden group/piet hover:shadow-md transition-all scroll-mt-24">
-            <div className="absolute top-0 right-0 px-3 py-1 bg-accent-orange/10 border-b border-l border-accent-orange/20 rounded-bl-xl">
-               <span className="text-[9px] font-black text-accent-orange uppercase tracking-widest">Piet's Verdict</span>
-            </div>
-            
-            <p className="font-bold text-lg sm:text-xl text-text-primary leading-[1.4] relative z-10 mb-4 max-w-[90%]">
+          {/* Intelligence Briefing — Integrated directly in Hero card */}
+          <div className="mt-8 pt-6 border-t border-black/5">
+            <p className="font-bold text-lg sm:text-xl text-text-primary leading-[1.4] mb-4">
               {weather.aiVerdict || getMainCommentary(weather)}
             </p>
-            
             <PietInlineTip weather={weather} />
-            
-            {/* Vandaag / Morgen mini-summary moved to separate cards below hero */}
-
-            <div className="mt-4 pt-4 border-t border-black/5 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-accent-orange/20 flex items-center justify-center text-xs">📊</div>
-                <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
-                  Dataverificatie: {new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}
-                </span>
-              </div>
-              <div className="flex items-center gap-1 opacity-60">
-                 <div className="w-1.5 h-1.5 rounded-full bg-accent-green" />
-                 <span className="text-[9px] font-black uppercase">Active</span>
-              </div>
-            </div>
           </div>
           
         </div>
       </div>
 
       
-      {/* ===== 2. Daily & Detail Cluster — De kern van de voorspelling ===== */}
-      <div className="animate-fade-in space-y-3 sm:space-y-4" style={{ animationDelay: "0.22s" }}>
+      {/* ===== 2. Daily & Detail Cluster — Unified Grid ===== */}
+      <div className="animate-fade-in grid grid-cols-2 gap-3 sm:gap-4" style={{ animationDelay: "0.22s" }}>
         {/* Vandaag & Morgen Cards */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <div className="card p-4 flex flex-col justify-between min-h-[100px] border-white/40">
-            <div className="flex justify-between items-start">
-              <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Vandaag</span>
-              <span className="text-2xl">{getWeatherEmoji(weather.daily[0].weatherCode)}</span>
-            </div>
-            <div className="mt-2">
-              <div className="text-2xl font-black text-text-primary">
-                {weather.daily[0].tempMax}° <span className="text-sm text-text-muted font-bold">/ {weather.daily[0].tempMin}°</span>
-              </div>
-              <div className="text-[10px] font-bold text-text-secondary uppercase mt-1">
-                {getWeatherDescription(weather.daily[0].weatherCode)}
-              </div>
-            </div>
+        <div className="card p-4 flex flex-col justify-between min-h-[100px] border-white/40">
+          <div className="flex justify-between items-start">
+            <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Vandaag</span>
+            <span className="text-2xl">{getWeatherEmoji(weather.daily[0].weatherCode)}</span>
           </div>
-
-          <div className="card p-4 flex flex-col justify-between min-h-[100px] border-white/40">
-            <div className="flex justify-between items-start">
-              <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Morgen</span>
-              <span className="text-2xl">{getWeatherEmoji(weather.daily[1].weatherCode)}</span>
+          <div className="mt-2">
+            <div className="text-2xl font-black text-text-primary">
+              {weather.daily[0].tempMax}° <span className="text-sm text-text-muted font-bold">/ {weather.daily[0].tempMin}°</span>
             </div>
-            <div className="mt-2">
-              <div className="text-2xl font-black text-text-primary">
-                {weather.daily[1].tempMax}° <span className="text-sm text-text-muted font-bold">/ {weather.daily[1].tempMin}°</span>
-              </div>
-              <div className="text-[10px] font-bold text-text-secondary uppercase mt-1">
-                {getWeatherDescription(weather.daily[1].weatherCode)}
-              </div>
+            <div className="text-[10px] font-bold text-text-secondary uppercase mt-1">
+              {getWeatherDescription(weather.daily[0].weatherCode)}
             </div>
           </div>
         </div>
 
-        {/* 4 Key Metrics Grid */}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          {/* Gevoelstemperatuur */}
-          <div className="card p-4 border-white/30">
-            <div className="text-[10px] font-black text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <span className="text-base">🌡️</span> Gevoelstemperatuur
+        <div className="card p-4 flex flex-col justify-between min-h-[100px] border-white/40">
+          <div className="flex justify-between items-start">
+            <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Morgen</span>
+            <span className="text-2xl">{getWeatherEmoji(weather.daily[1].weatherCode)}</span>
+          </div>
+          <div className="mt-2">
+            <div className="text-2xl font-black text-text-primary">
+              {weather.daily[1].tempMax}° <span className="text-sm text-text-muted font-bold">/ {weather.daily[1].tempMin}°</span>
             </div>
-            <div className="text-3xl font-black text-text-primary">
-              {weather.current.feelsLike}°
-            </div>
-            <div className="text-[11px] font-bold text-text-secondary mt-1">
-              {weather.current.feelsLike < weather.current.temperature ? "Voelt kouder dan het is" : 
-               weather.current.feelsLike > weather.current.temperature ? "Voelt warmer dan het is" : 
-               "Precies wat het is"}
+            <div className="text-[10px] font-bold text-text-secondary uppercase mt-1">
+              {getWeatherDescription(weather.daily[1].weatherCode)}
             </div>
           </div>
-          
-          {/* Luchtvochtigheid */}
-          <div className="card p-4 border-white/30">
-            <div className="text-[10px] font-black text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <span className="text-base">💧</span> Luchtvochtigheid
-            </div>
-            <div className="text-3xl font-black text-text-primary">
-              {weather.current.humidity}%
-            </div>
-            <div className="text-[11px] font-bold text-text-secondary mt-1">
-              {weather.current.humidity > 80 ? "Klam en benauwd" : 
-               weather.current.humidity < 40 ? "Lekker droog" : 
-               "Normaal Nederlands vochtgehalte"}
-            </div>
+        </div>
+
+        {/* Gevoelstemperatuur */}
+        <div className="card p-4 border-white/30">
+          <div className="text-[10px] font-black text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            🌡️ Gevoel
           </div>
-          
-          {/* Wind */}
-          <div className="card p-4 border-white/30">
-            <div className="text-[10px] font-black text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <span className="text-base">🌬️</span> Wind Bft {getWindBeaufort(weather.current.windSpeed).scale}
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-black text-text-primary">{weather.current.windSpeed}</span>
-              <span className="text-xs font-bold text-text-muted">km/h</span>
-            </div>
-            <div className="text-[11px] font-bold text-text-secondary mt-1">
-              {weather.current.windDirection} • Stoten {weather.current.windGusts} km/h
-            </div>
-            <div className="text-[11px] font-medium text-text-muted mt-1 italic leading-tight">
-              {getWindComment(weather.current.windSpeed, weather.current.windGusts)}
-            </div>
+          <div className="text-2xl font-black text-text-primary">
+            {weather.current.feelsLike}°
           </div>
-          
-          {/* Neerslag */}
-          <div className="card p-4 border-white/30">
-            <div className="text-[10px] font-black text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <span className="text-base">🌧️</span> Neerslag
-            </div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-3xl font-black text-text-primary">{weather.current.precipitation}</span>
-              <span className="text-xs font-bold text-text-muted">mm</span>
-            </div>
-            <div className="text-[11px] font-bold text-text-secondary mt-1">
-              {weather.current.precipitation > 0 ? "Gewoon nat 💧" : "Droog 👍"}
-            </div>
+          <div className="text-[10px] font-bold text-text-secondary mt-1 uppercase">
+            {weather.current.feelsLike < weather.current.temperature ? "Kouder" : "Warmer"}
+          </div>
+        </div>
+        
+        {/* Luchtvochtigheid */}
+        <div className="card p-4 border-white/30">
+          <div className="text-[10px] font-black text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            💧 Vocht
+          </div>
+          <div className="text-2xl font-black text-text-primary">
+            {weather.current.humidity}%
+          </div>
+          <div className="text-[10px] font-bold text-text-secondary mt-1 uppercase">
+            {weather.current.humidity > 80 ? "Klam" : "Normaal"}
+          </div>
+        </div>
+        
+        {/* Wind */}
+        <div className="card p-4 border-white/30">
+          <div className="text-[10px] font-black text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            🌬️ Wind
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-black text-text-primary">{weather.current.windSpeed}</span>
+            <span className="text-[10px] font-bold text-text-muted">KM/H</span>
+          </div>
+          <div className="text-[10px] font-bold text-text-secondary mt-1 uppercase">
+            {weather.current.windDirection} · Bft {getWindBeaufort(weather.current.windSpeed).scale}
+          </div>
+        </div>
+        
+        {/* Neerslag */}
+        <div className="card p-4 border-white/30">
+          <div className="text-[10px] font-black text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            🌧️ Regen
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-black text-text-primary">{weather.current.precipitation}</span>
+            <span className="text-[10px] font-bold text-text-muted">MM</span>
+          </div>
+          <div className="text-[10px] font-bold text-text-secondary mt-1 uppercase">
+            {weather.current.precipitation > 0 ? "Nat" : "Droog"}
           </div>
         </div>
       </div>

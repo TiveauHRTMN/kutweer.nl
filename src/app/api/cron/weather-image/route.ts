@@ -179,7 +179,7 @@ function buildAffiliateBlock(tag: ConditionTag, weatherData: Record<string, unkn
     </div>`;
 }
 
-function buildEmailHtml(city: string, data: Record<string, unknown>, affiliateBlock: string): string {
+async function buildEmailHtml(city: string, data: Record<string, unknown>, affiliateBlock: string): Promise<string> {
   const current = data.current as Record<string, number>;
   const hourly = data.hourly as Record<string, (number | string)[]>;
   const daily = data.daily as Record<string, (number | string)[]>;
@@ -248,7 +248,7 @@ function buildEmailHtml(city: string, data: Record<string, unknown>, affiliateBl
   if (apiKey) {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const aiRes = await model.generateContent(`
         Geef een KORTE Engelse prompt voor een AI image generator (Stable Diffusion/Flux stijl).
         Het moet het weer in ${city} uitbeelden.
@@ -532,7 +532,7 @@ export async function GET(req: Request) {
       emailSessionId
     ).catch(() => {});
 
-    const html = buildEmailHtml(city, weatherData, affiliateBlock);
+    const html = await buildEmailHtml(city, weatherData, affiliateBlock);
 
     for (const sub of group.subscribers) {
       try {

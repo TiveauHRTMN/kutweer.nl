@@ -62,7 +62,7 @@ export async function GET(req: Request) {
       
       if (genAI) {
         try {
-          const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+          const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
           const result = await model.generateContent(`${AGENT_PROMPT}\n\nSituatie: ${trigger} in ${user.city}. Details: ${details}.`);
           aiText = result.response.text()?.trim() || aiText;
         } catch (e) {

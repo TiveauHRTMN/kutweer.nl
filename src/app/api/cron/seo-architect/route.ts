@@ -37,7 +37,7 @@ export async function GET(req: Request) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (apiKey) {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const prompt = `
         Je bent Hermes, de SEO Architect van WEERZONE.nl. 
         Je inspecteert nu de provincie ${provLabel}. 
