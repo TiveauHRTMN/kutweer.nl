@@ -220,12 +220,12 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
       <div className="flex flex-col gap-3 animate-fade-in" style={{ animationDelay: "0.15s" }}>
       <div className="card overflow-hidden relative animate-fade-in group shadow-2xl border-white/40" style={{ animationDelay: "0.2s" }}>
         {/* Nano Banana 2.1 — Dynamic Hero Visual Overlay */}
-        <div className="absolute top-0 left-0 w-full h-40 sm:h-48 overflow-hidden z-[1]">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/90 z-10" />
+        <div className="absolute top-0 left-0 w-full h-40 sm:h-48 overflow-hidden z-[1] bg-slate-200">
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-white/90 z-10" />
           <img 
-            src={`https://visuals.weerzone.nl/gen?prompt=${encodeURIComponent((weather.aiVerdict || getWeatherDescription(weather.current.weatherCode)).slice(0, 120))}&city=${encodeURIComponent(city.name)}&v=2.1&seed=${new Date().getUTCHours()}`}
+            src={`https://visuals.weerzone.nl/gen?prompt=${encodeURIComponent(`${getWeatherDescription(weather.current.weatherCode)} in ${city.name}, high-resolution realistic photography, 8k`)}&city=${encodeURIComponent(city.name)}&v=2.1&seed=${new Date().getUTCHours()}`}
             alt="Local weather visual"
-            className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-[10s] ease-linear"
+            className="w-full h-full object-cover transition-transform duration-[15s] ease-linear group-hover:scale-110"
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
         </div>
@@ -291,9 +291,9 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
           <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-transparent to-white pointer-events-none" />
           <div className="flex justify-between items-start relative z-10">
             <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Vandaag</span>
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/60 shadow-lg bg-white/20 backdrop-blur-sm group-hover/mini:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/60 shadow-lg bg-slate-100 group-hover/mini:scale-110 transition-transform">
               <img 
-                src={`https://visuals.weerzone.nl/gen?prompt=${encodeURIComponent(getWeatherDescription(weather.daily[0].weatherCode) + " cinematic closeup")}&v=2.1&seed=today`} 
+                src={`https://visuals.weerzone.nl/gen?prompt=${encodeURIComponent(getWeatherDescription(weather.daily[0].weatherCode))}&v=2.1&seed=today`} 
                 alt="Today" 
                 className="w-full h-full object-cover"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
@@ -314,9 +314,9 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
           <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-transparent to-white pointer-events-none" />
           <div className="flex justify-between items-start relative z-10">
             <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Morgen</span>
-            <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/60 shadow-lg bg-white/20 backdrop-blur-sm group-hover/mini:scale-110 transition-transform">
+            <div className="w-10 h-10 rounded-xl overflow-hidden border border-white/60 shadow-lg bg-slate-100 group-hover/mini:scale-110 transition-transform">
               <img 
-                src={`https://visuals.weerzone.nl/gen?prompt=${encodeURIComponent(getWeatherDescription(weather.daily[1].weatherCode) + " cinematic closeup")}&v=2.1&seed=tomorrow`} 
+                src={`https://visuals.weerzone.nl/gen?prompt=${encodeURIComponent(getWeatherDescription(weather.daily[1].weatherCode))}&v=2.1&seed=tomorrow`} 
                 alt="Tomorrow" 
                 className="w-full h-full object-cover"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
