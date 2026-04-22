@@ -345,13 +345,24 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
             { id: "was", label: "Wasje Buiten", score: getWasScore(weather), emoji: "🧺" },
             { id: "autowas", label: "Auto Wassen", score: getAutoWasScore(weather), emoji: "🚗" },
           ].map((item) => (
-            <div key={item.id} className="flex flex-col gap-2 group/score">
-              <div className="w-full aspect-square rounded-2xl overflow-hidden border border-white/60 bg-white/5 backdrop-blur-sm transition-transform group-hover/score:scale-105 shadow-lg flex items-center justify-center text-5xl">
+            <div key={item.id} className="relative aspect-square rounded-2xl border border-white/60 bg-white/5 backdrop-blur-md transition-all hover:scale-105 shadow-xl flex flex-col items-center justify-center group/score">
+              {/* Score Badge — Top Right */}
+              <div className={`absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-black border border-white/20 shadow-inner ${
+                item.score >= 7 ? 'bg-accent-green/20 text-accent-green' : 
+                item.score >= 5 ? 'bg-accent-amber/20 text-accent-amber' : 
+                'bg-accent-red/20 text-accent-red'
+              }`}>
+                {item.score}
+              </div>
+              
+              {/* Emoji — Centered */}
+              <div className="text-4xl mb-1 drop-shadow-lg">
                 {item.emoji}
               </div>
-              <div className="flex justify-between items-center px-0.5">
-                <span className="text-[9px] font-black text-text-muted uppercase truncate mr-1">{item.label}</span>
-                <span className={`text-sm font-black ${item.score >= 7 ? 'text-accent-green' : item.score >= 5 ? 'text-accent-amber' : 'text-accent-red'}`}>{item.score}</span>
+              
+              {/* Label — Bottom */}
+              <div className="absolute bottom-2 left-0 w-full text-center">
+                <span className="text-[8px] font-black text-text-muted uppercase tracking-wider opacity-80">{item.label}</span>
               </div>
             </div>
           ))}
