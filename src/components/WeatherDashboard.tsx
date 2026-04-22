@@ -212,9 +212,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
       {/* NL Pulse — Perfectly aligned with boxes */}
       <NLPulse />
 
-      {/* ===== CORE WEATHER SECTION — Hero & Clusters grouped with consistent spacing ===== */}
+      {/* ===== MAIN DASHBOARD CONTENT — Unified Gap-6 Spacing ===== */}
       <div className="flex flex-col gap-6 animate-fade-in" style={{ animationDelay: "0.15s" }}>
-      <div className="card overflow-hidden relative animate-fade-in group shadow-2xl border-white/40" style={{ animationDelay: "0.2s" }}>
+        
+        {/* HERO SECTION */}
+        <div className="card overflow-hidden relative group shadow-2xl border-white/40">
         {/* Nano Banana 2.1 — Dynamic Hero Visual Overlay */}
         <div className="absolute top-0 left-0 w-full h-40 sm:h-48 overflow-hidden z-[1] bg-slate-400">
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-white/90 z-10" />
@@ -281,7 +283,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
 
       
       {/* ===== 1. FORECAST CLUSTER — Today & Tomorrow ===== */}
-      <div className="card p-4 sm:p-6 animate-fade-in border-white/40 shadow-xl overflow-hidden relative" style={{ animationDelay: "0.22s" }}>
+      <div className="card p-4 sm:p-6 border-white/40 shadow-xl overflow-hidden relative">
         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
         <div className="flex justify-between items-center mb-6 relative z-10 px-1">
           <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Korte Termijn</h3>
@@ -330,7 +332,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
       </div>
 
       {/* ===== 2. LIFESTYLE CLUSTER — Scores (BBQ, Hooikoorts, etc.) ===== */}
-      <div className="card p-4 sm:p-6 animate-fade-in border-white/40 shadow-xl" style={{ animationDelay: "0.25s" }}>
+      <div className="card p-4 sm:p-6 border-white/40 shadow-xl">
         <div className="flex justify-between items-center mb-6 px-1">
           <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Activiteiten & Scores</h3>
           <div className="flex items-center gap-1.5">
@@ -364,7 +366,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
       </div>
 
       {/* ===== 3. ATMOSPHERE CLUSTER — Metrics (UV, Wind, Regen, etc.) ===== */}
-      <div className="card p-4 sm:p-6 animate-fade-in border-white/40 shadow-xl" style={{ animationDelay: "0.28s" }}>
+      <div className="card p-4 sm:p-6 border-white/40 shadow-xl">
         <div className="flex justify-between items-center mb-6 px-1">
           <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">Atmosferische Details</h3>
           <span className="text-[9px] font-bold text-text-muted opacity-40 uppercase">Real-time KNMI Sensors</span>

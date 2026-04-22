@@ -15,14 +15,14 @@ export async function GET(req: NextRequest) {
     const prompt = searchParams.get("prompt") || "Weather";
     const city = searchParams.get("city") || "";
     
-    // Determine color scheme based on prompt keywords
-    let bgGradient = "linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)"; // Sky Blue (Standard)
+    // Determine color scheme based on prompt keywords with HIGH VIBRANCY
+    let bgGradient = "linear-gradient(135deg, #0284c7 0%, #2563eb 100%)"; // Deep Ocean Blue
     if (prompt.toLowerCase().includes("regen") || prompt.toLowerCase().includes("rain")) {
-      bgGradient = "linear-gradient(135deg, #475569 0%, #1e293b 100%)"; // Storm Gray
+      bgGradient = "linear-gradient(135deg, #1e293b 0%, #020617 100%)"; // Midnight Storm
     } else if (prompt.toLowerCase().includes("zon") || prompt.toLowerCase().includes("sun")) {
-      bgGradient = "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"; // Sun Orange
+      bgGradient = "linear-gradient(135deg, #ea580c 0%, #9a3412 100%)"; // Sunset Burn
     } else if (prompt.toLowerCase().includes("mist") || prompt.toLowerCase().includes("fog")) {
-      bgGradient = "linear-gradient(135deg, #94a3b8 0%, #64748b 100%)"; // Fog Gray
+      bgGradient = "linear-gradient(135deg, #475569 0%, #1e293b 100%)"; // Dark Fog
     }
 
     return new ImageResponse(
