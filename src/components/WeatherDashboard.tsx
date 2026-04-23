@@ -29,28 +29,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import AffiliateCard from "./AffiliateCard";
 import AmazonStickyBar from "./AmazonStickyBar";
 import PietInlineTip from "./PietInlineTip";
-import { temuUrl } from "@/lib/affiliates";
 import EmailSubscribe from "./EmailSubscribe";
 import NavBar from "./NavBar";
-import AdSlot from "./AdSlot";
-import NLPulse from "./NLPulse";
-import LeadRescue from "./LeadRescue";
 import Footer from "./Footer";
 import dynamic from "next/dynamic";
 
-// Lazy-load zware visuele componenten
 const WeatherBackground = dynamic(() => import("./WeatherBackground"));
 const RainRadar = dynamic(() => import("./RainRadar"), {
   ssr: false,
   loading: () => <div className="card p-4 text-center text-xs text-text-secondary">Radar laadt…</div>,
 });
-
-interface DashboardProps {
-  initialCity?: City;
-  initialWeather?: WeatherData;
-  beforeFooter?: React.ReactNode;
-  titleOverride?: string;
-}
 
 function getSavedCity(): City | null {
   if (typeof window === "undefined") return null;
@@ -66,7 +54,7 @@ function getSavedCity(): City | null {
   return null;
 }
 
-export default function WeatherDashboard({ initialCity, initialWeather, beforeFooter }: DashboardProps = {}) {
+export default function WeatherDashboard({ initialCity, initialWeather, beforeFooter }: { initialCity?: City; initialWeather?: WeatherData; beforeFooter?: React.ReactNode } = {}) {
   const [city, setCity] = useState<City>(initialCity || getSavedCity() || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0]);
   const [weather, setWeather] = useState<WeatherData | null>(initialWeather || null);
   const [loading, setLoading] = useState(!initialWeather);
@@ -86,9 +74,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         (fresh) => {
           if (!cancelled) setWeather(fresh);
         },
-        (neural) => {
-          if (!cancelled) setWeather((prev) => (prev ? { ...prev, neuralData: neural } : prev));
-        }
+        () => {}
       );
       if (!cancelled) {
         setWeather(data);
@@ -116,7 +102,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         const { latitude: lat, longitude: lon } = pos.coords;
         const provisional: City = { name: "Jouw locatie", lat, lon };
         setCity(provisional);
-        localStorage.setItem("wz_city", JSON.stringify(provisional));
         setIsLocating(false);
         reverseGeocode(lat, lon).then((geoCity) => {
           setCity(geoCity);
@@ -156,7 +141,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         </header>
 
         <NavBar activeCity={city.name} isLocating={isLocating} />
-        <NLPulse />
 
         <div className="flex flex-col gap-6 animate-fade-in">
           <div className="card overflow-hidden relative group shadow-2xl border-white/40">
@@ -195,11 +179,12 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
                 <p className="font-bold text-lg sm:text-xl text-text-primary leading-[1.4]">
                   {weather.summaryVerdict || getMainCommentary(weather)}
                 </p>
+                <PietInlineTip weather={weather} />
               </div>
             </div>
           </div>
 
-          <div className="card p-4 sm:p-6 border-white/40 shadow-xl overflow-hidden">
+          <div className="card p-4 sm:p-6 border-white/40 shadow-xl">
             <h3 className="text-[11px] font-black text-text-primary uppercase tracking-[0.2em] mb-6 px-1">Korte Termijn</h3>
             <div className="grid grid-cols-2 gap-4">
               {[0, 1].map((i) => (
@@ -255,6 +240,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
 
           <PremiumGate>
             <div className="card p-4">
+              {weather.minutely && weather.minutely.length > 0 && (
+                <div className="mb-6 pb-6 border-b border-black/5">
+                  <RainRadar data={weather.minutely} />
+                </div>
+              )}
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider">Komende Uren</h3>
                 <div className="flex items-center gap-1 bg-black/5 rounded-full p-0.5">
@@ -263,7 +253,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
                   ))}
                 </div>
               </div>
-              <div className="horizontal-scroll no-scrollbar py-2 flex gap-3 overflow-x-auto snap-x snap-mandatory">
+              <div className="horizontal-scroll no-scrollbar py-2 -mx-2 px-2 flex gap-3 overflow-x-auto snap-x snap-mandatory">
                 {weather.hourly.slice(0, 16).map((hour, idx) => {
                   const h = new Date(hour.time).getHours();
                   return (

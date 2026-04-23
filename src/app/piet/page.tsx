@@ -45,15 +45,20 @@ export default function PietPage() {
         <div className="max-w-2xl mx-auto">
           <header className="flex flex-col items-center mb-10 pt-2">
             <Link href="/" className="hover:opacity-90 transition-opacity">
-              <LogoFull height={80} className="drop-shadow-lg" />
+              <img 
+                src="/logo-white.png" 
+                alt="WeerZone" 
+                style={{ height: '60px', width: 'auto' }} 
+                className="drop-shadow-md"
+              />
             </Link>
           </header>
 
-          <header className="mb-8">
-            <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-3">
+          <header className="mb-10">
+            <h1 className="text-5xl sm:text-6xl font-black leading-tight mb-4 tracking-tighter">
               Piet
             </h1>
-            <p className="text-white/80 text-base leading-relaxed">
+            <p className="text-white/90 text-lg leading-relaxed font-medium">
               De uitgebreide 48-uurs weer-update voor jouw locatie. Geen gokwerk, maar pure data op de vierkante meter.
             </p>
           </header>
