@@ -33,32 +33,28 @@ export default function NeuralInsights({ weather, tier }: NeuralInsightsProps) {
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
-          <BrainCircuit className="w-4 h-4 text-accent-cyan animate-pulse" />
-          <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white/90">Intelligence Engine</span>
-        </div>
-        <div className="flex items-center gap-1.5 bg-accent-cyan/20 px-2 py-0.5 rounded-full border border-accent-cyan/30">
-          <div className="w-1.5 h-1.5 rounded-full bg-accent-cyan animate-ping" />
-          <span className="text-[9px] font-black text-accent-cyan uppercase">Live Pulse</span>
+          <Activity className="w-4 h-4 text-accent-cyan" />
+          <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white/90">Analyse</span>
         </div>
       </div>
 
-      {/* 1. PRIMARY: NOWCAST MONITOR */}
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="homecard"
-      >
-        <div className="homecard-top mb-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Activity className="w-3 h-3 text-accent-cyan" />
-              <h4 className="homecard-kicker !mb-0">Micro-Precision Nowcast</h4>
+      <div className="grid grid-cols-1 gap-4">
+        {/* 1. PRIMARY: NOWCAST MONITOR */}
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="homecard"
+        >
+          <div className="homecard-top mb-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="homecard-kicker !mb-0">Neerslag Radar</h4>
+              </div>
+              <p className="text-xl font-black text-white leading-tight">{metNetNowcast || "Data wordt geladen..."}</p>
             </div>
-            <p className="text-xl font-black text-white leading-tight">{metNetNowcast || "Synchronisatie loopt..."}</p>
+            <Zap className="w-6 h-6 text-accent-cyan homecard-sun" />
           </div>
-          <Zap className="w-6 h-6 text-accent-cyan homecard-sun" />
-        </div>
-        
+
         {/* Real-time Frequency Viz */}
         <div className="homecard-strip !border-none !mt-0 h-12 items-end px-2">
           {[...Array(30)].map((_, i) => (

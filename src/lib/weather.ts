@@ -226,7 +226,7 @@ export async function getNeuralInsights(lat: number, lon: number, weather: Weath
   if (!apiKey) return undefined;
 
   // TEST MODE: Forceer Reed-gate event voor demo
-  const isSimulation = true; 
+  const isSimulation = false; 
   if (isSimulation) {
     return {
       metNetNowcast: "Zware ontlading nadert vanuit het zuidwesten. Impact binnen 12 minuten.",
