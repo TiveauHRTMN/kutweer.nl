@@ -69,20 +69,10 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-4">
-             <span className="text-[10px] font-black uppercase tracking-widest text-white/30">
-               © {currentYear} WEERZONE.nl — EEN TIVEAU PRODUCTION
-             </span>
-          </div>
-          <div className="flex items-center gap-6">
-             <span className="text-[9px] font-bold text-white/20 uppercase">
-               Powered by Tiveau & Google
-             </span>
-             <span className="text-[9px] font-bold text-white/20 uppercase">
-               Uptime: 99.9%
-             </span>
-          </div>
+        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-center items-center gap-6 text-center">
+           <span className="text-[10px] font-black uppercase tracking-widest text-white/30">
+             WEERZONE - Powered by Google & Tiveau
+           </span>
         </div>
       </div>
     </footer>
