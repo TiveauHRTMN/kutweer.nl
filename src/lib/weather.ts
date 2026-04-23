@@ -123,7 +123,7 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
         if (!r.ok) return null;
         return r.json();
       }),
-      fetchModel(OPEN_METEO_BASE, lat, lon, { models: "knmi_seamless" }).catch(() => null),
+      fetchModel(OPEN_METEO_BASE, lat, lon, { models: "knmi_harmonie" }).catch(() => null),
     ]);
 
     const data = genericRes;
