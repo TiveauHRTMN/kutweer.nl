@@ -251,3 +251,14 @@ export function getTerrasScore(w: WeatherData): number {
     return Math.max(1, Math.min(10, Math.round(score)));
 }
 
+export function getWandelScore(w: WeatherData): number {
+    // Wandelen: droog, niet te koud, niet te veel wind
+    let score = 10;
+    const t = w.current.temperature;
+    if (t < 5) score -= 3;
+    if (t > 28) score -= 3;
+    if (w.current.precipitation > 0) score -= 5;
+    if (w.current.windSpeed > 40) score -= 4;
+    return Math.max(1, Math.min(10, Math.round(score)));
+}
+

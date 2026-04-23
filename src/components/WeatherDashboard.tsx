@@ -20,6 +20,7 @@ import {
   getStrandScore,
   getHooikoortsScore,
   getTerrasScore,
+  getWandelScore,
 } from "@/lib/commentary";
 import { getWeatherEmoji, getWeatherDescription, getWindBeaufort } from "@/lib/weather";
 import { getTemperatureComparison } from "@/lib/climate";
@@ -330,6 +331,8 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
             { id: "pollen", label: "Hooikoorts", score: getHooikoortsScore(weather), emoji: "🤧" },
             { id: "strand", label: "Strand", score: getStrandScore(weather), emoji: "🏖️" },
             { id: "terras", label: "Terrasje", score: getTerrasScore(weather), emoji: "🍻" },
+            { id: "fietsen", label: "Fietsen", score: getFietsScore(weather).score, emoji: "🚲" },
+            { id: "wandelen", label: "Wandelen", score: getWandelScore(weather), emoji: "🥾" },
           ].map((item) => (
             <div key={item.id} className="relative aspect-square rounded-2xl border border-white/60 bg-white/5 backdrop-blur-md transition-all hover:scale-105 shadow-xl flex flex-col items-center justify-center group/score">
               {/* Score Badge — Top Right */}
