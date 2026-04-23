@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users, BrainCircuit } from "lucide-react";
+import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users } from "lucide-react";
 import { LogoFull } from "./Logo";
 import PersonaBadge from "./PersonaBadge";
 import PremiumGate from "./PremiumGate";
@@ -294,24 +294,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
               {weather.aiVerdict || getMainCommentary(weather)}
             </p>
 
-            {/* Intelligence Engine Teaser */}
-            <div className="mb-6 p-4 rounded-2xl bg-white/40 border border-white/60 shadow-inner">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <BrainCircuit className="w-3.5 h-3.5 text-accent-cyan animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Intelligence Pulse</span>
-                </div>
-                <span className="text-[9px] font-bold text-accent-cyan uppercase tracking-tighter">1.0km resolution active</span>
-              </div>
-              <p className="text-xs font-bold text-text-primary mb-3">
-                {weather.neuralData?.metNetNowcast || "Synchroniseren met neurale sensoren..."}
-              </p>
-              <div className="flex gap-1 h-4 items-end">
-                {[...Array(15)].map((_, i) => (
-                  <div key={i} className="flex-1 bg-accent-cyan/20 rounded-t-[1px]" style={{ height: `${Math.random() * 100}%` }} />
-                ))}
-              </div>
-            </div>
 
             <PietInlineTip weather={weather} />
           </div>
@@ -319,7 +301,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         </div>
       </div>
 
-      <NeuralInsights weather={weather} tier={tier} />
 
       
       {/* ===== 1. FORECAST CLUSTER — Today & Tomorrow ===== */}

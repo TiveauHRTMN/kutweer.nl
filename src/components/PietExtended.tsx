@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { MapPin, RefreshCw, Activity } from "lucide-react";
+import { MapPin, RefreshCw, Activity, BrainCircuit } from "lucide-react";
 import { loadWeather } from "@/lib/weatherCache";
 import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData, distanceBetween } from "@/lib/types";
 import { getWeatherEmoji, getWeatherDescription } from "@/lib/weather";
@@ -134,20 +134,46 @@ const locate = () => {
       <NeuralInsights weather={weather} tier={tier} />
 
       {/* 2. PIET'S ANALYTICAL VERDICT */}
-      <div className="homecard !p-8 border-l-4 border-l-accent-cyan">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-accent-cyan/20 flex items-center justify-center text-2xl shadow-inner">
+      <div className="homecard !p-8 border-l-4 border-l-accent-cyan overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-4 opacity-10">
+           <BrainCircuit className="w-24 h-24" />
+        </div>
+        <div className="flex items-center gap-4 mb-8 relative z-10">
+          <div className="w-14 h-14 rounded-2xl bg-accent-cyan/20 flex items-center justify-center text-3xl shadow-inner border border-white/10">
             💬
           </div>
           <div>
-            <h2 className="homecard-kicker !text-accent-cyan">Meteorologische Analyse</h2>
-            <p className="text-sm font-black text-white/50 uppercase tracking-tighter">
-              Gegenereerd op {new Date().toLocaleTimeString("nl-NL", { hour: '2-digit', minute: '2-digit' })}
+            <h2 className="homecard-kicker !text-accent-cyan !text-xs !mb-1">Intelligence Analyse</h2>
+            <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">
+              Snoeiharde realiteit — {new Date().toLocaleTimeString("nl-NL", { hour: '2-digit', minute: '2-digit' })}
             </p>
           </div>
         </div>
-        <div className="text-xl sm:text-2xl font-bold text-white leading-relaxed tracking-tight">
-          {narrative}
+        <div className="text-lg sm:text-xl font-medium text-white/90 leading-relaxed space-y-4 relative z-10">
+          {narrative.split('\n\n').map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </div>
+      </div>
+
+      {/* 2.5 PIET'S UUR-TOT-UUR FOCUS */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between px-1">
+          <div className="flex items-center gap-2">
+            <Activity className="w-3 h-3 text-accent-cyan" />
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Focus: De komende uren</h3>
+          </div>
+          <span className="text-[9px] font-bold text-accent-cyan/60 uppercase">1km Grid active</span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {weather.hourly.slice(0, 4).map((h, i) => (
+            <div key={i} className="homecard !p-4 bg-white/5 border-white/5 flex flex-col items-center">
+              <span className="text-[10px] font-black text-white/40 mb-2">{new Date(h.time).getHours()}:00</span>
+              <span className="text-2xl mb-2">{getWeatherEmoji(h.weatherCode, true)}</span>
+              <span className="text-lg font-black text-white">{h.temperature}°</span>
+              <span className="text-[9px] font-bold text-accent-cyan mt-1">{h.precipitation > 0 ? `${h.precipitation}mm` : "Droog"}</span>
+            </div>
+          ))}
         </div>
       </div>
 

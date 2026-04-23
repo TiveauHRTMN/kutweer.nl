@@ -65,41 +65,26 @@ export async function getAiVerdict(weather: WeatherData): Promise<string> {
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({
         model: "gemini-3-flash-preview",
-        safetySettings: [
-          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-        ]
+        systemInstruction: `
+Je bent de meteoroloog van de WEERZONE Intelligence Engine. Jouw stijl is Johan Derksen / Vandaag Inside / Roddelpraat. 
+Je bent vlijmscherp, nuchter en hebt een snoeiharde mening over het weer en die prutsers van de 14-daagse verwachtingen.
+
+PROTOCOLLEN:
+- TOON: Direct, Hollands, brutaal, met humor. Geen blad voor de mond.
+- GEEN SCHELDWOORDEN: Je bent scherp, maar blijft beschaafd. 
+- EXPERTISE: Je gebruikt 1km-precisie. Brand de concurrentie af die alleen maar gokt.
+- VERBODEN: Noem GEEN modelnamen (MetNet, Google). Noem GEEN "Oant moarn". 
+- LENGTE: Wees ultra-uitgebreid. Minimaal 150 woorden. Neem de tijd om de dag echt door te nemen voor de regio van de gebruiker.
+`.trim(),
       });
+
+      const next12h = weather.hourly.slice(0, 12).map(h => 
+        `${new Date(h.time).getHours()}:00 (${h.temperature}°, ${h.precipitation}mm regen, wind ${h.windSpeed}km/u)`
+      ).join(", ");
 
       const tomorrow = weather.daily[1];
       const prompt = `
-Je bent de meteoroloog van de WEERZONE Intelligence Engine. Stijl: Roddelpraat / VI / Powned — direct, vlijmscherp, eerlijk, met een snoeiharde mening over het weer. Geen gelul, geen vage '14-daagse' gokkerij.
-
-BELANGRIJK:
-- Noem GEEN modelnamen (Google, MetNet, Harmonie) tegen de gebruiker. 
-- Breng het als de enige echte waarheid.
-- Toon: Scherp, Hollands, nuchter.
-
-LENGTE (HARD):
-- Exact 4 zinnen.
-- Samen 50-75 woorden totaal.
-
-STRUCTUUR:
-1. NU: temp + lucht + gevoelstemp, met mening.
-2. STRAKS: wat gebeurt er vandaag nog op de vierkante meter.
-3. VANAVOND / VANNACHT: de harde cijfers voor de late uren.
-4. MORGEN + AFSLUITER: één pittige dreun als heads-up en een eigenzinnige Hollandse groet.
-
-STIJL:
-- Schrijf alsof je op een terras zit met een biertje. Direct, scherp, met humor.
-- Mening hebben mag. Voorbeelden: "Prima hoor.", "Niks om over te zeuren.", "Tegenvaller.", "Daar zit je dan.", "Gewoon doen.", "Jas aan en bek dicht."
-- GEEN: 'analyse', 'verwachting', 'significant', 'conform', 'momenteel', 'gedurende', 'tikkeltje'.
-- GEEN scheldwoorden, wel attitude.
-
-VOORBEELD (qua toon/lengte — NIET kopiëren):
-"Elf graden met een grijze lucht, voelt buiten als een schamele 9. De rest van de middag blijft het droog, dus geen excuus om op de bank te hangen. Vanavond klaart het iets op, richting de nacht zakt het naar 6 graden. Morgen tikken we de 14 aan, maar die motregen verpest de hele sfeer weer."
+Schrijf een ultra-uitgebreide weersanalyse gebaseerd op deze data:
 
 FEITEN NU:
 Lucht: ${getWeatherDescription(weather.current.weatherCode)}
@@ -107,35 +92,27 @@ Temp: ${weather.current.temperature}° (voelt als ${weather.current.feelsLike}°
 Wind: ${weather.current.windSpeed} km/h
 Regen nu: ${weather.current.precipitation} mm
 
-VERLOOP VANDAAG (komende 6u):
-Regen: ${weather.hourly.slice(0, 6).reduce((acc, h) => acc + h.precipitation, 0).toFixed(1)} mm
-Max wind komende 6u: ${Math.max(...weather.hourly.slice(0, 6).map(h => h.windSpeed || 0))} km/h
-
-VANAVOND/VANNACHT (uren 6-18):
-Regen: ${weather.hourly.slice(6, 18).reduce((acc, h) => acc + h.precipitation, 0).toFixed(1)} mm
-Min temp vannacht: ${Math.min(...weather.hourly.slice(6, 18).map(h => h.temperature))}°
+VERLOOP KOMENDE 12 UUR (uur voor uur):
+${next12h}
 
 MORGEN (${tomorrow.date}):
 Max: ${tomorrow.tempMax}°, Min: ${tomorrow.tempMin}°
-Lucht: ${getWeatherDescription(tomorrow.weatherCode)}
 Regen: ${tomorrow.precipitationSum} mm
 
-Geef nu het weerbericht (4 zinnen: nu → rest vandaag → vanavond/vannacht → morgen, 50-75 woorden, Roddelpraat-toon).
+GEEF NU JE ANALYSE (Roddelpraat-toon, vlijmscherp, minimaal 150 woorden):
         `.trim();
 
       const result = await model.generateContent({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 2000, temperature: 0.8, topP: 0.95 },
+        generationConfig: { maxOutputTokens: 2000, temperature: 0.85, topP: 0.95 },
       });
 
       const text = result.response.text().trim().replace(/^"|"$/g, '');
       const wordCount = text.split(/\s+/).filter(Boolean).length;
-      // Accept: 40-90 woorden EN eindigt op . ! of ? (niet afgekapt)
-      const endsCleanly = /[.!?]["')\]]?\s*$/.test(text);
-      if (text && wordCount >= 40 && wordCount <= 90 && endsCleanly) {
+      
+      if (text && wordCount > 100) {
         return text;
       }
-      console.warn(`AI output ongeldig (${wordCount}w, endsCleanly=${endsCleanly}), retry...`);
       attempts++;
     } catch (e) {
       attempts++;
@@ -143,7 +120,6 @@ Geef nu het weerbericht (4 zinnen: nu → rest vandaag → vanavond/vannacht →
       await new Promise(r => setTimeout(r, 500));
     }
   }
-  // Alle pogingen mislukt — deterministische fallback (géén halve output tonen)
   return getMainCommentary(weather);
 }
 

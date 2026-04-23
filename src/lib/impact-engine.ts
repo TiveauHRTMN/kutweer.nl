@@ -1,5 +1,5 @@
 /**
- * WeerZone Impact Engine: De "Antigravity" Core.
+ * WeerZone Impact Engine: De "MetNet-3" Core.
  * Integreert Google Maps Platform (Solar, Air Quality) met Weerdata
  * om hyper-lokale fysieke impact te voorspellen.
  */

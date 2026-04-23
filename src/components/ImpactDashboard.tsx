@@ -81,7 +81,7 @@ export default function ImpactDashboard({ data }: { data: ImpactData }) {
               <div className="text-[10px] text-white/40 font-bold uppercase mb-1">Model</div>
               <div className="text-sm font-bold flex items-center gap-1.5">
                 <ThermometerSun size={14} className="text-amber-400" />
-                Antigravity
+                MetNet-3
               </div>
             </div>
           </div>
