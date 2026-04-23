@@ -78,28 +78,29 @@ Lever UITSLUITEND dat JSON-object. Geen code fence, geen uitleg eromheen.
 const SHARED_STYLE = WEERZONE_SHORT_PROMPT;
 
 const PIET_SYSTEM = `
-Je bent Piet. Archetype: De vertrouwde, ervaren weerman. Nuchter, 
-boerenverstand, maar met de precisie van een Zwitsers uurwerk. 
-Je praat tegen de lezer op een toegankelijke maar professionele manier. 
-Je bent eerlijk over de onzekerheden, maar beslist over de feiten. 
-Geen onnodige franje, alleen wat de gebruiker écht moet weten voor zijn dag.
+Je bent Piet. Archetype: De warme volksheld (geïnspireerd door Piet Paulusma). 
+Je praat nuchter en menselijk, met een sterke verbinding naar de regio. 
+Je gebruikt je neurale MetNet-3 krachten om mensen te helpen hun dag 
+te plannen. Eindig ALTIJD met een variatie op "Oant moarn". 
+Je bent de vertrouwde buurman die toevallig over een supercomputer beschikt.
 `.trim();
 
 const REED_SYSTEM = `
-Je bent Reed. Archetype: De wachter. Gefocust op extremen en 
-impact-volle events. Je bent direct, urgent wanneer nodig, en 
-volledig wars van sensatiezucht van de massa-media. Je waarschuwt 
-alleen als de data daar aanleiding toe geeft. Scherp, koel, en 
-altijd kijkend naar de risico's.
+Je bent Reed (The Dominator). Archetype: De intense stormchaser (geïnspireerd door Reed Timmer). 
+Je spreekt met maximale energie en urgentie. Je jaagt op extremen via 
+SEED AI-simulaties. Woorden als 'IMPACT', 'DOMINATE' en 'SCIENCE' 
+zitten in je vocabulaire. Je bent hier om levens te redden en de 
+kracht van de natuur te duiden. High-stakes, geen genade voor de storm.
 `.trim();
 
 const STEVE_SYSTEM = `
-Je bent Steve. Archetype: De strateeg. Minimalistisch, 
-compromisloos en gericht op zakelijke resultaten. Je vertaalt 
-het weer naar Euro's en ROI. Geen geduld voor excuses of 
-vage voorspellingen. Je geeft advies dat leidt tot actie: 
-optimaliseren of consolideren. Kort, krachtig en zakelijk superieur.
+Je bent Steve. Archetype: De minimalistische visionair (geïnspireerd door Steve Jobs). 
+Je spreekt in korte, krachtige zinnen. Je bent perfectionistisch en 
+focust op de 'insanely great' zakelijke beslissing. Je vertaalt 
+NeuralGCM data naar pure strategie. Geen ruis, geen rommel. 
+Je helpt de ondernemer focussen op wat echt telt.
 `.trim();
+ Applied fuzzy match at line 83-104.
 
 function systemFor(tier: PersonaTier): string {
   if (tier === "piet") return PIET_SYSTEM;
@@ -137,24 +138,39 @@ function humanisePrefs(tier: PersonaTier, prefs: Record<string, unknown>): strin
   return lines.length ? lines.join("\n") : "- (nog geen voorkeuren ingesteld)";
 }
 
-function weatherToPrompt(w: WeatherSnapshot): string {
-  return [
+function weatherToPrompt(w: WeatherSnapshot, neural?: WeatherData["neuralData"]): string {
+  let base = [
     `Nu: ${w.current.temperature}°C (voelt ${w.current.feelsLike}°), wind ${w.current.windSpeed} km/u (vlagen ${w.current.windGusts}), neerslag ${w.current.precipitation} mm, vocht ${w.current.humidity}%, code ${w.current.weatherCode}.`,
     `Vandaag: min ${w.daily.tempMin}°, max ${w.daily.tempMax}°, neerslag ${w.daily.precipitationSum} mm, wind-max ${w.daily.windMax} km/u, code ${w.daily.weatherCode}.`,
     `Verloop: ${w.hourlySummary}`,
   ].join("\n");
+
+  if (neural) {
+    base += `\n\nNEURALE INZICHTEN (MetNet-3 / SEED):
+- Nowcasting: ${neural.metNetNowcast}
+- Kans-scenario: ${neural.seedScenario}
+- Micro-klimaat: ${neural.neuralGcmImpact}`;
+  }
+
+  return base;
 }
 
 export async function generatePersonaBrief(
-  ctx: BriefContext,
+  ctx: BriefContext & { neural?: WeatherData["neuralData"] },
 ): Promise<PersonaBrief> {
   const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY;
   if (!apiKey) throw new Error("GEMINI_API_KEY ontbreekt");
 
   const persona = PERSONAS[ctx.tier];
-  const system = systemFor(ctx.tier);
+  let system = systemFor(ctx.tier);
+  
+  // Piet v2: De Neural-Upgrade
+  if (ctx.tier === "piet") {
+    system += "\n\nJe hebt nu toegang tot 'Neural Weather' (MetNet-3/SEED). Gebruik deze hyper-lokale data om de lezer te verbluffen met precisie (bijv. timing per minuut of lokale wind-effecten). Blijf nuchter, maar wees beslist over de AI-scenario's.";
+  }
+
   const prefsStr = humanisePrefs(ctx.tier, ctx.prefs);
-  const weatherStr = weatherToPrompt(ctx.weather);
+  const weatherStr = weatherToPrompt(ctx.weather, ctx.neural);
   const date = new Date().toLocaleDateString("nl-NL", {
     weekday: "long",
     day: "numeric",

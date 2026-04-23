@@ -35,13 +35,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const supabase = getSupabase();
     if (supabase) {
       const { data: discovered } = await supabase
-        .from("discovered_places")
-        .select("name, province")
+        .from("location_metadata")
+        .select("place_name, province")
         .limit(1000);
       
       if (discovered) {
         discoveredPages = discovered.map((loc) => ({
-          url: `https://weerzone.nl/weer/${loc.province.toLowerCase().replace(/ /g, "-")}/${placeSlug(loc.name)}`,
+          url: `https://weerzone.nl/weer/${loc.province.toLowerCase().replace(/ /g, "-")}/${placeSlug(loc.place_name)}`,
           lastModified: new Date(),
           changeFrequency: 'hourly',
           priority: 0.6,

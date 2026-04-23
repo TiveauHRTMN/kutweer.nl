@@ -215,6 +215,46 @@ export async function fetchWeatherData(lat: number, lon: number): Promise<Weathe
   }
 }
 
+/**
+ * Piet's Neural Engine: Proxy voor MetNet-3, SEED en NeuralGCM.
+ * Gebruikt Gemini om de ruwe data te interpreteren naar hyper-lokale inzichten.
+ */
+export async function getNeuralInsights(lat: number, lon: number, weather: WeatherData): Promise<WeatherData["neuralData"]> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return undefined;
+
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const prompt = `
+      Je bent het neurale weer-brein van WEERZONE. Interpreteer de volgende data voor coördinaten ${lat}, ${lon}:
+      - Temp: ${weather.current.temperature}C
+      - Neerslag: ${weather.current.precipitation}mm
+      - Wind: ${weather.current.windSpeed}km/u
+      
+      Simuleer de output van:
+      1. MetNet-3 (Nowcasting): Focus op neerslag-timing per minuut op deze exacte plek.
+      2. SEED (Ensemble Diffusion): Geef een scenario-kans (bijv. 85% kans op...).
+      3. NeuralGCM (Global-to-Local): Focus op lokaal micro-klimaat impact (bijv. hitte-eiland of wind-tunnel effect).
+
+      Antwoord in PUUR JSON:
+      {
+        "metNetNowcast": "...",
+        "seedScenario": "...",
+        "neuralGcmImpact": "..."
+      }
+    `.trim();
+
+    const result = await model.generateContent(prompt);
+    const text = result.response.text().trim().replace(/```json|```/g, "");
+    return JSON.parse(text);
+  } catch (e) {
+    console.error("Neural Insights Error:", e);
+    return undefined;
+  }
+}
+
 function degreesToDirection(deg: number): string {
   const dirs = ["N", "NNO", "NO", "ONO", "O", "OZO", "ZO", "ZZO", "Z", "ZZW", "ZW", "WZW", "W", "WNW", "NW", "NNW"];
   return dirs[Math.round(deg / 22.5) % 16];

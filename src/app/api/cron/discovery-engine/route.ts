@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { ALL_PLACES, type Place } from "@/lib/places-data";
-import { logAgentAction } from "@/lib/agent-logger";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const dynamic = "force-dynamic";
@@ -16,9 +16,18 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const supabase = createSupabaseAdminClient();
+  
   try {
-    // 1. Selecteer een willekeurige set plaatsen die nog geen 'character' hebben
-    const candidates = ALL_PLACES.filter(p => !p.character).slice(0, 100);
+    // 1. Zoek locaties die we al hebben verwerkt
+    const { data: processed } = await supabase
+      .from("location_metadata")
+      .select("name");
+    
+    const processedNames = new Set((processed || []).map(p => p.name));
+
+    // 2. Selecteer een willekeurige set plaatsen die we NOG NIET hebben
+    const candidates = ALL_PLACES.filter(p => !processedNames.has(p.name)).slice(0, 50);
     const target = candidates[Math.floor(Math.random() * candidates.length)];
 
     if (!target) {
@@ -67,6 +76,17 @@ export async function GET(req: Request) {
         discoveryType: "micro_location_audit"
       }
     );
+
+    // 4. PERSISTEER NAAR DATABASE
+    await supabase.from("location_metadata").upsert({
+      place_name: target.name,
+      province: target.province,
+      lat: target.lat,
+      lon: target.lon,
+      character: suggestedCharacter,
+      discovery_reason: discoveryLog,
+      last_seo_update: new Date().toISOString()
+    });
 
     return NextResponse.json({
       status: "Discovery Cycle Complete",

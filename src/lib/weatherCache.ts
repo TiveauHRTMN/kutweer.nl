@@ -2,6 +2,7 @@
 
 import type { WeatherData } from "./types";
 import { getWeather as fetchServer, getAiVerdict } from "@/app/actions";
+import { getNeuralInsights } from "./weather";
 
 /**
  * Hyperintelligente client-cache.
@@ -64,19 +65,36 @@ function patchCacheVerdict(lat: number, lon: number, verdict: string) {
   entry.weather.aiVerdict = verdict;
   writeCache(lat, lon, entry.weather);
 }
+function patchCacheNeural(lat: number, lon: number, neural: WeatherData["neuralData"]) {
+  const entry = readCache(lat, lon);
+  if (!entry) return;
+  entry.weather.neuralData = neural;
+  writeCache(lat, lon, entry.weather);
+}
 
 async function fetchAndCache(
   lat: number,
   lon: number,
-  onVerdict?: (v: string) => void
+  onVerdict?: (v: string) => void,
+  onNeural?: (n: WeatherData["neuralData"]) => void
 ): Promise<WeatherData> {
   const weather = await fetchServer(lat, lon);
   writeCache(lat, lon, weather);
+  
+  // Async background enrichment
   if (onVerdict) {
     getAiVerdict(weather)
       .then((v) => {
         patchCacheVerdict(lat, lon, v);
         onVerdict(v);
+      })
+      .catch(() => {});
+  }
+  if (onNeural) {
+    getNeuralInsights(lat, lon, weather)
+      .then((n) => {
+        patchCacheNeural(lat, lon, n);
+        onNeural(n);
       })
       .catch(() => {});
   }
@@ -87,7 +105,8 @@ export async function loadWeather(
   lat: number,
   lon: number,
   onVerdict?: (verdict: string) => void,
-  onFresh?: (weather: WeatherData) => void
+  onFresh?: (weather: WeatherData) => void,
+  onNeural?: (neural: WeatherData["neuralData"]) => void
 ): Promise<WeatherData> {
   const k = key(lat, lon);
   const cached = readCache(lat, lon);
@@ -100,6 +119,11 @@ export async function loadWeather(
         .then((v) => { patchCacheVerdict(lat, lon, v); onVerdict(v); })
         .catch(() => {});
     }
+    if (!cached.weather.neuralData && onNeural) {
+      getNeuralInsights(lat, lon, cached.weather)
+        .then((n) => { patchCacheNeural(lat, lon, n); onNeural(n); })
+        .catch(() => {});
+    }
     return cached.weather;
   }
 
@@ -107,7 +131,7 @@ export async function loadWeather(
   if (cached && now - cached.ts < STALE_MS) {
     if (!revalidating.has(k)) {
       revalidating.add(k);
-      fetchAndCache(lat, lon, onVerdict)
+      fetchAndCache(lat, lon, onVerdict, onNeural)
         .then((fresh) => onFresh?.(fresh))
         .catch(() => {})
         .finally(() => revalidating.delete(k));
@@ -117,6 +141,11 @@ export async function loadWeather(
         .then((v) => { patchCacheVerdict(lat, lon, v); onVerdict(v); })
         .catch(() => {});
     }
+    if (!cached.weather.neuralData && onNeural) {
+      getNeuralInsights(lat, lon, cached.weather)
+        .then((n) => { patchCacheNeural(lat, lon, n); onNeural(n); })
+        .catch(() => {});
+    }
     return cached.weather;
   }
 
@@ -124,7 +153,7 @@ export async function loadWeather(
   const existing = inflight.get(k);
   if (existing) return existing;
 
-  const promise = fetchAndCache(lat, lon, onVerdict);
+  const promise = fetchAndCache(lat, lon, onVerdict, onNeural);
   inflight.set(k, promise);
   try {
     return await promise;

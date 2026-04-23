@@ -24,6 +24,11 @@ export interface WeatherData {
   uvIndex: number;
   models: ModelComparison;
   aiVerdict?: string;
+  neuralData?: {
+    metNetNowcast?: string; // "Local rain intensity peak at 14:12"
+    seedScenario?: string;  // "85% confidence in evening clearing"
+    neuralGcmImpact?: string; // "Urban heat island effect adds +2C"
+  };
 }
 
 export interface HourlyForecast {

@@ -1,7 +1,9 @@
 /**
  * Template voor de Smart Affiliate Agent e-mails.
  */
-export function getSmartAffiliateEmailHtml(city: string, trigger: string, aiText: string): string {
+import type { ImpactData } from "./impact-engine";
+
+export function getSmartAffiliateEmailHtml(city: string, trigger: string, aiText: string, impactData?: ImpactData): string {
   const emoji = trigger === "regen" ? "☔" : trigger === "storm" ? "🌪️" : trigger === "hitte" ? "☀️" : trigger === "kou" ? "❄️" : "⚠️";
   
   return `<!DOCTYPE html>
@@ -22,6 +24,20 @@ export function getSmartAffiliateEmailHtml(city: string, trigger: string, aiText
     <p style="margin:0 0 16px 0;font-size:18px;line-height:1.6;font-weight:500;color:#1e293b;">
       ${aiText}
     </p>
+
+    ${impactData ? `
+    <div style="background:#f1f5f9;border-radius:16px;padding:16px;margin-bottom:24px;">
+      <div style="font-size:10px;font-weight:900;text-transform:uppercase;color:#64748b;margin-bottom:8px;letter-spacing:1px;">Lokale Impact Analyse</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:12px;font-weight:700;">Luchtkwaliteit</span>
+        <span style="font-size:12px;font-weight:900;color:${impactData.airQuality.aqi > 50 ? '#ef4444' : '#10b981'}">${impactData.airQuality.label}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="font-size:12px;font-weight:700;">Solar Potentieel</span>
+        <span style="font-size:12px;font-weight:900;">${impactData.solar.panelCapacityWatts.toLocaleString()}W</span>
+      </div>
+    </div>
+    ` : ''}
     
     <div style="margin-top:32px;padding-top:24px;border-top:1px solid #f1f5f9;">
       <a href="https://weerzone.nl/app" style="display:block;text-align:center;background:#0ea5e9;color:#ffffff;text-decoration:none;font-weight:800;padding:14px;border-radius:12px;font-size:15px;">

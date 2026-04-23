@@ -35,6 +35,8 @@ import AdSlot from "./AdSlot";
 import NLPulse from "./NLPulse";
 import LeadRescue from "./LeadRescue";
 import Footer from "./Footer";
+import NeuralInsights from "./NeuralInsights";
+import { getNeuralInsights } from "@/lib/weather";
 import dynamic from "next/dynamic";
 
 // Lazy-load zware visuele componenten — scheelt initial JS
@@ -127,6 +129,9 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         },
         (fresh) => {
           if (!cancelled) setWeather(fresh);
+        },
+        (neural) => {
+          if (!cancelled) setWeather((prev) => (prev ? { ...prev, neuralData: neural } : prev));
         }
       );
       if (!cancelled) {
@@ -307,6 +312,8 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
           
         </div>
       </div>
+
+      <NeuralInsights weather={weather} tier={tier} />
 
       
       {/* ===== 1. FORECAST CLUSTER — Today & Tomorrow ===== */}

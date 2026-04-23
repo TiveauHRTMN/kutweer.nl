@@ -4,6 +4,7 @@ import { fetchWeatherData } from "@/lib/weather";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Resend } from "resend";
 import { getSmartAffiliateEmailHtml } from "@/lib/smart-affiliate-email";
+import { getImpactAnalysis } from "@/lib/impact-engine";
 
 export const dynamic = "force-dynamic";
 
@@ -66,9 +67,17 @@ export async function GET(req: Request) {
           console.error("Gemini error:", e);
         }
       }
+      
+      // Impact Analysis
+      let impactData = undefined;
+      try {
+        impactData = await getImpactAnalysis(user.lat, user.lon);
+      } catch (e) {
+        console.error("Impact Analysis failed (non-fatal):", e);
+      }
 
       // Verstuur de mail
-      const html = getSmartAffiliateEmailHtml(user.city, trigger, aiText);
+      const html = getSmartAffiliateEmailHtml(user.city, trigger, aiText, impactData);
       await resend.emails.send({
         from: "WEERZONE Alert <info@weerzone.nl>",
         to: user.email,
