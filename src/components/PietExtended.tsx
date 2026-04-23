@@ -121,7 +121,7 @@ const locate = () => {
 
   const today = weather.daily[0];
   const tomorrow = weather.daily[1];
-  const narrative = weather.aiVerdict || getMainCommentary(weather);
+  const narrative = pietAnalysis || weather.summaryVerdict || getMainCommentary(weather);
 
   // 48-uurs highlights per 6-uurs blok
   const blocks = [
