@@ -204,17 +204,19 @@ textarea::placeholder {
   ul.nav-list {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
     gap: 0 !important;
-    justify-content: flex-start !important;
-    padding-right: 20px;
+    justify-content: space-between !important;
+    padding: 0 !important;
   }
   ul.nav-list::-webkit-scrollbar { display: none; }
   ul.nav-list > li {
-    scroll-snap-align: start;
-    flex: 0 0 auto !important;
-    min-width: 80px;
+    flex: 1 1 0 !important;
+    min-width: 65px;
   }
+  .nav-item {
+    padding: 0.6rem 0.1rem !important;
+  }
+  .nav-divider { display: none; }
 }
 
 /* Gradient divider */
