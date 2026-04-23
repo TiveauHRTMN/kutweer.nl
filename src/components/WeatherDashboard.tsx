@@ -220,6 +220,12 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         {/* HERO SECTION */}
         <div className="card overflow-hidden relative group shadow-2xl border-white/40">
         <div className="absolute top-0 left-0 w-full h-40 sm:h-48 overflow-hidden z-[1] bg-white/5 backdrop-blur-2xl">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img 
+            src="/four-seasons.png" 
+            alt="Vier seizoenen" 
+            className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" 
+          />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/90 z-10" />
         </div>
 
