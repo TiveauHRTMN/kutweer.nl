@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { ALL_PLACES, type Place } from "@/lib/places-data";
+import { logAgentAction } from "@/lib/agent-logger";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 

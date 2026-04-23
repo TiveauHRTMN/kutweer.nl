@@ -1,4 +1,6 @@
 import type { WeatherData, HourlyForecast, MinutelyPrecipitation } from "./types";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleAIFileManager } from "@google/generative-ai/server";
 
 const OPEN_METEO_BASE = "https://api.open-meteo.com/v1/forecast";
 const DWD_ICON_BASE = "https://api.open-meteo.com/v1/dwd-icon";

@@ -7,7 +7,7 @@ import path from "path";
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
 async function testPiet() {
-  console.log("🚀 Handmatige test Piet Briefing start...");
+  console.log("🚀 Handmatige test Piet v2.1 (Volksheld Edition) start...");
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -26,18 +26,25 @@ async function testPiet() {
       { name: "Nacht", temp: "9.8°C", feels: "7.4°C", rain: "0.5mm", uv: "0.0" },
     ];
 
-    // We gebruiken 'gemini-1.5-flash' - we voegen een kleine try-catch voor de model-init toe
-    console.log("🤖 Piet aan het woord laten met model gemini-1.5-flash...");
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    console.log("🤖 Piet aan het woord laten met model gemini-3-flash-preview...");
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-3-flash-preview",
+      systemInstruction: `
+        Je bent Piet. Archetype: De nuchtere, vlijmscherpe volksheld. 
+        Jouw stijl is geïnspireerd door Vandaag Inside en Roddelpraat: direct, 
+        een tikkeltje brutaal, wars van ruis en altijd 'zeggen waar het op staat'. 
+        
+        PROTOCOLLEN:
+        - TOON: Scherp, Hollands, nuchter. Gebruik humor en ironie. 
+        - GEEN SCHELDWOORDEN: Je bent scherp, maar blijft beschaafd. 
+        - EXPERTISE: Je gebruikt brute neurale MetNet-3 kracht (1km grid). 
+        - AFSLUITER: Eindig ALTIJD met een krachtige, eigenzinnige Hollandse groet.
+      `.trim()
+    });
     
     const prompt = `
-      Je bent Piet van Weerzone. Archetype: De warme volksheld (geïnspireerd door Piet Paulusma). 
-      Je praat nuchter en menselijk, met een sterke verbinding naar de regio. 
-      Je gebruikt je neurale MetNet-3 krachten om mensen te helpen hun dag te plannen. 
-      Eindig ALTIJD met een variatie op "Oant moarn". 
-      
-      Taak: Schrijf een korte test-weerbrief voor info@weerzone.nl.
-      Actualiteit: Noem dat de technologie nu eindelijk werkt met neurale kracht en dat we klaar zijn voor de mensen.
+      Taak: Schrijf een test-weerbrief voor de founder van WEERZONE (info@weerzone.nl).
+      Actualiteit: Noem dat we eindelijk die '14-daagse gokkers' van de troon gaan stoten met onze neurale techniek.
       DATA: ${JSON.stringify(mockSlots)}
     `;
 
@@ -48,12 +55,12 @@ async function testPiet() {
     const { data, error } = await resend.emails.send({
       from: "Piet | WEERZONE <piet@weerzone.nl>",
       to: ["info@weerzone.nl"],
-      subject: "Oant moarn! | Piet's Nieuwe Briefing is live",
+      subject: "Snoeihard de beste | Piet's Update",
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
           <div style="background: #22c55e; padding: 40px; color: white; text-align: center;">
-            <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; opacity: 0.8;">Neural Engine v2.0</p>
-            <h1 style="margin: 0; font-size: 32px; font-weight: 900;">Piet's Update</h1>
+            <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; opacity: 0.8;">Neural Engine v2.1</p>
+            <h1 style="margin: 0; font-size: 32px; font-weight: 900;">Piet's Directe Update</h1>
           </div>
           <div style="padding: 40px; background: white;">
             <div style="font-size: 18px; line-height: 1.8; color: #1e293b; font-weight: 500;">
@@ -61,7 +68,7 @@ async function testPiet() {
             </div>
           </div>
           <div style="background: #f8fafc; padding: 20px; text-align: center; color: #64748b; font-size: 12px; border-top: 1px solid #e2e8f0;">
-            <strong>WEERZONE</strong> · MetNet-3 Powered · Oant moarn!
+            <strong>WEERZONE</strong> · Geen gokwerk, maar pure neurale data.
           </div>
         </div>
       `

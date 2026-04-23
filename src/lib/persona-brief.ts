@@ -1,5 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PERSONAS, type PersonaTier } from "@/lib/personas";
+import type { WeatherData } from "@/lib/types";
 
 export interface WeatherSnapshot {
   current: {

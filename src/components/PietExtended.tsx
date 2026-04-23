@@ -7,6 +7,8 @@ import { loadWeather } from "@/lib/weatherCache";
 import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData } from "@/lib/types";
 import { getWeatherEmoji, getWeatherDescription } from "@/lib/weather";
 import { getMainCommentary } from "@/lib/commentary";
+import NeuralInsights from "./NeuralInsights";
+import { useSession } from "@/lib/session-context";
 
 function getSavedCity(): City | null {
   if (typeof window === "undefined") return null;
@@ -29,29 +31,31 @@ export default function PietExtended() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [locating, setLocating] = useState(false);
+useEffect(() => {
+  let cancelled = false;
+  setLoading(true);
+  loadWeather(
+    city.lat,
+    city.lon,
+    (verdict) => { if (!cancelled) setWeather((prev) => (prev ? { ...prev, aiVerdict: verdict } : prev)); },
+    (fresh) => { if (!cancelled) setWeather(fresh); },
+    (neural) => { if (!cancelled) setWeather((prev) => (prev ? { ...prev, neuralData: neural } : prev)); }
+  )
+    .then((w) => {
+      if (!cancelled) {
+        setWeather(w);
+        setLoading(false);
+      }
+    })
+    .catch(() => !cancelled && setLoading(false));
+  return () => {
+    cancelled = true;
+  };
+}, [city]);
 
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    loadWeather(
-      city.lat,
-      city.lon,
-      (verdict) => { if (!cancelled) setWeather((prev) => (prev ? { ...prev, aiVerdict: verdict } : prev)); },
-      (fresh) => { if (!cancelled) setWeather(fresh); }
-    )
-      .then((w) => {
-        if (!cancelled) {
-          setWeather(w);
-          setLoading(false);
-        }
-      })
-      .catch(() => !cancelled && setLoading(false));
-    return () => {
-      cancelled = true;
-    };
-  }, [city]);
+const { tier } = useSession();
 
-  const locate = () => {
+const locate = () => {
     if (!("geolocation" in navigator)) return;
     setLocating(true);
     navigator.geolocation.getCurrentPosition(

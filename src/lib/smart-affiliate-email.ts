@@ -30,11 +30,11 @@ export function getSmartAffiliateEmailHtml(city: string, trigger: string, aiText
       <div style="font-size:10px;font-weight:900;text-transform:uppercase;color:#64748b;margin-bottom:8px;letter-spacing:1px;">Lokale Impact Analyse</div>
       <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
         <span style="font-size:12px;font-weight:700;">Luchtkwaliteit</span>
-        <span style="font-size:12px;font-weight:900;color:${impactData.airQuality.aqi > 50 ? '#ef4444' : '#10b981'}">${impactData.airQuality.label}</span>
+        <span style="font-size:12px;font-weight:900;color:${impactData.airQuality.index > 50 ? '#ef4444' : '#10b981'}">${impactData.airQuality.label}</span>
       </div>
       <div style="display:flex;justify-content:space-between;">
-        <span style="font-size:12px;font-weight:700;">Solar Potentieel</span>
-        <span style="font-size:12px;font-weight:900;">${impactData.solar.panelCapacityWatts.toLocaleString()}W</span>
+        <span style="font-size:12px;font-weight:700;">Zon-uren / jaar</span>
+        <span style="font-size:12px;font-weight:900;">${impactData.solar.maxSunshineHours.toLocaleString()} uur</span>
       </div>
     </div>
     ` : ''}

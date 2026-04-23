@@ -4,13 +4,13 @@ import PietExtended from "@/components/PietExtended";
 import PremiumGate from "@/components/PremiumGate";
 
 export const metadata: Metadata = {
-  title: "Piet’s Dagelijkse Weer-Update — 48 uur vooruit",
+  title: "Piet’s Neurale Weer-Update — Snoeiharde 48-uurs data",
   description:
-    "De scherpste 48-uurs weersverwachting van Nederland door Piet van WEERZONE. Geen 14-daagse gokwerk, maar KNMI HARMONIE data op de vierkante meter.",
+    "De enige weerdienst die niet gokt. Piet van WEERZONE gebruikt Google MetNet-3 voor 1km-precisie op jouw adres. Geen 14-daagse ruis, maar de keiharde realiteit.",
   alternates: { canonical: "https://weerzone.nl/piet" },
   openGraph: {
-    title: "Piet’s Weer-Update | WEERZONE",
-    description: "48 uur vooruit. De rest is ruis. Ontvang Piet's update elke ochtend vers in je inbox.",
+    title: "Piet’s Neurale Update | WEERZONE",
+    description: "48 uur vooruit op de vierkante meter. De rest is gokwerk.",
     images: ["/og-image.png"],
   }
 };
@@ -18,12 +18,12 @@ export const metadata: Metadata = {
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Piet's Dagelijkse Weer-Update",
-  description: "Een scherpe, data-gedreven analyse van het weer in Nederland voor de komende 48 uur.",
+  headline: "Piet's Neurale 48-uurs Analyse",
+  description: "Een vlijmscherpe, data-gedreven analyse van het weer in Nederland via de Google Neural Engine.",
   author: {
     "@type": "Person",
     name: "Piet",
-    jobTitle: "Weerman bij WEERZONE",
+    jobTitle: "Senior Analist bij WEERZONE",
   },
   publisher: {
     "@type": "Organization",
@@ -53,9 +53,10 @@ export default function PietPage() {
             <span>💬</span> Piet
           </h1>
           <p className="text-white/70 text-base leading-relaxed">
-            De uitgebreide 48-uurs weer-update voor jouw locatie. Elke ochtend om 08:00 stuurt Piet
-            dit ook per mail — wil je hem in je inbox? Aanmelden kan op de{" "}
-            <Link href="/" className="text-accent-orange hover:underline">homepage</Link>.
+            De enige meteorologische analyse van Nederland die niet gokt. Piet gebruikt de 
+            brute rekenkracht van de <strong>Google Neural Engine</strong> om 48 uur vooruit te kijken op de vierkante meter. 
+            Elke ochtend vlijmscherp in je inbox? Regel het op de{" "}
+            <Link href="/" className="text-accent-orange font-bold hover:underline">homepage</Link>.
           </p>
         </header>
 
