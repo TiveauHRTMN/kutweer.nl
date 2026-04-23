@@ -15,13 +15,9 @@ export default async function OnboardingPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/app/signup");
-  }
-
   return (
     <Suspense fallback={null}>
-      <OnboardingClient email={user.email ?? ""} />
+      <OnboardingClient email={user?.email ?? ""} />
     </Suspense>
   );
 }

@@ -136,7 +136,7 @@ export default async function AgentCockpit() {
           {agents.map((agent) => (
             <div key={agent.name} className={`p-8 rounded-[32px] border border-white/5 ${agent.bg} backdrop-blur-xl relative overflow-hidden group hover:border-white/20 transition-all duration-500`}>
               <div className="absolute top-0 right-0 p-8">
-                <div className={`w-3 h-3 rounded-full ${agent.status === "Active" || agent.status === "Monitoring" ? "bg-green-400 animate-pulse" : "bg-white/20"}`} />
+                <div className={`w-3 h-3 rounded-full ${agent.status === "Active" || agent.status === "Monitoring" || agent.status === "Scanning" || agent.status === "Optimizing" ? "bg-green-400 animate-pulse" : "bg-white/20"}`} />
               </div>
               <div className={`text-4xl font-black mb-1 ${agent.color}`}>{agent.name}</div>
               <div className="text-xs font-bold uppercase tracking-widest text-white/50 mb-6">{agent.role}</div>
@@ -157,6 +157,57 @@ export default async function AgentCockpit() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* B2C OPTIMIZATION INSIGHTS (NEW) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div className="bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 rounded-[40px] p-8 backdrop-blur-2xl">
+                <h2 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-purple-400 rounded-full animate-pulse" />
+                    OpenClaw: Micro-Location Discovery
+                </h2>
+                <div className="space-y-4">
+                    {logs?.filter(l => l.agent_name === "OpenClaw").slice(0, 3).map((log, i) => (
+                        <div key={i} className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                            <p className="text-[10px] font-black uppercase text-purple-400 mb-1">Identified Location</p>
+                            <p className="text-sm font-bold">{log.metadata?.place || "Searching..."}</p>
+                            <p className="text-[10px] text-white/40 mt-1 uppercase tracking-widest">Type: {log.metadata?.suggestedType || "Analyzing"}</p>
+                        </div>
+                    ))}
+                    {logs?.filter(l => l.agent_name === "OpenClaw").length === 0 && (
+                        <p className="text-xs text-white/20 italic">Wachten op de eerste ontdekkingen van OpenClaw...</p>
+                    )}
+                </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-500/20 rounded-[40px] p-8 backdrop-blur-2xl">
+                <h2 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+                    <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                    Paperclip: Yield Intelligence
+                </h2>
+                <div className="space-y-4">
+                    {logs?.filter(l => l.agent_name === "Paperclip").slice(0, 1).map((log, i) => (
+                        <div key={i} className="p-6 rounded-3xl bg-white/5 border border-white/5">
+                            <div className="flex justify-between items-start mb-4">
+                                <div>
+                                    <p className="text-[10px] font-black uppercase text-emerald-400 mb-1">Active A/B Test</p>
+                                    <p className="text-lg font-black">{log.metadata?.abTest?.variant || "None"}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] font-black uppercase text-white/40 mb-1">Confidence</p>
+                                    <p className="text-lg font-black text-emerald-400">{log.metadata?.abTest?.currentConfidence || "0%"}</p>
+                                </div>
+                            </div>
+                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                <div className="h-full bg-emerald-400" style={{ width: log.metadata?.abTest?.currentConfidence || '0%' }} />
+                            </div>
+                        </div>
+                    ))}
+                    {logs?.filter(l => l.agent_name === "Paperclip").length === 0 && (
+                        <p className="text-xs text-white/20 italic">Paperclip analyseert de conversiedata...</p>
+                    )}
+                </div>
+            </div>
         </div>
 
         {/* ACTIVITY LOG */}

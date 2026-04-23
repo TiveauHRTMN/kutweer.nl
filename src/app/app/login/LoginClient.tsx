@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Loader2, ArrowLeft, Mail, ShieldCheck, UserPlus } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import WzAuthShell from "@/components/wz/WzAuthShell";
 import {
@@ -14,61 +14,94 @@ import {
   WzSocialButtons,
 } from "@/components/wz/WzForm";
 
+import { sendBrandedMagicLink, checkUserExists } from "@/app/actions";
+
+type LoginStep = "email" | "password" | "magic_link_sent";
+
 export default function LoginClient() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
-  const [email, setEmail] = useState("");
+  const [step, setStep] = useState<LoginStep>("email");
+  const [email, setEmail] = useState(searchParams.get("email") || "");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [errors, setErrors] = useState<{ email?: string; pw?: string }>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  // Auto-focus email field on mount
+  useEffect(() => {
+    if (email && step === "email") {
+      // If email was pre-filled from query, we might want to trigger the check automatically
+      // but usually better to let user click "Doorgaan"
+    }
+  }, [email, step]);
+
+  async function handleEmailNext(e: React.FormEvent) {
     e.preventDefault();
-    const errs: typeof errors = {};
-    if (!email.trim()) errs.email = "Vul je e-mailadres in";
-    if (!password) errs.pw = "Vul we wachtwoord in of gebruik de e-mail link";
-    setErrors(errs);
-    if (Object.keys(errs).length > 0) return;
+    if (!email.trim() || !/.+@.+\..+/.test(email)) {
+      setErrors({ email: "Vul een geldig e-mailadres in" });
+      return;
+    }
 
+    setErrors({});
     setSubmitError(null);
     setLoading(true);
-    const { error: signInErr } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
-    if (signInErr) {
-      setSubmitError("E-mail of wachtwoord klopt niet.");
+
+    try {
+      const exists = await checkUserExists(email.trim());
+      if (exists) {
+        setStep("password");
+      } else {
+        // Smart Routing: Account bestaat niet -> Direct naar signup
+        router.push(`/app/signup?email=${encodeURIComponent(email.trim())}`);
+      }
+    } catch (err: any) {
+      setSubmitError("Er ging iets mis bij het controleren van je account.");
+    } finally {
       setLoading(false);
-      return;
     }
-    router.replace("/app");
   }
 
-  async function handleMagicLink() {
-    if (!email.trim() || !/.+@.+\..+/.test(email)) {
-      setErrors({ email: "Vul een geldig e-mailadres in voor de link" });
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    if (!password) {
+      setErrors({ pw: "Vul je wachtwoord in" });
       return;
     }
+
     setSubmitError(null);
     setLoading(true);
     
-    // We gebruiken de Supabase ingebouwde Magic Link helper
-    const { error } = await supabase.auth.signInWithOtp({
+    const { data, error: signInErr } = await supabase.auth.signInWithPassword({
       email: email.trim(),
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/app`,
-      }
+      password,
     });
 
-    setLoading(false);
-    if (error) {
-      setSubmitError(error.message);
-    } else {
-      setMagicLinkSent(true);
+    if (signInErr) {
+      console.error("[LOGIN] Sign in error:", signInErr);
+      setSubmitError("Wachtwoord is onjuist. Probeer het opnieuw of gebruik de inloglink.");
+      setLoading(false);
+      return;
+    }
+    
+    const next = searchParams.get("next") || "/app";
+    router.replace(next);
+  }
+
+  async function handleMagicLink() {
+    setSubmitError(null);
+    setLoading(true);
+    
+    try {
+      await sendBrandedMagicLink(email.trim(), "piet", "");
+      setStep("magic_link_sent");
+    } catch (err: any) {
+      setSubmitError(err.message || "Kon geen inloglink sturen.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -81,125 +114,169 @@ export default function LoginClient() {
       options: { redirectTo },
     });
     if (oauthErr) {
-      const msg = oauthErr.message.toLowerCase();
-      setSubmitError(
-        msg.includes("provider") || msg.includes("unsupported")
-          ? "Google-login staat nog niet aan in Supabase. Gebruik de e-mail link!"
-          : oauthErr.message,
-      );
+      setSubmitError("Google-login is tijdelijk niet beschikbaar. Gebruik e-mail!");
       setLoading(false);
     }
   }
 
-  return (
-    <WzAuthShell
-      title="Welkom terug."
-      subtitle="Log in om je persoonlijke weerbericht, voorkeuren en abonnement te beheren."
-      footer={
-        <>
-          Nog geen account?{" "}
-          <Link
-            href="/app/signup"
-            className="font-bold no-underline hover:underline"
-            style={{ color: "var(--wz-brand)" }}
-          >
-            Maak er gratis één
-          </Link>
-        </>
-      }
-    >
-      <h1 className="wz-h-1 mb-2">Inloggen</h1>
-      <p className="wz-body mb-6">Welkom terug bij Weerzone.</p>
+  // --- RENDERING STRATEGIES ---
+
+  const renderEmailStep = () => (
+    <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+      <h1 className="wz-h-1 mb-2">Welkom terug.</h1>
+      <p className="wz-body mb-6 text-slate-500">Voer je e-mailadres in om verder te gaan.</p>
 
       <WzSocialButtons onGoogle={handleGoogle} loading={loading} />
-      <WzDivider />
+      <WzDivider>of gebruik e-mail</WzDivider>
 
-      {magicLinkSent ? (
-        <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl text-sm mb-6 animate-in fade-in slide-in-from-top-4">
-          <p className="font-bold mb-1">Check je inbox! 🚀</p>
-          <p>We hebben een inloglink gestuurd naar <strong>{email}</strong>. Klik op de link in de mail om direct in te loggen.</p>
-          <button 
-            onClick={() => setMagicLinkSent(false)}
-            className="mt-3 text-green-700 font-bold underline hover:no-underline"
+      <form onSubmit={handleEmailNext} noValidate>
+        <WzTextField
+          label="E-mailadres"
+          type="email"
+          value={email}
+          onChange={setEmail}
+          placeholder="je@voorbeeld.nl"
+          error={errors.email}
+          autoComplete="email"
+          autoFocus
+        />
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="wz-btn wz-btn-primary wz-btn-block wz-btn-lg mt-2 disabled:opacity-60"
+        >
+          {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Doorgaan"}
+        </button>
+      </form>
+    </div>
+  );
+
+  const renderPasswordStep = () => (
+    <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+      <button 
+        onClick={() => setStep("email")}
+        className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-slate-600 mb-6 transition-colors"
+      >
+        <ArrowLeft className="w-3 h-3" /> E-mail wijzigen
+      </button>
+
+      <div className="flex items-center gap-3 mb-6 p-3 bg-slate-50 rounded-2xl border border-slate-100">
+        <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400">
+          <ShieldCheck className="w-5 h-5" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Account gevonden</p>
+          <p className="text-sm font-bold truncate text-slate-700">{email}</p>
+        </div>
+      </div>
+
+      <form onSubmit={handleLogin} noValidate>
+        <div className="flex justify-between items-baseline mb-1.5">
+          <label className="text-[13px] font-bold" style={{ color: "var(--wz-text)" }}>
+            Wachtwoord
+          </label>
+          <Link
+            href="/app/reset"
+            className="text-[13px] font-bold no-underline hover:underline text-brand"
+            style={{ color: "var(--wz-brand)" }}
           >
-            Nog een poging met wachtwoord
+            Vergeten?
+          </Link>
+        </div>
+        <WzPasswordField
+          value={password}
+          onChange={setPassword}
+          placeholder="Je wachtwoord"
+          error={errors.pw}
+          autoComplete="current-password"
+          autoFocus
+        />
+
+        <div className="mt-1.5 mb-6">
+          <WzCheckbox checked={remember} onChange={setRemember}>
+            Onthoud mij op dit apparaat
+          </WzCheckbox>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3">
+          <button
+            type="submit"
+            disabled={loading}
+            className="wz-btn wz-btn-primary wz-btn-block wz-btn-lg disabled:opacity-60"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Inloggen"}
+          </button>
+          
+          <button
+            type="button"
+            onClick={handleMagicLink}
+            disabled={loading}
+            className="wz-btn wz-btn-outline wz-btn-block wz-btn-lg flex items-center justify-center gap-2 disabled:opacity-60"
+          >
+            <Mail className="w-4 h-4" />
+            {loading ? "Even geduld..." : "Inloggen zonder wachtwoord"}
           </button>
         </div>
-      ) : (
-        <form onSubmit={handleSubmit} noValidate>
-          <WzTextField
-            label="E-mailadres"
-            type="email"
-            value={email}
-            onChange={setEmail}
-            placeholder="je@voorbeeld.nl"
-            error={errors.email}
-            autoComplete="email"
-            autoFocus
-          />
+      </form>
+    </div>
+  );
 
-          <div className="flex justify-between items-baseline mb-1.5">
-            <label
-              className="text-[13px] font-bold"
-              style={{ color: "var(--wz-text)" }}
-              htmlFor="wz-login-pw"
-            >
-              Wachtwoord
-            </label>
+  const renderMagicLinkSent = () => (
+    <div className="animate-in fade-in slide-in-from-top-4 duration-500 text-center py-4">
+      <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+        <Mail className="w-8 h-8" />
+      </div>
+      <h2 className="wz-h-2 mb-2 text-green-900">Check je inbox!</h2>
+      <p className="wz-body mb-8 text-slate-600">
+        We hebben een magische inloglink gestuurd naar <br />
+        <strong className="text-slate-900">{email}</strong>.
+      </p>
+      
+      <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm text-slate-500 mb-8">
+        Geen mail ontvangen? Check je spam-folder of klik hieronder om het opnieuw te proberen.
+      </div>
+
+      <button 
+        onClick={() => setStep("password")}
+        className="wz-btn wz-btn-outline wz-btn-block"
+      >
+        Toch met wachtwoord inloggen
+      </button>
+    </div>
+  );
+
+  return (
+    <WzAuthShell
+      title={step === 'email' ? "Welkom terug." : "Beveiligde toegang."}
+      subtitle={step === 'email' 
+        ? "Log in om je persoonlijke weerbericht en voorkeuren te beheren."
+        : "Bevestig je identiteit om door te gaan naar je dashboard."
+      }
+      footer={
+        step === 'email' ? (
+          <>
+            Nog geen account?{" "}
             <Link
-              href="/app/reset"
-              className="text-[13px] font-bold no-underline hover:underline"
+              href="/app/signup"
+              className="font-bold no-underline hover:underline flex items-center gap-1 inline-flex"
               style={{ color: "var(--wz-brand)" }}
             >
-              Vergeten?
+              Maak er één <UserPlus className="w-3.5 h-3.5" />
             </Link>
-          </div>
-          <WzPasswordField
-            id="wz-login-pw"
-            value={password}
-            onChange={setPassword}
-            placeholder="Je wachtwoord"
-            error={errors.pw}
-            autoComplete="current-password"
-          />
-
-          <div className="mt-1.5 mb-4">
-            <WzCheckbox checked={remember} onChange={setRemember}>
-              Onthoud mij op dit apparaat
-            </WzCheckbox>
-          </div>
-
-          {submitError && (
-            <div
-              className={`mb-4 text-sm rounded-lg p-3 ${
-                submitError.includes("Google") 
-                  ? "bg-amber-50 border border-amber-200 text-amber-800" 
-                  : "bg-red-50 border border-red-200 text-red-800"
-              }`}
-            >
-              {submitError}
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 gap-3">
-            <button
-              type="submit"
-              disabled={loading}
-              className="wz-btn wz-btn-primary wz-btn-block wz-btn-lg disabled:opacity-60"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Inloggen met wachtwoord"}
-            </button>
-            <button
-              type="button"
-              onClick={handleMagicLink}
-              disabled={loading}
-              className="wz-btn wz-btn-outline wz-btn-block wz-btn-lg disabled:opacity-60"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Stuur mij een inloglink"}
-            </button>
-          </div>
-        </form>
+          </>
+        ) : null
+      }
+    >
+      {submitError && (
+        <div className="mb-6 text-sm rounded-2xl p-4 bg-red-50 border border-red-100 text-red-800 animate-in shake-1">
+          {submitError}
+        </div>
       )}
+
+      {step === "email" && renderEmailStep()}
+      {step === "password" && renderPasswordStep()}
+      {step === "magic_link_sent" && renderMagicLinkSent()}
     </WzAuthShell>
   );
 }

@@ -44,6 +44,7 @@ async function fetchLive(): Promise<EnrichedProduct[]> {
 
 interface Props {
   weather: WeatherData;
+  placeName?: string;
 }
 
 function ProductImage({ src, alt, size = 100 }: { src: string; alt: string; size?: number }) {
@@ -72,7 +73,7 @@ function ProductImage({ src, alt, size = 100 }: { src: string; alt: string; size
   );
 }
 
-export default function AffiliateCard({ weather }: Props) {
+export default function AffiliateCard({ weather, placeName }: Props) {
   const [sessionId] = useState(() => Math.random().toString(36).slice(2));
   const impressionFired = useRef<Set<string>>(new Set());
   const tag = getConditionTag(weather);
@@ -109,6 +110,7 @@ export default function AffiliateCard({ weather }: Props) {
   }, [deals, hero, sessionId, tag, weather.current.temperature]);
 
   const handleProductClick = (productId: string) => {
+    // Legacy track
     fetch("/api/affiliate/track", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -119,6 +121,18 @@ export default function AffiliateCard({ weather }: Props) {
         weatherContext: { temp: weather.current.temperature },
         platform: "SITE",
         sessionId,
+      }),
+    }).catch(() => {});
+
+    // New Paperclip click tracking
+    fetch("/api/affiliate/click", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        place_name: placeName || "Onbekend",
+        weather_code: weather.current.weatherCode,
+        temp: weather.current.temperature,
+        product_id: productId
       }),
     }).catch(() => {});
   };

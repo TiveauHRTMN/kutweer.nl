@@ -30,6 +30,13 @@ interface Metrics {
     locations: number;
     coverage: string;
   };
+  searchPerformance?: {
+    clicks: number;
+    impressions: number;
+    ctr: string;
+    position: number;
+    lastUpdate: string;
+  };
 }
 
 export default function PerformanceDashboard() {
@@ -107,6 +114,26 @@ export default function PerformanceDashboard() {
             trend="Projected Growth"
             color="text-purple-400"
           />
+        </div>
+        
+        {/* SEARCH PERFORMANCE (NEW) */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+           <div className="bg-slate-900/50 border border-white/5 p-6 rounded-3xl backdrop-blur-md">
+             <h3 className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">Search Clicks</h3>
+             <div className="text-2xl font-black text-accent-cyan">{metrics.searchPerformance?.clicks || 0}</div>
+           </div>
+           <div className="bg-slate-900/50 border border-white/5 p-6 rounded-3xl backdrop-blur-md">
+             <h3 className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">Search Impressions</h3>
+             <div className="text-2xl font-black text-white/80">{metrics.searchPerformance?.impressions || 0}</div>
+           </div>
+           <div className="bg-slate-900/50 border border-white/5 p-6 rounded-3xl backdrop-blur-md">
+             <h3 className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">Average CTR</h3>
+             <div className="text-2xl font-black text-accent-green">{metrics.searchPerformance?.ctr || "0%"}</div>
+           </div>
+           <div className="bg-slate-900/50 border border-white/5 p-6 rounded-3xl backdrop-blur-md">
+             <h3 className="text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">Avg. Position</h3>
+             <div className="text-2xl font-black text-accent-orange">{metrics.searchPerformance?.position || "0"}</div>
+           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

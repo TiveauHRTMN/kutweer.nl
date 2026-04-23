@@ -31,7 +31,7 @@ export default function SignupClient() {
     queryTier && PERSONA_ORDER.includes(queryTier) ? queryTier : null;
 
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(searchParams.get("email") || "");
   const [password, setPassword] = useState("");
   const [agree, setAgree] = useState(false);
   const [errors, setErrors] = useState<{
@@ -44,8 +44,10 @@ export default function SignupClient() {
   const [loading, setLoading] = useState(false);
 
   function nextAfterSignup(): string {
-    // Met een gekozen tier: onboarding → /prijzen met preselect.
-    // Anders onboarding → /prijzen om keuze te maken.
+    const next = searchParams.get("next");
+    if (next) return next;
+    
+    // Default fallback
     return preTier ? `/app/onboarding?tier=${preTier}` : "/app/onboarding";
   }
 

@@ -11,19 +11,20 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get("next") ?? "/app";
 
   if (code) {
+    console.log(`[AUTH-CALLBACK] Exchanging code for session...`);
     const supabase = await createSupabaseServerClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
+    
     if (!error) {
       const { data: { user } } = await supabase.auth.getUser();
+      console.log(`[AUTH-CALLBACK] Success! User: ${user?.email}`);
       const redirectUrl = new URL(next, origin);
-      
-      const response = NextResponse.redirect(redirectUrl.href);
-
-
-
-      return response;
+      return NextResponse.redirect(redirectUrl.href);
+    } else {
+      console.error(`[AUTH-CALLBACK] Error exchanging code:`, error.message);
     }
   }
 
-  return NextResponse.redirect(`${origin}/app/onboarding?error=auth`);
+  // Fallback if no code or error
+  return NextResponse.redirect(`${origin}/app/signup?error=auth`);
 }

@@ -421,3 +421,26 @@ export async function pingSearchConsole() {
     return { success: false };
   }
 }
+
+/**
+ * Checkt veilig of een gebruiker al een account heeft via de Admin API.
+ * Gebruikt in de Smart Login flow.
+ */
+export async function checkUserExists(email: string): Promise<boolean> {
+  const admin = createSupabaseAdminClient();
+  
+  // We checken de public.user_profile tabel omdat listUsers() traag is en limieten heeft.
+  // user_profile wordt altijd aangemaakt bij signup via de DB trigger.
+  const { data, error } = await admin
+    .from("user_profile")
+    .select("id")
+    .eq("email", email.toLowerCase())
+    .maybeSingle();
+  
+  if (error) {
+    console.error("checkUserExists error:", error);
+    return false;
+  }
+  
+  return !!data;
+}

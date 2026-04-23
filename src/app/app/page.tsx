@@ -13,7 +13,7 @@ export default async function AppDashboard() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/app/onboarding");
+  if (!user) redirect("/app/login");
 
   // Actieve subscriptions ophalen
   const { data: subs } = await supabase

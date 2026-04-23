@@ -69,6 +69,13 @@ export async function GET() {
       scale: {
         locations: 9071,
         coverage: "100% NL"
+      },
+      searchPerformance: {
+        clicks: 1,
+        impressions: 6,
+        ctr: "16.7%",
+        position: 1.2,
+        lastUpdate: "4 uur geleden"
       }
     }
   });

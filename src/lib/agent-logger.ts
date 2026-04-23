@@ -1,7 +1,7 @@
 import { getSupabase } from "./supabase";
 
-export type AgentName = "Hermes" | "OpenClaw" | "Paperclip" | "Sentinel" | "B2B Ignite" | "Performance Control" | "SEO Architect";
-export type ActionType = "lead_found" | "outreach_sent" | "content_generated" | "alert_triggered" | "system_check";
+export type AgentName = "Hermes" | "OpenClaw" | "Paperclip" | "Sentinel" | "B2B Ignite" | "Performance Control" | "SEO Architect" | "Discovery Engine";
+export type ActionType = "lead_found" | "outreach_sent" | "content_generated" | "alert_triggered" | "system_check" | "indexing_scan" | "yield_optimized" | "location_discovered";
 
 export async function logAgentAction(
   agentName: AgentName,

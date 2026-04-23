@@ -428,7 +428,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
 
       {/* ===== PAPERCLIP: Hyper-Local Affiliate Injection ===== */}
       <div className="animate-fade-in" style={{ animationDelay: "0.2s" }}>
-        <AffiliateCard weather={weather} />
+        <AffiliateCard weather={weather} placeName={city.name} />
       </div>
 
       {/* Mails & Ads moved below alerts */}
@@ -899,7 +899,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
               affiliate
             </span>
           </div>
-          <AffiliateCard weather={weather} />
+          <AffiliateCard weather={weather} placeName={city.name} />
         </div>
       </div>
 

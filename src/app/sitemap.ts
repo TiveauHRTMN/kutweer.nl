@@ -21,13 +21,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // 2. Dynamische lokale pagina's (ca. 9000 stuks)
-  // De limiet per sitemap is 50.000, we zitten daar dus nog ver onder.
   const dynamicPages: MetadataRoute.Sitemap = ALL_PLACES.map((city) => ({
     url: `https://weerzone.nl/weer/${city.province}/${placeSlug(city.name)}`,
     lastModified: new Date(),
-    changeFrequency: 'hourly', // Lokale weardata vernieuwt continu
+    changeFrequency: 'hourly',
     priority: 0.7,
   }));
 
-  return [...staticPages, ...dynamicPages];
+  // 3. Autonoom ontdekte locaties (OpenClaw)
+  let discoveredPages: MetadataRoute.Sitemap = [];
+  try {
+    const { getSupabase } = await import("@/lib/supabase");
+    const supabase = getSupabase();
+    if (supabase) {
+      const { data: discovered } = await supabase
+        .from("discovered_places")
+        .select("name, province")
+        .limit(1000);
+      
+      if (discovered) {
+        discoveredPages = discovered.map((loc) => ({
+          url: `https://weerzone.nl/weer/${loc.province.toLowerCase().replace(/ /g, "-")}/${placeSlug(loc.name)}`,
+          lastModified: new Date(),
+          changeFrequency: 'hourly',
+          priority: 0.6,
+        }));
+      }
+    }
+  } catch (e) {
+    console.error("Sitemap discovery error:", e);
+  }
+
+  return [...staticPages, ...dynamicPages, ...discoveredPages];
 }

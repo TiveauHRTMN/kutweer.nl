@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
-import { ALL_PLACES } from "@/lib/places-data";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { fetchWeatherData } from "@/lib/weather";
 import { logAgentAction } from "@/lib/agent-logger";
-import { getSupabase } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Performance Control: Piet.
- * Deze agent optimaliseert de koppelvlakken tussen weerdata en commerciële conversie.
+ * Performance Control: De "Yield Optimizer".
+ * Beheert de landelijke affiliate strategieën op basis van live weer.
  */
 export async function GET(req: Request) {
   const authHeader = req.headers.get("authorization");
@@ -17,50 +16,45 @@ export async function GET(req: Request) {
   }
 
   try {
-    const supabase = getSupabase();
-    if (!supabase) throw new Error("Supabase not configured");
-    // 1. Analyseer landelijke trends (sample van 3 grote steden)
-    const cities = ["Utrecht", "Amsterdam", "Eindhoven"];
-    const trends = [];
+    // 1. Fetch weer voor een paar strategische punten (De Bilt, Schiphol, Eindhoven)
+    const stations = [
+      { lat: 52.10, lon: 5.18 }, // De Bilt
+      { lat: 52.31, lon: 4.76 }, // Schiphol
+      { lat: 51.44, lon: 5.48 }, // Eindhoven
+    ];
 
-    for (const cityName of cities) {
-      const p = ALL_PLACES.find(x => x.name === cityName);
-      if (p) {
-        const weather = await fetchWeatherData(p.lat, p.lon);
-        const temp = weather.current.temperature;
-        const rain = weather.current.precipitation;
-        
-        trends.push({ cityName, temp, rain });
-      }
-    }
+    const weatherData = await Promise.all(
+      stations.map(s => fetchWeatherData(s.lat, s.lon))
+    );
 
-    // 2. Commerciële logica bepaalt focus
-    const avgTemp = trends.reduce((acc, curr) => acc + curr.temp, 0) / trends.length;
-    const isRaining = trends.some(t => t.rain > 0.5);
-    
-    let strategy = "Balanced Revenue";
-    let flash_deal_message = "Volg WeerZone voor de scherpste updates!";
-    let flash_deal_link = "https://weerzone.nl";
-    let flash_deal_type: 'neutral' | 'storm' | 'heat' | 'cold' = 'neutral';
+    const avgTemp = weatherData.reduce((acc, w) => acc + w.current.temperature, 0) / stations.length;
+    const isRaining = weatherData.some(w => w.current.precipitation > 0);
+
+    // 2. Bepaal de "Winst-zet"
+    let strategy = "GENERIC_BRANDING";
+    let flash_deal_message = "Het WeerZone 2026 Dashboard komt eraan.";
+    let flash_deal_link = "/app/signup";
+    let flash_deal_type = "info";
 
     if (isRaining) {
-       strategy = "Rain-Response Active";
-       flash_deal_message = "Regen op komst! Bekijk de best-geteste stormparaplu's.";
-       flash_deal_link = "https://amzn.to/3B8K47M2";
-       flash_deal_type = 'storm';
+      strategy = "RAIN_GEAR_AFFILIATE";
+      flash_deal_message = "Regen op komst? Bekijk de beste regenkleding deals.";
+      flash_deal_link = "https://www.amazon.nl/s?k=regenkleding&tag=tiveaubusines-21";
+      flash_deal_type = "warning";
     } else if (avgTemp > 22) {
-      strategy = "High-Heat Conversion";
-      flash_deal_message = "Hittegolf waarschuwing! Mobiele airco's nu nog leverbaar.";
-      flash_deal_link = "https://amzn.to/3mobiele-airco";
-      flash_deal_type = 'heat';
+      strategy = "BBQ_SUN_AFFILIATE";
+      flash_deal_message = "Zonnig weer! Tijd voor de BBQ of zonnebrand?";
+      flash_deal_link = "https://www.amazon.nl/s?k=barbecue&tag=tiveaubusines-21";
+      flash_deal_type = "success";
     } else if (avgTemp < 5) {
-      strategy = "Cold-Snap Protection";
-      flash_deal_message = "Vorst aan de grond! IJskrabbers en thermo-kleding nodig?";
-      flash_deal_link = "https://amzn.to/3ijskrabber";
-      flash_deal_type = 'cold';
+      strategy = "WINTER_GEAR_AFFILIATE";
+      flash_deal_message = "Koud buiten! Warme mutsen en handschoenen nu met korting.";
+      flash_deal_link = "https://www.amazon.nl/s?k=winterkleding&tag=tiveaubusines-21";
+      flash_deal_type = "info";
     }
 
-    // 3. Update de Centrale Hersenen (System State)
+    // 3. Update de system_state voor de global banner
+    const supabase = createSupabaseAdminClient();
     await supabase
       .from("system_state")
       .upsert({
@@ -97,13 +91,6 @@ export async function GET(req: Request) {
     });
   } catch (e: any) {
     console.error("Performance Control Error:", e);
-    // Paperclip Heartbeat: FAILING
-    try {
-      const { logPaperclipHeartbeat } = await import("@/lib/agent-logger");
-      await logPaperclipHeartbeat("Performance Control", "failing");
-    } catch {}
-    
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
-

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -40,10 +40,21 @@ export default function OnboardingClient({ email }: { email: string }) {
   const [postcode, setPostcode] = useState("");
   const [gpsCoords, setGpsCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [gpsStatus, setGpsStatus] = useState<"idle" | "asking" | "ok" | "denied">("idle");
+  const [authChecked, setAuthChecked] = useState(false);
   const [topics, setTopics] = useState<TopicKey[]>(["rain", "temp"]);
   const [time, setTime] = useState<TimeKey>("07:00");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Client-side protectie: als de server de gebruiker nog niet zag, checken we het hier.
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user && !authChecked) {
+        router.replace("/app/signup?next=/app/onboarding");
+      }
+      setAuthChecked(true);
+    });
+  }, [supabase, router, authChecked]);
 
   const stepTitles = [
     {

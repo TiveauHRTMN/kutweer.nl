@@ -20,14 +20,18 @@ export function generateStaticParams() {
   return [];
 }
 
+import { getHermesSEO } from "@/lib/seo";
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { province, place: slug } = await params;
   const place = findPlace(province, slug);
   if (!place) return {};
 
   const provLabel = PROVINCE_LABELS[province as Province] || province;
+  const hermesSEO = await getHermesSEO(place.name, province);
+
   const title = `Weer ${place.name} — Actueel weerbericht vandaag en morgen`;
-  const description = `Weer in ${place.name} (${provLabel}). De enige weerdienst die niet gokt. Bekijk de 48-uurs voorspelling snoeihard op basis van KNMI HARMONIE. Temperatuur, regen, wind en UV — per uur bijgewerkt.`;
+  const description = hermesSEO?.meta_description || `Weer in ${place.name} (${provLabel}). De enige weerdienst die niet gokt. Bekijk de 48-uurs voorspelling snoeihard op basis van KNMI HARMONIE. Temperatuur, regen, wind en UV — per uur bijgewerkt.`;
 
   return {
     title,
@@ -72,7 +76,32 @@ const TOP_CITIES = [
 
 export default async function PlaceWeatherPage({ params }: PageProps) {
   const { province, place: slug } = await params;
-  const place = findPlace(province, slug);
+  let place = findPlace(province, slug);
+  
+  // Als niet in statische lijst, check DB (OpenClaw's vondsten)
+  if (!place) {
+    const { getSupabase } = await import("@/lib/supabase");
+    const supabase = getSupabase();
+    if (supabase) {
+      const { data } = await supabase
+        .from("discovered_places")
+        .select("*")
+        .eq("province", province)
+        .ilike("name", slug.replace(/-/g, " ")) // Simpele fallback match
+        .maybeSingle();
+      
+      if (data) {
+        place = {
+          name: data.name,
+          province: data.province,
+          lat: data.lat,
+          lon: data.lon,
+          character: "inland"
+        };
+      }
+    }
+  }
+
   if (!place) notFound();
 
   const provLabel = PROVINCE_LABELS[province as Province] || province;
@@ -172,6 +201,7 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
   };
 
   const city = { name: place.name, lat: place.lat, lon: place.lon };
+  const hermesSEO = await getHermesSEO(place.name, province);
 
 
   return (
@@ -182,7 +212,8 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
           __html: JSON.stringify([
             weatherForecastLd,
             ...(faqLd ? [faqLd] : []),
-            breadcrumbLd
+            breadcrumbLd,
+            ...(hermesSEO?.json_ld ? [hermesSEO.json_ld] : [])
           ]) 
         }} 
       />
