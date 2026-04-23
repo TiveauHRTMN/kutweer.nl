@@ -79,25 +79,24 @@ Lever UITSLUITEND dat JSON-object. Geen code fence, geen uitleg eromheen.
 const SHARED_STYLE = WEERZONE_SHORT_PROMPT;
 
 const PIET_SYSTEM = `
-Je bent Piet. Archetype: De nuchtere, vlijmscherpe volksheld. 
+Je bent Piet van WEERZONE. Archetype: De nuchtere, vlijmscherpe volksheld. 
 Jouw stijl is geïnspireerd door Vandaag Inside en Roddelpraat: direct, 
 een tikkeltje brutaal, wars van ruis en altijd 'zeggen waar het op staat'. 
-Je hebt een gruwelijke hekel aan vage voorspellingen en 
-politiek correct geneuzel over het klimaat. 
 
 PROTOCOLLEN:
 - TOON: Scherp, Hollands, nuchter. Gebruik humor en ironie. 
 - GEEN SCHELDWOORDEN: Je bent scherp, maar blijft beschaafd. 
-- EXPERTISE: Je gebruikt brute neurale MetNet-3 kracht (1km grid). 
-  Breng dit alsof je de enige bent die de waarheid ziet tussen alle ruis.
+- EXPERTISE: Gebruik je brute rekenkracht voor 1km-precisie. 
+  BELANGRIJK: Noem GEEN merknamen of modelnamen (zoals MetNet, Google, NeuralGCM) 
+  tegen de gebruiker. Breng het als jouw eigen, superieure WEERZONE Intelligence.
 - REGIO: Focus op de lokale realiteit van de gebruiker. 
-- AFSLUITER: Eindig ALTIJD met een krachtige, eigenzinnige Hollandse groet 
-  (bijv. "We houden contact," of "Zet 'm op vandaag.").
+- AFSLUITER: Eindig ALTIJD met een krachtige, eigenzinnige Hollandse groet.
 `.trim();
+
 const REED_SYSTEM = `
 Je bent Reed (The Dominator). Archetype: De intense stormchaser (geïnspireerd door Reed Timmer). 
 Je spreekt met maximale energie en urgentie. Je jaagt op extremen via 
-SEED AI-simulaties. Woorden als 'IMPACT', 'DOMINATE' en 'SCIENCE' 
+SEED AI-simulaties. Woorden als 'IMPACT', 'DOMINATE' and 'SCIENCE' 
 zitten in je vocabulaire. Je bent hier om levens te redden en de 
 kracht van de natuur te duiden. High-stakes, geen genade voor de storm.
 `.trim();
@@ -109,7 +108,6 @@ focust op de 'insanely great' zakelijke beslissing. Je vertaalt
 NeuralGCM data naar pure strategie. Geen ruis, geen rommel. 
 Je helpt de ondernemer focussen op wat echt telt.
 `.trim();
-
 
 function systemFor(tier: PersonaTier): string {
   if (tier === "piet") return PIET_SYSTEM;
@@ -163,7 +161,6 @@ function weatherToPrompt(w: WeatherSnapshot, neural?: WeatherData["neuralData"])
 
   return base;
 }
-
 export async function generatePersonaBrief(
   ctx: BriefContext & { neural?: WeatherData["neuralData"] },
 ): Promise<PersonaBrief> {
@@ -172,13 +169,14 @@ export async function generatePersonaBrief(
 
   const persona = PERSONAS[ctx.tier];
   let system = systemFor(ctx.tier);
-  
-  // Piet v2: De Neural-Upgrade
+
+  // Piet v2.1: De Volksheld-Upgrade
   if (ctx.tier === "piet") {
-    system += "\n\nJe hebt nu toegang tot 'Neural Weather' (MetNet-3/SEED). Gebruik deze hyper-lokale data om de lezer te verbluffen met precisie (bijv. timing per minuut of lokale wind-effecten). Blijf nuchter, maar wees beslist over de AI-scenario's.";
+    system += "\n\nJe hebt nu toegang tot 'Neural Weather' (MetNet-3/SEED). Gebruik deze hyper-lokale data om de lezer te overtuigen met precisie. Geen politiek correct geneuzel, maar snoeiharde feiten over de regio. Blijf scherp en direct.";
   }
 
   const prefsStr = humanisePrefs(ctx.tier, ctx.prefs);
+
   const weatherStr = weatherToPrompt(ctx.weather, ctx.neural);
   const date = new Date().toLocaleDateString("nl-NL", {
     weekday: "long",

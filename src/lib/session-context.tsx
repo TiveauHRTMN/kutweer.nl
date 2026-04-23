@@ -8,7 +8,8 @@ import { isFounderEmail, FOUNDER_TIER } from "@/lib/founders";
 
 interface SessionState {
   user: User | null;
-  tier: PersonaTier | null;   // actieve tier (trialing|active) of null
+  tier: PersonaTier | null;
+  primaryLocation: { name: string; lat: number; lon: number } | null;
   loading: boolean;
   refresh: () => Promise<void>;
 }
@@ -16,6 +17,7 @@ interface SessionState {
 const SessionContext = createContext<SessionState>({
   user: null,
   tier: null,
+  primaryLocation: null,
   loading: true,
   refresh: async () => {},
 });
@@ -28,6 +30,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [user, setUser] = useState<User | null>(null);
   const [tier, setTier] = useState<PersonaTier | null>(null);
+  const [primaryLocation, setPrimaryLocation] = useState<{ name: string; lat: number; lon: number } | null>(null);
   const [loading, setLoading] = useState(true);
 
   async function hydrate() {
@@ -36,28 +39,46 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     setUser(u);
     if (!u) {
       setTier(null);
+      setPrimaryLocation(null);
       setLoading(false);
       return;
     }
-    const { data: subs } = await supabase
-      .from("subscriptions")
-      .select("tier, status")
-      .eq("user_id", u.id)
-      .in("status", ["trialing", "active"]);
 
-    const activeSubs = subs || [];
+    // Parallel fetch: subs and primary location
+    const [subsRes, locRes] = await Promise.all([
+      supabase
+        .from("subscriptions")
+        .select("tier, status")
+        .eq("user_id", u.id)
+        .in("status", ["trialing", "active"]),
+      supabase
+        .from("user_locations")
+        .select("label, lat, lon")
+        .eq("user_id", u.id)
+        .eq("is_primary", true)
+        .maybeSingle()
+    ]);
+
+    const activeSubs = subsRes.data || [];
     const tierRanking: Record<string, number> = { steve: 3, reed: 2, piet: 1, free: 0 };
     const sortedSubs = activeSubs.sort((a, b) => 
       (tierRanking[b.tier] ?? 0) - (tierRanking[a.tier] ?? 0)
     );
     
     let t = (sortedSubs[0]?.tier ?? null) as PersonaTier | null;
-    
-    // Founder-bypass: eigenaar krijgt altijd de hoogste tier.
-    if (!t && isFounderEmail(u.email)) {
-      t = FOUNDER_TIER;
-    }
+    if (!t && isFounderEmail(u.email)) t = FOUNDER_TIER;
     setTier(t && PERSONA_ORDER.includes(t) ? t : null);
+
+    if (locRes.data) {
+      setPrimaryLocation({
+        name: locRes.data.label,
+        lat: locRes.data.lat,
+        lon: locRes.data.lon
+      });
+    } else {
+      setPrimaryLocation(null);
+    }
+
     setLoading(false);
   }
 
@@ -71,7 +92,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <SessionContext.Provider value={{ user, tier, loading, refresh: hydrate }}>
+    <SessionContext.Provider value={{ user, tier, primaryLocation, loading, refresh: hydrate }}>
       {children}
     </SessionContext.Provider>
   );

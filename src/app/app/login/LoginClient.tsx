@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Loader2, ArrowLeft, Mail, ShieldCheck, UserPlus } from "lucide-react";
+import { Loader2, ArrowLeft, Mail, ShieldCheck } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import WzAuthShell from "@/components/wz/WzAuthShell";
 import {
@@ -31,14 +31,6 @@ export default function LoginClient() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Auto-focus email field on mount
-  useEffect(() => {
-    if (email && step === "email") {
-      // If email was pre-filled from query, we might want to trigger the check automatically
-      // but usually better to let user click "Doorgaan"
-    }
-  }, [email, step]);
-
   async function handleEmailNext(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim() || !/.+@.+\..+/.test(email)) {
@@ -55,7 +47,6 @@ export default function LoginClient() {
       if (exists) {
         setStep("password");
       } else {
-        // Smart Routing: Account bestaat niet -> Direct naar signup
         router.push(`/app/signup?email=${encodeURIComponent(email.trim())}`);
       }
     } catch (err: any) {
@@ -75,13 +66,12 @@ export default function LoginClient() {
     setSubmitError(null);
     setLoading(true);
     
-    const { data, error: signInErr } = await supabase.auth.signInWithPassword({
+    const { error: signInErr } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
     });
 
     if (signInErr) {
-      console.error("[LOGIN] Sign in error:", signInErr);
       setSubmitError("Wachtwoord is onjuist. Probeer het opnieuw of gebruik de inloglink.");
       setLoading(false);
       return;
@@ -119,12 +109,10 @@ export default function LoginClient() {
     }
   }
 
-  // --- RENDERING STRATEGIES ---
-
   const renderEmailStep = () => (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-      <h1 className="wz-h-1 mb-2">Welkom terug.</h1>
-      <p className="wz-body mb-6 text-slate-500">Voer je e-mailadres in om verder te gaan.</p>
+      <h1 className="h-1 mb-2">Welkom terug.</h1>
+      <p className="t-body mb-6">Voer je e-mailadres in om verder te gaan.</p>
 
       <WzSocialButtons onGoogle={handleGoogle} loading={loading} />
       <WzDivider>of gebruik e-mail</WzDivider>
@@ -144,7 +132,7 @@ export default function LoginClient() {
         <button
           type="submit"
           disabled={loading}
-          className="wz-btn wz-btn-primary wz-btn-block wz-btn-lg mt-2 disabled:opacity-60"
+          className="btn btn-primary btn-block btn-lg mt-2 disabled:opacity-60"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Doorgaan"}
         </button>
@@ -161,13 +149,13 @@ export default function LoginClient() {
         <ArrowLeft className="w-3 h-3" /> E-mail wijzigen
       </button>
 
-      <div className="flex items-center gap-3 mb-6 p-3 bg-slate-50 rounded-2xl border border-slate-100">
-        <div className="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400">
+      <div className="flex items-center gap-3 mb-6 p-3 bg-[var(--ink-050)] rounded-2xl border border-[var(--border)]">
+        <div className="w-10 h-10 rounded-full bg-white border border-[var(--border)] flex items-center justify-center text-[var(--ink-400)]">
           <ShieldCheck className="w-5 h-5" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">Account gevonden</p>
-          <p className="text-sm font-bold truncate text-slate-700">{email}</p>
+          <p className="t-micro">Account gevonden</p>
+          <p className="t-body font-bold truncate text-[var(--ink-900)]">{email}</p>
         </div>
       </div>
 
@@ -178,8 +166,7 @@ export default function LoginClient() {
           </label>
           <Link
             href="/app/reset"
-            className="text-[13px] font-bold no-underline hover:underline text-brand"
-            style={{ color: "var(--wz-brand)" }}
+            className="btn btn-link"
           >
             Vergeten?
           </Link>
@@ -203,7 +190,7 @@ export default function LoginClient() {
           <button
             type="submit"
             disabled={loading}
-            className="wz-btn wz-btn-primary wz-btn-block wz-btn-lg disabled:opacity-60"
+            className="btn btn-primary btn-block btn-lg disabled:opacity-60"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Inloggen"}
           </button>
@@ -212,7 +199,7 @@ export default function LoginClient() {
             type="button"
             onClick={handleMagicLink}
             disabled={loading}
-            className="wz-btn wz-btn-outline wz-btn-block wz-btn-lg flex items-center justify-center gap-2 disabled:opacity-60"
+            className="btn btn-ghost btn-block btn-lg flex items-center justify-center gap-2 disabled:opacity-60"
           >
             <Mail className="w-4 h-4" />
             {loading ? "Even geduld..." : "Inloggen zonder wachtwoord"}
@@ -224,22 +211,22 @@ export default function LoginClient() {
 
   const renderMagicLinkSent = () => (
     <div className="animate-in fade-in slide-in-from-top-4 duration-500 text-center py-4">
-      <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+      <div className="w-16 h-16 bg-[var(--success-bg)] text-[var(--success)] rounded-full flex items-center justify-center mx-auto mb-6">
         <Mail className="w-8 h-8" />
       </div>
-      <h2 className="wz-h-2 mb-2 text-green-900">Check je inbox!</h2>
-      <p className="wz-body mb-8 text-slate-600">
+      <h2 className="h-2 mb-2">Check je inbox!</h2>
+      <p className="t-body mb-8">
         We hebben een magische inloglink gestuurd naar <br />
-        <strong className="text-slate-900">{email}</strong>.
+        <strong className="text-[var(--ink-900)]">{email}</strong>.
       </p>
       
-      <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm text-slate-500 mb-8">
+      <div className="bg-[var(--ink-050)] border border-[var(--border)] rounded-2xl p-4 t-small mb-8">
         Geen mail ontvangen? Check je spam-folder of klik hieronder om het opnieuw te proberen.
       </div>
 
       <button 
         onClick={() => setStep("password")}
-        className="wz-btn wz-btn-outline wz-btn-block"
+        className="btn btn-ghost btn-block"
       >
         Toch met wachtwoord inloggen
       </button>
@@ -259,17 +246,16 @@ export default function LoginClient() {
             Nog geen account?{" "}
             <Link
               href="/app/signup"
-              className="font-bold no-underline hover:underline flex items-center gap-1 inline-flex"
-              style={{ color: "var(--wz-brand)" }}
+              className="btn btn-link"
             >
-              Maak er één <UserPlus className="w-3.5 h-3.5" />
+              Maak er één
             </Link>
           </>
         ) : null
       }
     >
       {submitError && (
-        <div className="mb-6 text-sm rounded-2xl p-4 bg-red-50 border border-red-100 text-red-800 animate-in shake-1">
+        <div className="mb-6 p-4 rounded-2xl bg-[var(--wz-danger-bg)] text-[var(--wz-danger)] t-body border border-[var(--wz-danger)] animate-in shake-1">
           {submitError}
         </div>
       )}

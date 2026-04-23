@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Inter } from "next/font/google";
+import { Manrope, JetBrains_Mono } from "next/font/google";
 import CookieBanner from "@/components/CookieBanner";
 import InstallPrompt from "@/components/InstallPrompt";
 import FounderBanner from "@/components/FounderBanner";
@@ -12,11 +12,17 @@ import "./globals.css";
 
 const ADSENSE_CLIENT = "ca-pub-6187487207780127";
 
-const inter = Inter({
-  variable: "--font-inter",
+const manrope = Manrope({
+  variable: "--font-manrope",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const jetbrains = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -112,7 +118,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="nl" className={`${inter.variable} antialiased`}>
+    <html lang="nl" className={`${manrope.variable} ${jetbrains.variable} antialiased`}>
       <head>
         <meta name="theme-color" content="#4a9ee8" />
       </head>

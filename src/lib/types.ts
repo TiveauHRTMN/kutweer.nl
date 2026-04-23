@@ -25,9 +25,15 @@ export interface WeatherData {
   models: ModelComparison;
   aiVerdict?: string;
   neuralData?: {
-    metNetNowcast?: string; // "Local rain intensity peak at 14:12"
-    seedScenario?: string;  // "85% confidence in evening clearing"
-    neuralGcmImpact?: string; // "Urban heat island effect adds +2C"
+    metNetNowcast?: string;
+    seedScenario?: string;
+    neuralGcmImpact?: string;
+    // Technical Layers
+    opticalDepth?: number;    // 0-100 (bewolking dichtheid)
+    solarRadiation?: number; // W/m2
+    windTurbulence?: string; // "Low", "Moderate", "High (Urban Tunnel)"
+    lightningRisk?: number;  // 0-100 (Reed trigger)
+    stormSeverity?: number;  // 0-12 Bft (Reed trigger)
   };
 }
 

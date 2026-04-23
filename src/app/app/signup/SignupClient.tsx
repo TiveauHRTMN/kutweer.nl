@@ -18,8 +18,6 @@ import {
 
 /**
  * Signup conform design handoff: naam, e-mail, wachtwoord, akkoord.
- * Postcode + onderwerpen komen in /app/onboarding, plan in /prijzen.
- * ?tier= query wordt bewaard voor onboarding → pricing.
  */
 export default function SignupClient() {
   const router = useRouter();
@@ -46,8 +44,6 @@ export default function SignupClient() {
   function nextAfterSignup(): string {
     const next = searchParams.get("next");
     if (next) return next;
-    
-    // Default fallback
     return preTier ? `/app/onboarding?tier=${preTier}` : "/app/onboarding";
   }
 
@@ -98,12 +94,7 @@ export default function SignupClient() {
       options: { redirectTo },
     });
     if (oauthErr) {
-      const msg = oauthErr.message.toLowerCase();
-      setSubmitError(
-        msg.includes("provider") || msg.includes("unsupported")
-          ? "Google-login is nog niet actief. Gebruik e-mail + wachtwoord."
-          : oauthErr.message,
-      );
+      setSubmitError(oauthErr.message);
       setLoading(false);
     }
   }
@@ -121,16 +112,15 @@ export default function SignupClient() {
           Heb je al een account?{" "}
           <Link
             href="/app/login"
-            className="font-bold no-underline hover:underline"
-            style={{ color: "var(--wz-brand)" }}
+            className="btn btn-link"
           >
             Inloggen
           </Link>
         </>
       }
     >
-      <h1 className="wz-h-1 mb-2">Maak een account</h1>
-      <p className="wz-body mb-6">Gratis proberen — geen creditcard nodig.</p>
+      <h1 className="h-1 mb-2">Maak een account</h1>
+      <p className="t-body mb-6">Gratis proberen — geen creditcard nodig.</p>
 
       <WzSocialButtons onGoogle={handleGoogle} loading={loading} />
       <WzDivider />
@@ -167,38 +157,19 @@ export default function SignupClient() {
         <div className="mt-1.5 mb-4">
           <WzCheckbox checked={agree} onChange={setAgree}>
             Ik ga akkoord met de{" "}
-            <Link
-              href="/voorwaarden"
-              className="font-semibold no-underline hover:underline"
-              style={{ color: "var(--wz-brand)" }}
-            >
-              voorwaarden
-            </Link>{" "}
+            <Link href="/voorwaarden" className="kbd-link">voorwaarden</Link>{" "}
             en het{" "}
-            <Link
-              href="/privacy"
-              className="font-semibold no-underline hover:underline"
-              style={{ color: "var(--wz-brand)" }}
-            >
-              privacybeleid
-            </Link>
-            .
+            <Link href="/privacy" className="kbd-link">privacybeleid</Link>.
           </WzCheckbox>
           {errors.agree && (
-            <div
-              className="mt-1.5 flex items-center gap-1.5 text-xs"
-              style={{ color: "var(--wz-danger)" }}
-            >
+            <div className="err mt-1.5">
               {errors.agree}
             </div>
           )}
         </div>
 
         {submitError && (
-          <div
-            className="mb-3 text-sm rounded-lg p-3"
-            style={{ background: "var(--wz-danger-bg)", color: "var(--wz-danger)" }}
-          >
+          <div className="mb-4 p-3 rounded-lg bg-[var(--wz-danger-bg)] text-[var(--wz-danger)] text-sm">
             {submitError}
           </div>
         )}
@@ -206,7 +177,7 @@ export default function SignupClient() {
         <button
           type="submit"
           disabled={loading}
-          className="wz-btn wz-btn-primary wz-btn-block wz-btn-lg disabled:opacity-60"
+          className="btn btn-primary btn-block btn-lg disabled:opacity-60"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Account aanmaken"}
         </button>

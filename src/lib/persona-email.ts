@@ -42,30 +42,32 @@ export function buildPersonaEmailHtml(
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>${escapeHtml(brief.subject)}</title>
 </head>
-<body style="margin:0;padding:0;background:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a;">
-<div style="max-width:560px;margin:0 auto;background:#ffffff;">
-  <div style="background:${p.color};padding:20px 24px;color:#ffffff;">
-    <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;opacity:0.85;">WEERZONE · ${escapeHtml(p.name)}</div>
-    <div style="font-size:22px;font-weight:900;margin-top:4px;">${escapeHtml(city)} — ${escapeHtml(date)}</div>
+<body style="margin:0;padding:0;background:#f4f7f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1e293b;">
+<div style="max-width:560px;margin:20px auto;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.05);border:1px solid #e2e8f0;">
+  <div style="background:${p.color};padding:32px 30px;color:#ffffff;">
+    <div style="font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;opacity:0.75;margin-bottom:8px;">WEERZONE INTELLIGENCE ENGINE</div>
+    <div style="font-size:24px;font-weight:900;letter-spacing:-0.02em;">${escapeHtml(p.name)}: ${escapeHtml(city)}</div>
+    <div style="font-size:13px;font-weight:500;opacity:0.9;margin-top:4px;">${escapeHtml(date)} · 48 uur vooruit</div>
   </div>
 
-  <div style="padding:28px 24px 8px 24px;">
-    <p style="margin:0 0 16px 0;font-size:16px;font-weight:700;">${escapeHtml(brief.greeting)}</p>
-    <p style="margin:0 0 20px 0;font-size:16px;line-height:1.6;">${escapeHtml(brief.verdict).replace(/\n/g, "<br>")}</p>
+  <div style="padding:40px 30px 10px 30px;">
+    <div style="font-size:18px;font-weight:800;color:#0f172a;margin-bottom:16px;">${escapeHtml(brief.greeting)}</div>
+    <div style="font-size:16px;line-height:1.7;color:#334155;">${escapeHtml(brief.verdict).replace(/\n/g, "<br>")}</div>
 
     ${
       bullets
-        ? `<ul style="margin:0 0 20px 0;padding:0 0 0 20px;font-size:15px;">${bullets}</ul>`
+        ? `<ul style="margin:24px 0;padding:0 0 0 20px;font-size:15px;color:#475569;">${bullets}</ul>`
         : ""
     }
 
-    <p style="margin:24px 0 4px 0;font-size:14px;color:#555;font-style:italic;">${escapeHtml(brief.closing)}</p>
-    <p style="margin:0;font-size:13px;color:#777;">— ${escapeHtml(p.name)}</p>
+    <div style="margin:32px 0 0 0;padding:20px;background:#f8fafc;border-radius:16px;border-left:4px solid ${p.color};">
+      <p style="margin:0;font-size:14px;color:#1e293b;font-weight:700;line-height:1.5;">${escapeHtml(brief.closing)}</p>
+    </div>
   </div>
 
-  <div style="padding:20px 24px 28px 24px;border-top:1px solid #eee;margin-top:20px;">
-    <a href="https://weerzone.nl/app" style="display:inline-block;background:${p.color};color:#ffffff;text-decoration:none;font-weight:800;padding:10px 18px;border-radius:999px;font-size:13px;">
-      Open dashboard
+  <div style="padding:30px;text-align:center;">
+    <a href="https://weerzone.nl/piet" style="display:inline-block;background:#0f172a;color:#ffffff;text-decoration:none;font-weight:800;padding:14px 28px;border-radius:14px;font-size:14px;box-shadow:0 4px 12px rgba(15,23,42,0.15);">
+      Bekijk volledige 48-uurs analyse →
     </a>
   </div>
 

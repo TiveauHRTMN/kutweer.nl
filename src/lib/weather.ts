@@ -225,6 +225,21 @@ export async function getNeuralInsights(lat: number, lon: number, weather: Weath
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return undefined;
 
+  // TEST MODE: Forceer Reed-gate event voor demo
+  const isSimulation = true; 
+  if (isSimulation) {
+    return {
+      metNetNowcast: "Zware ontlading nadert vanuit het zuidwesten. Impact binnen 12 minuten.",
+      seedScenario: "95% kans op supercell-vorming in deze regio.",
+      neuralGcmImpact: "Lokaal verhoogd risico door stedelijke hitte-accumulatie.",
+      opticalDepth: 94,
+      solarRadiation: 42,
+      windTurbulence: "Extreme Gusts Detected",
+      lightningRisk: 88, // Reed trigger (>40)
+      stormSeverity: 9   // Reed trigger (>6)
+    };
+  }
+
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -235,16 +250,28 @@ export async function getNeuralInsights(lat: number, lon: number, weather: Weath
       - Neerslag: ${weather.current.precipitation}mm
       - Wind: ${weather.current.windSpeed}km/u
       
-      Simuleer de output van:
-      1. MetNet-3 (Nowcasting): Focus op neerslag-timing per minuut op deze exacte plek.
-      2. SEED (Ensemble Diffusion): Geef een scenario-kans (bijv. 85% kans op...).
-      3. NeuralGCM (Global-to-Local): Focus op lokaal micro-klimaat impact (bijv. hitte-eiland of wind-tunnel effect).
+      Simuleer de output van de WEERZONE Intelligence Engine:
+      1. Nowcasting: Focus op neerslag-timing per minuut op deze exacte plek.
+      2. Ensemble Scenario: Geef een scenario-kans (bijv. 85% kans op...).
+      3. Micro-klimaat: Focus op lokaal micro-klimaat impact.
+      4. Technische Layers: 
+         - opticalDepth (0-100)
+         - solarRadiation (W/m2)
+         - windTurbulence (tekst)
+         - lightningRisk (0-100)
+         - stormSeverity (0-12 Bft)
 
+      BELANGRIJK: Noem GEEN modelnamen in de tekstvelden.
       Antwoord in PUUR JSON:
       {
         "metNetNowcast": "...",
         "seedScenario": "...",
-        "neuralGcmImpact": "..."
+        "neuralGcmImpact": "...",
+        "opticalDepth": number,
+        "solarRadiation": number,
+        "windTurbulence": "...",
+        "lightningRisk": number,
+        "stormSeverity": number
       }
     `.trim();
 

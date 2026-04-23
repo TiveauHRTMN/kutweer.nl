@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import Link from "next/link";
 import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users } from "lucide-react";
 import { LogoFull } from "./Logo";
 import PersonaBadge from "./PersonaBadge";
@@ -289,9 +290,29 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
           
           {/* Intelligence Briefing — Integrated directly in Hero card */}
           <div className="mt-8 pt-6 border-t border-black/5">
-            <p className="font-bold text-lg sm:text-xl text-text-primary leading-[1.4] mb-4">
+            <p className="font-bold text-lg sm:text-xl text-text-primary leading-[1.4] mb-6">
               {weather.aiVerdict || getMainCommentary(weather)}
             </p>
+
+            {/* Intelligence Engine Teaser */}
+            <div className="mb-6 p-4 rounded-2xl bg-white/40 border border-white/60 shadow-inner">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <BrainCircuit className="w-3.5 h-3.5 text-accent-cyan animate-pulse" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Intelligence Pulse</span>
+                </div>
+                <span className="text-[9px] font-bold text-accent-cyan uppercase tracking-tighter">1.0km resolution active</span>
+              </div>
+              <p className="text-xs font-bold text-text-primary mb-3">
+                {weather.neuralData?.metNetNowcast || "Synchroniseren met neurale sensoren..."}
+              </p>
+              <div className="flex gap-1 h-4 items-end">
+                {[...Array(15)].map((_, i) => (
+                  <div key={i} className="flex-1 bg-accent-cyan/20 rounded-t-[1px]" style={{ height: `${Math.random() * 100}%` }} />
+                ))}
+              </div>
+            </div>
+
             <PietInlineTip weather={weather} />
           </div>
           
@@ -306,6 +327,9 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
         <div className="flex justify-between items-center mb-6 relative z-10 px-1">
           <h3 className="text-[11px] font-black text-text-primary uppercase tracking-[0.2em]">Korte Termijn</h3>
+          <Link href="/piet" className="text-[10px] font-black text-brand uppercase tracking-widest hover:underline decoration-2 underline-offset-4">
+            Piet's 48h Detail →
+          </Link>
         </div>
         
         <div className="grid grid-cols-2 gap-4 relative z-10">

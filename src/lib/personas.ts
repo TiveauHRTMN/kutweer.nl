@@ -23,23 +23,24 @@ export const PERSONAS: Record<PersonaTier, PersonaConfig> = {
   piet: {
     tier: "piet",
     name: "Piet",
-    label: "Neurale Precisie",
+    label: "Hyper-lokale Precisie",
     color: "#22c55e",
     colorVar: "--persona-piet",
-    tagline: "Oant moarn, maar dan met neurale kracht.",
+    tagline: "De scherpste blik op jouw straat.",
     description:
-      "Piet brengt het weer terug naar de mensen. Geïnspireerd door Piet Paulusma, maar versterkt met Google MetNet-3. Hij geeft je dat vertrouwde gevoel van de lokale weerman die precies weet wat er in jouw dorp gebeurt, tot op de minuut nauwkeurig.",
+      "Piet is de nuchtere volksheld van WEERZONE. Geen fratsen, geen vage gokwerkjes, maar brute rekenkracht die precies weet hoe de vlag erbij hangt in jouw regio. Hij vertelt je direct waar het op staat, tot op de minuut nauwkeurig.",
     priceCents: 499,
     founderPriceCents: 299,
     features: [
-      "MetNet-3 Neural Nowcasting (1km grid)",
-      "Warm, lokaal en toegankelijk (Paulusma-stijl)",
+      "Snoeiharde precisie (1km grid)",
+      "Minuut-tot-minuut neerslag-update",
       "Elke ochtend vóór 7:00 je persoonlijke brief",
       "Focus op jouw dagelijkse buitenleven",
-      "Oant moarn: Altijd een blik op morgen",
+      "Zegt waar het op staat (geen politiek geneuzel)",
     ],
-    audience: "Voor wie houdt van een menselijk weerbericht met de scherpste techniek.",
+    audience: "Voor wie houdt van een eerlijk weerbericht met de scherpste techniek.",
   },
+
   reed: {
     tier: "reed",
     name: "Reed",

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapPin, RefreshCw } from "lucide-react";
 import { loadWeather } from "@/lib/weatherCache";
-import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData } from "@/lib/types";
+import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData, distanceBetween } from "@/lib/types";
 import { getWeatherEmoji, getWeatherDescription } from "@/lib/weather";
 import { getMainCommentary } from "@/lib/commentary";
 import NeuralInsights from "./NeuralInsights";
@@ -25,12 +25,21 @@ function getSavedCity(): City | null {
 }
 
 export default function PietExtended() {
+  const { tier, primaryLocation, loading: sessionLoading } = useSession();
+  
   const [city, setCity] = useState<City>(
     () => getSavedCity() || DUTCH_CITIES.find((c) => c.name === "De Bilt") || DUTCH_CITIES[0]
   );
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const [locating, setLocating] = useState(false);
+
+  // Sync with primary location from session if available
+  useEffect(() => {
+    if (!sessionLoading && primaryLocation) {
+      setCity(primaryLocation);
+    }
+  }, [sessionLoading, primaryLocation]);
 useEffect(() => {
   let cancelled = false;
   setLoading(true);
@@ -53,25 +62,25 @@ useEffect(() => {
   };
 }, [city]);
 
-const { tier } = useSession();
-
 const locate = () => {
+
     if (!("geolocation" in navigator)) return;
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude: lat, longitude: lon } = pos.coords;
-        const provisional: City = { name: "Jouw locatie", lat, lon };
+        
+        const provisional: City = { name: "Locatie bepalen...", lat, lon };
         setCity(provisional);
-        localStorage.setItem("wz_city", JSON.stringify(provisional));
-        setLocating(false);
+        
         reverseGeocode(lat, lon).then((c) => {
           setCity(c);
           localStorage.setItem("wz_city", JSON.stringify(c));
-        }).catch(() => {});
+          setLocating(false);
+        }).catch(() => setLocating(false));
       },
       () => setLocating(false),
-      { enableHighAccuracy: false, timeout: 8000, maximumAge: 60 * 60 * 1000 }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   };
 
@@ -99,101 +108,112 @@ const locate = () => {
   ];
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          onClick={locate}
-          disabled={locating}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/20 bg-white/10 backdrop-blur-md text-white text-sm font-bold hover:bg-white/20 transition-all disabled:opacity-60"
-        >
-          <MapPin className={`w-4 h-4 ${locating ? "animate-pulse" : ""}`} />
-          {locating ? "Locatie bepalen…" : city.name}
-        </button>
-        <span className="text-xs text-white/60">← wissel stad via GPS</span>
+    <div className="space-y-8 animate-fade-in">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={locate}
+            disabled={locating}
+            className="btn btn-ghost bg-white/10 backdrop-blur-md border-white/20 text-white font-bold"
+          >
+            <MapPin className={`w-4 h-4 ${locating ? "animate-pulse text-accent-cyan" : ""}`} />
+            {locating ? "Sensoren kalibreren…" : city.name}
+          </button>
+          {primaryLocation?.name === city.name && (
+            <span className="badge sun !bg-accent-orange/20 !text-accent-orange border border-accent-orange/30">Home Base</span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-accent-green animate-pulse" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-white/60">Data stream: Knmi + Neural Engine</span>
+        </div>
       </div>
 
-      {/* Hoofdverhaal Piet */}
-      <div className="card p-5 sm:p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-accent-orange/20 flex items-center justify-center text-xl">
+      {/* 1. THE NEURAL INTELLIGENCE GRID */}
+      <NeuralInsights weather={weather} tier={tier} />
+
+      {/* 2. PIET'S ANALYTICAL VERDICT */}
+      <div className="homecard !p-8 border-l-4 border-l-accent-cyan">
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-12 h-12 rounded-2xl bg-accent-cyan/20 flex items-center justify-center text-2xl shadow-inner">
             💬
           </div>
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-widest text-accent-orange">
-              Piet — {new Date().toLocaleDateString("nl-NL", { weekday: "long", day: "numeric", month: "long" })}
+            <h2 className="homecard-kicker !text-accent-cyan">Meteorologische Analyse</h2>
+            <p className="text-sm font-black text-white/50 uppercase tracking-tighter">
+              Gegenereerd op {new Date().toLocaleTimeString("nl-NL", { hour: '2-digit', minute: '2-digit' })}
             </p>
-            <p className="text-xs text-text-secondary">Voor {city.name} — 48 uur vooruit</p>
           </div>
         </div>
-        <p className="text-lg font-semibold text-text-primary leading-relaxed break-words">{narrative}</p>
-      </div>
-
-      {/* Huidig moment + vandaag + morgen cards */}
-      <div className="grid sm:grid-cols-3 gap-3">
-        <div className="card p-4">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-text-secondary mb-2">Nu</p>
-          <div className="flex items-center gap-3">
-            <span className="text-4xl">{getWeatherEmoji(weather.current.weatherCode, weather.current.isDay)}</span>
-            <div>
-              <p className="text-3xl font-black">{weather.current.temperature}°</p>
-              <p className="text-xs text-text-secondary">voelt als {weather.current.feelsLike}°</p>
-            </div>
-          </div>
-          <p className="text-xs text-text-secondary mt-2">{getWeatherDescription(weather.current.weatherCode)}</p>
-        </div>
-        <div className="card p-4 border-l-4 border-accent-orange">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-accent-orange mb-2">Vandaag</p>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black">{today.tempMax}°</span>
-            <span className="text-sm text-text-secondary">/ {today.tempMin}°</span>
-          </div>
-          <p className="text-xs text-text-secondary mt-1">
-            {today.precipitationSum > 0 ? `${today.precipitationSum}mm regen` : "Droog"} · wind {today.windSpeedMax} km/h
-          </p>
-        </div>
-        <div className="card p-4">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-text-secondary mb-2">Morgen</p>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-black">{tomorrow.tempMax}°</span>
-            <span className="text-sm text-text-secondary">/ {tomorrow.tempMin}°</span>
-          </div>
-          <p className="text-xs text-text-secondary mt-1">
-            {tomorrow.precipitationSum > 0 ? `${tomorrow.precipitationSum}mm regen` : "Droog"} · wind {tomorrow.windSpeedMax} km/h
-          </p>
+        <div className="text-xl sm:text-2xl font-bold text-white leading-relaxed tracking-tight">
+          {narrative}
         </div>
       </div>
 
-      {/* 48-uurs blokken */}
-      <div className="card p-5">
-        <p className="text-[11px] font-bold uppercase tracking-widest text-text-secondary mb-3">48-uurs verloop — per 6 uur</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {blocks.map((b) => {
+      {/* 3. THE 48-HOUR PRECISION GRID */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 px-1">
+          <Activity className="w-3 h-3 text-text-muted" />
+          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">48-uurs window (1km resolution)</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {blocks.map((b, idx) => {
             const slice = weather.hourly.slice(b.start, b.end);
             if (slice.length === 0) return null;
             const avgTemp = Math.round(slice.reduce((a, h) => a + h.temperature, 0) / slice.length);
             const rainSum = slice.reduce((a, h) => a + h.precipitation, 0);
             const maxWind = Math.max(...slice.map((h) => h.windSpeed || 0));
             const midCode = slice[Math.floor(slice.length / 2)].weatherCode;
+            
             return (
-              <div key={b.label} className="p-3 rounded-xl bg-white/40 border border-white/20">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-text-secondary">{b.label}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xl">{getWeatherEmoji(midCode, true)}</span>
-                  <span className="text-xl font-bold">{avgTemp}°</span>
+              <motion.div 
+                key={b.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="homecard group hover:border-white/40 transition-colors"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <span className="homecard-kicker">{b.label}</span>
+                  <span className="text-3xl drop-shadow-xl">{getWeatherEmoji(midCode, true)}</span>
                 </div>
-                <p className="text-[11px] text-text-secondary mt-1">
-                  {rainSum > 0.1 ? `${rainSum.toFixed(1)}mm` : "droog"} · {maxWind} km/h
-                </p>
-              </div>
+                
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-black text-white tracking-tighter">{avgTemp}°</span>
+                  <span className="text-xs font-bold text-white/40 uppercase">Avg</span>
+                </div>
+
+                <div className="homecard-strip">
+                  <div className="homecard-tick">
+                    <div className="tk">Rain</div>
+                    <div className="vl !text-accent-cyan">{rainSum > 0.1 ? `${rainSum.toFixed(1)}mm` : "0.0"}</div>
+                  </div>
+                  <div className="homecard-tick">
+                    <div className="tk">Wind</div>
+                    <div className="vl">{maxWind} <span className="text-[8px] opacity-50">km/h</span></div>
+                  </div>
+                  <div className="homecard-tick">
+                    <div className="tk">UV</div>
+                    <div className="vl text-wz-sun">{weather.uvIndex.toFixed(0)}</div>
+                  </div>
+                </div>
+              </motion.div>
             );
           })}
         </div>
       </div>
 
-      <div className="text-center">
-        <Link href="/" className="text-sm text-white/80 hover:text-white underline">
-          → Terug naar het volledige dashboard
+      <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <Link href="/" className="btn btn-ghost text-sm font-bold">
+          ← Dashboard
         </Link>
+        <div className="flex items-center gap-4">
+          <p className="text-[10px] font-black text-white/30 uppercase tracking-widest text-center sm:text-right">
+            Brute kracht van de WEERZONE Intelligence Engine.<br />
+            Next-gen meteorologie voor elke Nederlander.
+          </p>
+        </div>
       </div>
     </div>
   );

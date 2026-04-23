@@ -1,110 +1,103 @@
+"use client";
+
 import Image from "next/image";
 import type { ReactNode } from "react";
 
+interface Quote {
+  text: string;
+  author: string;
+}
+
 /**
  * Twee-koloms auth-shell conform handoff. Links blauw marketingpaneel
- * met logo-pill + hero + optionele quote; rechts formulierpaneel. Onder
- * 860px verdwijnt het linkerpaneel en vult het formulier de viewport.
+ * met logo-pill + hero + homecard + optionele quote; rechts formulierpaneel.
  */
 export default function WzAuthShell({
-  title = "Het weer, zoals jij het wil.",
-  subtitle = "Iedere ochtend een persoonlijk weerbericht in je inbox. Helder, betrouwbaar, zonder ruis.",
+  title = "48 uur vooruit.\nDe rest is ruis.",
+  subtitle = "Per GPS, op jouw locatie. Elke ochtend een persoonlijk weerbericht — geen reclame, geen gokwerk.",
   quote,
   children,
   footer,
 }: {
   title?: string;
   subtitle?: string;
-  quote?: { text: string; author: string } | null;
+  quote?: Quote | null;
   children: ReactNode;
   footer?: ReactNode;
 }) {
   return (
-    <div
-      className="min-h-screen grid"
-      style={{
-        fontFamily: "var(--font-wz)",
-        background: "var(--wz-bg)",
-        gridTemplateColumns: "1fr 1fr",
-      }}
-    >
-      <aside
-        className="wz-auth-side relative p-10 text-white overflow-hidden hidden md:flex flex-col justify-between"
-        style={{
-          background:
-            "radial-gradient(120% 80% at 50% -10%, #6fa6ff 0%, transparent 55%), linear-gradient(180deg, var(--wz-blue) 0%, var(--wz-blue-deep) 100%)",
-        }}
-      >
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-40 mix-blend-overlay"
-          style={{
-            backgroundImage:
-              "radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px)",
-            backgroundSize: "3px 3px",
-          }}
-        />
-        <div
-          className="relative inline-flex items-center self-start rounded-[10px]"
-          style={{ background: "rgba(255,255,255,0.15)", padding: "8px 14px" }}
-        >
-          <Image
-            src="/brand/weerzone-logo.png"
-            alt="Weerzone"
-            width={94}
-            height={22}
+    <div className="auth-shell">
+      <aside className="auth-side">
+        <div className="brand-pill">
+          <Image 
+            src="/logo-white.png" 
+            alt="Weerzone" 
+            width={100} 
+            height={20} 
+            className="brand-logo"
             priority
-            style={{ height: 22, width: "auto", display: "block" }}
           />
         </div>
 
-        <div className="relative flex flex-col gap-5 max-w-[460px]">
-          <h2
-            className="text-[40px] leading-[1.1] font-extrabold m-0"
-            style={{ letterSpacing: "-0.02em" }}
-          >
-            {title}
-          </h2>
-          <p className="text-base leading-[1.55] m-0" style={{ color: "rgba(255,255,255,0.85)" }}>
-            {subtitle}
-          </p>
-          {quote && (
-            <div
-              className="mt-4 p-5 rounded-2xl border"
-              style={{
-                background: "rgba(255,255,255,0.08)",
-                borderColor: "rgba(255,255,255,0.15)",
-              }}
-            >
-              <p
-                className="text-[15px] leading-[1.55] m-0"
-                style={{ color: "rgba(255,255,255,0.92)" }}
-              >
-                “{quote.text}”
-              </p>
-              <div className="mt-3 text-[13px]" style={{ color: "rgba(255,255,255,0.7)" }}>
-                — {quote.author}
+        <div className="side-hero">
+          {/* Big homepage-style weer-tegel */}
+          <div className="homecard">
+            <div className="homecard-top">
+              <div>
+                <div className="homecard-kicker">Vandaag · De Bilt</div>
+                <div className="homecard-temp">12<span className="deg">°</span></div>
+                <div className="homecard-sub">Snoeiharde 48-uurs data</div>
+              </div>
+              <div className="homecard-sun" aria-hidden="true">
+                <svg viewBox="0 0 64 64" width="92" height="92">
+                  <circle cx="24" cy="32" r="12" fill="var(--wz-sun)"/>
+                  {Array.from({length:8}).map((_,i)=>{
+                    const a = (i*45)*Math.PI/180;
+                    const x1 = 24 + Math.cos(a)*16, y1 = 32 + Math.sin(a)*16;
+                    const x2 = 24 + Math.cos(a)*22, y2 = 32 + Math.sin(a)*22;
+                    return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--wz-sun)" strokeWidth="3" strokeLinecap="round"/>;
+                  })}
+                  <path d="M28 40c4-2 10-2 14 0 4 2 10 2 16 0v8c-6 2-12 2-16 0-4-2-10-2-14 0z" fill="#fff" opacity=".92"/>
+                  <path d="M20 46c6-2 12-2 18 0 6 2 14 2 20 0v6c-6 2-14 2-20 0-6-2-12-2-18 0z" fill="#fff" opacity=".75"/>
+                </svg>
               </div>
             </div>
-          )}
-        </div>
+            <div className="homecard-strip">
+              {[
+                { t: '09:00', v: '10°', g: '☀' },
+                { t: '12:00', v: '13°', g: '⛅' },
+                { t: '15:00', v: '14°', g: '⛅' },
+                { t: '18:00', v: '11°', g: '🌧' },
+                { t: '21:00', v: '8°', g: '🌧' }
+              ].map((item)=>(
+                <div key={item.t} className="homecard-tick">
+                  <div className="tk">{item.t}</div>
+                  <div className="gl">{item.g}</div>
+                  <div className="vl">{item.v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
 
-        <div className="relative text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>
-          © {new Date().getFullYear()} Weerzone · Dagelijks weer voor Nederland
-        </div>
-      </aside>
+          <h2 className="whitespace-pre-line">{title}</h2>
+          <p className="t-body !text-white/80">{subtitle}</p>
 
-      <main className="flex items-center justify-center p-6 md:p-10">
-        <div className="w-full max-w-[420px]" style={{ color: "var(--wz-text)" }}>
-          {children}
-          {footer && (
-            <div
-              className="mt-5 text-center text-sm"
-              style={{ color: "var(--wz-text-soft)" }}
-            >
-              {footer}
+          {quote && (
+            <div className="side-quote">
+              <p>“{quote.text}”</p>
+              <div>— {quote.author}</div>
             </div>
           )}
+        </div>
+
+        <div className="side-foot text-[10px] font-black uppercase tracking-[0.2em] opacity-40">
+          WEERZONE Intelligence · v2.1
+        </div>
+      </aside>
+      <main className="auth-panel">
+        <div className="auth-inner">
+          {children}
+          {footer && <div className="mt-5 text-center text-sm" style={{ color: "var(--wz-text-soft)" }}>{footer}</div>}
         </div>
       </main>
     </div>

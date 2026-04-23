@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Zap, Shield, Target, Info, BrainCircuit } from "lucide-react";
+import { Zap, Shield, Target, Info, BrainCircuit, Activity, Sun, Wind, Cloud, AlertOctagon } from "lucide-react";
+import Link from "next/link";
 import type { WeatherData } from "@/lib/types";
 import type { PersonaTier } from "@/lib/personas";
 
@@ -13,113 +14,163 @@ interface NeuralInsightsProps {
 export default function NeuralInsights({ weather, tier }: NeuralInsightsProps) {
   if (!weather.neuralData) return null;
 
-  const { metNetNowcast, seedScenario, neuralGcmImpact } = weather.neuralData;
+  const { 
+    metNetNowcast, 
+    seedScenario, 
+    neuralGcmImpact,
+    opticalDepth,
+    solarRadiation,
+    windTurbulence,
+    lightningRisk,
+    stormSeverity
+  } = weather.neuralData;
 
-  // Configuration per tier
-  const config = {
-    piet: {
-      title: "MetNet-3 Nowcast",
-      icon: <Zap className="w-4 h-4 text-accent-cyan" />,
-      content: metNetNowcast,
-      label: "Hyper-lokale Precisie",
-      color: "border-accent-cyan/30 bg-accent-cyan/5"
-    },
-    reed: {
-      title: "SEED AI Simulatie",
-      icon: <Shield className="w-4 h-4 text-accent-red" />,
-      content: seedScenario,
-      label: "Extreme Kansberekening",
-      color: "border-accent-red/30 bg-accent-red/5"
-    },
-    steve: {
-      title: "NeuralGCM Impact",
-      icon: <Target className="w-4 h-4 text-accent-blue" />,
-      content: neuralGcmImpact,
-      label: "Strategische Analyse",
-      color: "border-accent-blue/30 bg-accent-blue/5"
-    }
-  };
-
-  // Determine which insights to show based on tier (hierarchy)
-  const showPiet = tier === "piet" || tier === "reed" || tier === "steve";
-  const showReed = tier === "reed" || tier === "steve";
-  const showSteve = tier === "steve";
+  const confidence = 92; 
+  const isReed = tier === "reed" || tier === "steve";
+  const hasExtreme = (lightningRisk || 0) > 40 || (stormSeverity || 0) > 6;
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2 px-1">
-        <BrainCircuit className="w-3 h-3 text-text-muted" />
-        <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">Google Neural Weather Engine</span>
+    <div className="flex flex-col gap-5">
+      <div className="flex items-center justify-between px-1">
+        <div className="flex items-center gap-2">
+          <BrainCircuit className="w-4 h-4 text-accent-cyan animate-pulse" />
+          <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white/90">Intelligence Engine</span>
+        </div>
+        <div className="flex items-center gap-1.5 bg-accent-cyan/20 px-2 py-0.5 rounded-full border border-accent-cyan/30">
+          <div className="w-1.5 h-1.5 rounded-full bg-accent-cyan animate-ping" />
+          <span className="text-[9px] font-black text-accent-cyan uppercase">Live Pulse</span>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-3">
-        {showPiet && config.piet.content && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`card p-4 border ${config.piet.color} flex gap-4`}
-          >
-            <div className="mt-1">{config.piet.icon}</div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h4 className="text-[10px] font-black uppercase tracking-wider text-text-primary">{config.piet.title}</h4>
-                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-accent-cyan/20 text-accent-cyan uppercase">{config.piet.label}</span>
-              </div>
-              <p className="text-sm font-bold text-text-primary mt-1 leading-relaxed">{config.piet.content}</p>
+      {/* 1. PRIMARY: NOWCAST MONITOR */}
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="homecard"
+      >
+        <div className="homecard-top mb-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Activity className="w-3 h-3 text-accent-cyan" />
+              <h4 className="homecard-kicker !mb-0">Micro-Precision Nowcast</h4>
             </div>
-          </motion.div>
-        )}
-
-        {showReed && config.reed.content && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className={`card p-4 border ${config.reed.color} flex gap-4`}
-          >
-            <div className="mt-1">{config.reed.icon}</div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h4 className="text-[10px] font-black uppercase tracking-wider text-text-primary">{config.reed.title}</h4>
-                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-accent-red/20 text-accent-red uppercase">{config.reed.label}</span>
-              </div>
-              <p className="text-sm font-bold text-text-primary mt-1 leading-relaxed">{config.reed.content}</p>
-            </div>
-          </motion.div>
-        )}
-
-        {showSteve && config.steve.content && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className={`card p-4 border ${config.steve.color} flex gap-4`}
-          >
-            <div className="mt-1">{config.steve.icon}</div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h4 className="text-[10px] font-black uppercase tracking-wider text-text-primary">{config.steve.title}</h4>
-                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full bg-accent-blue/20 text-accent-blue uppercase">{config.steve.label}</span>
-              </div>
-              <p className="text-sm font-bold text-text-primary mt-1 leading-relaxed">{config.steve.content}</p>
-            </div>
-          </motion.div>
-        )}
-
-        {!tier && (
-          <div className="card p-4 border-dashed border-white/40 bg-white/5 flex items-center justify-between group cursor-pointer" onClick={() => window.dispatchEvent(new CustomEvent("wz:open-persona-modal"))}>
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-text-muted">
-                <Zap className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-text-muted">Neural Insights Vergrendeld</p>
-                <p className="text-xs font-bold text-text-secondary">Word Piet, Reed of Steve voor AI-precisie.</p>
-              </div>
-            </div>
-            <Info className="w-4 h-4 text-text-muted group-hover:text-accent-orange transition-colors" />
+            <p className="text-xl font-black text-white leading-tight">{metNetNowcast || "Synchronisatie loopt..."}</p>
           </div>
-        )}
+          <Zap className="w-6 h-6 text-accent-cyan homecard-sun" />
+        </div>
+        
+        {/* Real-time Frequency Viz */}
+        <div className="homecard-strip !border-none !mt-0 h-12 items-end px-2">
+          {[...Array(30)].map((_, i) => (
+            <motion.div 
+              key={i}
+              animate={{ height: [15, Math.random() * 40 + 10, 15] }}
+              transition={{ repeat: Infinity, duration: 2, delay: i * 0.03 }}
+              className="flex-1 bg-accent-cyan/30 rounded-t-sm"
+            />
+          ))}
+        </div>
+      </motion.div>
+
+      {/* 2. SECONDARY: TECHNICAL GRID */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="card p-3 bg-white/5 border-white/5 flex flex-col items-center text-center">
+          <Cloud className="w-4 h-4 text-text-muted mb-2" />
+          <span className="text-[10px] font-black text-text-secondary uppercase mb-1">Optische Diepte</span>
+          <span className="text-sm font-black text-white">{opticalDepth || "—"}%</span>
+        </div>
+        <div className="card p-3 bg-white/5 border-white/5 flex flex-col items-center text-center">
+          <Sun className="w-4 h-4 text-accent-orange mb-2" />
+          <span className="text-[10px] font-black text-text-secondary uppercase mb-1">Straling</span>
+          <span className="text-sm font-black text-white">{solarRadiation || "—"} W/m²</span>
+        </div>
+        <div className="card p-3 bg-white/5 border-white/5 flex flex-col items-center text-center">
+          <Wind className="w-4 h-4 text-accent-blue mb-2" />
+          <span className="text-[10px] font-black text-text-secondary uppercase mb-1">Turbulentie</span>
+          <span className="text-[10px] font-black text-white truncate w-full uppercase">{windTurbulence || "Stable"}</span>
+        </div>
+        <div className="card p-3 bg-white/5 border-white/5 flex flex-col items-center text-center">
+          <Target className="w-4 h-4 text-accent-green mb-2" />
+          <span className="text-[10px] font-black text-text-secondary uppercase mb-1">Grid Resolutie</span>
+          <span className="text-sm font-black text-white">1.0 km</span>
+        </div>
+      </div>
+
+      {/* 3. TERTIARY: SCENARIO & IMPACT */}
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div className="card p-5 bg-white/5 border-white/10">
+          <div className="flex items-center gap-2 mb-4">
+            <Shield className="w-4 h-4 text-accent-orange" />
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Ensemble Model</h4>
+          </div>
+          <div className="flex justify-between items-end mb-2">
+            <span className="text-3xl font-black text-white">{confidence}%</span>
+            <span className="text-[9px] font-bold text-accent-orange uppercase">Zekerheid</span>
+          </div>
+          <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${confidence}%` }}
+              className="h-full bg-accent-orange"
+            />
+          </div>
+          <p className="text-[11px] text-text-muted mt-3 leading-relaxed italic">"{seedScenario}"</p>
+        </div>
+
+        <div className="card p-5 bg-white/5 border-white/10">
+          <div className="flex items-center gap-2 mb-4">
+            <Activity className="w-4 h-4 text-accent-blue" />
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-text-secondary">Omgevings-Impact</h4>
+          </div>
+          <p className="text-sm font-bold text-white mb-3">{neuralGcmImpact}</p>
+          <div className="flex gap-2">
+            <div className="px-2 py-1 rounded bg-accent-blue/10 border border-accent-blue/20 text-[9px] font-black text-accent-blue uppercase tracking-tighter">Geo-Aware Analysis</div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. REED GATE: EXTREME WEATHER UPSELL */}
+      {hasExtreme && (
+        <div className={`card overflow-hidden border-2 ${isReed ? 'border-accent-red/50 bg-accent-red/5' : 'border-accent-red/30 bg-black/40'}`}>
+          <div className="p-5 flex items-center gap-5">
+            <div className="w-12 h-12 rounded-full bg-accent-red flex items-center justify-center shrink-0">
+              <AlertOctagon className="w-7 h-7 text-white" />
+            </div>
+            <div className="flex-1">
+              <h4 className="text-sm font-black text-accent-red uppercase tracking-widest">Extreme Atmosfeer Gedetecteerd</h4>
+              <p className="text-xs font-bold text-white/80 mt-1">
+                {isReed 
+                  ? "Snoeiharde waarschuwing: Neurale sensoren slaan uit op storm/onweer." 
+                  : "Detail-data voor deze extreme condities is vergrendeld voor Piet-abonnees."}
+              </p>
+            </div>
+            {!isReed && (
+              <Link 
+                href="/reed"
+                className="px-5 py-2.5 bg-accent-red text-white text-[11px] font-black uppercase rounded-xl hover:scale-105 transition-transform"
+              >
+                Reed Alerts →
+              </Link>
+            )}
+          </div>
+          {!isReed && (
+            <div className="h-10 bg-accent-red flex items-center justify-center gap-2">
+               <span className="text-[9px] font-black text-white uppercase tracking-[0.2em]">Upgrade naar Reed voor Real-time Storm Intelligence</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 5. RAW TELEMETRY OVERLAY (Visual only) */}
+      <div className="flex items-center gap-4 py-2 border-t border-white/5 opacity-30">
+        <div className="flex-1 h-px bg-white/10" />
+        <div className="flex gap-4 font-mono text-[8px] uppercase tracking-widest text-white">
+          <span>Buffer: OK</span>
+          <span>Lat: {weather.current.temperature.toFixed(2)}</span>
+          <span>Flux: 1.042</span>
+          <span>Neural: Active</span>
+        </div>
+        <div className="flex-1 h-px bg-white/10" />
       </div>
     </div>
   );
