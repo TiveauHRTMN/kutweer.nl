@@ -1,12 +1,35 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { MapPin, RefreshCw } from "lucide-react";
+import {
+  MapPin,
+  RefreshCw,
+  Wind,
+  Droplet,
+  Sun,
+  Sunrise,
+  Sunset,
+  Cloud,
+  Eye,
+  Zap,
+  Snowflake,
+  ThermometerSun,
+} from "lucide-react";
 import { loadWeather, patchCacheDeep } from "@/lib/weatherCache";
-import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData } from "@/lib/types";
-import { getWeatherEmoji } from "@/lib/weather";
+import {
+  DUTCH_CITIES,
+  reverseGeocode,
+  type City,
+  type WeatherData,
+  type HourlyForecast,
+} from "@/lib/types";
+import {
+  getWeatherEmoji,
+  getWeatherDescription,
+  getWindBeaufort,
+} from "@/lib/weather";
 import { getMainCommentary } from "@/lib/commentary";
 import { getPietDeepAnalysis } from "@/app/actions";
 import { useSession } from "@/lib/session-context";
@@ -25,11 +48,405 @@ function getSavedCity(): City | null {
   return null;
 }
 
+function formatHour(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getHours().toString().padStart(2, "0")}:00`;
+}
+
+function formatTime(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getHours().toString().padStart(2, "0")}:${d
+    .getMinutes()
+    .toString()
+    .padStart(2, "0")}`;
+}
+
+function isDaylightHour(iso: string, sunrise?: string, sunset?: string): boolean {
+  if (!sunrise || !sunset) {
+    const h = new Date(iso).getHours();
+    return h >= 7 && h < 21;
+  }
+  const t = new Date(iso).getTime();
+  return t >= new Date(sunrise).getTime() && t <= new Date(sunset).getTime();
+}
+
+function dateLabel(d: Date): string {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(d);
+  target.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((target.getTime() - today.getTime()) / 86400000);
+  if (diffDays === 0) return "Vandaag";
+  if (diffDays === 1) return "Morgen";
+  if (diffDays === 2) return "Overmorgen";
+  return target.toLocaleDateString("nl-NL", { weekday: "long" });
+}
+
+interface RiskFlag {
+  key: string;
+  label: string;
+  detail: string;
+  icon: React.ReactNode;
+  tone: "danger" | "warn" | "cool" | "hot";
+}
+
+function computeRisks(weather: WeatherData): RiskFlag[] {
+  const out: RiskFlag[] = [];
+  const next48 = weather.hourly.slice(0, 48);
+
+  // Onweer: cape > 1000 of weatherCode 95-99
+  const onweerHour = next48.find(
+    (h) => h.cape > 1000 || (h.weatherCode >= 95 && h.weatherCode <= 99)
+  );
+  if (onweerHour) {
+    out.push({
+      key: "onweer",
+      label: "Onweer in zicht",
+      detail: `Rond ${formatHour(onweerHour.time)} kans op buien met onweer.`,
+      icon: <Zap className="w-4 h-4" />,
+      tone: "danger",
+    });
+  }
+
+  // Storm: windSpeed >= 50 km/h (≥ Bft 7)
+  const stormHour = next48.find((h) => (h.windSpeed ?? 0) >= 50);
+  if (stormHour) {
+    const bft = getWindBeaufort(stormHour.windSpeed);
+    out.push({
+      key: "wind",
+      label: `${bft.label} (${bft.scale} bft)`,
+      detail: `Vanaf ${formatHour(stormHour.time)} ${stormHour.windSpeed} km/h. Zet je fiets goed vast.`,
+      icon: <Wind className="w-4 h-4" />,
+      tone: "warn",
+    });
+  }
+
+  // Vorst: tempMin < 0 vandaag of morgen
+  const minTemp = Math.min(
+    weather.daily[0]?.tempMin ?? 99,
+    weather.daily[1]?.tempMin ?? 99
+  );
+  if (minTemp < 0) {
+    out.push({
+      key: "vorst",
+      label: "Nachtvorst",
+      detail: `Tot ${minTemp}° vannacht. Auto krabben en planten naar binnen.`,
+      icon: <Snowflake className="w-4 h-4" />,
+      tone: "cool",
+    });
+  }
+
+  // Hitte: tempMax >= 28 (NL-context: dat valt op)
+  const maxTemp = Math.max(
+    weather.daily[0]?.tempMax ?? 0,
+    weather.daily[1]?.tempMax ?? 0
+  );
+  if (maxTemp >= 28) {
+    out.push({
+      key: "hitte",
+      label: "Warme dag",
+      detail: `Tot ${maxTemp}°. Drink water, smeer in, blijf uit de volle zon.`,
+      icon: <ThermometerSun className="w-4 h-4" />,
+      tone: "hot",
+    });
+  }
+
+  return out;
+}
+
+function riskTone(tone: RiskFlag["tone"]): { bg: string; border: string; fg: string } {
+  switch (tone) {
+    case "danger":
+      return {
+        bg: "rgba(244,63,94,0.18)",
+        border: "rgba(244,63,94,0.45)",
+        fg: "#fecdd3",
+      };
+    case "warn":
+      return {
+        bg: "rgba(251,146,60,0.18)",
+        border: "rgba(251,146,60,0.45)",
+        fg: "#fed7aa",
+      };
+    case "cool":
+      return {
+        bg: "rgba(125,211,252,0.18)",
+        border: "rgba(125,211,252,0.45)",
+        fg: "#bae6fd",
+      };
+    case "hot":
+      return {
+        bg: "rgba(255,210,26,0.18)",
+        border: "rgba(255,210,26,0.45)",
+        fg: "#fde68a",
+      };
+  }
+}
+
+function NextRain({
+  weather,
+}: {
+  weather: WeatherData;
+}): { headline: string; sub?: string } {
+  // Bekijk eerst minutely (komend uur), daarna hourly.
+  if (weather.minutely.length > 0) {
+    const wet = weather.minutely.find((m) => m.precipitation > 0.05);
+    if (wet) {
+      const mins = Math.max(
+        1,
+        Math.round((new Date(wet.time).getTime() - Date.now()) / 60000)
+      );
+      return {
+        headline: `Eerste druppels over zo'n ${mins} min`,
+        sub: `${wet.precipitation.toFixed(1)} mm verwacht`,
+      };
+    }
+  }
+  const wetHour = weather.hourly
+    .slice(0, 48)
+    .find((h) => h.precipitation > 0.1);
+  if (!wetHour) {
+    return { headline: "Komende 48 uur droog", sub: "Geen druppel in zicht." };
+  }
+  const hours = Math.round(
+    (new Date(wetHour.time).getTime() - Date.now()) / 3600000
+  );
+  if (hours <= 1) {
+    return {
+      headline: "Komend uur regen",
+      sub: `${wetHour.precipitation.toFixed(1)} mm rond ${formatHour(wetHour.time)}`,
+    };
+  }
+  return {
+    headline: `Eerste regen rond ${formatHour(wetHour.time)}`,
+    sub: `${dateLabel(new Date(wetHour.time))} · ${wetHour.precipitation.toFixed(1)} mm`,
+  };
+}
+
+interface DaypartSummary {
+  key: string;
+  label: string;
+  window: string; // "06–12 u"
+  emoji: string;
+  description: string;
+  tempLine: string;
+  rainLine: string;
+  windLine: string;
+  hint: string;
+  empty?: boolean;
+}
+
+function summarizeDaypart(
+  label: string,
+  window: string,
+  hours: HourlyForecast[],
+  weather: WeatherData,
+  daytime: boolean
+): DaypartSummary {
+  const key = label.toLowerCase();
+  if (hours.length === 0) {
+    return {
+      key,
+      label,
+      window,
+      emoji: "·",
+      description: "Buiten het 48-uurs venster.",
+      tempLine: "",
+      rainLine: "",
+      windLine: "",
+      hint: "",
+      empty: true,
+    };
+  }
+
+  const tempMin = Math.min(...hours.map((h) => h.temperature));
+  const tempMax = Math.max(...hours.map((h) => h.temperature));
+  const feelsMin = Math.min(...hours.map((h) => h.apparentTemperature));
+  const feelsMax = Math.max(...hours.map((h) => h.apparentTemperature));
+  const rainSum = hours.reduce((a, h) => a + (h.precipitation ?? 0), 0);
+  const wetHours = hours.filter((h) => (h.precipitation ?? 0) > 0.1);
+  const maxWind = Math.max(...hours.map((h) => h.windSpeed ?? 0));
+  const bft = getWindBeaufort(maxWind);
+  const stormy = hours.find((h) => (h.windSpeed ?? 0) >= 50);
+  const onweer = hours.find(
+    (h) => h.cape > 1000 || (h.weatherCode >= 95 && h.weatherCode <= 99)
+  );
+
+  // Representatieve weerscode: middelste uur, of zwaarste neerslag-uur.
+  const heaviest = hours.reduce(
+    (a, h) => ((h.precipitation ?? 0) > (a.precipitation ?? 0) ? h : a),
+    hours[0]
+  );
+  const codeHour = (heaviest.precipitation ?? 0) > 0.2
+    ? heaviest
+    : hours[Math.floor(hours.length / 2)];
+  const emoji = getWeatherEmoji(codeHour.weatherCode, daytime);
+  const description = getWeatherDescription(codeHour.weatherCode);
+
+  const tempLine =
+    tempMin === tempMax
+      ? `${tempMin}°`
+      : `${tempMin}° tot ${tempMax}°`;
+  const feelsTxt =
+    feelsMin !== tempMin || feelsMax !== tempMax
+      ? feelsMin === feelsMax
+        ? `, voelt als ${feelsMin}°`
+        : `, voelt als ${feelsMin}°–${feelsMax}°`
+      : "";
+
+  let rainLine: string;
+  if (onweer) {
+    rainLine = `Onweerskans rond ${formatHour(onweer.time)}.`;
+  } else if (rainSum < 0.1) {
+    rainLine = "Droog.";
+  } else if (wetHours.length === 1) {
+    rainLine = `Korte bui rond ${formatHour(wetHours[0].time)} (${rainSum.toFixed(1)} mm).`;
+  } else if (rainSum < 2) {
+    rainLine = `Af en toe wat motregen, samen ${rainSum.toFixed(1)} mm.`;
+  } else if (rainSum < 8) {
+    rainLine = `Geregeld regen, ${rainSum.toFixed(1)} mm in totaal.`;
+  } else {
+    rainLine = `Veel regen: ${rainSum.toFixed(1)} mm. Kletsnat.`;
+  }
+
+  let windLine: string;
+  if (stormy) {
+    windLine = `Krachtige wind tot ${maxWind} km/h (${bft.scale} bft).`;
+  } else if (maxWind >= 30) {
+    windLine = `Stevige wind, tot ${maxWind} km/h (${bft.scale} bft).`;
+  } else if (maxWind >= 15) {
+    windLine = `Matige wind (${bft.scale} bft).`;
+  } else {
+    windLine = "Weinig wind.";
+  }
+
+  // Praktische tip per dagdeel
+  let hint = "";
+  if (onweer) {
+    hint = "Plan binnenactiviteit rond dat uur.";
+  } else if (rainSum > 2) {
+    hint = "Jas mee. Fiets met spatborden de moeite waard.";
+  } else if (stormy) {
+    hint = "Tuinmeubels vastzetten, fiets goed op slot.";
+  } else if (key.includes("nacht") && tempMin < 0) {
+    hint = "Auto krabben. Planten naar binnen.";
+  } else if (daytime && tempMax >= 25 && weather.uvIndex >= 5) {
+    hint = "Smeer in, drink genoeg, schaduw is je vriend.";
+  } else if (daytime && tempMax >= 18 && rainSum < 0.5) {
+    hint = "Mooi moment om naar buiten te gaan.";
+  } else if (key === "ochtend" && tempMin <= 5 && rainSum < 0.5) {
+    hint = "Frisse start — extra laag eronder.";
+  } else if (key === "avond" && rainSum < 0.5 && maxWind < 25) {
+    hint = "Prima avond voor een wandeling na het eten.";
+  } else {
+    hint = "";
+  }
+
+  return {
+    key,
+    label,
+    window,
+    emoji,
+    description: `${description}${feelsTxt}`,
+    tempLine,
+    rainLine,
+    windLine,
+    hint,
+  };
+}
+
+interface DayBlockProps {
+  title: string;
+  daily: WeatherData["daily"][number] | undefined;
+  sunrise?: string;
+  sunset?: string;
+  uvIndex?: number;
+  hourly: HourlyForecast[]; // gefilterd op deze dag
+}
+
+function DayBlock({ title, daily, sunrise, sunset, uvIndex, hourly }: DayBlockProps) {
+  if (!daily) return null;
+  const totalRain = hourly.reduce((a, h) => a + (h.precipitation ?? 0), 0);
+  const maxWind = Math.max(0, ...hourly.map((h) => h.windSpeed ?? 0));
+  const bft = getWindBeaufort(maxWind);
+
+  return (
+    <div className="homecard !p-6">
+      <div className="flex items-center justify-between mb-4">
+        <span className="homecard-kicker !mb-0">{title}</span>
+        <span className="text-3xl drop-shadow-xl">
+          {getWeatherEmoji(daily.weatherCode, true)}
+        </span>
+      </div>
+
+      <div className="flex items-baseline gap-3 mb-1">
+        <span className="text-5xl font-black text-white tracking-tighter">
+          {daily.tempMax}°
+        </span>
+        <span className="text-xl font-bold text-white/40">{daily.tempMin}°</span>
+      </div>
+      <p className="text-[12px] font-bold text-white/60 uppercase tracking-widest mb-5">
+        {getWeatherDescription(daily.weatherCode)}
+      </p>
+
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-[13px]">
+        <div className="flex items-center gap-2">
+          <Droplet className="w-3.5 h-3.5 text-accent-cyan flex-none" />
+          <span className="text-white/70">
+            <strong className="text-white">
+              {totalRain > 0.05 ? `${totalRain.toFixed(1)} mm` : "Droog"}
+            </strong>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Wind className="w-3.5 h-3.5 text-white/60 flex-none" />
+          <span className="text-white/70">
+            <strong className="text-white">{maxWind} km/h</strong>{" "}
+            <span className="text-white/40">· {bft.scale} bft</span>
+          </span>
+        </div>
+        {typeof daily.sunHours === "number" && daily.sunHours > 0 && (
+          <div className="flex items-center gap-2">
+            <Sun className="w-3.5 h-3.5 text-wz-sun flex-none" />
+            <span className="text-white/70">
+              <strong className="text-white">{daily.sunHours.toFixed(1)} u</strong>{" "}
+              <span className="text-white/40">zon</span>
+            </span>
+          </div>
+        )}
+        {typeof uvIndex === "number" && uvIndex > 0 && (
+          <div className="flex items-center gap-2">
+            <Eye className="w-3.5 h-3.5 text-wz-sun flex-none" />
+            <span className="text-white/70">
+              <strong className="text-white">UV {uvIndex.toFixed(0)}</strong>
+            </span>
+          </div>
+        )}
+        {sunrise && (
+          <div className="flex items-center gap-2">
+            <Sunrise className="w-3.5 h-3.5 text-wz-sun flex-none" />
+            <span className="text-white/70">{formatTime(sunrise)}</span>
+          </div>
+        )}
+        {sunset && (
+          <div className="flex items-center gap-2">
+            <Sunset className="w-3.5 h-3.5 text-orange-300 flex-none" />
+            <span className="text-white/70">{formatTime(sunset)}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function PietExtended() {
-  const { tier, primaryLocation, loading: sessionLoading } = useSession();
-  
+  const { primaryLocation, loading: sessionLoading } = useSession();
+
   const [city, setCity] = useState<City>(
-    () => getSavedCity() || DUTCH_CITIES.find((c) => c.name === "De Bilt") || DUTCH_CITIES[0]
+    () =>
+      getSavedCity() ||
+      DUTCH_CITIES.find((c) => c.name === "De Bilt") ||
+      DUTCH_CITIES[0]
   );
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [pietAnalysis, setPietAnalysis] = useState<string | null>(null);
@@ -49,8 +466,13 @@ export default function PietExtended() {
       city.lat,
       city.lon,
       () => {},
-      (fresh) => { if (!cancelled) setWeather(fresh); },
-      (neural) => { if (!cancelled) setWeather((prev) => (prev ? { ...prev, neuralData: neural } : prev)); }
+      (fresh) => {
+        if (!cancelled) setWeather(fresh);
+      },
+      (neural) => {
+        if (!cancelled)
+          setWeather((prev) => (prev ? { ...prev, neuralData: neural } : prev));
+      }
     )
       .then((w) => {
         if (!cancelled) {
@@ -59,17 +481,19 @@ export default function PietExtended() {
           if (w.deepAnalysis) {
             setPietAnalysis(w.deepAnalysis);
           } else {
-            getPietDeepAnalysis(w).then(analysis => {
-                if (!cancelled) {
-                  setPietAnalysis(analysis);
-                  patchCacheDeep(city.lat, city.lon, analysis);
-                }
+            getPietDeepAnalysis(w).then((analysis) => {
+              if (!cancelled) {
+                setPietAnalysis(analysis);
+                patchCacheDeep(city.lat, city.lon, analysis);
+              }
             });
           }
         }
       })
       .catch(() => !cancelled && setLoading(false));
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [city]);
 
   const locate = () => {
@@ -80,38 +504,97 @@ export default function PietExtended() {
         const { latitude: lat, longitude: lon } = pos.coords;
         const provisional: City = { name: "Locatie bepalen...", lat, lon };
         setCity(provisional);
-        reverseGeocode(lat, lon).then((c) => {
-          setCity(c);
-          localStorage.setItem("wz_city", JSON.stringify(c));
-          setLocating(false);
-        }).catch(() => setLocating(false));
+        reverseGeocode(lat, lon)
+          .then((c) => {
+            setCity(c);
+            localStorage.setItem("wz_city", JSON.stringify(c));
+            setLocating(false);
+          })
+          .catch(() => setLocating(false));
       },
       () => setLocating(false),
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   };
 
+  const risks = useMemo(() => (weather ? computeRisks(weather) : []), [weather]);
+  const nextRain = useMemo(() => (weather ? NextRain({ weather }) : null), [weather]);
+
   if (loading || !weather) {
     return (
-      <div className="card p-6 text-center">
-        <RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2 text-accent-orange" />
-        <p className="text-sm text-text-secondary">Piet verzint iets slims…</p>
+      <div className="homecard !p-6 text-center">
+        <RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2 text-white/80" />
+        <p className="text-sm text-white/70">Piet verzint iets slims…</p>
       </div>
     );
   }
 
-  const narrative = pietAnalysis || weather.summaryVerdict || getMainCommentary(weather);
-  const blocks = [
-    { label: "Nu", start: 0, end: 1 },
-    { label: "Vanmiddag", start: 1, end: 6 },
-    { label: "Vanavond", start: 6, end: 12 },
-    { label: "Vannacht", start: 12, end: 18 },
-    { label: "Morgenochtend", start: 18, end: 30 },
-    { label: "Morgenmiddag/avond", start: 30, end: 42 },
+  const narrative =
+    pietAnalysis || weather.summaryVerdict || getMainCommentary(weather);
+
+  // Splits 48 uur in vandaag-rest + morgen
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayHourly = weather.hourly.filter((h) => h.time.slice(0, 10) === todayStr);
+  const tomorrowStr = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+  const tomorrowHourly = weather.hourly.filter(
+    (h) => h.time.slice(0, 10) === tomorrowStr
+  );
+
+  // 6 dagdelen, met UV alleen voor overdag-blokken
+  const blocks: Array<{ label: string; start: number; end: number; daytime: boolean }> = [
+    { label: "Nu", start: 0, end: 1, daytime: true },
+    { label: "Vanmiddag", start: 1, end: 6, daytime: true },
+    { label: "Vanavond", start: 6, end: 12, daytime: false },
+    { label: "Vannacht", start: 12, end: 18, daytime: false },
+    { label: "Morgenochtend", start: 18, end: 30, daytime: true },
+    { label: "Morgenmiddag/avond", start: 30, end: 42, daytime: true },
+  ];
+
+  const current = weather.current;
+  const currentBft = getWindBeaufort(current.windSpeed);
+  const showGusts = current.windGusts > current.windSpeed * 1.3;
+
+  // Wall-clock dagdelen (ochtend/middag/avond/nacht voor vandaag, en Morgen totaal).
+  // Hours-of-day filtering: ochtend 06–12, middag 12–18, avond 18–24, nacht 00–06 (komende nacht).
+  const todayDateStr = todayStr;
+  const tomorrowDateStr = tomorrowStr;
+  const inHourRange = (h: HourlyForecast, dateStr: string, from: number, to: number) => {
+    if (h.time.slice(0, 10) !== dateStr) return false;
+    const hr = new Date(h.time).getHours();
+    return hr >= from && hr < to;
+  };
+  const nowMs = Date.now();
+  const futureOnly = (h: HourlyForecast) => new Date(h.time).getTime() >= nowMs - 30 * 60 * 1000;
+
+  const ochtendHours = weather.hourly.filter(
+    (h) => inHourRange(h, todayDateStr, 6, 12) && futureOnly(h)
+  );
+  const middagHours = weather.hourly.filter(
+    (h) => inHourRange(h, todayDateStr, 12, 18) && futureOnly(h)
+  );
+  const avondHours = weather.hourly.filter(
+    (h) => inHourRange(h, todayDateStr, 18, 24) && futureOnly(h)
+  );
+  // Nacht = komende nacht (00–06 van morgen)
+  const nachtHours = weather.hourly.filter(
+    (h) => inHourRange(h, tomorrowDateStr, 0, 6)
+  );
+  // Morgen = 06–24 van morgen (overdag + avond)
+  const morgenHours = weather.hourly.filter(
+    (h) => inHourRange(h, tomorrowDateStr, 6, 24)
+  );
+
+  const dayparts: DaypartSummary[] = [
+    summarizeDaypart("Ochtend", "06–12 u", ochtendHours, weather, true),
+    summarizeDaypart("Middag", "12–18 u", middagHours, weather, true),
+    summarizeDaypart("Avond", "18–00 u", avondHours, weather, false),
+    summarizeDaypart("Nacht", "00–06 u", nachtHours, weather, false),
+    summarizeDaypart("Morgen", "hele dag", morgenHours, weather, true),
   ];
 
   return (
     <div className="space-y-10 animate-fade-in">
+      {/* LOCATIE-SELECTOR */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <button
           onClick={locate}
@@ -126,60 +609,358 @@ export default function PietExtended() {
         )}
       </div>
 
+      {/* NU-HERO */}
+      <div className="homecard !p-7 sm:!p-9">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div>
+            <span className="homecard-kicker">Nu in {city.name}</span>
+            <div className="flex items-baseline gap-3 mt-2">
+              <span className="text-7xl sm:text-8xl font-black text-white tracking-tighter leading-none">
+                {current.temperature}°
+              </span>
+              <span className="text-6xl sm:text-7xl drop-shadow-xl">
+                {getWeatherEmoji(current.weatherCode, current.isDay)}
+              </span>
+            </div>
+            <p className="text-base sm:text-lg font-bold text-white/80 mt-2">
+              {getWeatherDescription(current.weatherCode)}
+              {current.feelsLike !== current.temperature && (
+                <span className="text-white/50 font-medium">
+                  {" "}
+                  · voelt als {current.feelsLike}°
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-4 gap-x-3 mt-6 pt-6 border-t border-white/10">
+          <div>
+            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">
+              <Wind className="w-3 h-3" /> Wind
+            </div>
+            <div className="text-white font-bold">
+              {current.windSpeed} km/h{" "}
+              <span className="text-white/50 text-xs font-medium">
+                · {current.windDirection}
+              </span>
+            </div>
+            <div className="text-[11px] text-white/40">
+              {currentBft.scale} bft · {currentBft.label.toLowerCase()}
+              {showGusts && (
+                <>
+                  {" "}
+                  · vlagen {current.windGusts} km/h
+                </>
+              )}
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">
+              <Droplet className="w-3 h-3" /> Neerslag nu
+            </div>
+            <div className="text-white font-bold">
+              {current.precipitation > 0
+                ? `${current.precipitation.toFixed(1)} mm`
+                : "Droog"}
+            </div>
+            <div className="text-[11px] text-white/40">{nextRain?.headline ?? ""}</div>
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">
+              <Cloud className="w-3 h-3" /> Bewolking
+            </div>
+            <div className="text-white font-bold">{current.cloudCover}%</div>
+            <div className="text-[11px] text-white/40">
+              vochtigheid {current.humidity}%
+            </div>
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">
+              <Sun className="w-3 h-3" /> Zon
+            </div>
+            <div className="text-white font-bold">
+              {weather.sunrise ? formatTime(weather.sunrise) : "—"}
+              <span className="text-white/40 text-xs">
+                {" "}
+                / {weather.sunset ? formatTime(weather.sunset) : "—"}
+              </span>
+            </div>
+            <div className="text-[11px] text-white/40">
+              {weather.uvIndex > 0 ? `UV ${weather.uvIndex.toFixed(0)}` : ""}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* RISICO-STRIP */}
+      {risks.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {risks.map((r) => {
+            const t = riskTone(r.tone);
+            return (
+              <div
+                key={r.key}
+                className="rounded-2xl p-4 flex items-start gap-3"
+                style={{ background: t.bg, border: `1px solid ${t.border}` }}
+              >
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-none"
+                  style={{ background: t.border, color: t.fg }}
+                >
+                  {r.icon}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-black text-white">{r.label}</div>
+                  <div className="text-xs text-white/70 leading-snug mt-0.5">
+                    {r.detail}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* PIET'S ANALYSE */}
       <div className="homecard !p-8 border-l-4 border-l-accent-cyan">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-accent-cyan/20 flex items-center justify-center text-2xl shadow-inner">💬</div>
+          <div className="w-12 h-12 rounded-2xl bg-accent-cyan/20 flex items-center justify-center text-2xl shadow-inner">
+            💬
+          </div>
           <div>
-            <h2 className="homecard-kicker !text-accent-cyan !mb-0">Piet’s Analyse</h2>
+            <h2 className="homecard-kicker !text-accent-cyan !mb-0">Piet's Analyse</h2>
             <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mt-1">
-              {new Date().toLocaleTimeString("nl-NL", { hour: '2-digit', minute: '2-digit' })}
+              {new Date().toLocaleTimeString("nl-NL", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </p>
           </div>
         </div>
         <div className="text-xl sm:text-2xl font-bold text-white leading-relaxed space-y-5">
-          {narrative.split('\n\n').map((para, i) => <p key={i}>{para}</p>)}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50 px-1">Komende Uren</h3>
-        <div className="horizontal-scroll no-scrollbar -mx-4 px-4 pb-4">
-          {weather.hourly.slice(0, 12).map((h, i) => (
-            <div key={i} className="homecard !p-5 bg-white/5 border-white/5 flex flex-col items-center min-w-[100px] snap-start">
-              <span className="text-[10px] font-black text-white/40 mb-3">{new Date(h.time).getHours()}:00</span>
-              <span className="text-4xl mb-3 drop-shadow-lg">{getWeatherEmoji(h.weatherCode, true)}</span>
-              <span className="text-xl font-black text-white">{h.temperature}°</span>
-              <span className="text-[10px] font-bold text-accent-cyan mt-2">{h.precipitation > 0 ? `${h.precipitation.toFixed(1)}mm` : "Droog"}</span>
-            </div>
+          {narrative.split("\n\n").map((para, i) => (
+            <p key={i}>{para}</p>
           ))}
         </div>
       </div>
 
+      {/* DAGDEEL-SAMENVATTING (ochtend/middag/avond/nacht/morgen) */}
+      <div className="space-y-4">
+        <div className="flex items-end justify-between px-1">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">
+            Samenvatting per dagdeel
+          </h3>
+          <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
+            ochtend → morgen
+          </span>
+        </div>
+        <div className="space-y-3">
+          {dayparts.map((d, idx) => (
+            <motion.div
+              key={d.key}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.04 }}
+              className="homecard !p-5 flex gap-4 items-start"
+              style={d.empty ? { opacity: 0.4 } : undefined}
+            >
+              <div className="flex-none w-14 text-center">
+                <div className="text-3xl drop-shadow-lg">{d.emoji}</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-white/40 mt-1">
+                  {d.window}
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-baseline justify-between gap-3 mb-1">
+                  <h4 className="text-base font-black text-white tracking-tight">
+                    {d.label}
+                  </h4>
+                  {!d.empty && (
+                    <span className="text-sm font-bold text-white/60 flex-none">
+                      {d.tempLine}
+                    </span>
+                  )}
+                </div>
+                {d.empty ? (
+                  <p className="text-sm text-white/50 leading-relaxed">
+                    {d.description}
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-sm text-white/80 leading-relaxed font-medium">
+                      {d.description}. {d.rainLine} {d.windLine}
+                    </p>
+                    {d.hint && (
+                      <p className="text-[12px] text-accent-cyan/90 font-bold mt-1.5">
+                        → {d.hint}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* VOLLEDIGE 48-UURS UURVOORSPELLING */}
+      <div className="space-y-4">
+        <div className="flex items-end justify-between px-1">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">
+            48-uurs uur-voor-uur
+          </h3>
+          <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
+            scroll →
+          </span>
+        </div>
+        <div className="horizontal-scroll no-scrollbar -mx-4 px-4 pb-4">
+          {weather.hourly.slice(0, 48).map((h, i) => {
+            const d = new Date(h.time);
+            const isMidnight = d.getHours() === 0;
+            const isFirst = i === 0;
+            const showDayLabel = isFirst || isMidnight;
+            const isDay = isDaylightHour(h.time, weather.sunrise, weather.sunset);
+            const wet = h.precipitation > 0.05;
+            const stormy = (h.windSpeed ?? 0) >= 50;
+            return (
+              <div
+                key={h.time}
+                className="flex flex-col items-stretch min-w-[88px] snap-start"
+              >
+                {showDayLabel && (
+                  <span className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1.5 pl-1">
+                    {dateLabel(d)}
+                  </span>
+                )}
+                {!showDayLabel && <span className="block h-[18px] mb-1.5" />}
+                <div
+                  className="homecard !p-4 bg-white/5 border-white/10 flex flex-col items-center"
+                  style={
+                    isFirst
+                      ? { borderColor: "rgba(56,189,248,0.6)", background: "rgba(56,189,248,0.12)" }
+                      : undefined
+                  }
+                >
+                  <span className="text-[10px] font-black text-white/50 mb-2">
+                    {isFirst ? "NU" : formatHour(h.time)}
+                  </span>
+                  <span className="text-3xl mb-2 drop-shadow-lg">
+                    {getWeatherEmoji(h.weatherCode, isDay)}
+                  </span>
+                  <span className="text-lg font-black text-white">{h.temperature}°</span>
+                  <span
+                    className={`text-[10px] font-bold mt-1.5 ${
+                      wet ? "text-accent-cyan" : "text-white/30"
+                    }`}
+                  >
+                    {wet ? `${h.precipitation.toFixed(1)}mm` : "—"}
+                  </span>
+                  <span
+                    className={`text-[10px] font-bold mt-0.5 ${
+                      stormy ? "text-orange-300" : "text-white/30"
+                    }`}
+                  >
+                    {h.windSpeed} km/h
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* VANDAAG | MORGEN SPLIT */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <DayBlock
+          title={`Vandaag · ${new Date().toLocaleDateString("nl-NL", {
+            day: "numeric",
+            month: "short",
+          })}`}
+          daily={weather.daily[0]}
+          sunrise={weather.sunrise}
+          sunset={weather.sunset}
+          uvIndex={weather.uvIndex}
+          hourly={todayHourly}
+        />
+        <DayBlock
+          title="Morgen"
+          daily={weather.daily[1]}
+          hourly={tomorrowHourly}
+        />
+      </div>
+
+      {/* DAGDELEN */}
       <div className="space-y-6">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-1 text-center">48-uurs Overzicht</h3>
+        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30 px-1 text-center">
+          Per dagdeel
+        </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {blocks.map((b, idx) => {
             const slice = weather.hourly.slice(b.start, b.end);
             if (slice.length === 0) return null;
-            const avgTemp = Math.round(slice.reduce((a, h) => a + h.temperature, 0) / slice.length);
+            const avgTemp = Math.round(
+              slice.reduce((a, h) => a + h.temperature, 0) / slice.length
+            );
+            const minFeels = Math.min(...slice.map((h) => h.apparentTemperature));
+            const maxFeels = Math.max(...slice.map((h) => h.apparentTemperature));
             const rainSum = slice.reduce((a, h) => a + h.precipitation, 0);
             const maxWind = Math.max(...slice.map((h) => h.windSpeed || 0));
             const midCode = slice[Math.floor(slice.length / 2)].weatherCode;
-            
+            const midIso = slice[Math.floor(slice.length / 2)].time;
+            const isDay = b.daytime
+              ? isDaylightHour(midIso, weather.sunrise, weather.sunset)
+              : false;
+
             return (
-              <motion.div key={b.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.05 }} className="homecard">
+              <motion.div
+                key={b.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="homecard"
+              >
                 <div className="flex justify-between items-start mb-4">
                   <span className="homecard-kicker">{b.label}</span>
-                  <span className="text-3xl drop-shadow-xl">{getWeatherEmoji(midCode, true)}</span>
+                  <span className="text-3xl drop-shadow-xl">
+                    {getWeatherEmoji(midCode, isDay)}
+                  </span>
                 </div>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-5xl font-black text-white tracking-tighter">{avgTemp}°</span>
-                  <span className="text-[10px] font-bold text-white/40 uppercase">Gemiddeld</span>
+                <div className="flex items-baseline gap-2 mb-1">
+                  <span className="text-5xl font-black text-white tracking-tighter">
+                    {avgTemp}°
+                  </span>
+                  <span className="text-[10px] font-bold text-white/40 uppercase">
+                    Gemiddeld
+                  </span>
                 </div>
+                {minFeels !== maxFeels && (
+                  <p className="text-[11px] font-bold text-white/40 mb-4">
+                    Voelt als {minFeels}°–{maxFeels}°
+                  </p>
+                )}
                 <div className="homecard-strip !mt-0 !pt-4">
-                  <div className="homecard-tick"><div className="tk">Regen</div><div className="vl !text-accent-cyan">{rainSum > 0.1 ? `${rainSum.toFixed(1)}mm` : "0.0"}</div></div>
-                  <div className="homecard-tick"><div className="tk">Wind</div><div className="vl">{maxWind} <span className="text-[8px] opacity-50">km/h</span></div></div>
-                  <div className="homecard-tick"><div className="tk">UV</div><div className="vl text-wz-sun">{weather.uvIndex.toFixed(0)}</div></div>
+                  <div className="homecard-tick">
+                    <div className="tk">Regen</div>
+                    <div className="vl !text-accent-cyan">
+                      {rainSum > 0.1 ? `${rainSum.toFixed(1)}mm` : "0.0"}
+                    </div>
+                  </div>
+                  <div className="homecard-tick">
+                    <div className="tk">Wind</div>
+                    <div className="vl">
+                      {maxWind}{" "}
+                      <span className="text-[8px] opacity-50">km/h</span>
+                    </div>
+                  </div>
+                  <div className="homecard-tick">
+                    <div className="tk">UV</div>
+                    <div className="vl text-wz-sun">
+                      {isDay && weather.uvIndex > 0
+                        ? weather.uvIndex.toFixed(0)
+                        : "—"}
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             );
@@ -188,7 +969,12 @@ export default function PietExtended() {
       </div>
 
       <div className="pt-12 border-t border-white/10 flex justify-center">
-        <Link href="/" className="btn btn-ghost text-sm font-bold opacity-60 hover:opacity-100">← Dashboard</Link>
+        <Link
+          href="/"
+          className="btn btn-ghost text-sm font-bold opacity-60 hover:opacity-100"
+        >
+          ← Dashboard
+        </Link>
       </div>
     </div>
   );
