@@ -54,7 +54,7 @@ function getSavedCity(): City | null {
   return null;
 }
 
-export default function WeatherDashboard({ initialCity, initialWeather, beforeFooter }: { initialCity?: City; initialWeather?: WeatherData; beforeFooter?: React.ReactNode } = {}) {
+export default function WeatherDashboard({ initialCity, initialWeather, beforeFooter, titleOverride: _titleOverride }: { initialCity?: City; initialWeather?: WeatherData; beforeFooter?: React.ReactNode; titleOverride?: string } = {}) {
   const [city, setCity] = useState<City>(initialCity || getSavedCity() || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0]);
   const [weather, setWeather] = useState<WeatherData | null>(initialWeather || null);
   const [loading, setLoading] = useState(!initialWeather);
