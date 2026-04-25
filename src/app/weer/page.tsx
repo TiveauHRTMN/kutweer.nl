@@ -38,8 +38,6 @@ export default function WeerIndexPage() {
       <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <nav className="text-xs text-white/50 mb-6 font-bold uppercase tracking-widest">
-            <Link href="/" className="hover:text-white">WEERZONE</Link>
-            <span className="mx-2">/</span>
             <span className="text-white/80">Weer Nederland</span>
           </nav>
 

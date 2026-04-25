@@ -44,14 +44,12 @@ export default function PietPage() {
       <main className="min-h-screen bg-[#3b7ff0] text-white px-4 py-8 pb-20">
         <div className="max-w-2xl mx-auto">
           <header className="flex flex-col items-center mb-10 pt-2">
-            <Link href="/" className="hover:opacity-90 transition-opacity">
-              <img
-                src="/weerzone-logo.png"
-                alt="Weerzone"
-                style={{ height: "60px", width: "auto" }}
-                className="drop-shadow-md"
-              />
-            </Link>
+            <img
+              src="/weerzone-logo.png"
+              alt="Weerzone"
+              style={{ height: "60px", width: "auto" }}
+              className="drop-shadow-md"
+            />
           </header>
 
           <header className="mb-10">

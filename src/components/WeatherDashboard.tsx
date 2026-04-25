@@ -140,13 +140,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
       <WeatherBackground weatherCode={weather.current.weatherCode} isDay={weather.current.isDay} />
       <div className="relative z-10 max-w-2xl mx-auto p-4 pb-20 sm:p-6 space-y-6">
         
-        <header className="flex flex-col items-center mb-8 sm:mb-10 pt-2">
-          <div className="relative flex items-center justify-center">
-            <LogoFull height={72} className="sm:hidden max-w-full h-auto" />
-            <LogoFull height={112} className="hidden sm:block" />
-            {tier && <PersonaBadge tier={tier} />}
-          </div>
-        </header>
+
 
         <NavBar activeCity={city.name} isLocating={isLocating} />
 

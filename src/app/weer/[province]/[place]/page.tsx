@@ -227,8 +227,6 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
       <main>
         {/* Breadcrumb navigatie */}
         <nav className="max-w-4xl mx-auto px-4 pt-4 text-xs text-white/50">
-          <Link href="/" className="hover:text-white">WEERZONE</Link>
-          <span className="mx-1.5">/</span>
           <Link href="/weer" className="hover:text-white">Weer</Link>
           <span className="mx-1.5">/</span>
           <Link href={`/weer/${province}`} className="hover:text-white">{provLabel}</Link>

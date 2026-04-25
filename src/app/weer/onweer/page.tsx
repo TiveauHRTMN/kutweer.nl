@@ -46,8 +46,6 @@ export default function OnweerPage() {
       <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white px-4 py-12">
         <div className="max-w-3xl mx-auto">
           <nav className="text-xs text-white/50 mb-6 font-bold uppercase">
-            <Link href="/" className="hover:text-white">WEERZONE</Link>
-            <span className="mx-2">/</span>
             <Link href="/weer" className="hover:text-white">Weer</Link>
             <span className="mx-2">/</span>
             <span className="text-white/80">Onweer</span>

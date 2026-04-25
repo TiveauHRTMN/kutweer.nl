@@ -54,9 +54,7 @@ export default function TrustSection() {
               </div>
             ))}
           </div>
-          <div className="mt-8 pt-8 border-t border-white/5">
-            <p className="text-sm font-black text-white italic">"Geen 14-daagse belofte — wel de nauwkeurigste voorspelling van Nederland voor de komende 48 uur."</p>
-          </div>
+
         </div>
       </div>
     </section>
