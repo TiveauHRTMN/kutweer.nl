@@ -3,13 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { MapPin, RefreshCw, Activity, BrainCircuit } from "lucide-react";
+import { MapPin, RefreshCw } from "lucide-react";
 import { loadWeather, patchCacheDeep } from "@/lib/weatherCache";
-import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData, distanceBetween } from "@/lib/types";
-import { getWeatherEmoji, getWeatherDescription } from "@/lib/weather";
+import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData } from "@/lib/types";
+import { getWeatherEmoji } from "@/lib/weather";
 import { getMainCommentary } from "@/lib/commentary";
 import { getPietDeepAnalysis } from "@/app/actions";
-import NeuralInsights from "./NeuralInsights";
 import { useSession } from "@/lib/session-context";
 
 function getSavedCity(): City | null {

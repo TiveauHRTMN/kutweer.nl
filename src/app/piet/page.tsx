@@ -1,37 +1,37 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import PietExtended from "@/components/PietExtended";
 import PremiumGate from "@/components/PremiumGate";
 
 export const metadata: Metadata = {
-  title: "Piet’s Hyper-lokale Weer-Update — Snoeiharde 48-uurs data",
+  title: "Piet — Hyperlokaal weerbericht voor jouw straat",
   description:
-    "De enige weerdienst die niet gokt. Piet van WEERZONE gebruikt brute rekenkracht voor 1km-precisie op jouw adres. Geen 14-daagse ruis, maar de keiharde realiteit.",
+    "Een eerlijke, korte weerbrief voor de komende 48 uur op jouw GPS-locatie. In gewone taal, zonder reclame, zonder gokwerk over twee weken vooruit.",
   alternates: { canonical: "https://weerzone.nl/piet" },
   openGraph: {
-    title: "Piet’s Hyper-lokale Update | WEERZONE",
-    description: "48 uur vooruit op de vierkante meter. De rest is gokwerk.",
+    title: "Piet — Het eerlijke 48-uurs weerbericht | Weerzone",
+    description:
+      "48 uur vooruit voor jouw locatie. Eerlijk, kort, persoonlijk — zonder de glazen-bol-praat van een 14-daagse.",
     images: ["/og-image.png"],
-  }
+  },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Piet's Hyper-lokale 48-uurs Analyse",
-  description: "Een vlijmscherpe, data-gedreven analyse van het weer in Nederland.",
+  headline: "Piet — Hyperlokaal 48-uurs weerbericht",
+  description:
+    "De dagelijkse, eerlijke weeranalyse van Piet van Weerzone voor jouw GPS-locatie. Geen 14-daagse-gok, gewoon de komende 48 uur in gewone taal.",
   author: {
     "@type": "Person",
-    name: "Piet",
-    jobTitle: "Senior Meteoroloog bij WEERZONE",
+    name: "Piet van Weerzone",
   },
   publisher: {
     "@type": "Organization",
-    name: "WEERZONE",
+    name: "Weerzone",
     logo: "https://weerzone.nl/favicon-icon.png",
   },
-  datePublished: new Date().toISOString().split('T')[0],
+  datePublished: new Date().toISOString().split("T")[0],
 };
 
 export default function PietPage() {
@@ -45,10 +45,10 @@ export default function PietPage() {
         <div className="max-w-2xl mx-auto">
           <header className="flex flex-col items-center mb-10 pt-2">
             <Link href="/" className="hover:opacity-90 transition-opacity">
-              <img 
-                src="/logo-white.png" 
-                alt="WeerZone" 
-                style={{ height: '60px', width: 'auto' }} 
+              <img
+                src="/logo-white.png"
+                alt="Weerzone"
+                style={{ height: "60px", width: "auto" }}
                 className="drop-shadow-md"
               />
             </Link>
@@ -59,13 +59,20 @@ export default function PietPage() {
               Piet
             </h1>
             <p className="text-white/90 text-lg leading-relaxed font-medium">
-              De uitgebreide 48-uurs weer-update voor jouw locatie. Geen gokwerk, maar pure data op de vierkante meter.
+              De volledige 48 uur voor jouw locatie. In gewone taal, met
+              concrete tips voor je dag — zoals Piet het zelf zou
+              vertellen.
             </p>
           </header>
 
           <PremiumGate>
             <PietExtended />
           </PremiumGate>
+
+          <p className="mt-12 text-center text-white/50 text-xs font-medium">
+            Verder dan 48 uur kijken we niet vooruit. Dan wordt het gokken
+            — en dat doen we niet.
+          </p>
         </div>
       </main>
     </>
