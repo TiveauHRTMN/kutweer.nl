@@ -34,7 +34,7 @@ export default function OnboardingClient({ email }: { email: string }) {
   const searchParams = useSearchParams();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
-  const queryTier = searchParams.get("tier") as PersonaTier | null;
+  const queryTier = searchParams?.get("tier") as PersonaTier | null;
   const preTier =
     queryTier && PERSONA_ORDER.includes(queryTier) ? queryTier : null;
 

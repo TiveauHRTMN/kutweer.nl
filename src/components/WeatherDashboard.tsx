@@ -176,10 +176,10 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
               </div>
 
               <div className="mt-2 p-4 bg-white/40 rounded-2xl border border-white/60 shadow-sm">
-                <p className="text-sm font-bold text-text-primary mb-1">
+                <p className="text-sm font-bold text-text-primary">
                   {getDayProgression(weather)}
                 </p>
-                <p className="text-[11px] text-text-secondary font-medium italic">
+                <p className="text-[11px] text-text-secondary font-medium italic mt-1">
                   Wij tonen alleen de komende 48 uur — de periode waarin een weersvoorspelling echt klopt.
                 </p>
               </div>

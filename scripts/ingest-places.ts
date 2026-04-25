@@ -27,9 +27,18 @@ function getProvince(lat: number, lon: number): string {
   return "UNKNOWN";
 }
 
+function placeSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, "en")
+    .replace(/[^a-z0-9\-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 async function ingest() {
   const discoveredPath = path.join(process.cwd(), 'scratch', 'discovered-places.json');
-  const existingPath = path.join(process.cwd(), 'src', 'lib', 'places-data.ts');
+  const placesJsonPath = path.join(process.cwd(), 'src', 'lib', 'places.json');
 
   if (!fs.existsSync(discoveredPath)) {
     console.error("❌ No discovered-places.json found in scratch/");
@@ -37,69 +46,55 @@ async function ingest() {
   }
 
   const discovered = JSON.parse(fs.readFileSync(discoveredPath, 'utf8'));
+  const existingPlaces = JSON.parse(fs.readFileSync(placesJsonPath, 'utf8'));
+
   console.log(`📖 Loaded ${discovered.length} discovered places.`);
+  console.log(`🔍 Existing places: ${existingPlaces.length}`);
 
-  // Load existing places to avoid duplicates
-  const existingFile = fs.readFileSync(existingPath, 'utf8');
-  const existingPlacesJsonMatch = existingFile.match(/export const ALL_PLACES: Place\[] = \[([\s\S]*?)];/);
+  // Create a set of existing slugs per province to avoid URL collisions
+  const existingSlugs = new Set(existingPlaces.map((p: any) => `${p.province}/${placeSlug(p.name)}`));
   
-  if (!existingPlacesJsonMatch) {
-    console.error("❌ Could not find ALL_PLACES in src/lib/places-data.ts");
-    return;
-  }
-
-  // We'll just build a new array of objects
-  const uniqueByName = new Set<string>();
-  
-  // Extract names from existing file (simple regex way since it's a TS file)
-  const nameRegex = /name: "([^"]+)"/g;
-  let match;
-  while ((match = nameRegex.exec(existingFile)) !== null) {
-    uniqueByName.add(match[1]);
-  }
-  
-  console.log(`🔍 Existing unique names: ${uniqueByName.size}`);
-
   const newPlaces: any[] = [];
+  let skippedCount = 0;
+
   for (const p of discovered) {
-    if (!uniqueByName.has(p.name)) {
-      const province = getProvince(p.lat, p.lon);
-      if (province !== "UNKNOWN") {
-        newPlaces.push({
-          name: p.name,
-          province,
-          lat: p.lat,
-          lon: p.lon,
-          population: p.population,
-          character: p.type === 'city' ? 'urban' : undefined
-        });
-        uniqueByName.add(p.name);
-      }
+    const province = getProvince(p.lat, p.lon);
+    if (province === "UNKNOWN") continue;
+
+    const slug = placeSlug(p.name);
+    const key = `${province}/${slug}`;
+
+    if (!existingSlugs.has(key)) {
+      newPlaces.push({
+        name: p.name,
+        province,
+        lat: p.lat,
+        lon: p.lon,
+        population: p.population,
+        character: p.type === 'city' ? 'urban' : undefined
+      });
+      existingSlugs.add(key);
+    } else {
+      skippedCount++;
     }
   }
 
   console.log(`➕ Adding ${newPlaces.length} new places.`);
+  console.log(`⏭️ Skipped ${skippedCount} duplicates/slug collisions.`);
 
-  // Generate the new content for the array
-  const newEntriesStr = newPlaces
-    .map(p => `  { name: "${p.name}", province: "${p.province}", lat: ${p.lat}, lon: ${p.lon}${p.population ? `, population: ${p.population}` : ''}${p.character ? `, character: "${p.character}"` : ''} },`)
-    .join('\n');
+  if (newPlaces.length > 0) {
+    const updatedPlaces = [...existingPlaces, ...newPlaces];
+    // Sort to keep it organized
+    updatedPlaces.sort((a, b) => {
+        if (a.province !== b.province) return a.province.localeCompare(b.province);
+        return a.name.localeCompare(b.name);
+    });
 
-  const updatedFile = existingFile.replace(
-    /];\s*\/\/\s*=\s*=\s*=+/ ,
-    `\n${newEntriesStr}\n];\n\n// ============================================================`
-  );
-
-  // Note: The regex above might be fragile. Let's try to insert it before the closing bracket of ALL_PLACES
-  const lastBracketIndex = existingFile.lastIndexOf('];');
-  const finalContent = existingFile.slice(0, lastBracketIndex) + 
-    `\n  // --- AUTO-GENERATED BATCH BY OPENCLAW ---\n` +
-    newEntriesStr + 
-    '\n' + 
-    existingFile.slice(lastBracketIndex);
-
-  fs.writeFileSync(existingPath, finalContent);
-  console.log(`✅ Successfully updated ${existingPath} with ${newPlaces.length} new locations.`);
+    fs.writeFileSync(placesJsonPath, JSON.stringify(updatedPlaces, null, 2));
+    console.log(`✅ Successfully updated ${placesJsonPath}`);
+  } else {
+    console.log("ℹ️ No new places to add.");
+  }
 }
 
 ingest();

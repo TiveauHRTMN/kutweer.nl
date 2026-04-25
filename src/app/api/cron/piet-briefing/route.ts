@@ -70,7 +70,8 @@ export async function GET(request: Request) {
     // 4. AI Copy (Piet Style)
     const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
     const prompt = `
-      Je bent Piet van WEERZONE. STIJL: Doortastend, scherp, tikkeltje brutaal ("Vandaag Inside" vibe).
+      Je bent Piet van WEERZONE. Een nuchtere, betrouwbare weerman. 
+      STIJL: Behulpzaam, nuchter en respectvol. Focus op de feiten en wat het weer betekent voor de dag van de lezer.
       CONTEXT: Landelijk weerbericht voor Nederland.
       DATA: 
       - Ochtend: ${slots[0].temp}, ${slots[0].rain}
@@ -80,8 +81,8 @@ export async function GET(request: Request) {
       - Zon: ${main.daily[0].sunHours}u, UV: ${main.uvIndex.toFixed(1)}
       - Regio's: ${validWeather.map(r => `${r.name}: ${r.weather!.current.temperature}°`).join(', ')}
 
-      TAAK: Schrijf een weerpraatje van max 100 woorden. Geen poespas. Harde feiten met een mening. 
-      Eindig met een scherpe oneliner. Gebruik GEEN opsommingstekens.
+      TAAK: Schrijf een beknopte weersamenvatting van max 100 woorden. Geen beledigingen of agressieve taal. Focus op nauwkeurigheid. 
+      Eindig met een vriendelijke Hollandse groet. Gebruik GEEN opsommingstekens.
     `;
 
     const aiRes = await model.generateContent(prompt);

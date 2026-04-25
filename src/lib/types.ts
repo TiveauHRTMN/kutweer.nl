@@ -69,6 +69,51 @@ export interface ModelComparison {
   sources: string[];
 }
 
+export interface WWSPayload {
+  timestamp: string;
+  system_status: string;
+  pipeline: string;
+  cycle?: string;
+  resolution: string;
+  window: string;
+  b2b_decision_matrix: {
+    sector_bouw: { status: string; p90_risk: string; time_window: string; action: string };
+    sector_logistiek: { status: string; p90_risk: string; time_window: string; action: string };
+    sector_maritiem: { status: string; p90_risk: string; time_window: string; action: string };
+  };
+  api_grid_1km: {
+    region: string;
+    models_synthesized: string[];
+    thermodynamic_validation: string;
+    divergence_alert: boolean;
+    divergence_delta: number;
+    forecast: Array<{
+      time: string;
+      temp_c: number;
+      precip_mm: number;
+      wind_gust_kmh: number;
+      confidence: number;
+    }>;
+  };
+  piet_update: {
+    title: string;
+    content: string;
+    closing: string;
+  };
+  reed_alert: {
+    active: boolean;
+    severity: "NONE" | "YELLOW" | "ORANGE" | "RED";
+    type: string[];
+    location: string;
+    timing: string;
+    instruction: string;
+  } | null;
+  viral_hook: {
+    trigger_condition: string;
+    copy: string;
+  };
+}
+
 export interface City {
   name: string;
   lat: number;

@@ -8581,13 +8581,6 @@
     "population": 3330
   },
   {
-    "name": "Sint-Annaparochie",
-    "province": "friesland",
-    "lat": 53.2764,
-    "lon": 5.6548,
-    "population": 4832
-  },
-  {
     "name": "Sint-Jacobiparochie",
     "province": "friesland",
     "lat": 53.2728,
@@ -12237,14 +12230,6 @@
     "character": "coastal"
   },
   {
-    "name": "Elburg",
-    "province": "gelderland",
-    "lat": 52.4475,
-    "lon": 5.8333,
-    "population": 12500,
-    "character": "coastal"
-  },
-  {
     "name": "Elden",
     "province": "gelderland",
     "lat": 51.9582,
@@ -12377,13 +12362,6 @@
     "lat": 51.8488,
     "lon": 5.9634,
     "population": 152
-  },
-  {
-    "name": "Ermelo",
-    "province": "gelderland",
-    "lat": 52.3,
-    "lon": 5.6167,
-    "population": 27000
   },
   {
     "name": "Ermelo",
@@ -15067,13 +15045,6 @@
     "population": 44000
   },
   {
-    "name": "Nijkerk",
-    "province": "gelderland",
-    "lat": 52.2217,
-    "lon": 5.485,
-    "population": 44000
-  },
-  {
     "name": "Nijkerkerveen",
     "province": "gelderland",
     "lat": 52.1957,
@@ -15183,13 +15154,6 @@
     "province": "gelderland",
     "lat": 51.9611,
     "lon": 5.6533
-  },
-  {
-    "name": "Nunspeet",
-    "province": "gelderland",
-    "lat": 52.3783,
-    "lon": 5.7917,
-    "population": 28000
   },
   {
     "name": "Nunspeet",
@@ -15620,18 +15584,6 @@
     "lon": 5.9401
   },
   {
-    "name": "Presikhaaf Ⅱ",
-    "province": "gelderland",
-    "lat": 51.9814,
-    "lon": 5.9431
-  },
-  {
-    "name": "Presikhaaf Ⅲ",
-    "province": "gelderland",
-    "lat": 51.9788,
-    "lon": 5.9539
-  },
-  {
     "name": "Prins Maurits Kazerne",
     "province": "gelderland",
     "lat": 52.0348,
@@ -15649,13 +15601,6 @@
     "lat": 51.8779,
     "lon": 5.5911,
     "population": 1250
-  },
-  {
-    "name": "Putten",
-    "province": "gelderland",
-    "lat": 52.2583,
-    "lon": 5.6067,
-    "population": 24500
   },
   {
     "name": "Putten",
@@ -26946,13 +26891,6 @@
     "population": 30000
   },
   {
-    "name": "Boxmeer",
-    "province": "noord-brabant",
-    "lat": 51.6442,
-    "lon": 5.9458,
-    "population": 30000
-  },
-  {
     "name": "Boxtel",
     "province": "noord-brabant",
     "lat": 51.5903,
@@ -28272,13 +28210,6 @@
     "province": "noord-brabant",
     "lat": 51.7346,
     "lon": 5.8316
-  },
-  {
-    "name": "Dongen",
-    "province": "noord-brabant",
-    "lat": 51.6258,
-    "lon": 4.9333,
-    "population": 26000
   },
   {
     "name": "Dongen",
@@ -31836,13 +31767,6 @@
     "province": "noord-brabant",
     "lat": 51.4209,
     "lon": 5.8172
-  },
-  {
-    "name": "Loon op Zand",
-    "province": "noord-brabant",
-    "lat": 51.6267,
-    "lon": 5.075,
-    "population": 23000
   },
   {
     "name": "Loon op Zand",
@@ -46099,14 +46023,6 @@
     "population": 733
   },
   {
-    "name": "CadZand",
-    "province": "zeeland",
-    "lat": 51.3725,
-    "lon": 3.3917,
-    "population": 800,
-    "character": "coastal"
-  },
-  {
     "name": "Cadzand-Bad",
     "province": "zeeland",
     "lat": 51.3772,
@@ -51293,12 +51209,6 @@
     "province": "zuid-holland",
     "lat": 52.0103,
     "lon": 4.4385
-  },
-  {
-    "name": "KONIngshof",
-    "province": "zuid-holland",
-    "lat": 51.8179,
-    "lon": 4.4172
   },
   {
     "name": "Koningskwartier",

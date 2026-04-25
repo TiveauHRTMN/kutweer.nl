@@ -55,17 +55,17 @@ export default function FortyEightPage() {
           <header className="mb-10">
             <div className="text-5xl mb-4">⏱️</div>
             <h1 className="text-4xl sm:text-6xl font-black leading-tight mb-4 tracking-tighter">
-              48 uur weer. <span className="text-accent-cyan">De enige eerlijke horizon.</span>
+              48 uur weer. <span className="text-accent-cyan">De nauwkeurigste horizon.</span>
             </h1>
             <p className="text-white/70 text-lg leading-relaxed">
-              Elke weer-app belooft je 14 dagen vooruit. Dat is <strong className="text-white">wetenschappelijk onmogelijk</strong>. WeerZone toont 48 uur messcherpe data op basis van het KNMI HARMONIE model.
+              Veel weer-apps tonen 14 dagen vooruit, terwijl de nauwkeurigheid na drie dagen al sterk terugloopt. WeerZone levert de komende 48 uur zo precies mogelijk — op 1 bij 1 kilometer.
             </p>
           </header>
 
           <section className="mb-10 space-y-6 text-white/75 leading-relaxed bg-white/5 p-8 rounded-3xl border border-white/10">
             <h2 className="text-2xl font-black text-white uppercase tracking-tight">Waarom geen 14-daagse?</h2>
             <p>
-               Na ongeveer 48 uur loopt elk weermodel uit de bocht door het vlindereffect. Kleine afwijkingen worden grote fouten. Een 14-daagse is daarom pure gokkerij. Wij kiezen voor de waarheid.
+               Na ongeveer 48 uur lopen weersvoorspellingen door het vlindereffect sterk uiteen. Kleine afwijkingen worden grote fouten. Daarom concentreren wij ons op de periode waarin onze voorspelling écht klopt.
             </p>
             <div className="grid sm:grid-cols-2 gap-4 mt-6">
                <div className="p-4 rounded-xl bg-white/5 border border-white/10">

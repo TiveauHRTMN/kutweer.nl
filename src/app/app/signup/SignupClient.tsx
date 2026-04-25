@@ -24,12 +24,12 @@ export default function SignupClient() {
   const searchParams = useSearchParams();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
-  const queryTier = searchParams.get("tier") as PersonaTier | null;
+  const queryTier = searchParams?.get("tier") as PersonaTier | null;
   const preTier =
     queryTier && PERSONA_ORDER.includes(queryTier) ? queryTier : null;
 
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState(searchParams.get("email") || "");
+  const [email, setEmail] = useState(searchParams?.get("email") || "");
   const [password, setPassword] = useState("");
   const [agree, setAgree] = useState(false);
   const [errors, setErrors] = useState<{
@@ -42,7 +42,7 @@ export default function SignupClient() {
   const [loading, setLoading] = useState(false);
 
   function nextAfterSignup(): string {
-    const next = searchParams.get("next");
+    const next = searchParams?.get("next");
     if (next) return next;
     return preTier ? `/app/onboarding?tier=${preTier}` : "/app/onboarding";
   }

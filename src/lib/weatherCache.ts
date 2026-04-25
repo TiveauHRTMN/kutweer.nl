@@ -1,6 +1,6 @@
 "use client";
 
-import type { WeatherData } from "./types";
+import type { WeatherData, WWSPayload } from "./types";
 import { getWeather as fetchServer, getAiVerdict } from "@/app/actions";
 import { getNeuralInsights } from "./weather";
 
@@ -22,11 +22,13 @@ type CacheEntry = {
 
 const FRESH_MS = 10 * 60 * 1000;   // 10 min — geen refetch
 const STALE_MS = 60 * 60 * 1000;   // 60 min — toon direct, revalideer op achtergrond
-const STORAGE_KEY_PREFIX = "wz_weather_v4_";
+const STORAGE_KEY_PREFIX = "wz_weather_v5_";
 
 const memory = new Map<string, CacheEntry>();
 const inflight = new Map<string, Promise<WeatherData>>();
 const revalidating = new Set<string>();
+
+const wwsMemory = new Map<string, { payload: WWSPayload, ts: number }>();
 
 function key(lat: number, lon: number) {
   return `${lat.toFixed(3)},${lon.toFixed(3)}`;
@@ -165,6 +167,31 @@ export async function loadWeather(
     return await promise;
   } finally {
     inflight.delete(k);
+  }
+}
+
+/**
+ * Laadt de volledige Weerzone Weather System (WWS) payload.
+ * Gebruikt caching om dubbele API calls te voorkomen.
+ */
+export async function loadWWS(lat: number, lon: number): Promise<WWSPayload | null> {
+  const k = key(lat, lon);
+  const cached = wwsMemory.get(k);
+  const now = Date.now();
+
+  if (cached && now - cached.ts < FRESH_MS) {
+    return cached.payload;
+  }
+
+  try {
+    const res = await fetch(`/api/wws?lat=${lat}&lon=${lon}`);
+    if (!res.ok) throw new Error("WWS fetch failed");
+    const payload = await res.json() as WWSPayload;
+    wwsMemory.set(k, { payload, ts: now });
+    return payload;
+  } catch (err) {
+    console.error("loadWWS error:", err);
+    return null;
   }
 }
 

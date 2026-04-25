@@ -7,36 +7,36 @@ export default function TrustSection() {
             Waarom stopt WEERZONE bij <span className="text-accent-orange">48 uur?</span>
           </h2>
           <p className="text-white/70 text-lg mb-8 leading-relaxed">
-            De meeste weer-apps verkopen je een 14-daagse voorspelling alsof het de waarheid was. 
-            Maar vraag het een weerman en die vertelt je de waarheid: na drie dagen is het een muntje opgooien.
+            Veel weerdiensten tonen een 14-daagse voorspelling alsof die net zo betrouwbaar is als vandaag.
+            In werkelijkheid loopt de nauwkeurigheid na drie dagen al sterk terug. WeerZone richt zich op de periode waarin we écht precies kunnen zijn.
           </p>
           <div className="space-y-6">
             <div className="flex gap-4">
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-xl shrink-0">🎯</div>
               <div>
                 <p className="font-bold text-white">0–48 uur: Precisie</p>
-                <p className="text-white/50 text-sm">KNMI HARMONIE rekent met een 2,5 km raster. Hierop kun je beslissingen baseren.</p>
+                <p className="text-white/50 text-sm">Voorspellingen op 1 bij 1 kilometer, nauwkeurig genoeg om beslissingen op te baseren.</p>
               </div>
             </div>
             <div className="flex gap-4">
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-xl shrink-0">🎲</div>
               <div>
-                <p className="font-bold text-white">3–7 dagen: Statistische ruis</p>
-                <p className="text-white/50 text-sm">Modellen wijken af. Het verschil tussen een BBQ en een waterballet is dan één windvlaag.</p>
+                <p className="font-bold text-white">3–7 dagen: Beperkte zekerheid</p>
+                <p className="text-white/50 text-sm">De voorspelling kan nog flink veranderen. Plan grotere beslissingen liever op basis van de 48-uurs verwachting.</p>
               </div>
             </div>
             <div className="flex gap-4">
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-xl shrink-0">🔮</div>
               <div>
-                <p className="font-bold text-white">10+ dagen: Puur gokwerk</p>
-                <p className="text-white/50 text-sm">Perfect voor clickbait, onbruikbaar voor echte mensen die buiten werken.</p>
+                <p className="font-bold text-white">10+ dagen: Indicatief</p>
+                <p className="text-white/50 text-sm">Geschikt voor een globaal beeld van het seizoen — niet om je dag op te plannen.</p>
               </div>
             </div>
           </div>
         </div>
         <div className="relative aspect-square bg-white/5 rounded-3xl border border-white/10 p-8 flex flex-col justify-center overflow-hidden">
           {/* Visual Decay Chart */}
-          <p className="text-[10px] font-black uppercase tracking-[.2em] text-accent-orange mb-4">Accuracy Decay Model</p>
+          <p className="text-[10px] font-black uppercase tracking-[.2em] text-accent-orange mb-4">Nauwkeurigheid per dag</p>
           <div className="flex-1 flex flex-col justify-end gap-2">
             {[98, 92, 75, 45, 20, 10, 5].map((val, i) => (
               <div key={i} className="flex items-center gap-3">
@@ -55,7 +55,7 @@ export default function TrustSection() {
             ))}
           </div>
           <div className="mt-8 pt-8 border-t border-white/5">
-            <p className="text-sm font-black text-white italic">"Wij beloven je geen 14 dagen zon. Wij beloven je de waarheid over de komende 48 uur."</p>
+            <p className="text-sm font-black text-white italic">"Geen 14-daagse belofte — wel de nauwkeurigste voorspelling van Nederland voor de komende 48 uur."</p>
           </div>
         </div>
       </div>

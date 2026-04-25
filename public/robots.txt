@@ -1,13 +1,15 @@
-# WEERZONE.nl - Robots.txt
+# WEERZONE.nl - Robots.txt (Static)
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /_next/
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /*?* # Voorkom indexering van tracking params
 
 # Sitemaps
 Sitemap: https://weerzone.nl/sitemap.xml
 
-# Crawl-delay (be nice to our server)
+# Be nice to the server
 User-agent: Googlebot
 Crawl-delay: 0
 

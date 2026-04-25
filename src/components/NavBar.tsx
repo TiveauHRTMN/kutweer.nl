@@ -53,12 +53,6 @@ export default function NavBar({ activeCity, isLocating }: Props) {
     <nav aria-label="Hoofdnavigatie" className="card p-1 sm:p-2">
       <ul className="nav-list flex items-stretch justify-between">
         <li className="flex-1">
-          <Link href="/" className="nav-item w-full">
-            <span className="label">Home</span>
-          </Link>
-        </li>
-        <li className="nav-divider" aria-hidden="true" />
-        <li className="flex-1">
           <button
             type="button"
             onClick={handleLocateClick}

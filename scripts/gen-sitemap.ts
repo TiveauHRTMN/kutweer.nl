@@ -1,0 +1,55 @@
+import fs from 'fs';
+import path from 'path';
+
+/**
+ * Modern sitemap generator that writes to public/sitemap.xml.
+ * Uses consistent slug logic from src/lib/places-data.ts.
+ */
+
+const placesPath = path.join(process.cwd(), 'src/lib/places.json');
+const sitemapPath = path.join(process.cwd(), 'public/sitemap.xml');
+const BASE_URL = 'https://weerzone.nl';
+
+function placeSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, "en")
+    .replace(/[^a-z0-9\-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+async function run() {
+  console.log("🚀 Generating static sitemap...");
+  const places = JSON.parse(fs.readFileSync(placesPath, 'utf8'));
+  const now = new Date().toISOString();
+
+  let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+  xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+
+  // Home
+  xml += `  <url><loc>${BASE_URL}</loc><lastmod>${now}</lastmod><priority>1.0</priority></url>\n`;
+
+  // Static Pages
+  xml += `  <url><loc>${BASE_URL}/prijzen</loc><lastmod>${now}</lastmod><priority>0.8</priority></url>\n`;
+  xml += `  <url><loc>${BASE_URL}/zakelijk</loc><lastmod>${now}</lastmod><priority>0.8</priority></url>\n`;
+
+  // Provinces
+  const provinces = ["groningen", "friesland", "drenthe", "overijssel", "flevoland", "gelderland", "utrecht", "noord-holland", "zuid-holland", "zeeland", "noord-brabant", "limburg"];
+  provinces.forEach(p => {
+    xml += `  <url><loc>${BASE_URL}/weer/${p}</loc><lastmod>${now}</lastmod><priority>0.9</priority></url>\n`;
+  });
+
+  // Places
+  places.forEach((place: any) => {
+    const slug = placeSlug(place.name);
+    xml += `  <url><loc>${BASE_URL}/weer/${place.province}/${slug}</loc><lastmod>${now}</lastmod><priority>0.5</priority></url>\n`;
+  });
+
+  xml += '</urlset>';
+
+  fs.writeFileSync(sitemapPath, xml);
+  console.log(`✅ Sitemap saved to ${sitemapPath} (${places.length} locations)`);
+}
+
+run().catch(console.error);

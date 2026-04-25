@@ -24,7 +24,7 @@ export default function LoginClient() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const [step, setStep] = useState<LoginStep>("email");
-  const [email, setEmail] = useState(searchParams.get("email") || "");
+  const [email, setEmail] = useState(searchParams?.get("email") || "");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [errors, setErrors] = useState<{ email?: string; pw?: string }>({});
@@ -77,7 +77,7 @@ export default function LoginClient() {
       return;
     }
     
-    const next = searchParams.get("next") || "/app";
+    const next = searchParams?.get("next") || "/app";
     router.replace(next);
   }
 

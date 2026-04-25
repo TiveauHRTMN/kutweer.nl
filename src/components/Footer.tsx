@@ -40,11 +40,8 @@ export default function Footer() {
           <div className="col-span-2">
             <LogoFull height={40} className="mb-6 opacity-90" />
             <p className="text-white/50 text-sm max-w-xs leading-relaxed font-medium">
-              Geen reclame. Geen vage 14-daagse gokwerkjes. 
-              Snoeiharde precisie op de vierkante meter via de 
-              <strong> WEERZONE Intelligence Engine</strong>.
-              <br/><br/>
-              48 uur vooruit. De rest is ruis.
+              De nauwkeurigste weersvoorspelling van Nederland.
+              Op 1 bij 1 kilometer, tot 48 uur vooruit — precies voor uw locatie.
             </p>
           </div>
           

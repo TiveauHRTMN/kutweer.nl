@@ -35,21 +35,21 @@ export const metadata: Metadata = {
     apple: "/favicon-icon.png",
   },
   title: {
-    default: "WEERZONE | 48 uur vooruit. De rest is ruis.",
+    default: "WEERZONE | De nauwkeurigste weersvoorspelling van Nederland",
     template: "%s | WEERZONE",
   },
   description:
-    "WeerZone.nl — De weerdienst die niet gokt. Vergeet de 14-daagse onzin. Wij leveren de komende 48 uur puur de hardst mogelijke KNMI HARMONIE data, exact op jouw vierkante meter. De rest is ruis.",
+    "WeerZone is de nauwkeurigste weersvoorspelling van Nederland. Voor jouw postcode, op 1 bij 1 kilometer, tot 48 uur vooruit.",
   keywords: [
     "weer", "weer nederland", "weerbericht", "weersverwachting", "weer vandaag",
     "weer morgen", "48 uur weer", "weer komende 48 uur", "regen verwachting",
-    "WEERZONE", "nauwkeurig weer", "KNMI", "KNMI HARMONIE", "weerzone.nl",
+    "WEERZONE", "nauwkeurig weer", "weerzone.nl",
     "buienradar alternatief", "weerbericht nederland", "actueel weer",
     "neerslagverwachting", "zonkracht vandaag", "weerstation nederland",
   ],
   openGraph: {
-    title: "WEERZONE | 48 uur vooruit. De rest is ruis.",
-    description: "Vergeet de 14-daagse. De komende 48 uur vooruit. De rest is ruis. De enige weerdienst die de waarheid deelt.",
+    title: "WEERZONE | De nauwkeurigste weersvoorspelling van Nederland",
+    description: "De nauwkeurigste weersvoorspelling van Nederland. Op 1 bij 1 kilometer, tot 48 uur vooruit.",
     type: "website",
     locale: "nl_NL",
     url: "https://weerzone.nl",
@@ -65,8 +65,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "WEERZONE | 48 uur vooruit. De rest is ruis.",
-    description: "Vergeet de 14-daagse. De komende 48 uur vooruit. De rest is ruis.",
+    title: "WEERZONE | De nauwkeurigste weersvoorspelling van Nederland",
+    description: "De nauwkeurigste weersvoorspelling van Nederland. Op 1 bij 1 kilometer, tot 48 uur vooruit.",
     images: ["/og-image.png"],
   },
   robots: {

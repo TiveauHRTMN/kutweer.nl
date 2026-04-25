@@ -5,7 +5,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Weer in Nederland — 48 uur vooruit per provincie en stad | WEERZONE",
   description:
-    "Bekijk het actuele weerbericht voor alle 12 provincies en meer dan 9.000 locaties in Nederland. Messcherpe 48-uurs voorspelling met KNMI HARMONIE data.",
+    "Bekijk het actuele weerbericht voor alle 12 provincies en meer dan 9.000 locaties in Nederland. De nauwkeurigste 48-uurs voorspelling, op 1 bij 1 kilometer.",
   keywords: [
     "weer nederland",
     "weer per provincie",
@@ -89,13 +89,13 @@ export default function WeerIndexPage() {
             <div>
               <h3 className="font-black uppercase text-xs tracking-widest text-accent-cyan mb-3">Nauwkeurigheid</h3>
               <p className="text-xs text-white/50 leading-relaxed">
-                Wij gebruiken KNMI HARMONIE data op 2,5km resolutie. Dat is 10x scherper dan de meeste weer-apps.
+                WeerZone voorspelt op 1 bij 1 kilometer — aanzienlijk nauwkeuriger dan gangbare weer-apps.
               </p>
             </div>
             <div>
               <h3 className="font-black uppercase text-xs tracking-widest text-accent-orange mb-3">Persona's</h3>
               <p className="text-xs text-white/50 leading-relaxed">
-                Piet, Reed en Steve vertalen de data naar advies waar je wat aan hebt. Geen ruis.
+                Piet, Reed en Steve vertalen de voorspelling naar concreet advies waar u direct iets aan heeft.
               </p>
             </div>
             <div>

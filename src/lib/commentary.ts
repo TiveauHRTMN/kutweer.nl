@@ -2,9 +2,9 @@ import type { WeatherData } from "./types";
 import { getWeatherDescription } from "./weather";
 
 // ============================================================
-// Commentary engine — WEERZONE: Roddelpraat-stijl, brutaal, provocerend
-// 48 uur. De rest is ruis.
-// Kijkt naar CURRENT + komende uren + morgen voor slimme context
+// Commentary engine — WEERZONE: zakelijk, zelfverzekerd, precies.
+// 48 uur vooruit, op 1 bij 1 km.
+// Kijkt naar CURRENT + komende uren + morgen voor context.
 // ============================================================
 export function getMainCommentary(w: WeatherData): string {
   const currentDesc = getWeatherDescription(w.current.weatherCode);
@@ -31,7 +31,7 @@ export function getMainCommentary(w: WeatherData): string {
     report += `Morgen schakelen we over naar ${getWeatherDescription(tomorrow.weatherCode).toLowerCase()} met een maximumtemperatuur van rond de ${tomorrow.tempMax}°. `;
   }
 
-  report += "Dit is de situatie zoals het KNMI het bevestigt. Geen ruis, gewoon de feiten.";
+  report += "Dit is de nauwkeurigste voorspelling voor jouw locatie.";
   
   return report;
 }
@@ -76,11 +76,11 @@ export function getMisereScore(w: WeatherData): { score: number; label: string; 
   // Clamp
   score = Math.max(0.5, Math.min(10, Math.round(score * 10) / 10));
 
-  if (score <= 2) return { score, label: "Koningsweer. Telefoon weg, deur uit, nu.", emoji: "😎" };
-  if (score <= 4) return { score, label: "Niks om over te janken. Gewoon genieten.", emoji: "🙂" };
-  if (score <= 6) return { score, label: "Matig. Je overleeft het, maar blij word je er niet van.", emoji: "😐" };
-  if (score <= 8) return { score, label: "Bagger. Bank, Netflix, bezorgen laten komen.", emoji: "😒" };
-  return { score, label: "Compleet waardeloos. Sterkte en gecondoleerd.", emoji: "💀" };
+  if (score <= 2) return { score, label: "Prachtig weer. Ideaal om naar buiten te gaan.", emoji: "😎" };
+  if (score <= 4) return { score, label: "Prima weer. Niets op aan te merken.", emoji: "🙂" };
+  if (score <= 6) return { score, label: "Matig weer. Een jasje kan geen kwaad.", emoji: "😐" };
+  if (score <= 8) return { score, label: "Slecht weer. Blijf lekker binnen als het kan.", emoji: "😒" };
+  return { score, label: "Zeer slecht weer. Sterkte vandaag.", emoji: "💀" };
 }
 
 export function getFietsScore(w: WeatherData): { score: number; label: string } {
@@ -97,11 +97,11 @@ export function getFietsScore(w: WeatherData): { score: number; label: string } 
 
   score = Math.max(0, Math.min(10, Math.round(score * 10) / 10));
 
-  if (score >= 8) return { score, label: "Topfietsweer. Wie nu de auto pakt is een aansteller." };
-  if (score >= 6) return { score, label: "Prima te doen. Jasje mee, bek dicht, trappen." };
-  if (score >= 4) return { score, label: "Kan, maar je gaat er niet blij van worden." };
-  if (score >= 2) return { score, label: "Alleen voor de echte diehards. Of gekken." };
-  return { score, label: "Nee. Gewoon nee. OV, Uber, kruipen. Alles beter dan dit." };
+  if (score >= 8) return { score, label: "Uitstekend fietsweer. Geniet van de rit." };
+  if (score >= 6) return { score, label: "Prima te doen op de fiets. Jasje mee voor de zekerheid." };
+  if (score >= 4) return { score, label: "Het kan, maar het is niet ideaal." };
+  if (score >= 2) return { score, label: "Alleen voor de echte doorzetters." };
+  return { score, label: "Geen aanrader om nu de fiets te pakken." };
 }
 
 export function getOutfitAdvice(w: WeatherData): { emoji: string; advice: string } {
@@ -110,30 +110,30 @@ export function getOutfitAdvice(w: WeatherData): { emoji: string; advice: string
   const rainComing = w.hourly.slice(0, 6).some(h => h.precipitation > 0.5);
 
   if (t >= 25) {
-    return { emoji: "🩳", advice: rain > 0 || rainComing ? "Kort broekje, maar regenjas in je tas. Je wordt nat vandaag." : "Kort en luchtig. Smeer je in — je huid vergeet niks." };
+    return { emoji: "🩳", advice: rain > 0 || rainComing ? "Korte broek, maar neem een regenjas mee." : "Kort en luchtig. Vergeet je niet in te smeren." };
   }
   if (t >= 18) {
-    return { emoji: "👕", advice: rain > 0 || rainComing ? "T-shirt, maar pak die regenjas. Vertrouw ons, niet Buienradar." : "T-shirt weer. Eindelijk. Duurt zelden lang in dit land." };
+    return { emoji: "👕", advice: rain > 0 || rainComing ? "T-shirt, maar houd een regenjas bij de hand." : "T-shirt weer. Geniet ervan zolang het duurt." };
   }
   if (t >= 12) {
-    return { emoji: "🧥", advice: `Jas mee. ${rainComing ? "Waterdicht." : "Licht jack is genoeg."} Je moeder had gelijk en dat weet je.` };
+    return { emoji: "🧥", advice: `Jas mee. ${rainComing ? "Een waterdichte jas is verstandig." : "Een licht jack is voldoende."}` };
   }
   if (t >= 5) {
-    return { emoji: "🧥", advice: "Winterjas. Altijd kouder dan je denkt. Altijd." };
+    return { emoji: "🧥", advice: "Winterjas. Het is frisser dan je denkt." };
   }
   if (t >= 0) {
-    return { emoji: "🧣", advice: "Sjaal, muts, handschoenen. De hele rambam. Geen stoer gedoe." };
+    return { emoji: "🧣", advice: "Sjaal en handschoenen zijn geen overbodige luxe." };
   }
-  return { emoji: "🥶", advice: "Álles aan. Thermisch ondergoed is geen schande, het is zelfbehoud." };
+  return { emoji: "🥶", advice: "Kleed je warm aan. Thermisch ondergoed is aanbevolen." };
 }
 
 export function getWindComment(wind: number, gusts: number): string {
-  if (gusts > 80) return "Windstoten boven de 80. Je fiets is weg. Jij straks ook als je niet oppast.";
-  if (gusts > 60) return "Heftige rukwinden. Je paraplu? Die is al in Duitsland.";
-  if (wind > 40) return "Stevig waaiig. Niet stoer doen bij het water, niet lullen, naar binnen.";
-  if (wind > 25) return "Behoorlijk wat wind. Fietsen wordt cardio op steroïden.";
-  if (wind > 15) return "Lekker briesje. Fris, maar niks om over te zeiken.";
-  return "Windstil. Zeldzaam in dit kikkerlandje. Geniet ervan.";
+  if (gusts > 80) return "Windstoten boven de 80 km/u. Extreem gevaarlijk — blijf binnen.";
+  if (gusts > 60) return "Zware rukwinden. Houd losse spullen binnen en wees voorzichtig.";
+  if (wind > 40) return "Stevige wind. Vermijd het water en open terrein.";
+  if (wind > 25) return "Behoorlijk wat wind. Fietsen kost flink meer moeite.";
+  if (wind > 15) return "Een frisse bries. Merkbaar, maar prima te doen.";
+  return "Windstil. Een zeldzame, aangename dag.";
 }
 
 export function getKutweerScore(w: WeatherData): number {
@@ -173,32 +173,41 @@ export function getDayProgression(w: WeatherData): string {
 }
 
 const ROTATING_QUOTES = [
-  "Buienradar gokt, wij rekenen. 48 uur messcherp met KNMI HARMONIE data. De rest is ruis.",
-  "Morgen wordt het beter? Dat zeiden ze gisteren ook. Geloof die 14-daagse fantasie-apps niet blind.",
-  "\"Kans op zon\" is de laffe uitweg van Weerplaza. Wij vertellen je gewoon de realiteit op de kilometer nauwkeurig.",
-  "48 uur. Meer heb je niet nodig. Een 14-daagse voorspelling is commerciële clickbait voor de massa.",
-  "Je weer-app zegt 22° volgende week? Trap er niet in. Puur bedrog om clicks te genereren.",
-  "KNMI HARMONIE op volle sterkte. Eén brute waarheid. Geen gelul.",
-  "14-daagse voorspelling? Dan kun je net zo goed je horoscoop of de krant van gisteren lezen.",
-  "Weerplaza, NOS, Buienradar... Stuk voor stuk bezig met nattevingerwerk. Wij vertellen je de feiten.",
-  "Jas-aan-jas-uit-jas-aan weer. Typisch Nederlands. Volkomen ruk, maar wij waarschuwen tenminste eerlijk.",
-  "\"Lokaal een bui\" is meteorologen-taal voor: we hebben geen flauw idee. Wij wel.",
-  "De gevestigde orde zit er weer naast? Logisch, die gebruiken achterhaalde data. Wij hebben de bron.",
-  "WEERZONE liegt niet. Geen valse hoop, geen 'misschien'. Keiharde data over jouw eigen postzegel.",
-  "Iedereen is meteoroloog totdat ze kletsnat op de fiets staan. Vertrouw op de radar, niet je onderbuik.",
-  "Wij beloven niks. Behalve dat de komende 48 uur klopt. De rest is ruis.",
+  "De nauwkeurigste 48-uurs weersverwachting van Nederland.",
+  "Voorspellingen op 1 bij 1 kilometer — precies voor jouw locatie.",
+  "Waarom 48 uur? Dat is zo ver als een voorspelling betrouwbaar reikt.",
+  "WEERZONE: het weerbericht teruggebracht tot wat echt klopt.",
+  "Nauwkeurig tot op de straat, tot 48 uur vooruit.",
+  "Helder, precies en betrouwbaar — 48 uur vooruit.",
+  "Een eerlijk en nauwkeurig verslag van wat je kunt verwachten.",
 ];
+
+export function getOneLiner(w: WeatherData): string {
+  const code = w.current.weatherCode;
+  const temp = w.current.temperature;
+  const rain = w.current.precipitation;
+  const wind = w.current.windSpeed;
+
+  if (code >= 95) return "Onweer en zware buien. Blijf binnen.";
+  if (rain > 5) return "Het regent flink. Neem een paraplu mee.";
+  if (wind > 40) return "Zeer harde wind. Let op losse spullen.";
+  if (temp > 28) return "Heet! Zoek de schaduw op.";
+  if (temp < 0) return "Het vriest. Kleed je dik aan.";
+  if (code <= 1 && temp > 18) return "Prachtig zonnig weer. Geniet ervan.";
+  if (code <= 1) return "Lekker zonnig vandaag.";
+  return "Gewoon Hollands weer. Prima dag.";
+}
 
 export function getRandomQuote(): string {
   return ROTATING_QUOTES[Math.floor(Math.random() * ROTATING_QUOTES.length)];
 }
 
 export function getUvLabel(uv: number): { label: string; color: string } {
-  if (uv <= 2) return { label: "Laag — chill", color: "#34d399" };
-  if (uv <= 5) return { label: "Matig — smeer je in, malloot", color: "#f0a040" };
+  if (uv <= 2) return { label: "Laag — geen bescherming nodig", color: "#34d399" };
+  if (uv <= 5) return { label: "Matig — zonnebrand aanbevolen", color: "#f0a040" };
   if (uv <= 7) return { label: "Hoog — factor 30 minimaal", color: "#e8743a" };
-  if (uv <= 10) return { label: "Zeer hoog — binnenblijven of factor 50, geen discussie", color: "#ef4444" };
-  return { label: "Extreem — je verbrandt sneller dan een tosti", color: "#a855f7" };
+  if (uv <= 10) return { label: "Zeer hoog — factor 50 en schaduw opzoeken", color: "#ef4444" };
+  return { label: "Extreem — huidbeschadiging binnen enkele minuten", color: "#a855f7" };
 }
 
 export function getBbqScore(w: WeatherData): number {

@@ -62,7 +62,7 @@ export default function OgImage() {
              fontSize: "36px", fontWeight: 600, color: "rgba(255,255,255,0.8)",
              letterSpacing: "8px", textTransform: "uppercase", display: "flex"
           }}>
-            48 uur. De rest is ruis.
+            De nauwkeurigste 48 uur van Nederland.
           </div>
         </div>
 
@@ -72,7 +72,7 @@ export default function OgImage() {
           color: "rgba(255,255,255,0.4)", fontSize: "16px", fontWeight: 700, letterSpacing: "2px"
         }}>
           <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#22c55e" }} />
-          DATA: KNMI HARMONIE LIVE · HYPERLOKAAL
+          LIVE · 1×1 KM · VOOR UW LOCATIE
         </div>
       </div>
     ),

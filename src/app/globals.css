@@ -302,6 +302,13 @@ textarea::placeholder {
 .animate-slide-in {
   animation: slideIn 0.4s ease forwards;
 }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
 
 /* ============================================
    Weather background elements
@@ -443,11 +450,12 @@ textarea::placeholder {
 /* Horizontal scroll */
 .horizontal-scroll {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   overflow-x: auto;
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 4px;
+  padding-bottom: 8px;
 }
 .horizontal-scroll > * {
   scroll-snap-align: start;

@@ -96,7 +96,30 @@
       "Bash(curl -s -H 'Authorization: Bearer sbp_87619606a494e5bb4e579235931006877fb613b4' https://api.supabase.com/v1/projects/bhguergqkyiejyxsiwdu/config/auth)",
       "Bash(node -e ' *)",
       "Bash(mkdir -p /tmp/weerzone-design)",
-      "Bash(unzip -o \"/c/Users/rwnhr/Downloads/Weerzone.zip\")"
+      "Bash(unzip -o \"/c/Users/rwnhr/Downloads/Weerzone.zip\")",
+      "WebFetch(domain:paperclip.ing)",
+      "WebFetch(domain:hermes-agent.nousresearch.com)",
+      "WebFetch(domain:openclaw.ai)",
+      "Bash(where supabase *)",
+      "Bash(where psql *)",
+      "Bash(taskkill /PID 31072 /F)",
+      "PowerShell(Stop-Process -Id 31072 -Force -ErrorAction SilentlyContinue)",
+      "Bash(npx supabase *)",
+      "PowerShell($zip = \"C:\\\\Users\\\\rwnhr\\\\Downloads\\\\Weerzone \\(1\\).zip\"; $dest = \".design-handoff-v2\"; if \\(Test-Path $dest\\) { Remove-Item $dest -Recurse -Force }; Expand-Archive -Path $zip -DestinationPath $dest -Force; Get-ChildItem $dest -Recurse | Select-Object FullName | ForEach-Object { $_.FullName.Replace\\(\\(Resolve-Path .\\).Path, ''\\) })",
+      "Bash(taskkill //PID 23656 //F)",
+      "Bash(git mv *)",
+      "Bash(node -e \"const fs = require\\('fs'\\); const c = fs.readFileSync\\('src/components/WeatherDashboard.tsx','utf8'\\); let opens=0,closes=0; for\\(const ch of c\\){if\\(ch==='{'\\)opens++;if\\(ch==='}'\\)closes++;} console.log\\('opens',opens,'closes',closes\\)\")",
+      "Bash(node -e \"const fs = require\\('fs'\\); const c = fs.readFileSync\\('src/components/WeatherDashboard.tsx','utf8'\\); let o={'\\(':0,'[':0,'<':0}, cl={'\\)':0,']':0,'>':0}; for\\(const ch of c\\){if\\(ch in o\\)o[ch]++; if\\(ch in cl\\)cl[ch]++;} console.log\\(o,cl\\)\")",
+      "Bash(npx swc *)",
+      "Bash(node -e \"const {transformSync} = require\\('@swc/core'\\); const fs = require\\('fs'\\); const c = fs.readFileSync\\('src/components/WeatherDashboard.tsx','utf8'\\); try { transformSync\\(c, {filename:'a.tsx', jsc:{parser:{syntax:'typescript',tsx:true}}}\\); console.log\\('OK'\\); } catch\\(e\\) { console.log\\(e.message\\); }\")",
+      "Bash(node -e \"const esbuild = require\\('esbuild'\\); const fs = require\\('fs'\\); const c = fs.readFileSync\\('src/components/WeatherDashboard.tsx','utf8'\\); esbuild.transform\\(c,{loader:'tsx'}\\).then\\(\\(\\)=>console.log\\('OK'\\)\\).catch\\(e=>console.log\\('ERR',e.message\\)\\)\")",
+      "Bash(node -e \"const fs=require\\('fs'\\); const c=fs.readFileSync\\('src/components/WeatherDashboard.tsx','utf8'\\); const opens=\\(c.match\\(/<div\\\\b/g\\)||[]\\).length; const closes=\\(c.match\\(/<\\\\/div>/g\\)||[]\\).length; console.log\\('div opens:',opens,'closes:',closes\\)\")",
+      "Bash(node -e \"const esbuild=require\\('esbuild'\\); const fs=require\\('fs'\\); const c=fs.readFileSync\\('src/components/WeatherDashboard.tsx','utf8'\\); esbuild.transform\\(c,{loader:'tsx',sourcefile:'W.tsx'}\\).then\\(r=>console.log\\('OK',r.code.length\\)\\).catch\\(e=>console.log\\(JSON.stringify\\(e,null,2\\)\\)\\)\")",
+      "Bash(node -e \"const fs=require\\('fs'\\); const buf=fs.readFileSync\\('src/components/WeatherDashboard.tsx'\\); console.log\\('first bytes',buf.slice\\(0,10\\)\\); const s=buf.toString\\('utf8'\\); console.log\\('has BOM',s.charCodeAt\\(0\\)===0xFEFF\\);\")",
+      "Bash(node -e \"const esbuild=require\\('esbuild'\\); const fs=require\\('fs'\\); const c=fs.readFileSync\\('src/components/WeatherDashboard.tsx','utf8'\\); esbuild.transform\\(c,{loader:'tsx'}\\).then\\(\\(\\)=>console.log\\('OK'\\)\\).catch\\(e=>console.log\\('ERR',e.errors[0]\\)\\)\")",
+      "Bash(git reset *)",
+      "Bash(git ls-tree *)",
+      "Bash(git stash *)"
     ]
   }
 }

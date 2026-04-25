@@ -34,7 +34,7 @@ export default function RegenPage() {
         name: "Wanneer stopt de regen?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "De uurlijkse neerslagverwachting op WeerZone laat exact zien wanneer de buien eindigen op basis van het HARMONIE model.",
+          text: "De uurlijkse neerslagverwachting op WeerZone laat exact zien wanneer de buien eindigen — op 1 bij 1 kilometer nauwkeurig voor uw locatie.",
         },
       },
     ],

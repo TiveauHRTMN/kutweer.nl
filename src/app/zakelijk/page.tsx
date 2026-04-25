@@ -7,10 +7,10 @@ import Footer from "@/components/Footer";
 export const metadata: Metadata = {
   title: "WEERZONE Zakelijk — Het weer, maar dan echt",
   description:
-    "Werk je buiten? Dan kost slecht weer je geld. Met 48-uurs data van het KNMI HARMONIE weet je precies wat er aankomt. Op de meter. Op tijd.",
+    "Werkt u buiten? Dan kost onverwacht weer u geld. WEERZONE levert de nauwkeurigste 48-uurs voorspelling van Nederland — op 1 bij 1 kilometer, voor uw bedrijfsadres.",
   openGraph: {
     title: "WEERZONE Zakelijk — Het weer, maar dan echt",
-    description: "48 uur vooruit. Op de vierkante meter. Voor bedrijven die buiten werken.",
+    description: "De nauwkeurigste 48-uurs voorspelling van Nederland. Op 1 bij 1 kilometer. Voor bedrijven die buiten werken.",
   },
 };
 
@@ -60,8 +60,8 @@ const FEATURES = [
   { icon: Clock, title: "48 uur vooruit", desc: "De enige voorspelling die echt betrouwbaar is. Daarna wordt het gokken — en dat weten wij ook." },
   { icon: BarChart3, title: "Op de vierkante meter", desc: "Niet ergens in de regio. Jouw adres, jouw locatie, jouw weer." },
   { icon: Zap, title: "Alleen wat telt", desc: "Geen melding dat het bewolkt wordt. Wel een signaal als het jou iets gaat kosten." },
-  { icon: Shield, title: "KNMI HARMONIE", desc: "Hetzelfde model dat het KNMI gebruikt. 2,5 km resolutie. Zo nauwkeurig als het in Nederland kan." },
-  { icon: TrendingUp, title: "Elke ochtend om 08:00", desc: "Je weerrapport staat in je inbox voor je dag begint. Geen app, geen gezeur." },
+  { icon: Shield, title: "Meest nauwkeurig", desc: "De nauwkeurigste weersvoorspelling van Nederland. Op 1 bij 1 kilometer precies." },
+  { icon: TrendingUp, title: "Elke ochtend om 08:00", desc: "Uw weerrapport staat in uw inbox voor de dag begint. Geen app nodig." },
   { icon: Building2, title: "Meerdere locaties", desc: "Meerdere vestigingen of bouwplaatsen? Elk adres zijn eigen data. Overzicht houd je zelf." },
 ];
 
@@ -100,13 +100,13 @@ export default function ZakelijkPage() {
       <div className="max-w-4xl mx-auto px-4 pb-12">
         <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8">
           <h2 className="text-xl sm:text-2xl font-black text-white mb-3">
-            De 14-daagse klopt niet. Dat weet je zelf ook.
+            Een voorspelling waar u uw werk op kunt plannen.
           </h2>
           <p className="text-white/60 text-sm sm:text-base leading-relaxed">
-            Na drie dagen is een weersvoorspelling zo onbetrouwbaar dat je er geen beslissingen meer op kunt baseren. Toch verkopen de meeste weerapps je een 14-daagse alsof het de waarheid is. Wij doen dat niet.
+            Na drie dagen loopt de nauwkeurigheid van elke weersvoorspelling sterk terug. Toch presenteren veel weerdiensten een 14-daagse alsof die net zo betrouwbaar is als vandaag. Wij doen dat niet.
           </p>
           <p className="text-white/80 font-semibold text-sm sm:text-base mt-3">
-            WEERZONE stopt bij 48 uur. Want dat is de window waarin voorspellingen daadwerkelijk kloppen. KNMI HARMONIE, 2,5 km resolutie. Wat je ziet, klopt.
+            WEERZONE richt zich op de komende 48 uur — de periode waarin voorspellingen écht kloppen. Op 1 bij 1 kilometer precies, voor uw locatie.
           </p>
         </div>
       </div>
@@ -116,10 +116,10 @@ export default function ZakelijkPage() {
         <div className="bg-accent-orange/10 border border-accent-orange/20 rounded-2xl p-8">
           <p className="text-xs font-bold text-accent-orange uppercase tracking-wider mb-3">Hoe het werkt</p>
           <p className="text-white/80 text-base leading-relaxed">
-            Je geeft je bedrijfsadres. Wij rekenen op KNMI HARMONIE, elke ochtend opnieuw. Als er iets in de komende 48 uur jouw werk raakt — regen, vorst, storm, hitte — krijg je een mail. Anders niet.
+            U geeft uw bedrijfsadres op. Wij maken elke ochtend een nieuwe voorspelling op 1 bij 1 kilometer. Zodra er in de komende 48 uur iets uw werk raakt — regen, vorst, storm, hitte — krijgt u een mail. Anders niet.
           </p>
           <p className="text-white/60 text-sm leading-relaxed mt-3">
-            Geen ruis. Geen schaarste-spelletjes. Geen app. Eén mail wanneer het telt.
+            Geen overbodige meldingen. Geen app. Eén mail wanneer het telt.
           </p>
         </div>
       </div>

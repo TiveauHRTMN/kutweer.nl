@@ -17,7 +17,14 @@ interface PageProps {
  * Next.js genereert ze on-demand (ISR) zodra Google ze crawlt via de sitemap.
  */
 export function generateStaticParams() {
-  return [];
+  // We pre-renderen alleen de top 20 steden voor razendsnelle initiële indexering.
+  // De overige 9.000+ worden on-demand (ISR) gegenereerd.
+  return ALL_PLACES
+    .filter(p => TOP_CITIES.includes(p.name))
+    .map((p) => ({ 
+      province: p.province, 
+      place: placeSlug(p.name) 
+    }));
 }
 
 import { getHermesSEO } from "@/lib/seo";
@@ -31,7 +38,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const hermesSEO = await getHermesSEO(place.name, province);
 
   const title = `Weer ${place.name} — Actueel weerbericht vandaag en morgen`;
-  const description = hermesSEO?.meta_description || `Weer in ${place.name} (${provLabel}). De enige weerdienst die niet gokt. Bekijk de 48-uurs voorspelling snoeihard op basis van KNMI HARMONIE. Temperatuur, regen, wind en UV — per uur bijgewerkt.`;
+  const description = hermesSEO?.meta_description || `Weer in ${place.name} (${provLabel}). De nauwkeurigste 48-uurs weersvoorspelling van Nederland, op 1 bij 1 kilometer. Temperatuur, regen, wind en UV — per uur bijgewerkt.`;
 
   return {
     title,
@@ -113,7 +120,7 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
 
   // Hermes Disaster SEO: Dynamic Schema Injection
   let schemaTitle = `Weer ${place.name} — WEERZONE`;
-  let schemaDesc = `48 uur nauwkeurig weer voor ${place.name}, ${provLabel}. Hardste data via KNMI HARMONIE.`;
+  let schemaDesc = `De nauwkeurigste 48-uurs weersvoorspelling voor ${place.name}, ${provLabel}. Op 1 bij 1 kilometer precies.`;
   
   if (initialWeather) {
     const { getMisereScore } = await import("@/lib/commentary");
@@ -174,7 +181,7 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
         name: `Wat is de weersverwachting voor ${place.name} de komende 48 uur?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: `In ${place.name} tonen wij een per uur bijgewerkte verwachting voor de komende 48 uur op basis van het messcherpe KNMI HARMONIE model. Bekijk temperatuur, wind en regen op de vierkante meter.`,
+          text: `In ${place.name} tonen wij een per uur bijgewerkte verwachting voor de komende 48 uur, op 1 bij 1 kilometer precies. Bekijk temperatuur, wind en regen voor uw exacte locatie.`,
         },
       },
       {
