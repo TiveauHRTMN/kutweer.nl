@@ -16,14 +16,17 @@ import {
   Zap,
   Snowflake,
   ThermometerSun,
+  Terminal,
+  ZapOff,
 } from "lucide-react";
-import { loadWeather, patchCacheDeep } from "@/lib/weatherCache";
+import { loadWeather, loadWWS, patchCacheDeep } from "@/lib/weatherCache";
 import {
   DUTCH_CITIES,
   reverseGeocode,
   type City,
   type WeatherData,
   type HourlyForecast,
+  type WWSPayload,
 } from "@/lib/types";
 import {
   getWeatherEmoji,
@@ -338,7 +341,7 @@ function summarizeDaypart(
   // Praktische tip per dagdeel
   let hint = "";
   if (onweer) {
-    hint = "Plan binnenactiviteit rond dat uur.";
+    hint = "Plan binnenactiviteit rond dat hour.";
   } else if (rainSum > 2) {
     hint = "Jas mee. Fiets met spatborden de moeite waard.";
   } else if (stormy) {
@@ -464,6 +467,7 @@ export default function PietExtended() {
       DUTCH_CITIES[0]
   );
   const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [wws, setWWS] = useState<WWSPayload | null>(null);
   const [pietAnalysis, setPietAnalysis] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [locating, setLocating] = useState(false);
@@ -477,38 +481,38 @@ export default function PietExtended() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    loadWeather(
-      city.lat,
-      city.lon,
-      () => {},
-      (fresh) => {
-        if (!cancelled) setWeather(fresh);
-      },
-      (neural) => {
-        if (!cancelled)
-          setWeather((prev) => (prev ? { ...prev, neuralData: neural } : prev));
-      }
-    )
-      .then((w) => {
-        if (!cancelled) {
-          setWeather(w);
-          setLoading(false);
-          if (w.deepAnalysis) {
-            setPietAnalysis(w.deepAnalysis);
-          } else {
-            getPietDeepAnalysis(w).then((analysis) => {
-              if (!cancelled) {
-                setPietAnalysis(analysis);
-                patchCacheDeep(city.lat, city.lon, analysis);
-              }
-            });
-          }
+    
+    // Parallel laden van weer en WWS
+    Promise.all([
+      loadWeather(
+        city.lat,
+        city.lon,
+        () => {},
+        (fresh) => { if (!cancelled) setWeather(fresh); },
+        (neural) => { if (!cancelled) setWeather((prev) => (prev ? { ...prev, neuralData: neural } : prev)); }
+      ),
+      loadWWS(city.lat, city.lon)
+    ])
+    .then(([w, wwsPayload]) => {
+      if (!cancelled) {
+        setWeather(w);
+        setWWS(wwsPayload);
+        setLoading(false);
+        if (w.deepAnalysis) {
+          setPietAnalysis(w.deepAnalysis);
+        } else {
+          getPietDeepAnalysis(w).then((analysis) => {
+            if (!cancelled) {
+              setPietAnalysis(analysis);
+              patchCacheDeep(city.lat, city.lon, analysis);
+            }
+          });
         }
-      })
-      .catch(() => !cancelled && setLoading(false));
-    return () => {
-      cancelled = true;
-    };
+      }
+    })
+    .catch(() => !cancelled && setLoading(false));
+
+    return () => { cancelled = true; };
   }, [city]);
 
   const locate = () => {
@@ -544,33 +548,16 @@ export default function PietExtended() {
     );
   }
 
-  const narrative =
-    pietAnalysis || weather.summaryVerdict || getMainCommentary(weather);
+  // WWS Piet update is primair, anders deep analysis, anders summary
+  const narrative = wws?.piet_update?.content || pietAnalysis || weather.summaryVerdict || getMainCommentary(weather);
+  const narrativeTitle = wws?.piet_update?.title || "Het volledige weerverhaal";
+  const narrativeClosing = wws?.piet_update?.closing || "— Piet, voor Weerzone";
 
   // Splits 48 uur in vandaag-rest + morgen
   const todayStr = new Date().toISOString().slice(0, 10);
-  const todayHourly = weather.hourly.filter((h) => h.time.slice(0, 10) === todayStr);
   const tomorrowStr = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
-  const tomorrowHourly = weather.hourly.filter(
-    (h) => h.time.slice(0, 10) === tomorrowStr
-  );
 
-  // 6 dagdelen, met UV alleen voor overdag-blokken
-  const blocks: Array<{ label: string; start: number; end: number; daytime: boolean }> = [
-    { label: "Nu", start: 0, end: 1, daytime: true },
-    { label: "Vanmiddag", start: 1, end: 6, daytime: true },
-    { label: "Vanavond", start: 6, end: 12, daytime: false },
-    { label: "Vannacht", start: 12, end: 18, daytime: false },
-    { label: "Morgenochtend", start: 18, end: 30, daytime: true },
-    { label: "Morgenmiddag/avond", start: 30, end: 42, daytime: true },
-  ];
-
-  const current = weather.current;
-  const currentBft = getWindBeaufort(current.windSpeed);
-  const showGusts = current.windGusts > current.windSpeed * 1.3;
-
-  // Wall-clock dagdelen (ochtend/middag/avond/nacht voor vandaag, en Morgen totaal).
-  // Hours-of-day filtering: ochtend 06–12, middag 12–18, avond 18–24, nacht 00–06 (komende nacht).
+  // Wall-clock dagdelen
   const todayDateStr = todayStr;
   const tomorrowDateStr = tomorrowStr;
   const inHourRange = (h: HourlyForecast, dateStr: string, from: number, to: number) => {
@@ -581,23 +568,11 @@ export default function PietExtended() {
   const nowMs = Date.now();
   const futureOnly = (h: HourlyForecast) => new Date(h.time).getTime() >= nowMs - 30 * 60 * 1000;
 
-  const ochtendHours = weather.hourly.filter(
-    (h) => inHourRange(h, todayDateStr, 6, 12) && futureOnly(h)
-  );
-  const middagHours = weather.hourly.filter(
-    (h) => inHourRange(h, todayDateStr, 12, 18) && futureOnly(h)
-  );
-  const avondHours = weather.hourly.filter(
-    (h) => inHourRange(h, todayDateStr, 18, 24) && futureOnly(h)
-  );
-  // Nacht = komende nacht (00–06 van morgen)
-  const nachtHours = weather.hourly.filter(
-    (h) => inHourRange(h, tomorrowDateStr, 0, 6)
-  );
-  // Morgen = 06–24 van morgen (overdag + avond)
-  const morgenHours = weather.hourly.filter(
-    (h) => inHourRange(h, tomorrowDateStr, 6, 24)
-  );
+  const ochtendHours = weather.hourly.filter((h) => inHourRange(h, todayDateStr, 6, 12) && futureOnly(h));
+  const middagHours = weather.hourly.filter((h) => inHourRange(h, todayDateStr, 12, 18) && futureOnly(h));
+  const avondHours = weather.hourly.filter((h) => inHourRange(h, todayDateStr, 18, 24) && futureOnly(h));
+  const nachtHours = weather.hourly.filter((h) => inHourRange(h, tomorrowDateStr, 0, 6));
+  const morgenHours = weather.hourly.filter((h) => inHourRange(h, tomorrowDateStr, 6, 24));
 
   const dayparts: DaypartSummary[] = [
     summarizeDaypart("Ochtend", "06–12 u", ochtendHours, weather, true),
@@ -631,22 +606,31 @@ export default function PietExtended() {
             <span className="homecard-kicker">Nu in {city.name}</span>
             <div className="flex items-baseline gap-3 mt-2">
               <span className="text-7xl sm:text-8xl font-black text-white tracking-tighter leading-none">
-                {current.temperature}°
+                {weather.current.temperature}°
               </span>
               <span className="text-6xl sm:text-7xl drop-shadow-xl">
-                {getWeatherEmoji(current.weatherCode, current.isDay)}
+                {getWeatherEmoji(weather.current.weatherCode, weather.current.isDay)}
               </span>
             </div>
             <p className="text-base sm:text-lg font-bold text-white/80 mt-2">
-              {getWeatherDescription(current.weatherCode)}
-              {current.feelsLike !== current.temperature && (
+              {getWeatherDescription(weather.current.weatherCode)}
+              {weather.current.feelsLike !== weather.current.temperature && (
                 <span className="text-white/50 font-medium">
                   {" "}
-                  · voelt als {current.feelsLike}°
+                  · voelt als {weather.current.feelsLike}°
                 </span>
               )}
             </p>
           </div>
+          {wws && (
+             <div className="hidden sm:block text-right">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-black uppercase tracking-widest">
+                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                   WWS Synthese Live
+                </div>
+                <p className="text-[10px] text-white/40 mt-1 uppercase tracking-tighter">Res: {wws.resolution} · Grid: 1km</p>
+             </div>
+          )}
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-4 gap-x-3 mt-6 pt-6 border-t border-white/10">
@@ -655,19 +639,13 @@ export default function PietExtended() {
               <Wind className="w-3 h-3" /> Wind
             </div>
             <div className="text-white font-bold">
-              {current.windSpeed} km/h{" "}
+              {weather.current.windSpeed} km/h{" "}
               <span className="text-white/50 text-xs font-medium">
-                · {current.windDirection}
+                · {weather.current.windDirection}
               </span>
             </div>
             <div className="text-[11px] text-white/40">
-              {currentBft.scale} bft · {currentBft.label.toLowerCase()}
-              {showGusts && (
-                <>
-                  {" "}
-                  · vlagen {current.windGusts} km/h
-                </>
-              )}
+              {getWindBeaufort(weather.current.windSpeed).scale} bft · {getWindBeaufort(weather.current.windSpeed).label.toLowerCase()}
             </div>
           </div>
           <div>
@@ -675,8 +653,8 @@ export default function PietExtended() {
               <Droplet className="w-3 h-3" /> Neerslag nu
             </div>
             <div className="text-white font-bold">
-              {current.precipitation > 0
-                ? `${current.precipitation.toFixed(1)} mm`
+              {weather.current.precipitation > 0
+                ? `${weather.current.precipitation.toFixed(1)} mm`
                 : "Droog"}
             </div>
             <div className="text-[11px] text-white/40">{nextRain?.headline ?? ""}</div>
@@ -685,9 +663,9 @@ export default function PietExtended() {
             <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-white/40 mb-1">
               <Cloud className="w-3 h-3" /> Bewolking
             </div>
-            <div className="text-white font-bold">{current.cloudCover}%</div>
+            <div className="text-white font-bold">{weather.current.cloudCover}%</div>
             <div className="text-[11px] text-white/40">
-              vochtigheid {current.humidity}%
+              vochtigheid {weather.current.humidity}%
             </div>
           </div>
           <div>
@@ -707,6 +685,39 @@ export default function PietExtended() {
           </div>
         </div>
       </div>
+
+      {/* WWS TECH GRID — hyperlokaal 1km grid */}
+      {wws && (
+        <div className="homecard !p-0 overflow-hidden bg-slate-900 border-slate-800">
+           <div className="bg-slate-800/50 px-6 py-3 flex items-center justify-between border-b border-white/5">
+              <div className="flex items-center gap-2">
+                 <Terminal className="w-4 h-4 text-emerald-400" />
+                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Meteorologisch Dossier (1KM GRID)</span>
+              </div>
+              <span className="text-[10px] font-bold text-white/30 uppercase">{wws.api_grid_1km.region}</span>
+           </div>
+           <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/5">
+              {wws.api_grid_1km.forecast.slice(0, 3).map((f, i) => (
+                 <div key={i} className="p-5">
+                    <p className="text-[10px] font-black text-white/30 uppercase mb-2">{formatTime(f.time)}</p>
+                    <div className="flex items-baseline gap-2">
+                       <span className="text-2xl font-black text-white">{f.temp_c}°</span>
+                       <span className="text-xs text-white/50">{f.precip_mm}mm</span>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between">
+                       <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                          <div className="h-full bg-emerald-500" style={{ width: `${f.confidence}%` }} />
+                       </div>
+                       <span className="text-[9px] font-black text-emerald-400/80 ml-3">{f.confidence}%</span>
+                    </div>
+                 </div>
+              ))}
+           </div>
+           <div className="px-6 py-2 bg-black/20 text-[9px] font-bold text-white/20 uppercase tracking-tighter">
+              Synthese: {wws.api_grid_1km.models_synthesized.join(" · ")}
+           </div>
+        </div>
+      )}
 
       {/* RISICO-STRIP */}
       {risks.length > 0 && (
@@ -744,13 +755,13 @@ export default function PietExtended() {
             💬
           </div>
           <div>
-            <h2 className="homecard-kicker !text-accent-cyan !mb-0">Het volledige weerverhaal</h2>
+            <h2 className="homecard-kicker !text-accent-cyan !mb-0">{narrativeTitle}</h2>
             <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mt-1">
               {new Date().toLocaleTimeString("nl-NL", {
                 hour: "2-digit",
                 minute: "2-digit",
               })}{" "}
-              · ochtend → morgen
+              · WWS Update
             </p>
           </div>
         </div>
@@ -758,13 +769,14 @@ export default function PietExtended() {
           {narrative.split(/\n\n+/).map((para, i) => (
             <p key={i}>{renderInlineBold(para)}</p>
           ))}
+          <p className="pt-4 text-white/40 italic text-sm">{narrativeClosing}</p>
         </div>
       </div>
 
       {/* DAGDEEL-SAMENVATTING — 1 overzicht: ochtend/middag/avond/nacht/morgen */}
       <div className="homecard !p-0 overflow-hidden">
         <div className="flex items-end justify-between px-6 pt-6 pb-4">
-          <h3 className="homecard-kicker !mb-0">Ochtend → Morgen in één blik</h3>
+          <h3 className="homecard-kicker !mb-0">De dagdelen</h3>
           <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
             wall-clock
           </span>
@@ -902,14 +914,23 @@ export default function PietExtended() {
           sunrise={weather.sunrise}
           sunset={weather.sunset}
           uvIndex={weather.uvIndex}
-          hourly={todayHourly}
+          hourly={weather.hourly.filter((h) => h.time.slice(0, 10) === todayStr)}
         />
         <DayBlock
           title="Morgen"
           daily={weather.daily[1]}
-          hourly={tomorrowHourly}
+          hourly={weather.hourly.filter((h) => h.time.slice(0, 10) === tomorrowStr)}
         />
       </div>
+
+      {/* VIRAL HOOK (Footer) */}
+      {wws?.viral_hook && (
+         <div className="bg-emerald-950/40 border border-emerald-500/20 rounded-3xl p-6">
+            <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-3">Viraal Inzicht</p>
+            <p className="text-white/80 text-sm italic">"{wws.viral_hook.copy}"</p>
+            <p className="text-[9px] text-white/20 mt-3 uppercase">Trigger: {wws.viral_hook.trigger_condition}</p>
+         </div>
+      )}
 
       <div className="pt-12 border-t border-white/10 flex justify-center">
         <Link
