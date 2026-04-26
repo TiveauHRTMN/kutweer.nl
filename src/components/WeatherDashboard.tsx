@@ -83,7 +83,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
   const [loading, setLoading] = useState(!initialWeather);
   const [hourlyMetric, setHourlyMetric] = useState<"temp" | "rain" | "wind">("temp");
   const [isLocating, setIsLocating] = useState(false);
-  const { tier } = useSession();
+  const { tier, isFounder } = useSession();
 
   const loadData = useCallback(async (targetCity: City) => {
     let cancelled = false;
@@ -178,6 +178,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
             </div>
             {tier && <PersonaBadge tier={tier} />}
           </div>
+          {isFounder && (
+            <span className="badge sun mt-2" style={{ fontSize: 11, letterSpacing: "0.08em" }}>
+              ★ Founder
+            </span>
+          )}
         </header>
 
         <NavBar activeCity={city.name} isLocating={isLocating} />
