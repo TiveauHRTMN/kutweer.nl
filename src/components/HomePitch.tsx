@@ -32,54 +32,44 @@ export default function HomePitch() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         {PERSONA_ORDER.map((tier) => {
           const p = PERSONAS[tier];
-          const hasPrice = p.priceCents !== undefined && p.founderPriceCents !== undefined;
+          const isComingSoon = !p.priceCents;
 
           return (
             <Link
               key={tier}
-              href={`/app/signup?tier=${tier}`}
+              href={isComingSoon ? "/zakelijk" : `/app/signup?tier=${tier}`}
               className="group rounded-2xl bg-white/95 backdrop-blur p-5 sm:p-6 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all"
             >
               <div className="flex items-center gap-2 mb-3">
-                <span
-                  className="w-2.5 h-2.5 rounded-full"
-                  style={{ background: p.color }}
-                />
-                <span
-                  className="text-xs font-black uppercase tracking-wider"
-                  style={{ color: p.color }}
-                >
+                <span className="w-2.5 h-2.5 rounded-full" style={{ background: p.color }} />
+                <span className="text-xs font-black uppercase tracking-wider" style={{ color: p.color }}>
                   {p.name} · {p.label}
                 </span>
               </div>
-              <h3 className="font-black text-text-primary text-lg leading-snug mb-2">
-                {p.tagline}
-              </h3>
-              <p className="text-sm text-text-secondary leading-relaxed mb-4">
-                {p.description}
-              </p>
-              
+              <h3 className="font-black text-text-primary text-lg leading-snug mb-2">{p.tagline}</h3>
+              <p className="text-sm text-text-secondary leading-relaxed mb-4">{p.description}</p>
+
               <div className="pt-3 border-t border-black/10">
-                {hasPrice ? (
+                {isComingSoon ? (
                   <>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-2xl font-black text-text-primary">
-                        {formatPrice(p.founderPriceCents!)}
-                      </span>
-                      <span className="text-xs text-text-muted">/mnd — als je nu aanmeldt</span>
-                    </div>
+                    <div className="text-xl font-black text-text-primary">Binnenkort</div>
+                    <p className="text-[11px] text-text-muted mt-1">Binnenkort beschikbaar voor zakelijk gebruik</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-xl font-black text-text-primary">Tijdelijk gratis</div>
                     <p className="text-[11px] text-text-muted mt-1">
-                      Normaal {formatPrice(p.priceCents!)}/mnd, binnenkort
+                      Straks {formatPrice(p.priceCents!)}/mnd — geen creditcard nodig
                     </p>
                   </>
-                ) : null}
+                )}
               </div>
 
               <div
                 className="mt-4 text-center rounded-xl py-2.5 text-white font-bold text-sm group-hover:brightness-110"
                 style={{ background: p.color }}
               >
-                Aanmelden →
+                {isComingSoon ? "Lees meer →" : "Aanmelden →"}
               </div>
             </Link>
           );

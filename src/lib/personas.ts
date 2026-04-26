@@ -30,7 +30,6 @@ export const PERSONAS: Record<PersonaTier, PersonaConfig> = {
     description:
       "Piet stuurt je elke ochtend voor 7:00 een korte mail: wat het weer vandaag en morgen doet op jouw adres.",
     priceCents: 499,
-    founderPriceCents: 299,
     features: [
       "Elke ochtend vóór 7:00 in je mail",
       "Op jouw postcode (KNMI HARMONIE, 2,5 km)",
@@ -50,8 +49,7 @@ export const PERSONAS: Record<PersonaTier, PersonaConfig> = {
     tagline: "Waarschuwing als het over jouw grens gaat.",
     description:
       "Reed stuurt alleen een bericht als het weer door jouw drempel heen gaat. Bij al het andere laat hij je met rust.",
-    priceCents: 799,
-    founderPriceCents: 499,
+    priceCents: 899,
     features: [
       "Alles wat Piet ook stuurt",
       "Waarschuwing op jouw drempel (wind, regen, vorst, onweer)",
@@ -72,8 +70,6 @@ export const PERSONAS: Record<PersonaTier, PersonaConfig> = {
     tagline: "Weer vertaald naar een bedrijfsbeslissing.",
     description:
       "Steve leest het weer voor 48 uur vooruit en vertaalt het naar wat het voor je zaak betekent: openen, sluiten, inkopen of annuleren.",
-    priceCents: 4999,
-    founderPriceCents: 2900,
     features: [
       "Dagelijkse zakelijke mail + live dashboard",
       "48 uur vooruit in blokken van 2 uur, per locatie",

@@ -103,12 +103,11 @@ export default function PrijzenClient({ userTier, isFounder }: Props) {
             <p className="t-body" style={{ marginBottom: 18, fontSize: 14 }}>{reed.description}</p>
 
             <div style={{ padding: "14px 16px", background: "var(--ink-050)", borderRadius: 12, marginBottom: 18 }}>
-              <div className="t-small" style={{ marginBottom: 2 }}>
-                Huidig: {formatPrice(piet.founderPriceCents!)}/mnd (Piet)
+              <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 2 }}>
+                Tijdelijk gratis
               </div>
-              <div style={{ fontSize: 15, fontWeight: 700 }}>
-                Upgrade naar: <span style={{ fontWeight: 800 }}>{formatPrice(reed.founderPriceCents!)}/mnd</span>{" "}
-                <span className="t-small" style={{ fontWeight: 500 }}>· introprijs vastgezet</span>
+              <div className="t-small">
+                Straks {formatPrice(reed.priceCents!)}/mnd — geen creditcard nodig
               </div>
             </div>
 
@@ -176,7 +175,6 @@ export default function PrijzenClient({ userTier, isFounder }: Props) {
           {VISIBLE_TIERS.map((tier) => {
             const p = PERSONAS[tier];
             const highlight = tier === HIGHLIGHT;
-            const hasFounderPrice = p.founderPriceCents !== undefined && p.priceCents !== undefined;
 
             return (
               <div
@@ -215,28 +213,39 @@ export default function PrijzenClient({ userTier, isFounder }: Props) {
 
                 {/* Price box */}
                 <div style={{ padding: "14px 16px", background: "var(--ink-050)", borderRadius: 12, marginBottom: 18 }}>
-                  {hasFounderPrice ? (
+                  {p.priceCents ? (
                     <>
-                      <div className="t-small" style={{ marginBottom: 2 }}>
-                        {formatPrice(p.priceCents!)}/mnd, binnenkort
+                      <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 2 }}>
+                        Tijdelijk gratis
                       </div>
-                      <div style={{ fontSize: 15, fontWeight: 700 }}>
-                        Introductieprijs:{" "}
-                        <span style={{ fontWeight: 800 }}>{formatPrice(p.founderPriceCents!)}/mnd</span>{" "}
-                        <span className="t-small" style={{ fontWeight: 500 }}>· vastgezet</span>
+                      <div className="t-small">
+                        Straks {formatPrice(p.priceCents)}/mnd — geen creditcard nodig
                       </div>
                     </>
                   ) : (
-                    <div className="t-small">Prijs volgt binnenkort</div>
+                    <>
+                      <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 2 }}>
+                        Binnenkort
+                      </div>
+                      <div className="t-small">
+                        Geen wachtlijst, mail zakelijk@weerzone.nl
+                      </div>
+                    </>
                   )}
                 </div>
 
-                <Link
-                  href={`/app/signup?tier=${tier}`}
-                  className={`btn btn-block btn-lg ${highlight ? "btn-primary" : "btn-ghost"}`}
-                >
-                  Aanmelden →
-                </Link>
+                {p.priceCents ? (
+                  <Link
+                    href={`/app/signup?tier=${tier}`}
+                    className={`btn btn-block btn-lg ${highlight ? "btn-primary" : "btn-ghost"}`}
+                  >
+                    Aanmelden →
+                  </Link>
+                ) : (
+                  <Link href="/zakelijk" className="btn btn-ghost btn-block btn-lg">
+                    Lees meer →
+                  </Link>
+                )}
 
                 <ul style={{ listStyle: "none", padding: 0, margin: "20px 0 0" }}>
                   {p.features.map((f, i) => (
