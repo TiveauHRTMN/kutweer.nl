@@ -440,7 +440,7 @@ export async function GET(req: Request) {
       const subject = `${style.emoji} ${style.label}: ${alerts[0].description} (${cityLabel})`;
 
       const { error: sendErr } = await resend.emails.send({
-        from: "Reed | Weerzone <reed@weerzone.nl>",
+        from: "Reed van Weerzone <reed@weerzone.nl>",
         to: email,
         subject,
         html,

@@ -380,7 +380,7 @@ export async function GET(req: Request) {
       for (const sub of group) {
         const personalHtml = html.replace("__EMAIL__", sub.user_profile.email);
         const { error: sendErr } = await resend.emails.send({
-          from: "Piet | Weerzone <piet@weerzone.nl>",
+          from: "Piet van Weerzone <piet@weerzone.nl>",
           to: sub.user_profile.email,
           subject,
           html: personalHtml,
