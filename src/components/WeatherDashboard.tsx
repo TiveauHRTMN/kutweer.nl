@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users, Terminal } from "lucide-react";
+import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users, Terminal, Droplets } from "lucide-react";
 import Logo from "./Logo";
 import PersonaBadge from "./PersonaBadge";
 import PremiumGate from "./PremiumGate";
@@ -55,6 +55,26 @@ function getSavedCity(): City | null {
   } catch {}
   return null;
 }
+
+const DetailItem = ({ label, value, subValue, icon, unit }: { label: string, value: string | number, subValue?: string, icon: React.ReactNode, unit?: string }) => (
+  <div className="flex flex-col group transition-all duration-300">
+    <div className="flex items-center gap-2 mb-4">
+      <div className="w-7 h-7 rounded-lg bg-black/[0.04] flex items-center justify-center text-text-muted group-hover:bg-black/[0.08] transition-colors">
+        {React.cloneElement(icon as React.ReactElement<{ size?: number; strokeWidth?: number }>, { size: 14, strokeWidth: 3 })}
+      </div>
+      <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.15em]">{label}</span>
+    </div>
+    <div className="flex items-baseline gap-1">
+      <div className="text-4xl font-black text-text-primary tracking-tighter">{value}</div>
+      {unit && <span className="text-lg font-black text-text-muted uppercase ml-0.5">{unit}</span>}
+    </div>
+    {subValue && (
+      <div className="mt-3 inline-flex items-center px-2 py-0.5 rounded-md bg-black/[0.03] border border-black/5 w-fit">
+        <span className="text-[9px] font-black text-text-muted uppercase tracking-widest leading-none py-0.5">{subValue}</span>
+      </div>
+    )}
+  </div>
+);
 
 export default function WeatherDashboard({ initialCity, initialWeather, beforeFooter, titleOverride }: DashboardProps) {
   const [city, setCity] = useState<City>(initialCity || getSavedCity() || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0]);
@@ -263,13 +283,13 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
           </div>
 
           <div className="card p-6 sm:p-8 border-white/40 shadow-xl">
-            <h3 className="text-xs font-black text-text-muted uppercase tracking-[0.2em] mb-8 px-1">Details</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-10 gap-x-6">
-              <div className="flex flex-col"><span className="text-[11px] font-black text-text-muted uppercase mb-3">☀️ Zon</span><div className="text-4xl font-black text-text-primary">UV {weather.uvIndex.toFixed(0)}</div></div>
-              <div className="flex flex-col"><span className="text-[11px] font-black text-text-muted uppercase mb-3">🌧️ Regen</span><div className="text-4xl font-black text-text-primary">{weather.current.precipitation} <span className="text-xl">MM</span></div></div>
-              <div className="flex flex-col"><span className="text-[11px] font-black text-text-muted uppercase mb-3">🌬️ Wind</span><div className="text-4xl font-black text-text-primary">{weather.current.windSpeed}</div><p className="text-[10px] font-black uppercase mt-1 text-text-muted">BFT {getWindBeaufort(weather.current.windSpeed).scale}</p></div>
-              <div className="flex flex-col"><span className="text-[11px] font-black text-text-muted uppercase mb-3">🌡️ Gevoel</span><div className="text-4xl font-black text-text-primary">{weather.current.feelsLike}°</div></div>
-              <div className="flex flex-col"><span className="text-[11px] font-black text-text-muted uppercase mb-3">💧 Vocht</span><div className="text-4xl font-black text-text-primary">{weather.current.humidity}%</div></div>
+            <h3 className="text-xs font-black text-text-muted uppercase tracking-[0.2em] mb-10 px-1">Details</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-12 gap-x-8">
+              <DetailItem label="Zon" value={`UV ${weather.uvIndex.toFixed(0)}`} icon={<Sun />} />
+              <DetailItem label="Regen" value={weather.current.precipitation} unit="MM" icon={<CloudRain />} />
+              <DetailItem label="Wind" value={weather.current.windSpeed} unit="KM/H" subValue={`BFT ${getWindBeaufort(weather.current.windSpeed).scale}`} icon={<Wind />} />
+              <DetailItem label="Gevoel" value={weather.current.feelsLike} unit="°" icon={<Thermometer />} />
+              <DetailItem label="Vocht" value={weather.current.humidity} unit="%" icon={<Droplets />} />
             </div>
           </div>
 
