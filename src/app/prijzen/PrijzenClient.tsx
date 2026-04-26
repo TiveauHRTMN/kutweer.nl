@@ -9,6 +9,11 @@ import { displaySubCount } from "@/lib/social-proof";
 const VISIBLE_TIERS: PersonaTier[] = ["piet", "reed", "steve"];
 const HIGHLIGHT: PersonaTier = "reed";
 
+interface Props {
+  userTier: PersonaTier | null;
+  isFounder: boolean;
+}
+
 const STEPS: Array<[string, string, string]> = [
   ["1", "Kies een abonnement", "Piet, Reed of Steve. Geen creditcard nodig. Opzeggen kan altijd."],
   ["2", "Vul je profiel in", "Postcode en een paar vragen (hond, fiets, kelder). Alleen wat je kwijt wilt."],
@@ -24,9 +29,116 @@ const FAQS: Array<[string, string]> = [
   ["Wat is het verschil met Buienradar of Weerplaza?", "Weerzone is reclamevrij en is afgestemd op jouw situatie: je postcode en de voorkeuren die je bij aanmelden hebt doorgegeven."],
 ];
 
-export default function PrijzenClient() {
+export default function PrijzenClient({ userTier, isFounder }: Props) {
   const subCount = displaySubCount(0);
 
+  // Founder/CEO: geen abonnement UI
+  if (isFounder) {
+    return (
+      <div className="wz-page min-h-screen">
+        <WzNavbar />
+        <div style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(60px,8vw,100px) clamp(20px,4vw,48px)", textAlign: "center" }}>
+          <span className="badge brand" style={{ marginBottom: 20 }}>Founder toegang</span>
+          <h1 className="h-1" style={{ marginBottom: 16 }}>Je hebt volledige toegang.</h1>
+          <p className="t-body" style={{ marginBottom: 32 }}>
+            Als founder heb je Steve-niveau toegang tot alle functies van Weerzone, zonder abonnement.
+          </p>
+          <Link href="/app" className="btn btn-primary btn-lg">Naar dashboard →</Link>
+        </div>
+        <WzFooter />
+      </div>
+    );
+  }
+
+  // Ingelogd als Reed of Steve: al abonnee
+  if (userTier === "reed" || userTier === "steve") {
+    const p = PERSONAS[userTier];
+    return (
+      <div className="wz-page min-h-screen">
+        <WzNavbar />
+        <div style={{ maxWidth: 640, margin: "0 auto", padding: "clamp(60px,8vw,100px) clamp(20px,4vw,48px)", textAlign: "center" }}>
+          <span className="badge ok" style={{ marginBottom: 20 }}>Actief abonnement</span>
+          <h1 className="h-1" style={{ marginBottom: 16 }}>Je bent {p.name}-abonnee.</h1>
+          <p className="t-body" style={{ marginBottom: 32 }}>
+            {p.tagline} Je hoeft niets te doen — alles staat klaar.
+          </p>
+          <Link href="/app" className="btn btn-primary btn-lg">Naar dashboard →</Link>
+        </div>
+        <WzFooter />
+      </div>
+    );
+  }
+
+  // Ingelogd als Piet: toon alleen upgrade naar Reed
+  if (userTier === "piet") {
+    const piet = PERSONAS.piet;
+    const reed = PERSONAS.reed;
+    return (
+      <div className="wz-page min-h-screen">
+        <WzNavbar />
+        <div style={{ maxWidth: 560, margin: "0 auto", padding: "clamp(60px,8vw,100px) clamp(20px,4vw,48px)" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <span className="badge brand" style={{ marginBottom: 16 }}>Huidig abonnement</span>
+            <h1 className="h-1" style={{ marginBottom: 12 }}>Je bent Piet-abonnee.</h1>
+            <p className="t-body">Upgrade naar Reed voor persoonlijke weerswaarschuwingen.</p>
+          </div>
+
+          {/* Upgrade card */}
+          <div className="card" style={{
+            padding: "clamp(20px,2.5vw,28px)", display: "flex", flexDirection: "column",
+            position: "relative",
+            borderColor: "var(--wz-brand)",
+            boxShadow: "0 20px 50px rgba(59,127,240,.18), 0 0 0 2px var(--wz-brand)",
+          }}>
+            <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)" }}>
+              <span className="badge sun" style={{ boxShadow: "0 4px 10px rgba(255,210,26,.35)" }}>
+                ★ Upgrade beschikbaar
+              </span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 6 }}>
+              <span style={{ fontSize: 24, fontWeight: 800 }}>{reed.name}</span>
+              <span className="t-micro">· {reed.label}</span>
+            </div>
+            <h3 className="h-3" style={{ marginBottom: 12, fontSize: 17 }}>{reed.tagline}</h3>
+            <p className="t-body" style={{ marginBottom: 18, fontSize: 14 }}>{reed.description}</p>
+
+            <div style={{ padding: "14px 16px", background: "var(--ink-050)", borderRadius: 12, marginBottom: 18 }}>
+              <div className="t-small" style={{ marginBottom: 2 }}>
+                Huidig: {formatPrice(piet.founderPriceCents!)}/mnd (Piet)
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 700 }}>
+                Upgrade naar: <span style={{ fontWeight: 800 }}>{formatPrice(reed.founderPriceCents!)}/mnd</span>{" "}
+                <span className="t-small" style={{ fontWeight: 500 }}>· introprijs vastgezet</span>
+              </div>
+            </div>
+
+            <Link href="/app/checkout/reed" className="btn btn-primary btn-block btn-lg">
+              Upgrade naar Reed →
+            </Link>
+
+            <ul style={{ listStyle: "none", padding: 0, margin: "20px 0 0" }}>
+              {reed.features.map((f, i) => (
+                <li key={i} style={{ display: "flex", gap: 10, alignItems: "flex-start", marginBottom: 10, fontSize: 14, color: "var(--text-soft)" }}>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flex: "0 0 auto", marginTop: 1 }}>
+                    <circle cx="9" cy="9" r="9" fill="var(--wz-brand-soft)" />
+                    <path d="M5 9.5l2.5 2.5L13 6.5" stroke="var(--wz-brand)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div style={{ textAlign: "center", marginTop: 24 }}>
+            <Link href="/app" className="btn btn-link">Terug naar dashboard</Link>
+          </div>
+        </div>
+        <WzFooter />
+      </div>
+    );
+  }
+
+  // Niet ingelogd: toon alle abonnementen
   return (
     <div className="wz-page min-h-screen">
       <WzNavbar />
