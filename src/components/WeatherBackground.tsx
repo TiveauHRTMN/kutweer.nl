@@ -8,14 +8,6 @@ interface Props {
   isDay: boolean;
 }
 
-interface Particle {
-  id: number;
-  left: number;
-  delay: number;
-  duration: number;
-  size: number;
-}
-
 function getWeatherTheme(code: number, isDay: boolean) {
   if (!isDay) {
     if (code === 0) return { bg1: "#0b1026", bg2: "#162050" };
@@ -53,47 +45,46 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
   const showSun = weatherCode === 0 && isDay;
   const showStars = !isDay;
 
-  const cloudCount = weatherCode <= 2 ? 3 : weatherCode === 3 ? 5 : 4;
+  const cloudCount = weatherCode <= 2 ? 2 : weatherCode === 3 ? 4 : 3;
 
   const rainDrops = useMemo(
     () =>
-      Array.from({ length: showHeavyRain ? 60 : 35 }, (_, i) => ({
+      Array.from({ length: showHeavyRain ? 35 : 20 }, (_, i) => ({
         id: i,
-        left: (i * 2.85) % 100,
-        delay: (i * 0.07) % 2.5,
-        duration: 0.4 + (i * 0.013) % 0.5,
-        size: 10 + (i * 3) % 12,
+        left: (i * 4.85) % 100,
+        delay: (i * 0.12) % 2.5,
+        duration: 0.5 + (i * 0.02) % 0.5,
+        size: 15 + (i * 4) % 15,
       })),
     [showHeavyRain]
   );
 
   const snowFlakes = useMemo(
     () =>
-      Array.from({ length: 30 }, (_, i) => ({
+      Array.from({ length: 18 }, (_, i) => ({
         id: i,
-        left: (i * 3.33) % 100,
-        delay: (i * 0.2) % 6,
-        duration: 4 + (i * 0.15) % 4,
-        size: 3 + (i * 0.2) % 5,
+        left: (i * 5.55) % 100,
+        delay: (i * 0.3) % 6,
+        duration: 4 + (i * 0.2) % 4,
+        size: 5 + (i * 0.3) % 6,
       })),
     []
   );
 
   const stars = useMemo(
     () =>
-      Array.from({ length: 40 }, (_, i) => ({
+      Array.from({ length: 25 }, (_, i) => ({
         id: i,
-        left: (i * 2.5) % 100,
-        top: (i * 7.3) % 60,
-        delay: (i * 0.15) % 3,
-        size: 1 + (i % 3),
+        left: (i * 3.9) % 100,
+        top: (i * 11.3) % 60,
+        delay: (i * 0.25) % 3,
+        size: 2 + (i % 2),
       })),
     []
   );
 
   return (
     <>
-      {/* Sky gradient */}
       <motion.div
         className="fixed inset-0 z-0"
         style={{ background: `linear-gradient(170deg, ${theme.bg1} 0%, ${theme.bg2} 100%)` }}
@@ -101,16 +92,13 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
         transition={{ duration: 2, ease: "easeInOut" }}
       />
 
-      {/* Animated elements */}
       <div className="fixed inset-0 z-[1] overflow-hidden pointer-events-none">
-        {/* Sun */}
         {showSun && (
           <div className="sun-glow">
             <div className="sun-core" />
           </div>
         )}
 
-        {/* Stars */}
         {showStars &&
           mounted &&
           stars.map((s) => (
@@ -127,19 +115,17 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
             />
           ))}
 
-        {/* Clouds */}
         {showClouds &&
           Array.from({ length: cloudCount }, (_, i) => (
             <div
               key={i}
               className={`cloud-shape cloud-${i + 1}`}
               style={{
-                opacity: weatherCode <= 2 ? 0.25 : weatherCode === 3 ? 0.45 : 0.35,
+                opacity: weatherCode <= 2 ? 0.2 : weatherCode === 3 ? 0.35 : 0.25,
               }}
             />
           ))}
 
-        {/* Rain */}
         {(showRain || showStorm) &&
           mounted &&
           rainDrops.map((d) => (
@@ -155,7 +141,6 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
             />
           ))}
 
-        {/* Snow */}
         {showSnow &&
           mounted &&
           snowFlakes.map((s) => (
@@ -172,7 +157,6 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
             />
           ))}
 
-        {/* Storm lightning flash */}
         {showStorm && <div className="lightning-flash" />}
       </div>
     </>
