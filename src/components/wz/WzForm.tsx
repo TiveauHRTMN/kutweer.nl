@@ -213,7 +213,7 @@ export function WzSocialButtons({
           type="button"
           onClick={onGoogle}
           disabled={loading}
-          className="wz-btn wz-btn-ghost wz-btn-block disabled:opacity-60"
+          className="btn btn-ghost btn-block disabled:opacity-60"
         >
           <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
             <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.17-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z" />
@@ -229,7 +229,7 @@ export function WzSocialButtons({
           type="button"
           onClick={onApple}
           disabled={loading}
-          className="wz-btn wz-btn-ghost wz-btn-block disabled:opacity-60"
+          className="btn btn-ghost btn-block disabled:opacity-60"
         >
           <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
             <path fill="#000" d="M14.94 13.86c-.27.62-.58 1.18-.95 1.7-.5.7-.91 1.19-1.23 1.46-.5.43-1.03.65-1.6.67-.4 0-.9-.12-1.47-.35-.58-.23-1.1-.35-1.59-.35-.5 0-1.05.12-1.63.35-.59.23-1.06.35-1.42.37-.55.02-1.09-.21-1.63-.69-.34-.29-.78-.8-1.3-1.52C1.54 14.7 1.08 13.8.7 12.78.3 11.68.1 10.62.1 9.6c0-1.17.25-2.18.76-3.03.4-.68.93-1.22 1.6-1.61.65-.4 1.37-.6 2.13-.61.43 0 1 .13 1.72.4.71.26 1.17.39 1.37.39.15 0 .66-.16 1.52-.46.82-.28 1.51-.4 2.08-.35 1.53.12 2.68.73 3.44 1.82-1.37.83-2.05 1.99-2.03 3.48.02 1.16.44 2.13 1.26 2.89.37.36.78.63 1.24.83-.1.29-.2.57-.31.84zM11.78.36c0 .88-.32 1.7-.96 2.46-.77.9-1.7 1.42-2.71 1.34a2.73 2.73 0 0 1-.02-.33c0-.84.37-1.74 1.03-2.48.33-.38.74-.69 1.25-.94.5-.24.97-.38 1.42-.4.01.12.01.24 0 .35z" />
