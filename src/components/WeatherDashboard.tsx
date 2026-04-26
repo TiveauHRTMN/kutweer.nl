@@ -188,19 +188,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
                 </div>
               </div>
 
-              <div className="flex flex-col gap-1 mb-8">
+              <div className="flex flex-col gap-1 mb-2">
                  <div className="flex items-center gap-3">
                    <span className="text-2xl font-black text-text-primary">{getWeatherDescription(weather.current.weatherCode)}</span>
                    <span className="text-sm font-bold text-text-secondary bg-black/5 px-2 py-0.5 rounded-full">Voelt als {weather.current.feelsLike}°</span>
                  </div>
-              </div>
-
-
-              <div className="pt-6 border-t border-black/5">
-                <p className="font-bold text-lg sm:text-xl text-text-primary leading-[1.4]">
-                  {narrative}
-                </p>
-                <PietInlineTip weather={weather} />
               </div>
             </div>
           </div>
