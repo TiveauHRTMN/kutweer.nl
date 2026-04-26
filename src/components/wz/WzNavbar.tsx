@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import WzLogo from "./WzLogo";
 import NLPulse from "../NLPulse";
 import { useSession } from "@/lib/session-context";
+import { isFounderEmail } from "@/lib/founders";
 
 const LINKS: Array<{ key: string; label: string; href: string }> = [
   { key: "weer", label: "Weer", href: "/" },
@@ -27,6 +28,7 @@ export default function WzNavbar() {
   const pathname = usePathname() ?? "/";
   const { user } = useSession();
   const [open, setOpen] = useState(false);
+  const isFounder = isFounderEmail(user?.email);
 
   return (
     <header
@@ -65,6 +67,14 @@ export default function WzNavbar() {
         <div className="hidden md:flex items-center gap-2">
           {user ? (
             <>
+              {isFounder && (
+                <span
+                  className="badge sun"
+                  style={{ fontSize: 11, padding: "4px 10px", letterSpacing: "0.08em" }}
+                >
+                  ★ Founder
+                </span>
+              )}
               <Link href="/app" className="wz-btn wz-btn-ghost wz-btn-sm font-bold">
                 Mijn Weerzone
               </Link>
@@ -133,6 +143,14 @@ export default function WzNavbar() {
           >
             {user ? (
               <>
+                {isFounder && (
+                  <span
+                    className="badge sun text-center"
+                    style={{ fontSize: 11, padding: "4px 10px", letterSpacing: "0.08em" }}
+                  >
+                    ★ Founder
+                  </span>
+                )}
                 <Link
                   href="/app"
                   onClick={() => setOpen(false)}
