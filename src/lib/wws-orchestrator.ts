@@ -134,9 +134,9 @@ export async function executeWWSOrchestrator(lat: number, lon: number): Promise<
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Gebruik de stabiele identifier om API-versie issues te voorkomen
+    // Switch naar gemini-3.1-flash-lite-preview voor ultra-snelle performance
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.1-flash-lite-preview",
       systemInstruction: SYSTEM_PROMPT 
     });
 
@@ -147,25 +147,29 @@ export async function executeWWSOrchestrator(lat: number, lon: number): Promise<
     }).join("\n");
 
     const prompt = `
-START_PIPELINE.
+    START_PIPELINE.
 
-Input Data (Multi-Model Entry):
-Locatie: ${city.name} (${lat}, ${lon})
-Model Consensus Index: ${weather.models.agreement}%
-Bronnen: ${weather.models.sources.join(", ")}
+    Input Data (Multi-Model Entry):
+    Locatie: ${city.name} (${lat}, ${lon})
+    Model Consensus Index: ${weather.models.agreement}%
+    Bronnen: ${weather.models.sources.join(", ")}
 
-Data Matrix (Next 12 Hours):
-(H = Harmonie, I = ICON-D2, A = AROME)
-${hours}
+    Data Matrix (Next 12 Hours):
+    (H = Harmonie, I = ICON-D2, A = AROME)
+    ${hours}
 
-Analyseer de divergentie tussen H, I en A. Bij neerslagpieken in I of A die H mist: weeg het P90 risico zwaarder voor Reed.
-Genereer de output payload uitsluitend als geldige JSON.
-`.trim();
+    Analyseer de divergentie tussen H, I en A. Bij neerslagpieken in I of A die H mist: weeg het P90 risico zwaarder voor Reed.
+    Genereer de output payload uitsluitend als geldige JSON.
+    `.trim();
 
     const result = await model.generateContent({
       contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: { responseMimeType: "application/json" }
+      generationConfig: { 
+        responseMimeType: "application/json",
+        maxOutputTokens: 800,
+      }
     });
+
 
     const text = result.response.text();
     return JSON.parse(text) as WWSPayload;

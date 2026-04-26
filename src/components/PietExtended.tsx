@@ -498,6 +498,13 @@ export default function PietExtended() {
         setWeather(w);
         setWWS(wwsPayload);
         setLoading(false);
+
+        // OPTIMALISATIE: Als WWS al een update heeft, skip dan de zware getPietDeepAnalysis
+        if (wwsPayload?.piet_update?.content) {
+            setPietAnalysis(wwsPayload.piet_update.content);
+            return;
+        }
+
         if (w.deepAnalysis) {
           setPietAnalysis(w.deepAnalysis);
         } else {

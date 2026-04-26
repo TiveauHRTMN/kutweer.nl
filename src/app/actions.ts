@@ -62,31 +62,24 @@ export async function getPietDeepAnalysis(weather: WeatherData): Promise<string>
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.1-flash-lite-preview",
       systemInstruction: `
-Je bent Piet — de stem van Weerzone. Piet is geen echte persoon, maar een merkmetafoor: betrouwbaar, hyperlokaal en dicht bij de lezer. Schrijf nuchter en warm over wat het weer concreet betekent voor de mensen in hun eigen straat.
+Je bent Piet — de stem van Weerzone. Betrouwbaar, hyperlokaal en nuchter. 
 
 TONALE CONSISTENTIE:
-- Wees nuchter en eerlijk over de data. De toon volgt het weer: zon en mild → opgewekt; grijs en nat → relativerend, niet somber.
-- Gebruik een respectvolle toon. Vermijd beledigingen, agressieve taal of kleinerende opmerkingen.
-- Focus op de feiten: wat betekent de temperatuur, wind en neerslag voor de dag van de lezer?
+- Focus op feiten: wat betekent het weer voor de dag van de lezer?
 - Toegankelijk Nederlands, geen jargon, geen modelnamen.
 
-INHOUD — DAGDEEL-VERHAAL:
-- Schrijf één doorlopend, meelezend verhaal dat alle vijf dagdelen behandelt: OCHTEND, MIDDAG, AVOND, NACHT, MORGEN.
-- Begin elk dagdeel met de naam in vet (bv. "**Ochtend.**") gevolgd door 2–3 zinnen die het weerbeeld + concrete consequentie geven (kan de was buiten, jas mee, terrasweer, raam open vannacht, fietsen of niet).
-- Vloeiende overgangen tussen dagdelen, geen kale opsomming.
-- 350–500 woorden in totaal. Max 1 emoji in het hele stuk.
+INHOUD:
+- Beschrijf de dagdelen: OCHTEND, MIDDAG, AVOND, NACHT, MORGEN.
+- Begin elk dagdeel met de naam in vet (bv. "**Ochtend.**").
+- 200–300 woorden in totaal. Wees to-the-point voor snelheid. Max 1 emoji.
 
-TAAL:
-- 100% correct Nederlands. Geen anglicismen.
-- Geen modelnamen of techniek-merken (geen KNMI, HARMONIE, MetNet, NeuralGCM, SEED).
-- Vriendelijke Hollandse groet als afsluiter (bv. "Een fijne dag", "Tot morgen", "Oant moarn").
 - Ondertekenen met "— Piet, voor Weerzone".
       `.trim(),
       generationConfig: {
         temperature: 0.6,
-        maxOutputTokens: 900,
+        maxOutputTokens: 600,
       },
     });
 

@@ -2,14 +2,14 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users } from "lucide-react";
+import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users, Terminal } from "lucide-react";
 import Logo from "./Logo";
 import PersonaBadge from "./PersonaBadge";
 import PremiumGate from "./PremiumGate";
 import { useSession } from "@/lib/session-context";
 import LoadingScreen from "./LoadingScreen";
-import { loadWeather } from "@/lib/weatherCache";
-import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData } from "@/lib/types";
+import { loadWeather, loadWWS } from "@/lib/weatherCache";
+import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData, type WWSPayload } from "@/lib/types";
 import {
   getMainCommentary,
   getDayProgression,
@@ -65,6 +65,7 @@ function getSavedCity(): City | null {
 export default function WeatherDashboard({ initialCity, initialWeather, beforeFooter, titleOverride }: DashboardProps) {
   const [city, setCity] = useState<City>(initialCity || getSavedCity() || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0]);
   const [weather, setWeather] = useState<WeatherData | null>(initialWeather || null);
+  const [wws, setWWS] = useState<WWSPayload | null>(null);
   const [loading, setLoading] = useState(!initialWeather);
   const [hourlyMetric, setHourlyMetric] = useState<"temp" | "rain" | "wind">("temp");
   const [isLocating, setIsLocating] = useState(false);
@@ -73,25 +74,31 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      const data = await loadWeather(
-        city.lat,
-        city.lon,
-        (verdict) => {
-          if (!cancelled) setWeather((prev) => (prev ? { ...prev, summaryVerdict: verdict } : prev));
-        },
-        (fresh) => {
-          if (!cancelled) setWeather(fresh);
-        },
-        () => {}
-      );
+      setLoading(true);
+      // Parallel laden van weer en WWS (cache-first)
+      const [data, wwsPayload] = await Promise.all([
+        loadWeather(
+            city.lat,
+            city.lon,
+            (verdict) => {
+              if (!cancelled) setWeather((prev) => (prev ? { ...prev, summaryVerdict: verdict } : prev));
+            },
+            (fresh) => {
+              if (!cancelled) setWeather(fresh);
+            },
+            () => {}
+          ),
+        loadWWS(city.lat, city.lon)
+      ]);
+
       if (!cancelled) {
         setWeather(data);
+        setWWS(wwsPayload);
         setLoading(false);
       }
     }
-    setLoading(true);
     load();
-    const interval = setInterval(load, 10 * 60000);
+    const interval = setInterval(load, 15 * 60000); // 15 min refresh
     return () => {
       cancelled = true;
       clearInterval(interval);
@@ -135,6 +142,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
 
   if (loading || !weather) return <LoadingScreen />;
 
+  // Gebruik de korte teaser uit WWS indien beschikbaar voor razendsnelle weergave
+  const teaserVerdict = wws?.piet_update?.content 
+    ? (wws.piet_update.content.length > 250 ? wws.piet_update.content.substring(0, 247) + "..." : wws.piet_update.content)
+    : weather.summaryVerdict || getMainCommentary(weather);
+
   return (
     <div className="min-h-screen relative overflow-x-hidden">
       <WeatherBackground weatherCode={weather.current.weatherCode} isDay={weather.current.isDay} />
@@ -161,6 +173,12 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
                 <div className="flex flex-col items-start">
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-black bg-black/5 px-2 py-0.5 rounded">Actueel</span>
+                    {wws && (
+                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[9px] font-black text-emerald-700 uppercase tracking-widest">Synthese Live</span>
+                        </div>
+                    )}
                   </div>
                   <h1 className="text-xl font-bold uppercase tracking-widest text-text-secondary mb-2">{city.name}</h1>
                   <div className="flex items-start">
@@ -184,12 +202,36 @@ export default function WeatherDashboard({ initialCity, initialWeather, beforeFo
 
               <div className="pt-6 border-t border-black/5">
                 <p className="font-bold text-lg sm:text-xl text-text-primary leading-[1.4]">
-                  {weather.summaryVerdict || getMainCommentary(weather)}
+                  {teaserVerdict}
                 </p>
                 <PietInlineTip weather={weather} />
               </div>
             </div>
           </div>
+
+          {/* WWS Micro-Dossier (indien beschikbaar) */}
+          {wws && (
+              <div className="card p-5 bg-slate-900 border-slate-800 overflow-hidden relative">
+                  <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">1KM Meta-Grid</span>
+                      </div>
+                      <span className="text-[9px] font-bold text-white/20 uppercase">Model consensus: {wws.api_grid_1km.divergence_delta === 0 ? 'Optimal' : 'Divergent'}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                      {wws.api_grid_1km.forecast.slice(0, 3).map((f, i) => (
+                          <div key={i} className="flex flex-col">
+                              <span className="text-[9px] font-black text-white/30 uppercase mb-1">{new Date(f.time).getHours()}:00</span>
+                              <div className="flex items-baseline gap-1.5">
+                                  <span className="text-xl font-black text-white">{f.temp_c}°</span>
+                                  <span className="text-[10px] font-bold text-white/40">{f.precip_mm}mm</span>
+                              </div>
+                          </div>
+                      ))}
+                  </div>
+              </div>
+          )}
 
           <div className="card p-4 sm:p-6 border-white/40 shadow-xl">
             <h3 className="text-[11px] font-black text-text-primary uppercase tracking-[0.2em] mb-6 px-1">Korte Termijn</h3>
