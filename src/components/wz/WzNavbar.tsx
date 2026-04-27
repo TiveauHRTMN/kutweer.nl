@@ -104,13 +104,11 @@ export default function WzNavbar() {
         </div>
       </div>
 
-      {/* Mobile: logo centered, burger right */}
-      <div className="md:hidden flex items-center px-4 py-3" style={{ position: "relative" }}>
-        <div className="flex-1" />
-        <div className="absolute left-1/2 -translate-x-1/2">
-          <WzLogo />
-        </div>
-        <div className="flex-1 flex justify-end">
+      {/* Mobile: 3-column grid so logo center is truly clickable */}
+      <div className="md:hidden grid items-center px-4 py-3" style={{ gridTemplateColumns: "1fr auto 1fr" }}>
+        <div />
+        <WzLogo />
+        <div className="flex justify-end">
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}

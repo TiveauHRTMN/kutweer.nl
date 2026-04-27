@@ -29,7 +29,7 @@ export default function WzAuthShell({
   return (
     <div className="auth-shell">
       <aside className="auth-side">
-        <div className="brand-pill">
+        <a href="/" className="brand-pill" aria-label="Weerzone — naar home">
           <Image
             src="/brand/weerzone-logo.png"
             alt="Weerzone"
@@ -38,7 +38,7 @@ export default function WzAuthShell({
             priority
             style={{ height: 20, width: "auto", display: "block" }}
           />
-        </div>
+        </a>
 
         <div className="side-hero">
           {/* Big homepage-style weer-tegel */}
