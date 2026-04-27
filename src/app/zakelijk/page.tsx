@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Building2, Clock, TrendingUp, Shield, Zap, BarChart3, Mail } from "lucide-react";
 import Footer from "@/components/Footer";
+import WzNavbar from "@/components/wz/WzNavbar";
 
 export const metadata: Metadata = {
   title: "WEERZONE Zakelijk — Het weer, maar dan echt",
@@ -66,6 +67,8 @@ const FEATURES = [
 
 export default function ZakelijkPage() {
   return (
+    <>
+    <WzNavbar />
     <div className="min-h-screen bg-[#4a9ee8]">
 
       {/* Hero */}
@@ -227,5 +230,6 @@ export default function ZakelijkPage() {
       <Footer />
 
     </div>
+    </>
   );
 }

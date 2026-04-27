@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import ReedExtended from "@/components/ReedExtended";
 import PremiumGate from "@/components/PremiumGate";
+import WzNavbar from "@/components/wz/WzNavbar";
 import { getSavedLocationServer } from "@/lib/location-cookies";
 import { fetchWeatherData } from "@/lib/weather";
 import { DUTCH_CITIES } from "@/lib/types";
@@ -21,12 +21,10 @@ export default async function ReedPage() {
   const initialWeather = await fetchWeatherData(activeLoc.lat, activeLoc.lon).catch(() => null);
 
   return (
-    <main className="min-h-screen bg-[#4a9ee8] text-white px-4 py-8 pb-20">
+    <>
+      <WzNavbar />
+      <main className="min-h-screen bg-[#4a9ee8] text-white px-4 py-8 pb-20">
       <div className="max-w-2xl mx-auto">
-        <nav className="text-xs text-white/50 mb-5">
-          <span className="text-white/80">Reed</span>
-        </nav>
-
         <header className="mb-6">
           <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-3 flex items-center gap-3">
             <span>⚠️</span> Reed
@@ -43,5 +41,6 @@ export default async function ReedPage() {
         </PremiumGate>
       </div>
     </main>
+    </>
   );
 }

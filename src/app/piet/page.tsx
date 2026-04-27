@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import PietExtended from "@/components/PietExtended";
 import PremiumGate from "@/components/PremiumGate";
+import WzNavbar from "@/components/wz/WzNavbar";
 import { getSavedLocationServer } from "@/lib/location-cookies";
 import { getCachedTruth } from "@/lib/wws-truth-server";
 import { fetchWeatherData } from "@/lib/weather";
@@ -55,17 +55,9 @@ export default async function PietPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <WzNavbar />
       <main className="min-h-screen bg-[#3b7ff0] text-white px-4 py-8 pb-20">
         <div className="max-w-2xl mx-auto">
-          <header className="flex flex-col items-center mb-10 pt-2">
-            <img
-              src="/weerzone-logo.png"
-              alt="Weerzone"
-              style={{ height: "60px", width: "auto" }}
-              className="drop-shadow-md"
-            />
-          </header>
-
           <header className="mb-10">
             <h1 className="text-5xl sm:text-6xl font-black leading-tight mb-4 tracking-tighter">
               Piet
