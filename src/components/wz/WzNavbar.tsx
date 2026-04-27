@@ -9,17 +9,17 @@ import NLPulse from "../NLPulse";
 import { useSession } from "@/lib/session-context";
 
 const LINKS: Array<{ key: string; label: string; href: string }> = [
-  { key: "weer", label: "Weer", href: "/" },
-  { key: "radar", label: "Radar", href: "/radar" },
+  { key: "piet", label: "Piet", href: "/piet" },
+  { key: "reed", label: "Reed", href: "/reed" },
+  { key: "steve", label: "Steve", href: "/zakelijk" },
   { key: "prijzen", label: "Prijzen", href: "/prijzen" },
-  { key: "over", label: "Over ons", href: "/over" },
 ];
 
 function isActive(pathname: string, key: string): boolean {
-  if (key === "weer") return pathname === "/";
+  if (key === "piet") return pathname.startsWith("/piet");
+  if (key === "reed") return pathname.startsWith("/reed");
+  if (key === "steve") return pathname.startsWith("/zakelijk");
   if (key === "prijzen") return pathname.startsWith("/prijzen");
-  if (key === "radar") return pathname.startsWith("/radar");
-  if (key === "over") return pathname.startsWith("/over");
   return false;
 }
 
@@ -39,11 +39,11 @@ export default function WzNavbar() {
       }}
     >
       <NLPulse />
-      <div className="max-w-[1200px] mx-auto flex items-center justify-between gap-5 px-4 sm:px-8 py-3">
-        <WzLogo />
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
+      {/* Desktop: 3-column grid — nav | logo | auth */}
+      <div className="hidden md:grid max-w-[1200px] mx-auto px-6 py-3" style={{ gridTemplateColumns: "1fr auto 1fr" }}>
+        {/* Left: nav links */}
+        <nav className="flex items-center gap-1">
           {LINKS.map((l) => {
             const active = isActive(pathname, l.key);
             return (
@@ -62,14 +62,17 @@ export default function WzNavbar() {
           })}
         </nav>
 
-        <div className="hidden md:flex items-center gap-2">
+        {/* Center: logo */}
+        <div className="flex items-center justify-center">
+          <WzLogo />
+        </div>
+
+        {/* Right: auth */}
+        <div className="flex items-center justify-end gap-2">
           {user ? (
             <>
               {isFounder && (
-                <span
-                  className="badge sun"
-                  style={{ fontSize: 11, padding: "4px 10px", letterSpacing: "0.08em" }}
-                >
+                <span className="badge sun" style={{ fontSize: 11, padding: "4px 10px", letterSpacing: "0.08em" }}>
                   ★ Founder
                 </span>
               )}
@@ -99,18 +102,28 @@ export default function WzNavbar() {
             </>
           )}
         </div>
-
-        <button
-          type="button"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Menu"
-          className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-[10px] border"
-          style={{ borderColor: "var(--wz-border)", color: "var(--wz-text)" }}
-        >
-          {open ? <X className="w-[18px] h-[18px]" /> : <Menu className="w-[18px] h-[18px]" />}
-        </button>
       </div>
 
+      {/* Mobile: logo centered, burger right */}
+      <div className="md:hidden flex items-center px-4 py-3" style={{ position: "relative" }}>
+        <div className="flex-1" />
+        <div className="absolute left-1/2 -translate-x-1/2">
+          <WzLogo />
+        </div>
+        <div className="flex-1 flex justify-end">
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Menu"
+            className="inline-flex items-center justify-center w-10 h-10 rounded-[10px] border"
+            style={{ borderColor: "var(--wz-border)", color: "var(--wz-text)" }}
+          >
+            {open ? <X className="w-[18px] h-[18px]" /> : <Menu className="w-[18px] h-[18px]" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
       {open && (
         <div
           className="md:hidden border-t bg-white px-5 pt-3 pb-5"
@@ -135,25 +148,15 @@ export default function WzNavbar() {
               );
             })}
           </nav>
-          <div
-            className="grid gap-2 mt-3 pt-3 border-t"
-            style={{ borderColor: "var(--wz-border)" }}
-          >
+          <div className="grid gap-2 mt-3 pt-3 border-t" style={{ borderColor: "var(--wz-border)" }}>
             {user ? (
               <>
                 {isFounder && (
-                  <span
-                    className="badge sun text-center"
-                    style={{ fontSize: 11, padding: "4px 10px", letterSpacing: "0.08em" }}
-                  >
+                  <span className="badge sun text-center" style={{ fontSize: 11, padding: "4px 10px", letterSpacing: "0.08em" }}>
                     ★ Founder
                   </span>
                 )}
-                <Link
-                  href="/app"
-                  onClick={() => setOpen(false)}
-                  className="btn btn-ghost btn-block"
-                >
+                <Link href="/app" onClick={() => setOpen(false)} className="btn btn-ghost btn-block">
                   Mijn Weerzone
                 </Link>
                 <button
@@ -170,18 +173,10 @@ export default function WzNavbar() {
               </>
             ) : (
               <>
-                <Link
-                  href="/app/login"
-                  onClick={() => setOpen(false)}
-                  className="btn btn-ghost btn-block"
-                >
+                <Link href="/app/login" onClick={() => setOpen(false)} className="btn btn-ghost btn-block">
                   Inloggen
                 </Link>
-                <Link
-                  href="/app/signup"
-                  onClick={() => setOpen(false)}
-                  className="btn btn-primary btn-block"
-                >
+                <Link href="/app/signup" onClick={() => setOpen(false)} className="btn btn-primary btn-block">
                   Aanmelden
                 </Link>
               </>
