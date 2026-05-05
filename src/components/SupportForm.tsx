@@ -28,7 +28,7 @@ export default function SupportForm() {
     // You can replace these with your actual usernames
     const PAYPAL_USERNAME = "weerzone"; 
     const REVOLUT_USERNAME = "weerzone"; 
-    const PHANTOM_ADDRESS = "JOUW_SOLANA_ADRES_HIER";
+    const PHANTOM_ADDRESS = "DkXHDeAjgXWKFcqpG7ziJ4D9gWEW5ifxjNfq3A6kJg1K";
 
     // We pass the amount to the URL. The message/name can be sent to your own API later, 
     // but for now the user can just leave a note in PayPal/Revolut.
