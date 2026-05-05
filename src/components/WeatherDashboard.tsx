@@ -281,6 +281,22 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
           {!hideWeatherInfo && (
             <>
               {!slimMode && (<>
+
+              {/* TAGLINE */}
+              <div className="text-center py-6 sm:py-10">
+                <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-[1.1] mb-3" style={{
+                  background: "linear-gradient(135deg, #1e293b 0%, #3b82f6 40%, #06b6d4 70%, #10b981 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}>
+                  Hyperlokaal weer.<br />Vandaag en morgen.
+                </h2>
+                <p className="text-sm sm:text-base font-medium text-text-secondary max-w-md mx-auto leading-relaxed">
+                  Op 1 bij 1 kilometer. Tot 48 uur vooruit.
+                </p>
+              </div>
+
               {/* ACTUEEL SECTION: HERO SIZE */}
               <div className="card overflow-hidden relative group shadow-2xl border-white/40">
             <div className="p-8 sm:p-12 relative z-[2] pt-12 sm:pt-20">
@@ -316,7 +332,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
             </div>
           </div>
 
-          {/* Narrative: Piet-commentaar of algemene samenvatting */}
+          {/* Narrative teaser */}
           {narrative && (
             <div className="card px-6 py-5 border-white/40 shadow-xl">
               <div className="flex items-center gap-2 mb-3">
@@ -329,264 +345,35 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
             </div>
           )}
 
-          {/* WWS Micro-Dossier (indien beschikbaar) */}
-          {wws && (
-              <div className="card p-5 bg-slate-900 border-slate-800 overflow-hidden relative">
-                  <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        <Terminal className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">1KM Meta-Grid</span>
-                      </div>
-                      <span className="text-[9px] font-bold text-white/20 uppercase">Model consensus: {wws.api_grid_1km.divergence_delta === 0 ? 'Optimal' : 'Divergent'}</span>
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                      {wws.api_grid_1km.forecast.slice(0, 3).map((f, i) => (
-                          <div key={i} className="flex flex-col">
-                              <span className="text-[9px] font-black text-white/30 uppercase mb-1">{new Date(f.time).getHours()}:00</span>
-                              <div className="flex items-baseline gap-1.5">
-                                  <span className="text-xl font-black text-white">{f.temp_c}°</span>
-                                  <span className="text-[10px] font-bold text-white/40">{f.precip_mm}mm</span>
-                              </div>
-                          </div>
-                      ))}
-                  </div>
+          {/* CTA: Mijn Weer */}
+          <Link href="/mijnweer" className="block group">
+            <div className="card p-8 sm:p-10 border-white/40 shadow-xl hover:shadow-2xl transition-all hover:scale-[1.01]">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-3xl">💬</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">Piet · Mijn Weer</span>
               </div>
-          )}
-
-          {/* KORTE TERMIJN SECTION: LARGER CARDS */}
-          <div className="card p-6 sm:p-10 border-white/40 shadow-xl">
-            <h3 className="text-xs font-black text-text-primary uppercase tracking-[0.2em] mb-8 px-1">Vandaag en morgen</h3>
-            <div className="grid grid-cols-2 gap-6">
-              {[0, 1].map((i) => (
-                <div key={i} className="flex flex-col gap-4">
-                  <div className="w-full aspect-square rounded-[32px] border border-white/60 bg-white/5 backdrop-blur-md flex items-center justify-center shadow-inner transition-transform hover:scale-105">
-                    <span className="text-8xl sm:text-9xl drop-shadow-xl">{getWeatherEmoji(weather.daily[i].weatherCode, true)}</span>
-                  </div>
-                  <div className="px-2 flex justify-between items-center">
-                    <span className="text-sm sm:text-base font-black uppercase tracking-widest text-text-secondary">{i === 0 ? "Vandaag" : "Morgen"}</span>
-                    <span className="text-3xl sm:text-4xl font-black text-text-primary">{weather.daily[i].tempMax}°</span>
-                  </div>
-                </div>
-              ))}
+              <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">Jouw persoonlijke weerverhaal</h3>
+              <p className="text-sm text-text-secondary leading-relaxed mb-4">Kledingadvies, terras- en fietsscore, dagdelen, pollen, UV-index en vandaag vs. morgen — alles voor jouw postcode.</p>
+              <span className="inline-flex items-center text-sm font-black text-blue-600 group-hover:gap-3 gap-2 transition-all">Bekijk Mijn Weer <span className="text-lg">→</span></span>
             </div>
-          </div>
+          </Link>
 
-          <div className="card p-6 sm:p-8 border-white/40 shadow-xl">
-            <h3 className="text-xs font-black text-text-muted uppercase tracking-[0.2em] mb-8 px-1">Activiteiten</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-              {[
-                { id: "bbq", label: "BBQ", score: getBbqScore(weather), emoji: "🍖", hint: "Temperatuur, wind en regen gecombineerd." },
-                { id: "pollen", label: "Hooikoorts", score: getHooikoortsScore(weather), emoji: "🤧", hint: "Risico op pollenklachten vandaag." },
-                { id: "strand", label: "Strand", score: getStrandScore(weather), emoji: "🏖️", hint: "Zon, temperatuur en wind aan zee." },
-                { id: "terras", label: "Terras", score: getTerrasScore(weather), emoji: "🍻", hint: "Droog, warm en niet te winderig." },
-                { id: "fietsen", label: "Fietsen", score: getFietsScore(weather).score, emoji: "🚲", hint: "Wind, regen en zicht voor fietsers." },
-                { id: "wandelen", label: "Wandelen", score: getWandelScore(weather), emoji: "🥾", hint: "Droog pad, aangenaam en niet te warm." },
-              ].map((item) => {
-                const label = item.score >= 8 ? "Uitstekend" : item.score >= 6 ? "Goed" : item.score >= 4 ? "Matig" : "Slecht";
-                const isOpen = activeActivity === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setActiveActivity(isOpen ? null : item.id)}
-                    onMouseEnter={() => setActiveActivity(item.id)}
-                    onMouseLeave={() => setActiveActivity(null)}
-                    className="relative aspect-square rounded-3xl border border-white/60 bg-white/5 backdrop-blur-md flex flex-col items-center justify-center transition-transform hover:scale-105 focus:outline-none"
-                  >
-                    <div className={`absolute -top-3 -right-3 w-10 h-10 rounded-full flex items-center justify-center text-sm font-black border-2 border-white/20 shadow-lg ${item.score >= 7 ? 'bg-accent-green text-white' : item.score >= 5 ? 'bg-accent-amber text-white' : 'bg-accent-red text-white'}`}>
-                      {item.score}
-                    </div>
-                    <div className="text-6xl mb-3 drop-shadow-md">{item.emoji}</div>
-                    <div className="text-[11px] font-black text-text-muted uppercase tracking-widest">{item.label}</div>
-                    {isOpen && (
-                      <div className="absolute -bottom-14 left-1/2 -translate-x-1/2 w-40 z-10 px-3 py-2 rounded-2xl text-center pointer-events-none"
-                        style={{ background: "rgba(15,26,44,0.88)", backdropFilter: "blur(8px)" }}>
-                        <p className="text-[11px] font-black text-white leading-none mb-1">{label}</p>
-                        <p className="text-[10px] text-white/60 leading-snug">{item.hint}</p>
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
+          {/* CTA: Waarschuwingen */}
+          <Link href="/waarschuwingen" className="block group">
+            <div className="card p-8 sm:p-10 border-white/40 shadow-xl hover:shadow-2xl transition-all hover:scale-[1.01]">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-3xl">⚡</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">Reed · Waarschuwingen</span>
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">Extreem weer? Wij zien het eerst.</h3>
+              <p className="text-sm text-text-secondary leading-relaxed mb-4">Reflectiviteit, CAPE, windstoten en KNMI-waarschuwingen — real-time op jouw locatie. Harmonie, ICON-D2 en Arome.</p>
+              <span className="inline-flex items-center text-sm font-black text-rose-500 group-hover:gap-3 gap-2 transition-all">Bekijk Waarschuwingen <span className="text-lg">→</span></span>
             </div>
-          </div>
-
-          <div className="card p-5 sm:p-7 border-white/40 shadow-xl">
-            <h3 className="text-[10px] font-black text-text-muted uppercase tracking-[0.25em] mb-4 px-1">Details</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              <DetailItem
-                label="Zon"
-                value={`UV ${weather.uvIndex.toFixed(0)}`}
-                icon={<Sun />}
-                fillPct={(weather.uvIndex / 11) * 100}
-              />
-              <DetailItem
-                label="Regen"
-                value={weather.current.precipitation}
-                unit="MM"
-                icon={<CloudRain />}
-                fillPct={Math.min((Number(weather.current.precipitation) / 10) * 100, 100)}
-              />
-              <DetailItem
-                label="Wind"
-                value={weather.current.windSpeed}
-                unit="KM/H"
-                subValue={`BFT ${getWindBeaufort(weather.current.windSpeed).scale}`}
-                icon={<Wind />}
-                fillPct={(getWindBeaufort(weather.current.windSpeed).scale / 12) * 100}
-              />
-              <DetailItem
-                label="Gevoel"
-                value={weather.current.feelsLike}
-                unit="°"
-                icon={<Thermometer />}
-              />
-              <DetailItem
-                label="Vocht"
-                value={weather.current.humidity}
-                unit="%"
-                icon={<Droplets />}
-                fillPct={Number(weather.current.humidity)}
-              />
-            </div>
-          </div>
+          </Link>
 
           <EmailSubscribe city={city} />
           <AffiliateCard weather={weather} placeName={city.name} />
               </>)}
-
-          {/* PIET GATE: HOURLY STRIP (+ radar in full mode) */}
-          <PremiumGate tierRequired="piet">
-            <div className="space-y-6">
-              {/* Rain radar — full mode only */}
-              {!slimMode && weather.minutely && weather.minutely.length > 0 && (
-                <div className="card p-5 border-white/40 shadow-xl overflow-hidden">
-                  <div className="flex items-center gap-2 mb-4 px-1">
-                    <div className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-                    <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.25em]">Live Regen-Precisie</h3>
-                  </div>
-                  <RainRadar data={weather.minutely} />
-                </div>
-              )}
-
-              {/* Hourly forecast */}
-              <div className="card p-5 sm:p-6 border-white/40 shadow-xl">
-                <div className="flex justify-between items-center mb-6 px-1">
-                  <h3 className="text-[11px] font-black text-slate-900 uppercase tracking-[0.25em]">48 uur · Uur-voor-uur</h3>
-                  <div className="flex items-center gap-0.5 rounded-2xl border border-white/60 p-0.5" style={{ background: "rgba(255,255,255,0.3)" }}>
-                    {[
-                      { k: "temp", i: <Thermometer className="w-3.5 h-3.5" /> },
-                      { k: "rain", i: <CloudRain className="w-3.5 h-3.5" /> },
-                      { k: "wind", i: <Wind className="w-3.5 h-3.5" /> },
-                    ].map(m => (
-                      <button
-                        key={m.k}
-                        onClick={() => setHourlyMetric(m.k as "temp" | "rain" | "wind")}
-                        className="w-7 h-7 rounded-xl flex items-center justify-center transition-all"
-                        style={{
-                          background: hourlyMetric === m.k ? "rgba(255,255,255,0.85)" : "transparent",
-                          color: hourlyMetric === m.k ? "var(--text-primary)" : "var(--text-muted)",
-                          boxShadow: hourlyMetric === m.k ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
-                        }}
-                      >
-                        {m.i}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="relative">
-                <div ref={hourlyScrollRef} className="flex gap-2.5 overflow-x-auto no-scrollbar pb-2" style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-x" }}>
-                  {(() => {
-                    const nowHour = new Date()
-                      .toLocaleString("sv-SE", { timeZone: "Europe/Amsterdam" })
-                      .slice(0, 13).replace(" ", "T"); 
-                    const startIdx = Math.max(0, weather.hourly.findIndex(h => h.time >= nowHour));
-                    return weather.hourly.slice(startIdx, startIdx + 16);
-                  })().map((hour, idx) => {
-                    const h   = new Date(hour.time).getHours();
-                    const isNow = idx === 0;
-                    return (
-                      <div
-                        key={hour.time}
-                        className="flex flex-col items-center gap-2 rounded-2xl border px-2.5 py-3 shrink-0 w-[72px] transition-all"
-                        style={{
-                          background: isNow ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.10)",
-                          borderColor: isNow ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.35)",
-                          boxShadow: isNow ? "0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)" : "none",
-                        }}
-                      >
-                        <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: isNow ? "#f59e0b" : "var(--text-muted)" }}>
-                          {isNow ? "Nu" : `${h}:00`}
-                        </span>
-                        <span className="text-3xl leading-none">{getWeatherEmoji(hour.weatherCode, h > 6 && h < 21)}</span>
-                        <div className="flex items-baseline gap-0.5 leading-none">
-                          <span className="text-sm font-black text-text-primary">
-                            {hourlyMetric === "temp" ? hour.temperature : hourlyMetric === "rain" ? hour.precipitation.toFixed(1) : hour.windSpeed}
-                          </span>
-                          <span className="text-[9px] font-black text-text-muted">
-                            {hourlyMetric === "temp" ? "°" : hourlyMetric === "rain" ? "mm" : "km"}
-                          </span>
-                        </div>
-                        <div className="w-full h-0.5 rounded-full overflow-hidden bg-black/[0.06]">
-                          <div className={`h-full rounded-full ${hour.confidence === "high" ? "bg-accent-green" : "bg-accent-amber"}`} style={{ width: "100%" }} />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="absolute inset-y-0 right-0 w-10 pointer-events-none rounded-r-2xl"
-                  style={{ background: "linear-gradient(to right, transparent, rgba(255,255,255,0.85))" }} />
-                </div>
-              </div>
-            </div>
-          </PremiumGate>
-
-          {/* REED GATE: EXTREMITIES & CAPE — full mode only */}
-          {!slimMode && <PremiumGate tierRequired="reed">
-            {(() => {
-              const cape = weather.hourly[0]?.cape ?? 0;
-              const precip = weather.current.precipitation;
-              const lightningRisk = weather.neuralData?.lightningRisk ?? 0;
-
-              const capeLabel = cape === 0 ? "Geen onweer" : cape < 500 ? "Licht onweer mogelijk" : cape < 1500 ? "Onweer mogelijk" : "Zwaar onweer";
-              const precipLabel = precip === 0 ? "Droog" : precip < 1 ? "Lichte regen" : precip < 5 ? "Matige regen" : "Zware regen";
-
-              const isAlert = cape > 1500 || precip > 5 || lightningRisk > 60;
-              const statusLabel = isAlert ? "Verhoogde dreiging" : "Alles rustig";
-              const reedVerdict = isAlert
-                ? `Let op: verhoogde weeractivity bij ${city.name}. Blijf de situatie volgen.`
-                : `Geen gevaarlijke condities bij ${city.name}.`;
-
-              return (
-                <div className="card p-6 border-white/40 shadow-xl">
-                  <div className="flex items-center gap-2 mb-5">
-                    <Zap className="w-4 h-4 text-rose-500 fill-rose-500" />
-                    <span className="text-[10px] font-black text-rose-500 uppercase tracking-[0.3em]">Reed</span>
-                  </div>
-
-                  <div className="mb-5">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${isAlert ? "bg-rose-500 animate-pulse" : "bg-emerald-500"}`} />
-                      <span className="text-2xl font-black text-text-primary">{statusLabel}</span>
-                    </div>
-                    <p className="text-sm font-medium leading-relaxed pl-[22px] text-text-secondary">
-                      {reedVerdict}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-2 flex-wrap pl-[22px]">
-                    <span className="text-[11px] font-bold px-3 py-1.5 rounded-full bg-black/5 text-text-secondary">
-                      ⚡ {capeLabel}
-                    </span>
-                    <span className="text-[11px] font-bold px-3 py-1.5 rounded-full bg-black/5 text-text-secondary">
-                      🌧 {precipLabel}
-                    </span>
-                  </div>
-                </div>
-              );
-            })()}
-          </PremiumGate>}
           </>
           )}
         </div>
