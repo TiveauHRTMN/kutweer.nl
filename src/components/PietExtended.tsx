@@ -12,11 +12,6 @@ import {
   Sunrise,
   Sunset,
   Cloud,
-  Eye,
-  Zap,
-  Snowflake,
-  ThermometerSun,
-  Terminal,
 } from "lucide-react";
 import { loadWeather, loadWWS, patchCacheDeep } from "@/lib/weatherCache";
 import {
@@ -25,6 +20,7 @@ import {
   type City,
   type WeatherData,
   type HourlyForecast,
+  type DailyForecast,
   type WWSPayload,
 } from "@/lib/types";
 import {
@@ -35,10 +31,11 @@ import {
 import { getMainCommentary } from "@/lib/commentary";
 import { getPietDeepAnalysis } from "@/app/actions";
 import { useSession } from "@/lib/session-context";
-import ModelPluim from "@/components/ModelPluim";
-import RainRadar from "@/components/RainRadar";
-import TemperatureHeatmap from "@/components/TemperatureHeatmap";
 import { persistCity } from "@/lib/persist-city";
+import {
+  getFietsScore, getBbqScore, getStrandScore, getHooikoortsScore,
+  getTerrasScore, getWandelScore, getHardloopScore, getOutfitAdvice, getUvLabel,
+} from "@/lib/commentary";
 
 
 function getSavedCity(): City | null {
@@ -263,56 +260,26 @@ function summarizeDaypart(label: string, window: string, hours: HourlyForecast[]
   return { key, label, window, emoji, description: `${description}${feelsTxt}`, tempLine, rainLine, windLine, hint };
 }
 
-function DayBlock({ title, daily, sunrise, sunset, uvIndex, hourly }: { title: string; daily: WeatherData["daily"][number] | undefined; sunrise?: string; sunset?: string; uvIndex?: number; hourly: HourlyForecast[]; }) {
-  if (!daily) return null;
-  const totalRain = hourly.reduce((a, h) => a + (h.precipitation ?? 0), 0);
-  const maxWind = Math.max(0, ...hourly.map((h) => h.windSpeed ?? 0));
-  const bft = getWindBeaufort(maxWind);
-
+function DayBlock({ title, daily, hourly, sunrise, sunset, uvIndex }: { title: string; daily: DailyForecast; hourly: HourlyForecast[]; sunrise?: string; sunset?: string; uvIndex?: number }) {
+  const rainTotal = hourly.reduce((s, h) => s + h.precipitation, 0);
+  const maxWind = Math.max(...hourly.map(h => h.windSpeed ?? 0), 0);
   return (
-    <div className="card p-6">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">{title}</span>
-        <span className="text-3xl drop-shadow-xl">{getWeatherEmoji(daily.weatherCode, true)}</span>
+    <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-5">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{title}</span>
+        <span className="text-2xl">{getWeatherEmoji(daily.weatherCode, true)}</span>
       </div>
-      <div className="flex items-baseline gap-3 mb-1">
-        <span className="text-5xl font-black text-text-primary tracking-tighter">{daily.tempMax}°</span>
-        <span className="text-xl font-bold text-text-muted">{daily.tempMin}°</span>
+      <div className="flex items-baseline gap-1 mb-3">
+        <span className="text-3xl font-black text-slate-900">{daily.tempMax}°</span>
+        <span className="text-lg font-bold text-slate-400">/ {daily.tempMin}°</span>
       </div>
-      <p className="text-[12px] font-bold text-text-secondary uppercase tracking-widest mb-5">{getWeatherDescription(daily.weatherCode)}</p>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-[13px]">
-        <div className="flex items-center gap-2">
-          <Droplet className="w-3.5 h-3.5 text-accent-cyan flex-none" />
-          <span className="text-text-secondary"><strong className="text-text-primary">{totalRain > 0.05 ? `${totalRain.toFixed(1)} mm` : "Droog"}</strong></span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Wind className="w-3.5 h-3.5 text-text-secondary flex-none" />
-          <span className="text-text-secondary"><strong className="text-text-primary">{maxWind} km/h</strong> <span className="text-text-muted">· {bft.scale} bft</span></span>
-        </div>
-        {typeof daily.sunHours === "number" && daily.sunHours > 0 && (
-          <div className="flex items-center gap-2">
-            <Sun className="w-3.5 h-3.5 text-wz-sun flex-none" />
-            <span className="text-text-secondary"><strong className="text-text-primary">{daily.sunHours.toFixed(1)} u</strong> <span className="text-text-muted">zon</span></span>
-          </div>
-        )}
-        {typeof uvIndex === "number" && uvIndex > 0 && (
-          <div className="flex items-center gap-2">
-            <Eye className="w-3.5 h-3.5 text-wz-sun flex-none" />
-            <span className="text-text-secondary"><strong className="text-text-primary">UV {uvIndex.toFixed(0)}</strong></span>
-          </div>
-        )}
-        {sunrise && (
-          <div className="flex items-center gap-2">
-            <Sunrise className="w-3.5 h-3.5 text-wz-sun flex-none" />
-            <span className="text-text-secondary">{formatTime(sunrise)}</span>
-          </div>
-        )}
-        {sunset && (
-          <div className="flex items-center gap-2">
-            <Sunset className="w-3.5 h-3.5 text-orange-300 flex-none" />
-            <span className="text-text-secondary">{formatTime(sunset)}</span>
-          </div>
-        )}
+      <p className="text-[12px] text-slate-600 mb-3">{getWeatherDescription(daily.weatherCode)}</p>
+      <div className="space-y-2 text-[12px]">
+        <div className="flex justify-between"><span className="text-slate-400">Neerslag</span><span className="font-bold text-slate-800">{rainTotal > 0 ? `${rainTotal.toFixed(1)} mm` : "Droog"}</span></div>
+        <div className="flex justify-between"><span className="text-slate-400">Max wind</span><span className="font-bold text-slate-800">{maxWind} km/h</span></div>
+        <div className="flex justify-between"><span className="text-slate-400">Zon-uren</span><span className="font-bold text-slate-800">{daily.sunHours.toFixed(1)}u</span></div>
+        {uvIndex != null && <div className="flex justify-between"><span className="text-slate-400">UV-index</span><span className="font-bold text-slate-800">{uvIndex.toFixed(0)}</span></div>}
+        {sunrise && <div className="flex justify-between"><span className="text-slate-400">Zon op/onder</span><span className="font-bold text-slate-800">{formatTime(sunrise)} / {sunset ? formatTime(sunset) : "—"}</span></div>}
       </div>
     </div>
   );
@@ -423,9 +390,25 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
     summarizeDaypart("Morgen avond", "18–00 u", weather.hourly.filter((h) => inHourRange(h, tomorrowStr, 18, 24)), weather, false),
   ].filter(d => !d.empty);
 
+  const outfit = getOutfitAdvice(weather);
+  const uvInfo = getUvLabel(weather.uvIndex);
+  const fiets = getFietsScore(weather);
+  const scores = [
+    { emoji: "☕", label: "Terras", score: getTerrasScore(weather), tip: weather.current.temperature > 15 && weather.current.precipitation === 0 ? "Lekker weer om buiten te zitten" : "Beter binnen blijven" },
+    { emoji: "🚲", label: "Fietsen", score: fiets.score, tip: fiets.label },
+    { emoji: "🥩", label: "BBQ", score: getBbqScore(weather), tip: getBbqScore(weather) >= 7 ? "Ideaal barbecueweer" : "Niet ideaal voor de BBQ" },
+    { emoji: "🏖️", label: "Strand", score: getStrandScore(weather), tip: getStrandScore(weather) >= 7 ? "Stranddag!" : "Nog even wachten" },
+    { emoji: "🤧", label: "Hooikoorts", score: getHooikoortsScore(weather), tip: getHooikoortsScore(weather) >= 6 ? "Veel pollen verwacht — antihistamine meenemen" : "Weinig pollendruk" },
+    { emoji: "🏃", label: "Hardlopen", score: getHardloopScore(weather), tip: getHardloopScore(weather) >= 7 ? "Prima hardloopweer" : "Pas je tempo aan" },
+    { emoji: "🥾", label: "Wandelen", score: getWandelScore(weather), tip: getWandelScore(weather) >= 7 ? "Heerlijk wandelweer" : "Trek stevig schoeisel aan" },
+  ];
+
+  const today = weather.daily[0];
+  const tomorrow = weather.daily[1];
+
   return (
-    <div className="space-y-10 animate-fade-in">
-      {/* 1. LOCATIE-SELECTOR */}
+    <div className="space-y-8 animate-fade-in">
+      {/* 1. LOCATIE */}
       {!hideLocate && (
         <div className="flex flex-wrap items-center justify-between gap-4">
           <button onClick={locate} disabled={locating} className="btn btn-ghost bg-white/10 backdrop-blur-md border-white/20 text-text-primary font-bold">
@@ -436,12 +419,12 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
         </div>
       )}
 
-      {/* 2. PIET'S VERHAAL — DE HOOFDROL */}
-      <div className="rounded-3xl bg-white/95 backdrop-blur-md p-7 sm:p-9 shadow-xl border-l-4 border-l-blue-500">
+      {/* 2. PIET'S WEERVERHAAL */}
+      <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-7 sm:p-9 border-l-4 border-l-blue-500">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl shadow-inner">💬</div>
+          <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl">💬</div>
           <div>
-            <h2 className="text-[11px] font-black uppercase tracking-widest text-blue-600 mb-0">{narrativeTitle}</h2>
+            <h2 className="text-[11px] font-black uppercase tracking-widest text-blue-600">{narrativeTitle}</h2>
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })} · vandaag → morgen</p>
           </div>
         </div>
@@ -453,114 +436,121 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
         ) : (
           <div className="space-y-3 animate-pulse">
             <div className="h-4 bg-slate-200 rounded-full w-full" /><div className="h-4 bg-slate-200 rounded-full w-5/6" /><div className="h-4 bg-slate-200 rounded-full w-full" />
-            <p className="text-xs text-slate-400 pt-2">Piet schrijft jouw dossier…</p>
+            <p className="text-xs text-slate-400 pt-2">Piet schrijft jouw verhaal…</p>
           </div>
         )}
       </div>
 
-      {/* 3. WWS TECH GRID — HARD DATA EVIDENCE */}
-      {wws && (
-        <div className="rounded-3xl overflow-hidden bg-white/95 backdrop-blur-md border border-slate-200 shadow-xl">
-           <div className="bg-slate-50 px-6 py-3 flex items-center justify-between border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                 <Terminal className="w-4 h-4 text-emerald-500" />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Meteorologisch Dossier (1KM GRID)</span>
-              </div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase">{wws.api_grid_1km.region}</span>
-           </div>
-           <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
-              {wws.api_grid_1km.forecast.slice(0, 3).map((f, i) => (
-                 <div key={i} className="p-5">
-                    <p className="text-[10px] font-black text-slate-400 uppercase mb-2">{formatTime(f.time)}</p>
-                    <div className="flex items-baseline gap-2">
-                       <span className="text-2xl font-black text-slate-800">{f.temp_c}°</span>
-                       <span className="text-xs text-slate-500">{f.precip_mm}mm</span>
-                    </div>
-                    <div className="mt-3 flex items-center justify-between">
-                       <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-400" style={{ width: `${f.confidence}%` }} />
-                       </div>
-                       <span className="text-[9px] font-black text-emerald-600 ml-3">{f.confidence}%</span>
-                    </div>
-                 </div>
-              ))}
-           </div>
-           <div className="px-6 py-2 bg-slate-50 text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Synthese: {wws.api_grid_1km.models_synthesized.join(" · ")}</div>
+      {/* 3. STATUS NU — compact */}
+      <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nu in {city.name}</span>
+          <span className="text-[10px] font-bold text-slate-400">{nextRain?.headline}</span>
         </div>
-      )}
-
-      {/* 4. NU-HERO & RADAR */}
-      <div className="rounded-3xl bg-white/95 backdrop-blur-md p-7 sm:p-9 shadow-xl">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-1">Status nu in {city.name}</span>
-            <div className="flex items-baseline gap-3 mt-2">
-              <span className="text-7xl sm:text-8xl font-black text-slate-900 tracking-tighter leading-none">{weather.current.temperature}°</span>
-              <span className="text-6xl sm:text-7xl drop-shadow-xl">{getWeatherEmoji(weather.current.weatherCode, weather.current.isDay)}</span>
-            </div>
-            <p className="text-base sm:text-lg font-bold text-slate-600 mt-2">{getWeatherDescription(weather.current.weatherCode)}{weather.current.feelsLike !== weather.current.temperature && <span className="text-slate-400 font-medium"> · voelt als {weather.current.feelsLike}°</span>}</p>
-            
-            <div className="grid grid-cols-2 gap-y-4 gap-x-3 mt-6 pt-6 border-t border-slate-100">
-              <div><div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1"><Wind className="w-3 h-3" /> Wind</div><div className="text-slate-800 font-bold">{weather.current.windSpeed} km/h <span className="text-slate-400 text-xs font-medium">· {weather.current.windDirection}</span></div><div className="text-[11px] text-slate-500">{getWindBeaufort(weather.current.windSpeed).scale} bft</div></div>
-              <div><div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1"><Cloud className="w-3 h-3" /> Lucht</div><div className="text-slate-800 font-bold">{weather.current.cloudCover}%</div><div className="text-[11px] text-slate-500">vochtigheid {weather.current.humidity}%</div></div>
-              <div><div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1"><Sun className="w-3 h-3" /> Zon</div><div className="text-slate-800 font-bold">{weather.sunrise ? formatTime(weather.sunrise) : "—"}<span className="text-slate-400 text-xs"> / {weather.sunset ? formatTime(weather.sunset) : "—"}</span></div><div className="text-[11px] text-slate-500">{weather.uvIndex > 0 ? `UV ${weather.uvIndex.toFixed(0)}` : ""}</div></div>
-            </div>
+        <div className="flex items-center gap-6">
+          <div className="flex items-baseline gap-2">
+            <span className="text-6xl font-black text-slate-900 tracking-tighter">{weather.current.temperature}°</span>
+            <span className="text-4xl drop-shadow-lg">{getWeatherEmoji(weather.current.weatherCode, weather.current.isDay)}</span>
           </div>
-          
-          {/* Right side: Radar */}
-          <div className="flex-1 lg:pl-8 lg:border-l border-slate-100 flex flex-col justify-center">
-            <RainRadar data={weather.minutely} />
+          <div className="flex-1 grid grid-cols-2 gap-x-4 gap-y-2 text-[13px]">
+            <div><span className="text-slate-400 text-[10px] font-black uppercase">Voelt als</span><div className="font-bold text-slate-800">{weather.current.feelsLike}°</div></div>
+            <div><span className="text-slate-400 text-[10px] font-black uppercase">Wind</span><div className="font-bold text-slate-800">{weather.current.windSpeed} km/h · {getWindBeaufort(weather.current.windSpeed).scale} bft</div></div>
+            <div><span className="text-slate-400 text-[10px] font-black uppercase">Luchtvochtigheid</span><div className="font-bold text-slate-800">{weather.current.humidity}%</div></div>
+            <div><span className="text-slate-400 text-[10px] font-black uppercase">Bewolking</span><div className="font-bold text-slate-800">{weather.current.cloudCover}%</div></div>
           </div>
         </div>
       </div>
 
-      {/* 5. RISICO-STRIP */}
-      {risks.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {risks.map((r) => {
-            const t = riskTone(r.tone);
-            return <div key={r.key} className="rounded-2xl p-4 flex items-start gap-3" style={{ background: t.bg, border: `1px solid ${t.border}` }}><div className="w-9 h-9 rounded-xl flex items-center justify-center flex-none" style={{ background: t.border, color: t.fg }}>{r.icon}</div><div className="min-w-0"><div className="text-sm font-black text-text-primary">{r.label}</div><div className="text-xs text-text-secondary leading-snug mt-0.5">{r.detail}</div></div></div>;
+      {/* 4. OUTFIT & UV */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-5">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-3xl">{outfit.emoji}</span>
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Kledingadvies</span>
+              <p className="text-sm font-bold text-slate-800 mt-0.5">{outfit.advice}</p>
+            </div>
+          </div>
+        </div>
+        <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-5">
+          <div className="flex items-center justify-between mb-2">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Zon & UV-index</span>
+              <div className="flex items-center gap-3 mt-1">
+                <div className="text-sm text-slate-800"><Sunrise className="w-3.5 h-3.5 inline text-amber-400 mr-1" /><strong>{weather.sunrise ? formatTime(weather.sunrise) : "—"}</strong></div>
+                <div className="text-sm text-slate-800"><Sunset className="w-3.5 h-3.5 inline text-orange-400 mr-1" /><strong>{weather.sunset ? formatTime(weather.sunset) : "—"}</strong></div>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-2xl font-black" style={{ color: uvInfo.color }}>{weather.uvIndex.toFixed(0)}</div>
+              <div className="text-[9px] font-bold text-slate-400 max-w-[120px]">{uvInfo.label}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. VANDAAG & MORGEN */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {[{ d: today, label: "Vandaag", sr: weather.sunrise, ss: weather.sunset, uv: weather.uvIndex },
+          { d: tomorrow, label: "Morgen" }].map(({ d, label, sr, ss, uv }) => d && (
+          <DayBlock key={label} title={label} daily={d} sunrise={sr} sunset={ss} uvIndex={uv}
+            hourly={weather.hourly.filter(h => h.time.startsWith(d.date || ""))} />
+        ))}
+      </div>
+
+      {/* 6. LEEFSTIJL SCORES */}
+      <div className="rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden">
+        <div className="px-5 pt-5 pb-3">
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Leefstijl & Activiteiten</span>
+          <p className="text-sm font-black text-slate-800 mt-0.5">Wat kun je vandaag doen?</p>
+        </div>
+        <div className="divide-y divide-slate-50">
+          {scores.map(s => {
+            const pct = s.score * 10;
+            const color = s.score >= 7 ? "#16a34a" : s.score >= 4 ? "#f59e0b" : "#ef4444";
+            return (
+              <div key={s.label} className="px-5 py-3.5 flex items-center gap-4">
+                <span className="text-2xl w-8 text-center">{s.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-black text-slate-800">{s.label}</span>
+                    <span className="text-sm font-black" style={{ color }}>{s.score}/10</span>
+                  </div>
+                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: color }} />
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-1">{s.tip}</p>
+                </div>
+              </div>
+            );
           })}
         </div>
-      )}
+      </div>
 
-      {/* 6. DAGDEEL-SAMENVATTING */}
-      <div className="rounded-3xl bg-white/95 backdrop-blur-md shadow-xl overflow-hidden p-0 border border-slate-200">
-        <div className="flex items-end justify-between px-6 pt-6 pb-4"><h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">De dagdelen</h3><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">wall-clock</span></div>
-        <div className="divide-y divide-slate-100">
+      {/* 7. DAGDELEN */}
+      <div className="rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden">
+        <div className="flex items-end justify-between px-5 pt-5 pb-3">
+          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">De dagdelen</span>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">vandaag → morgen</span>
+        </div>
+        <div className="divide-y divide-slate-50">
           {dayparts.map((d, idx) => (
-            <motion.div key={d.key} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.04 }} className="px-6 py-4 flex gap-4 items-start" style={d.empty ? { opacity: 0.4 } : undefined}>
-              <div className="flex-none w-14 text-center"><div className="text-3xl drop-shadow-lg leading-none">{d.emoji}</div><div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1.5">{d.window}</div></div>
+            <motion.div key={d.key} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.04 }} className="px-5 py-4 flex gap-4 items-start">
+              <div className="flex-none w-12 text-center"><div className="text-2xl leading-none">{d.emoji}</div><div className="text-[9px] font-black uppercase tracking-widest text-slate-400 mt-1">{d.window}</div></div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-baseline justify-between gap-3 mb-0.5"><h4 className="text-base font-black text-slate-800 tracking-tight">{d.label}</h4>{!d.empty && <span className="text-sm font-bold text-slate-600 flex-none">{d.tempLine}</span>}</div>
-                {d.empty ? <p className="text-sm text-slate-400 leading-relaxed">{d.description}</p> : <><p className="text-[13px] text-slate-600 leading-relaxed font-medium">{d.description}. {d.rainLine} {d.windLine}</p>{d.hint && <p className="text-[12px] text-blue-600 font-bold mt-1">→ {d.hint}</p>}</>}
+                <div className="flex items-baseline justify-between gap-3 mb-0.5"><h4 className="text-sm font-black text-slate-800">{d.label}</h4><span className="text-sm font-bold text-slate-600 flex-none">{d.tempLine}</span></div>
+                <p className="text-[12px] text-slate-600 leading-relaxed">{d.description}. {d.rainLine} {d.windLine}</p>
+                {d.hint && <p className="text-[11px] text-blue-600 font-bold mt-1">→ {d.hint}</p>}
               </div>
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* 7. TEMPERATUUR HEATMAP */}
-      <div className="space-y-3">
-        <div className="flex items-end justify-between px-1">
-          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Temperatuur</h3>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">48-uurs heatmap</span>
-        </div>
-        <TemperatureHeatmap hourly={weather.hourly} sunrise={weather.sunrise} sunset={weather.sunset} />
-      </div>
-
-      {/* 8. MODEL PLUIM */}
-      <div className="space-y-3">
-        <div className="flex items-end justify-between px-1">
-          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Model Pluim</h3>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">harmonie · icon · arome</span>
-        </div>
-        <ModelPluim hourly={weather.hourly} sunrise={weather.sunrise} sunset={weather.sunset} />
-      </div>
-
-      <div className="pt-12 border-t border-white/10 flex justify-center">
+      <div className="pt-8 border-t border-slate-100 flex justify-center">
         <Link href="/" className="btn btn-ghost text-sm font-bold opacity-60 hover:opacity-100">← Dashboard</Link>
       </div>
     </div>
   );
 }
+
