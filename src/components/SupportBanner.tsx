@@ -17,7 +17,7 @@ export default function SupportBanner() {
 
   return (
     <div className="sticky top-4 z-50 animate-fade-in px-4 sm:px-0">
-      <div className="card mx-auto max-w-2xl bg-gradient-to-r from-slate-900 to-slate-800 border-amber-500/30 shadow-2xl p-4 flex items-center justify-between gap-4 overflow-hidden relative">
+      <div className="mx-auto max-w-2xl bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl p-4 flex items-center justify-between gap-4 overflow-hidden relative">
         <div className="absolute -left-2 -top-2 text-amber-500/10 rotate-12 pointer-events-none">
           <Cookie size={64} />
         </div>
