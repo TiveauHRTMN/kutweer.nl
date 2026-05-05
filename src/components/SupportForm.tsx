@@ -149,7 +149,7 @@ export default function SupportForm() {
           </div>
           {method === "revolut" && (
             <p className="text-xs font-medium text-slate-500 text-center mt-3">
-              Geen Revolut? <a href="https://revolut.com/referral/?promo=JOUW_LINK" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:underline font-bold">Open gratis een account</a> en steun ons via de signup-bonus!
+              Geen Revolut? <a href="https://www.revolut.com/nl-NL/referral/?referral-code=rowanl6tw%21MAY1-26-VR-NL" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:underline font-bold">Open gratis een account</a> en steun ons via de signup-bonus!
             </p>
           )}
           {method === "phantom" && (
