@@ -25,7 +25,7 @@ export default function SupportBanner() {
               Support voor een koekje 🍪
             </h4>
             <p className="text-[11px] text-white/60 font-medium leading-tight">
-              Weerzone blijft draaien dankzij jou.
+              Trakteer via Tikkie, Revolut of Crypto.
             </p>
           </div>
         </div>
