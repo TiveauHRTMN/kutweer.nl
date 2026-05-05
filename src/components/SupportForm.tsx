@@ -9,7 +9,7 @@ export default function SupportForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [method, setMethod] = useState<"revolut" | "phantom" | "tikkie">("tikkie");
+  const [method, setMethod] = useState<"revolut" | "phantom">("revolut");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -38,11 +38,6 @@ export default function SupportForm() {
         setTimeout(() => setCopied(false), 3000);
       } else if (method === "revolut") {
         window.location.href = `https://revolut.me/${REVOLUT_USERNAME}/${finalAmount}`;
-      } else if (method === "tikkie") {
-        // Hier kun je een Bunq.me of Tikkie link neerzetten
-        const TIKKIE_LINK = "https://tikkie.me/pay/weerzone"; 
-        window.location.href = TIKKIE_LINK;
-        setLoading(false);
       }
     }, 500);
   };
@@ -119,20 +114,11 @@ export default function SupportForm() {
         {/* BETAALMETHODE */}
         <div>
           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-3">3. Betaalmethode</label>
-          <div className="grid grid-cols-3 gap-2 mb-2">
-            <button
-              type="button"
-              onClick={() => setMethod("tikkie")}
-              className={`py-3 rounded-xl font-bold flex items-center justify-center gap-2 border-2 transition-all ${
-                method === "tikkie" ? "border-amber-600 bg-amber-50 text-amber-700 shadow-md" : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
-              }`}
-            >
-              Tikkie
-            </button>
+          <div className="grid grid-cols-2 gap-3 mb-2">
             <button
               type="button"
               onClick={() => setMethod("revolut")}
-              className={`py-3 rounded-xl font-bold flex items-center justify-center gap-2 border-2 transition-all ${
+              className={`py-4 rounded-xl font-bold flex items-center justify-center gap-2 border-2 transition-all ${
                 method === "revolut" ? "border-slate-900 bg-slate-900 text-white shadow-md" : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
               }`}
             >
@@ -141,7 +127,7 @@ export default function SupportForm() {
             <button
               type="button"
               onClick={() => setMethod("phantom")}
-              className={`py-3 rounded-xl font-bold flex items-center justify-center gap-2 border-2 transition-all ${
+              className={`py-4 rounded-xl font-bold flex items-center justify-center gap-2 border-2 transition-all ${
                 method === "phantom" ? "border-purple-500 bg-purple-50 text-purple-700 shadow-md" : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
               }`}
             >
@@ -149,9 +135,17 @@ export default function SupportForm() {
             </button>
           </div>
           {method === "revolut" && (
-            <p className="text-xs font-medium text-slate-500 text-center mt-3">
-              Geen Revolut? <a href="https://www.revolut.com/nl-NL/referral/?referral-code=rowanl6tw%21MAY1-26-VR-NL" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:underline font-bold">Open gratis een account</a> en steun ons via de signup-bonus!
-            </p>
+            <div className="mt-4 space-y-3">
+              <p className="text-xs font-medium text-slate-500 text-center">
+                Geen Revolut-account? Geen probleem. Je kunt simpel betalen via <strong>Apple Pay, Google Pay</strong> of <strong>Card</strong>.
+              </p>
+              <p className="text-[10px] font-bold text-slate-400 text-center uppercase tracking-widest">
+                Gebruik je liever de affiliate bonus?
+              </p>
+              <p className="text-xs font-medium text-slate-500 text-center">
+                <a href="https://www.revolut.com/nl-NL/referral/?referral-code=rowanl6tw%21MAY1-26-VR-NL" target="_blank" rel="noopener noreferrer" className="text-amber-500 hover:underline font-bold">Open gratis een account</a> en steun ons via de signup-bonus!
+              </p>
+            </div>
           )}
           {method === "phantom" && (
             <p className="text-xs font-medium text-slate-500 text-center mt-3">
@@ -179,7 +173,7 @@ export default function SupportForm() {
         </button>
         {method !== "phantom" && (
             <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">
-              Veilig betalen via {method === "tikkie" ? "Tikkie" : "Revolut.me"}
+              Veilig betalen via Revolut.me
             </p>
         )}
       </form>
