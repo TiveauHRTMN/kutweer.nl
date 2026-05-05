@@ -9,21 +9,21 @@ interface Props {
 }
 
 const MODELS = [
-  { key: "harmonie" as const, label: "Harmonie", color: "#34d399" },
-  { key: "icon"     as const, label: "ICON-D2",  color: "#60a5fa" },
-  { key: "arome"    as const, label: "Arome",    color: "#fb923c" },
+  { key: "harmonie" as const, label: "Harmonie", color: "#059669" },
+  { key: "icon"     as const, label: "ICON-D2",  color: "#2563eb" },
+  { key: "arome"    as const, label: "Arome",    color: "#ea580c" },
 ];
 
 // ─── SVG layout ───────────────────────────────────────────────
-const W      = 560;
-const PL     = 30;   // left padding (y-axis labels)
-const PR     = 8;
-const PT     = 14;   // top padding
+const W      = 540;
+const PL     = 36;   // left padding (y-axis labels)
+const PR     = 12;
+const PT     = 16;   // top padding
 const CW     = W - PL - PR;
-const TEMP_H = 150;  // temperature chart height
-const GAP    = 10;
-const PREC_H = 38;   // precipitation bars height
-const AXIS_H = 18;   // time axis text height
+const TEMP_H = 180;  // temperature chart height (bigger for readability)
+const GAP    = 16;
+const PREC_H = 48;   // precipitation bars height
+const AXIS_H = 22;   // time axis text height
 const TOTAL_H = PT + TEMP_H + GAP + PREC_H + AXIS_H;
 
 function xAt(i: number, n: number) { return PL + (i / Math.max(n - 1, 1)) * CW; }
@@ -73,7 +73,7 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
   // ── precipitation ─────────────────────────────────────────
   const maxPrecip = Math.max(...hours.map(h => h.precipitation), 0.5);
   const prY0      = PT + TEMP_H + GAP + PREC_H;
-  const barW      = Math.max(2.5, (CW / n) - 1.5);
+  const barW      = Math.max(3, (CW / n) - 1.5);
 
   // ── day / night bands ─────────────────────────────────────
   type Band = { x: number; w: number; night: boolean };
@@ -119,22 +119,22 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
   });
 
   return (
-    <div className="w-full space-y-4">
+    <div className="rounded-2xl bg-white border border-slate-100 p-5 shadow-sm space-y-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-0.5">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">
             Modelonzekerheid · 3 modellen
           </p>
-          <h3 className="text-base font-black text-slate-900 leading-none">
+          <h3 className="text-sm font-black text-slate-800 leading-none">
             Temperatuur Pluim — 48 uur
           </h3>
         </div>
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-4 flex-wrap">
           {MODELS.map(m => (
             <div key={m.key} className="flex items-center gap-1.5">
-              <div className="w-6 h-[2px] rounded-full" style={{ background: m.color }} />
-              <span className="text-[9px] font-black uppercase tracking-wider" style={{ color: m.color }}>
+              <div className="w-5 h-[3px] rounded-full" style={{ background: m.color }} />
+              <span className="text-[10px] font-bold" style={{ color: m.color }}>
                 {m.label}
               </span>
             </div>
@@ -147,7 +147,7 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
         <svg
           viewBox={`0 0 ${W} ${TOTAL_H}`}
           className="w-full h-auto"
-          style={{ display: "block", overflow: "visible" }}
+          style={{ display: "block" }}
         >
           {/* Day/night shading */}
           {bands.map((b, i) =>
@@ -155,24 +155,28 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
               <rect
                 key={i}
                 x={b.x} y={PT} width={b.w} height={TEMP_H + GAP + PREC_H}
-                fill="rgba(0,0,0,0.03)"
+                fill="#f1f5f9"
               />
             ) : null
           )}
 
           {/* Precipitation baseline */}
-          <line x1={PL} y1={prY0} x2={W - PR} y2={prY0} stroke="rgba(0,0,0,0.07)" strokeWidth="1" />
+          <line x1={PL} y1={prY0} x2={W - PR} y2={prY0} stroke="#e2e8f0" strokeWidth="1" />
+
+          {/* Precip label */}
+          <text x={PL - 6} y={prY0 - PREC_H / 2 + 3} fill="#94a3b8" fontSize="8" textAnchor="end"
+            fontFamily="ui-sans-serif, system-ui, sans-serif" fontWeight="700">mm</text>
 
           {/* Temperature Y-axis gridlines + labels */}
           {yGrid.map(v => {
             const y = yTemp(v, tMin, tMax);
             return (
               <g key={v}>
-                <line x1={PL} y1={y} x2={W - PR} y2={y} stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
+                <line x1={PL} y1={y} x2={W - PR} y2={y} stroke="#e2e8f0" strokeWidth="1" />
                 <text
-                  x={PL - 4} y={y + 3.5}
-                  fill="rgba(0,0,0,0.40)"
-                  fontSize="9" textAnchor="end"
+                  x={PL - 6} y={y + 3.5}
+                  fill="#94a3b8"
+                  fontSize="10" textAnchor="end"
                   fontFamily="ui-sans-serif, system-ui, sans-serif" fontWeight="700"
                 >
                   {v}°
@@ -182,7 +186,7 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
           })}
 
           {/* Spread band */}
-          <path d={bandPath} fill="rgba(0,0,0,0.05)" />
+          <path d={bandPath} fill="#e2e8f0" opacity="0.6" />
 
           {/* Model lines */}
           {MODELS.map(m => {
@@ -193,10 +197,9 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
                 d={linePath(pts)}
                 fill="none"
                 stroke={m.color}
-                strokeWidth="1.8"
+                strokeWidth="2.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                opacity="0.88"
               />
             );
           })}
@@ -220,15 +223,16 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
             <g key={text + x}>
               <line
                 x1={x} y1={PT} x2={x} y2={prY0}
-                stroke="rgba(0,0,0,0.06)"
+                stroke="#cbd5e1"
                 strokeWidth="0.5"
                 strokeDasharray="3,3"
               />
               <text
-                x={x} y={prY0 + 13}
-                fill={text === "Nu" ? "#3b82f6" : "rgba(0,0,0,0.40)"}
-                fontSize="9" textAnchor="middle"
-                fontFamily="ui-sans-serif, system-ui, sans-serif" fontWeight="700"
+                x={x} y={prY0 + 16}
+                fill={text === "Nu" ? "#2563eb" : "#64748b"}
+                fontSize="10" textAnchor="middle"
+                fontFamily="ui-sans-serif, system-ui, sans-serif"
+                fontWeight={text === "Nu" ? "900" : "700"}
               >
                 {text}
               </text>
@@ -238,13 +242,13 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
       </div>
 
       {/* Footer legend */}
-      <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-slate-400 pt-3 mt-4 border-t border-slate-200">
+      <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-widest text-slate-400 pt-3 border-t border-slate-100">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-2.5 rounded-sm" style={{ background: "rgba(0,0,0,0.06)" }} />
-          <span>Onzekerheidsband = spread tussen modellen</span>
+          <div className="w-4 h-3 rounded-sm bg-slate-200" />
+          <span>Spread = onzekerheid</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2.5 rounded-sm bg-blue-400 opacity-70" />
+          <div className="w-3 h-3 rounded-sm bg-blue-400" />
           <span>Neerslag (mm)</span>
         </div>
       </div>

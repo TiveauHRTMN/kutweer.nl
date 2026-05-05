@@ -6,84 +6,173 @@ interface Props {
   hourly: HourlyForecast[];
 }
 
-function BarChart({ data, maxValue, label, unit, colorFn, threshold, textStyle }: { data: number[], maxValue: number, label: string, unit: string, colorFn: (val: number) => string, threshold?: number, textStyle?: { label: string, unit: string } }) {
-  const W = 500;
-  const H = 80;
-  const PT = 10;
-  const PB = 20;
-  const n = data.length;
-  const barW = Math.max(2, (W / n) - 2);
+// ─── Layout constants ─────────────────────────────────────────
+const W = 480;
+const H = 120;
+const PL = 36;  // left padding for Y-axis
+const PR = 12;
+const PT = 12;
+const PB = 24;  // bottom padding for time axis
+const CW = W - PL - PR;
+const CH = H - PT - PB;
 
-  const safeMax = Math.max(maxValue, ...data, 1);
-
-  return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
-        <span className={`text-[10px] font-black uppercase tracking-widest ${textStyle?.label || "text-text-muted"}`}>{label}</span>
-        <span className={`text-[10px] font-bold ${textStyle?.unit || "text-white/40"}`}>{Math.max(...data).toFixed(0)} {unit} max</span>
-      </div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto overflow-visible">
-        {/* Threshold line */}
-        {threshold && threshold < safeMax && (
-          <line x1="0" y1={PT + (H - PT - PB) * (1 - threshold / safeMax)} x2={W} y2={PT + (H - PT - PB) * (1 - threshold / safeMax)} stroke="rgba(244,63,94,0.3)" strokeWidth="1" strokeDasharray="4,4" />
-        )}
-        
-        {data.map((val, i) => {
-          if (val <= 0.01) return null;
-          const barH = Math.max(1, (val / safeMax) * (H - PT - PB));
-          const x = (i / Math.max(n - 1, 1)) * W - (barW / 2);
-          const y = H - PB - barH;
-          return <rect key={i} x={x} y={y} width={barW} height={barH} fill={colorFn(val)} rx="1" />;
-        })}
-      </svg>
-    </div>
-  );
+function formatHour(iso: string): string {
+  return `${new Date(iso).getHours()}u`;
 }
 
-function LineChart({ data, maxValue, label, unit, colorFn, threshold, textStyle }: { data: number[], maxValue: number, label: string, unit: string, colorFn: (val: number) => string, threshold?: number, textStyle?: { label: string, unit: string } }) {
-  const W = 500;
-  const H = 80;
-  const PT = 10;
-  const PB = 20;
+function xAt(i: number, n: number) {
+  return PL + (i / Math.max(n - 1, 1)) * CW;
+}
+
+// ─── Single chart panel ──────────────────────────────────────
+function ChartPanel({
+  title,
+  maxLabel,
+  data,
+  hours,
+  yMax,
+  unit,
+  colorFn,
+  threshold,
+  thresholdLabel,
+  type = "bar",
+}: {
+  title: string;
+  maxLabel: string;
+  data: number[];
+  hours: HourlyForecast[];
+  yMax: number;
+  unit: string;
+  colorFn: (val: number) => string;
+  threshold?: number;
+  thresholdLabel?: string;
+  type?: "bar" | "line";
+}) {
   const n = data.length;
+  const safeMax = Math.max(yMax, ...data, 1);
 
-  const safeMax = Math.max(maxValue, ...data, 1);
+  // Y-axis: 3 labels (0, mid, top)
+  const yMid = Math.round(safeMax / 2);
+  const yLabels = [
+    { val: 0, y: PT + CH },
+    { val: yMid, y: PT + CH * (1 - yMid / safeMax) },
+    { val: Math.round(safeMax), y: PT },
+  ];
 
-  const pts = data.map((val, i) => {
-    const x = (i / Math.max(n - 1, 1)) * W;
-    const y = PT + (H - PT - PB) * (1 - val / safeMax);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  // Time axis: every 6 hours
+  const timeLabels: { text: string; x: number }[] = [];
+  hours.forEach((h, i) => {
+    const hr = new Date(h.time).getHours();
+    if (i === 0) {
+      timeLabels.push({ text: "Nu", x: xAt(i, n) });
+    } else if (hr % 6 === 0) {
+      timeLabels.push({ text: formatHour(h.time), x: xAt(i, n) });
+    }
   });
-  
-  const pathData = `M${pts.join(" L")}`;
+
+  const barW = Math.max(3, (CW / n) - 2);
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-2">
-        <span className={`text-[10px] font-black uppercase tracking-widest ${textStyle?.label || "text-text-muted"}`}>{label}</span>
-        <span className={`text-[10px] font-bold ${textStyle?.unit || "text-white/40"}`}>{Math.max(...data).toFixed(0)} {unit} max</span>
+    <div className="rounded-2xl bg-white border border-slate-100 p-5 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">{title}</span>
+        <span className="text-[11px] font-bold text-slate-400">{maxLabel} {unit}</span>
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto overflow-visible">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" style={{ display: "block" }}>
+        {/* Horizontal grid lines + Y-axis labels */}
+        {yLabels.map(({ val, y }) => (
+          <g key={val}>
+            <line x1={PL} y1={y} x2={W - PR} y2={y} stroke="#e2e8f0" strokeWidth="1" />
+            <text x={PL - 6} y={y + 3} fill="#94a3b8" fontSize="9" textAnchor="end"
+              fontFamily="ui-sans-serif, system-ui, sans-serif" fontWeight="700">
+              {val}
+            </text>
+          </g>
+        ))}
+
         {/* Threshold line */}
-        {threshold && threshold < safeMax && (
-          <line x1="0" y1={PT + (H - PT - PB) * (1 - threshold / safeMax)} x2={W} y2={PT + (H - PT - PB) * (1 - threshold / safeMax)} stroke="rgba(244,63,94,0.3)" strokeWidth="1" strokeDasharray="4,4" />
+        {threshold != null && threshold < safeMax && (() => {
+          const ty = PT + CH * (1 - threshold / safeMax);
+          return (
+            <g>
+              <line x1={PL} y1={ty} x2={W - PR} y2={ty}
+                stroke="#f43f5e" strokeWidth="1" strokeDasharray="4,3" opacity="0.5" />
+              {thresholdLabel && (
+                <text x={W - PR} y={ty - 4} fill="#f43f5e" fontSize="8" textAnchor="end"
+                  fontFamily="ui-sans-serif, system-ui, sans-serif" fontWeight="700" opacity="0.7">
+                  {thresholdLabel}
+                </text>
+              )}
+            </g>
+          );
+        })()}
+
+        {/* Data visualization */}
+        {type === "bar" ? (
+          // Bar chart
+          data.map((val, i) => {
+            if (val <= 0.01) return null;
+            const barH = Math.max(2, (val / safeMax) * CH);
+            const x = xAt(i, n) - barW / 2;
+            const y = PT + CH - barH;
+            return <rect key={i} x={x} y={y} width={barW} height={barH}
+              fill={colorFn(val)} rx="1.5" opacity="0.9" />;
+          })
+        ) : (
+          // Line chart
+          <>
+            {/* Area fill */}
+            <path
+              d={
+                `M${xAt(0, n)},${PT + CH} ` +
+                data.map((val, i) => `L${xAt(i, n)},${PT + CH * (1 - val / safeMax)}`).join(" ") +
+                ` L${xAt(n - 1, n)},${PT + CH} Z`
+              }
+              fill="url(#windGrad)" opacity="0.15"
+            />
+            {/* Line */}
+            <path
+              d={data.map((val, i) => {
+                const x = xAt(i, n);
+                const y = PT + CH * (1 - val / safeMax);
+                return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+              }).join(" ")}
+              fill="none" stroke="#3b82f6" strokeWidth="2"
+              strokeLinecap="round" strokeLinejoin="round"
+            />
+            {/* Peak dots */}
+            {data.map((val, i) => {
+              if (threshold && val < threshold) return null;
+              if (!threshold && val < safeMax * 0.75) return null;
+              const x = xAt(i, n);
+              const y = PT + CH * (1 - val / safeMax);
+              return <circle key={i} cx={x} cy={y} r="3" fill={colorFn(val)} />;
+            })}
+            <defs>
+              <linearGradient id="windGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#3b82f6" />
+                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+          </>
         )}
-        
-        <path d={pathData} fill="none" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-        
-        {/* Dots for high values */}
-        {data.map((val, i) => {
-          if (threshold && val < threshold) return null;
-          if (!threshold && val < safeMax * 0.8) return null;
-          const x = (i / Math.max(n - 1, 1)) * W;
-          const y = PT + (H - PT - PB) * (1 - val / safeMax);
-          return <circle key={i} cx={x} cy={y} r="3" fill={colorFn(val)} />;
-        })}
+
+        {/* Time axis labels */}
+        {timeLabels.map(({ text, x }) => (
+          <text key={text + x} x={x} y={H - 4}
+            fill={text === "Nu" ? "#3b82f6" : "#94a3b8"}
+            fontSize="9" textAnchor="middle"
+            fontFamily="ui-sans-serif, system-ui, sans-serif"
+            fontWeight={text === "Nu" ? "900" : "700"}>
+            {text}
+          </text>
+        ))}
       </svg>
     </div>
   );
 }
 
+// ─── Main component ──────────────────────────────────────────
 export default function ReedExtremeCharts({ hourly }: Props) {
   const hours = hourly.slice(0, 48);
   if (hours.length === 0) return null;
@@ -92,42 +181,51 @@ export default function ReedExtremeCharts({ hourly }: Props) {
   const precipData = hours.map(h => h.precipitation);
   const windData = hours.map(h => h.windSpeed ?? 0);
 
+  const capeMax = Math.max(...capeData);
+  const precipMax = Math.max(...precipData);
+  const windMax = Math.max(...windData);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-xl border border-white/60">
-      
-      {/* CAPE Chart */}
-      <BarChart 
-        data={capeData} 
-        maxValue={2000} 
-        label="CAPE (Onweer-Energie)" 
-        unit="J/kg" 
+    <div className="space-y-4">
+      {/* CAPE */}
+      <ChartPanel
+        title="CAPE — Onweerenergie"
+        maxLabel={`${capeMax.toFixed(0)}`}
+        data={capeData}
+        hours={hours}
+        yMax={2000}
+        unit="J/kg"
         threshold={1000}
-        colorFn={(val) => val > 1500 ? "#e11d48" : val > 500 ? "#ea580c" : "#d97706"} 
-        textStyle={{ label: "text-slate-500", unit: "text-slate-400" }}
+        thresholdLabel="Onweersdrempel"
+        colorFn={(v) => v > 1500 ? "#dc2626" : v > 500 ? "#ea580c" : "#f59e0b"}
       />
 
-      {/* Neerslag Chart */}
-      <BarChart 
-        data={precipData} 
-        maxValue={10} 
-        label="Neerslagintensiteit" 
-        unit="mm/u" 
+      {/* Neerslag */}
+      <ChartPanel
+        title="Neerslag per uur"
+        maxLabel={`${precipMax.toFixed(1)}`}
+        data={precipData}
+        hours={hours}
+        yMax={10}
+        unit="mm"
         threshold={5}
-        colorFn={(val) => val > 5 ? "#e11d48" : val > 1 ? "#2563eb" : "#3b82f6"} 
-        textStyle={{ label: "text-slate-500", unit: "text-slate-400" }}
+        thresholdLabel="Felle buien"
+        colorFn={(v) => v > 5 ? "#dc2626" : v > 1 ? "#2563eb" : "#60a5fa"}
       />
 
-      {/* Windkracht Chart */}
-      <LineChart 
-        data={windData} 
-        maxValue={80} 
-        label="Windkracht" 
-        unit="km/h" 
+      {/* Wind */}
+      <ChartPanel
+        title="Windsnelheid"
+        maxLabel={`${windMax.toFixed(0)}`}
+        data={windData}
+        hours={hours}
+        yMax={80}
+        unit="km/h"
         threshold={50}
-        colorFn={(val) => val > 75 ? "#e11d48" : val > 50 ? "#ea580c" : "#3b82f6"} 
-        textStyle={{ label: "text-slate-500", unit: "text-slate-400" }}
+        thresholdLabel="Stormkracht"
+        type="line"
+        colorFn={(v) => v > 75 ? "#dc2626" : v > 50 ? "#ea580c" : "#3b82f6"}
       />
-
     </div>
   );
 }
