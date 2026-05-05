@@ -21,11 +21,11 @@ export default function SupportBanner() {
             <Cookie className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-black text-white leading-tight mb-0.5">
-              Support voor een koekje 🍪
+            <h4 className="text-sm font-black text-white leading-tight mb-0.5 uppercase tracking-tighter">
+              Groei jij mee? 🍪
             </h4>
             <p className="text-[11px] text-white/60 font-medium leading-tight">
-              Trakteer via Tikkie, Revolut of Crypto.
+              Samen bouwen we aan het beste weer van Nederland.
             </p>
           </div>
         </div>
