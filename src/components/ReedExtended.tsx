@@ -9,6 +9,7 @@ import type { KNMIWarningEnriched } from "@/lib/knmi-warnings";
 import { useSession } from "@/lib/session-context";
 import { persistCity } from "@/lib/persist-city";
 import ReflectivityMap from "@/components/ReflectivityMap";
+import LightningMap from "@/components/LightningMap";
 import ReedExtremeCharts from "@/components/ReedExtremeCharts";
 
 type Alert = { icon: React.ReactNode; title: string; detail: string; severity: "red" | "orange" };
@@ -238,6 +239,14 @@ export default function ReedExtended({ initialWeather, initialCity }: ReedProps)
               <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">48-uurs heatmap</span>
             </div>
             <ReflectivityMap hourly={weather.hourly} />
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex items-end justify-between px-1">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Live Bliksemkaart</h3>
+              <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Actuele ontladingen</span>
+            </div>
+            <LightningMap lat={city.lat} lon={city.lon} />
           </div>
           
           <div className="space-y-3">

@@ -292,9 +292,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
                 }}>
                   Hyperlokaal weer.<br />Vandaag en morgen.
                 </h2>
-                <p className="text-sm sm:text-base font-medium text-text-secondary max-w-md mx-auto leading-relaxed">
-                  Op 1 bij 1 kilometer. Tot 48 uur vooruit.
-                </p>
               </div>
 
               {/* ACTUEEL SECTION: HERO SIZE */}
