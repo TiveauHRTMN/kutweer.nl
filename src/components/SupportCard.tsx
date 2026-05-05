@@ -19,7 +19,7 @@ export default function SupportCard() {
         </div>
         
         <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-3 tracking-tight">
-          Steun Weerzone met een lekker koekje 🍪
+          Support voor een koekje 🍪
         </h3>
         
         <p className="text-sm text-text-secondary leading-relaxed mb-6 max-w-lg">
