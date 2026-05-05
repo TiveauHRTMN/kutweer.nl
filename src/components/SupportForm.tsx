@@ -9,7 +9,7 @@ export default function SupportForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [method, setMethod] = useState<"paypal" | "revolut" | "phantom">("revolut");
+  const [method, setMethod] = useState<"revolut" | "phantom">("revolut");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -26,20 +26,16 @@ export default function SupportForm() {
     }
 
     // You can replace these with your actual usernames
-    const PAYPAL_USERNAME = "weerzone"; 
     const REVOLUT_USERNAME = "hrtmnofficial"; 
     const PHANTOM_ADDRESS = "DkXHDeAjgXWKFcqpG7ziJ4D9gWEW5ifxjNfq3A6kJg1K";
 
-    // We pass the amount to the URL. The message/name can be sent to your own API later, 
-    // but for now the user can just leave a note in PayPal/Revolut.
+    // We pass the amount to the URL.
     setTimeout(() => {
       if (method === "phantom") {
         navigator.clipboard.writeText(PHANTOM_ADDRESS);
         setCopied(true);
         setLoading(false);
         setTimeout(() => setCopied(false), 3000);
-      } else if (method === "paypal") {
-        window.location.href = `https://paypal.me/${PAYPAL_USERNAME}/${finalAmount}EUR`;
       } else {
         window.location.href = `https://revolut.me/${REVOLUT_USERNAME}/${finalAmount}`;
       }
@@ -118,7 +114,7 @@ export default function SupportForm() {
         {/* BETAALMETHODE */}
         <div>
           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-3">3. Betaalmethode</label>
-          <div className="grid grid-cols-3 gap-2 mb-2">
+          <div className="grid grid-cols-2 gap-2 mb-2">
             <button
               type="button"
               onClick={() => setMethod("revolut")}
@@ -127,15 +123,6 @@ export default function SupportForm() {
               }`}
             >
               Revolut
-            </button>
-            <button
-              type="button"
-              onClick={() => setMethod("paypal")}
-              className={`py-3 rounded-xl font-bold flex items-center justify-center gap-2 border-2 transition-all ${
-                method === "paypal" ? "border-blue-500 bg-blue-50 text-blue-700 shadow-md" : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
-              }`}
-            >
-              PayPal
             </button>
             <button
               type="button"
@@ -178,7 +165,7 @@ export default function SupportForm() {
         </button>
         {method !== "phantom" && (
           <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">
-            Veilig betalen via {method === "paypal" ? "PayPal.me" : "Revolut.me"}
+            Veilig betalen via Revolut.me
           </p>
         )}
       </form>
