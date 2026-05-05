@@ -41,9 +41,8 @@ export default function SupportForm() {
         setLoading(false);
       });
     } else if (method === "revolut") {
-      // Directe navigatie
-      window.location.href = `https://revolut.me/${REVOLUT_USERNAME}/${finalAmount}`;
-      // In het geval dat de browser de navigatie blokkeert of traag is
+      // Directe navigatie naar profiel (voorkomt foutmeldingen bij bedrag-formatting)
+      window.location.href = `https://revolut.me/${REVOLUT_USERNAME}`;
       setTimeout(() => setLoading(false), 2000);
     }
   };
