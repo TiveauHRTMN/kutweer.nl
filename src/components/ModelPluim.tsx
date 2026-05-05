@@ -119,21 +119,15 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
   });
 
   return (
-    <div
-      className="rounded-[20px] p-5 space-y-4"
-      style={{
-        background: "rgba(5,10,30,0.45)",
-        border: "1px solid rgba(255,255,255,0.11)",
-        backdropFilter: "blur(14px)",
-      }}
-    >
+  return (
+    <div className="w-full space-y-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <p className="text-[9px] font-black uppercase tracking-[0.25em] text-white/35 mb-0.5">
+          <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400 mb-0.5">
             Modelonzekerheid · 3 modellen
           </p>
-          <h3 className="text-base font-black text-white leading-none">
+          <h3 className="text-base font-black text-slate-900 leading-none">
             Temperatuur Pluim — 48 uur
           </h3>
         </div>
@@ -162,23 +156,23 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
               <rect
                 key={i}
                 x={b.x} y={PT} width={b.w} height={TEMP_H + GAP + PREC_H}
-                fill="rgba(0,0,0,0.18)"
+                fill="rgba(0,0,0,0.03)"
               />
             ) : null
           )}
 
           {/* Precipitation baseline */}
-          <line x1={PL} y1={prY0} x2={W - PR} y2={prY0} stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
+          <line x1={PL} y1={prY0} x2={W - PR} y2={prY0} stroke="rgba(0,0,0,0.07)" strokeWidth="1" />
 
           {/* Temperature Y-axis gridlines + labels */}
           {yGrid.map(v => {
             const y = yTemp(v, tMin, tMax);
             return (
               <g key={v}>
-                <line x1={PL} y1={y} x2={W - PR} y2={y} stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+                <line x1={PL} y1={y} x2={W - PR} y2={y} stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
                 <text
                   x={PL - 4} y={y + 3.5}
-                  fill="rgba(255,255,255,0.30)"
+                  fill="rgba(0,0,0,0.40)"
                   fontSize="9" textAnchor="end"
                   fontFamily="ui-sans-serif, system-ui, sans-serif" fontWeight="700"
                 >
@@ -189,7 +183,7 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
           })}
 
           {/* Spread band */}
-          <path d={bandPath} fill="rgba(255,255,255,0.055)" />
+          <path d={bandPath} fill="rgba(0,0,0,0.05)" />
 
           {/* Model lines */}
           {MODELS.map(m => {
@@ -227,13 +221,13 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
             <g key={text + x}>
               <line
                 x1={x} y1={PT} x2={x} y2={prY0}
-                stroke="rgba(255,255,255,0.06)"
+                stroke="rgba(0,0,0,0.06)"
                 strokeWidth="0.5"
                 strokeDasharray="3,3"
               />
               <text
                 x={x} y={prY0 + 13}
-                fill={text === "Nu" ? "#fcd34d" : "rgba(255,255,255,0.30)"}
+                fill={text === "Nu" ? "#3b82f6" : "rgba(0,0,0,0.40)"}
                 fontSize="9" textAnchor="middle"
                 fontFamily="ui-sans-serif, system-ui, sans-serif" fontWeight="700"
               >
@@ -245,9 +239,9 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
       </div>
 
       {/* Footer legend */}
-      <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-white/25 pt-1 border-t border-white/[0.07]">
+      <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest text-slate-400 pt-3 mt-4 border-t border-slate-200">
         <div className="flex items-center gap-1.5">
-          <div className="w-3 h-2.5 rounded-sm" style={{ background: "rgba(255,255,255,0.08)" }} />
+          <div className="w-3 h-2.5 rounded-sm" style={{ background: "rgba(0,0,0,0.06)" }} />
           <span>Onzekerheidsband = spread tussen modellen</span>
         </div>
         <div className="flex items-center gap-1.5">

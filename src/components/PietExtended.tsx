@@ -36,6 +36,7 @@ import { getMainCommentary } from "@/lib/commentary";
 import { getPietDeepAnalysis } from "@/app/actions";
 import { useSession } from "@/lib/session-context";
 import ModelPluim from "@/components/ModelPluim";
+import RainRadar from "@/components/RainRadar";
 import { persistCity } from "@/lib/persist-city";
 
 
@@ -81,7 +82,7 @@ function renderInlineBold(text: string): React.ReactNode[] {
   return parts.map((p, i) => {
     if (p.startsWith("**") && p.endsWith("**")) {
       return (
-        <strong key={i} className="text-text-primary font-black">
+        <strong key={i} className="text-slate-900 font-black">
           {p.slice(2, -2)}
         </strong>
       );
@@ -435,75 +436,80 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
       )}
 
       {/* 2. PIET'S VERHAAL — DE HOOFDROL */}
-      <div className="card border-l-4 border-l-accent-cyan p-7 sm:p-9">
+      <div className="rounded-3xl bg-white/95 backdrop-blur-md p-7 sm:p-9 shadow-xl border-l-4 border-l-blue-500">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-accent-cyan/10 flex items-center justify-center text-2xl shadow-inner">💬</div>
+          <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl shadow-inner">💬</div>
           <div>
-            <h2 className="text-[11px] font-black uppercase tracking-widest text-accent-cyan mb-0">{narrativeTitle}</h2>
-            <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mt-1">{new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })} · vandaag → morgen</p>
+            <h2 className="text-[11px] font-black uppercase tracking-widest text-blue-600 mb-0">{narrativeTitle}</h2>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })} · vandaag → morgen</p>
           </div>
         </div>
         {narrative ? (
-          <div className="text-base sm:text-lg font-medium text-text-primary leading-[1.7] space-y-4">
+          <div className="text-base sm:text-lg font-medium text-slate-800 leading-[1.7] space-y-4">
             {narrative.split(/\n\n+/).map((para, i) => <p key={i}>{renderInlineBold(para)}</p>)}
-            <p className="pt-4 text-text-muted italic text-sm">{narrativeClosing}</p>
+            <p className="pt-4 text-slate-400 italic text-sm">{narrativeClosing}</p>
           </div>
         ) : (
           <div className="space-y-3 animate-pulse">
-            <div className="h-4 bg-white/20 rounded-full w-full" /><div className="h-4 bg-white/20 rounded-full w-5/6" /><div className="h-4 bg-white/20 rounded-full w-full" />
-            <p className="text-xs text-text-muted pt-2">Piet schrijft jouw dossier…</p>
+            <div className="h-4 bg-slate-200 rounded-full w-full" /><div className="h-4 bg-slate-200 rounded-full w-5/6" /><div className="h-4 bg-slate-200 rounded-full w-full" />
+            <p className="text-xs text-slate-400 pt-2">Piet schrijft jouw dossier…</p>
           </div>
         )}
       </div>
 
       {/* 3. WWS TECH GRID — HARD DATA EVIDENCE */}
       {wws && (
-        <div className="rounded-3xl overflow-hidden bg-slate-900 border border-slate-800">
-           <div className="bg-slate-800/50 px-6 py-3 flex items-center justify-between border-b border-white/5">
+        <div className="rounded-3xl overflow-hidden bg-white/95 backdrop-blur-md border border-slate-200 shadow-xl">
+           <div className="bg-slate-50 px-6 py-3 flex items-center justify-between border-b border-slate-100">
               <div className="flex items-center gap-2">
-                 <Terminal className="w-4 h-4 text-emerald-400" />
-                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Meteorologisch Dossier (1KM GRID)</span>
+                 <Terminal className="w-4 h-4 text-emerald-500" />
+                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Meteorologisch Dossier (1KM GRID)</span>
               </div>
-              <span className="text-[10px] font-bold text-text-muted uppercase">{wws.api_grid_1km.region}</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase">{wws.api_grid_1km.region}</span>
            </div>
-           <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-white/5">
+           <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
               {wws.api_grid_1km.forecast.slice(0, 3).map((f, i) => (
                  <div key={i} className="p-5">
-                    <p className="text-[10px] font-black text-text-muted uppercase mb-2">{formatTime(f.time)}</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase mb-2">{formatTime(f.time)}</p>
                     <div className="flex items-baseline gap-2">
-                       <span className="text-2xl font-black text-text-primary">{f.temp_c}°</span>
-                       <span className="text-xs text-text-muted">{f.precip_mm}mm</span>
+                       <span className="text-2xl font-black text-slate-800">{f.temp_c}°</span>
+                       <span className="text-xs text-slate-500">{f.precip_mm}mm</span>
                     </div>
                     <div className="mt-3 flex items-center justify-between">
-                       <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-500" style={{ width: `${f.confidence}%` }} />
+                       <div className="w-full bg-slate-100 h-1 rounded-full overflow-hidden">
+                          <div className="h-full bg-emerald-400" style={{ width: `${f.confidence}%` }} />
                        </div>
-                       <span className="text-[9px] font-black text-emerald-400/80 ml-3">{f.confidence}%</span>
+                       <span className="text-[9px] font-black text-emerald-600 ml-3">{f.confidence}%</span>
                     </div>
                  </div>
               ))}
            </div>
-           <div className="px-6 py-2 bg-black/20 text-[9px] font-bold text-text-muted uppercase tracking-tighter">Synthese: {wws.api_grid_1km.models_synthesized.join(" · ")}</div>
+           <div className="px-6 py-2 bg-slate-50 text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Synthese: {wws.api_grid_1km.models_synthesized.join(" · ")}</div>
         </div>
       )}
 
-      {/* 4. NU-HERO */}
-      <div className="card p-7 sm:p-9">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-text-muted block mb-1">Status nu in {city.name}</span>
+      {/* 4. NU-HERO & RADAR */}
+      <div className="rounded-3xl bg-white/95 backdrop-blur-md p-7 sm:p-9 shadow-xl">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex-1">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-1">Status nu in {city.name}</span>
             <div className="flex items-baseline gap-3 mt-2">
-              <span className="text-7xl sm:text-8xl font-black text-text-primary tracking-tighter leading-none">{weather.current.temperature}°</span>
+              <span className="text-7xl sm:text-8xl font-black text-slate-900 tracking-tighter leading-none">{weather.current.temperature}°</span>
               <span className="text-6xl sm:text-7xl drop-shadow-xl">{getWeatherEmoji(weather.current.weatherCode, weather.current.isDay)}</span>
             </div>
-            <p className="text-base sm:text-lg font-bold text-text-secondary mt-2">{getWeatherDescription(weather.current.weatherCode)}{weather.current.feelsLike !== weather.current.temperature && <span className="text-text-muted font-medium"> · voelt als {weather.current.feelsLike}°</span>}</p>
+            <p className="text-base sm:text-lg font-bold text-slate-600 mt-2">{getWeatherDescription(weather.current.weatherCode)}{weather.current.feelsLike !== weather.current.temperature && <span className="text-slate-400 font-medium"> · voelt als {weather.current.feelsLike}°</span>}</p>
+            
+            <div className="grid grid-cols-2 gap-y-4 gap-x-3 mt-6 pt-6 border-t border-slate-100">
+              <div><div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1"><Wind className="w-3 h-3" /> Wind</div><div className="text-slate-800 font-bold">{weather.current.windSpeed} km/h <span className="text-slate-400 text-xs font-medium">· {weather.current.windDirection}</span></div><div className="text-[11px] text-slate-500">{getWindBeaufort(weather.current.windSpeed).scale} bft</div></div>
+              <div><div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1"><Cloud className="w-3 h-3" /> Lucht</div><div className="text-slate-800 font-bold">{weather.current.cloudCover}%</div><div className="text-[11px] text-slate-500">vochtigheid {weather.current.humidity}%</div></div>
+              <div><div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1"><Sun className="w-3 h-3" /> Zon</div><div className="text-slate-800 font-bold">{weather.sunrise ? formatTime(weather.sunrise) : "—"}<span className="text-slate-400 text-xs"> / {weather.sunset ? formatTime(weather.sunset) : "—"}</span></div><div className="text-[11px] text-slate-500">{weather.uvIndex > 0 ? `UV ${weather.uvIndex.toFixed(0)}` : ""}</div></div>
+            </div>
           </div>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-4 gap-x-3 mt-6 pt-6 border-t border-white/10">
-          <div><div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted mb-1"><Wind className="w-3 h-3" /> Wind</div><div className="text-text-primary font-bold">{weather.current.windSpeed} km/h <span className="text-text-muted text-xs font-medium">· {weather.current.windDirection}</span></div><div className="text-[11px] text-text-muted">{getWindBeaufort(weather.current.windSpeed).scale} bft</div></div>
-          <div><div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted mb-1"><Droplet className="w-3 h-3" /> Neerslag</div><div className="text-text-primary font-bold">{weather.current.precipitation > 0 ? `${weather.current.precipitation.toFixed(1)} mm` : "Droog"}</div><div className="text-[11px] text-text-muted">{nextRain?.headline ?? ""}</div></div>
-          <div><div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted mb-1"><Cloud className="w-3 h-3" /> Lucht</div><div className="text-text-primary font-bold">{weather.current.cloudCover}%</div><div className="text-[11px] text-text-muted">vochtigheid {weather.current.humidity}%</div></div>
-          <div><div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-text-muted mb-1"><Sun className="w-3 h-3" /> Zon</div><div className="text-text-primary font-bold">{weather.sunrise ? formatTime(weather.sunrise) : "—"}<span className="text-text-muted text-xs"> / {weather.sunset ? formatTime(weather.sunset) : "—"}</span></div><div className="text-[11px] text-text-muted">{weather.uvIndex > 0 ? `UV ${weather.uvIndex.toFixed(0)}` : ""}</div></div>
+          
+          {/* Right side: Radar */}
+          <div className="flex-1 lg:pl-8 lg:border-l border-slate-100 flex flex-col justify-center">
+            <RainRadar data={weather.minutely} />
+          </div>
         </div>
       </div>
 
@@ -518,15 +524,15 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
       )}
 
       {/* 6. DAGDEEL-SAMENVATTING */}
-      <div className="card overflow-hidden p-0">
-        <div className="flex items-end justify-between px-6 pt-6 pb-4"><h3 className="text-[10px] font-black uppercase tracking-widest text-text-muted">De dagdelen</h3><span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">wall-clock</span></div>
-        <div className="divide-y divide-white/10">
+      <div className="rounded-3xl bg-white/95 backdrop-blur-md shadow-xl overflow-hidden p-0 border border-slate-200">
+        <div className="flex items-end justify-between px-6 pt-6 pb-4"><h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">De dagdelen</h3><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">wall-clock</span></div>
+        <div className="divide-y divide-slate-100">
           {dayparts.map((d, idx) => (
             <motion.div key={d.key} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: idx * 0.04 }} className="px-6 py-4 flex gap-4 items-start" style={d.empty ? { opacity: 0.4 } : undefined}>
-              <div className="flex-none w-14 text-center"><div className="text-3xl drop-shadow-lg leading-none">{d.emoji}</div><div className="text-[10px] font-black uppercase tracking-widest text-text-muted mt-1.5">{d.window}</div></div>
+              <div className="flex-none w-14 text-center"><div className="text-3xl drop-shadow-lg leading-none">{d.emoji}</div><div className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1.5">{d.window}</div></div>
               <div className="min-w-0 flex-1">
-                <div className="flex items-baseline justify-between gap-3 mb-0.5"><h4 className="text-base font-black text-text-primary tracking-tight">{d.label}</h4>{!d.empty && <span className="text-sm font-bold text-text-secondary flex-none">{d.tempLine}</span>}</div>
-                {d.empty ? <p className="text-sm text-text-muted leading-relaxed">{d.description}</p> : <><p className="text-[13px] text-text-secondary leading-relaxed font-medium">{d.description}. {d.rainLine} {d.windLine}</p>{d.hint && <p className="text-[12px] text-accent-cyan/90 font-bold mt-1">→ {d.hint}</p>}</>}
+                <div className="flex items-baseline justify-between gap-3 mb-0.5"><h4 className="text-base font-black text-slate-800 tracking-tight">{d.label}</h4>{!d.empty && <span className="text-sm font-bold text-slate-600 flex-none">{d.tempLine}</span>}</div>
+                {d.empty ? <p className="text-sm text-slate-400 leading-relaxed">{d.description}</p> : <><p className="text-[13px] text-slate-600 leading-relaxed font-medium">{d.description}. {d.rainLine} {d.windLine}</p>{d.hint && <p className="text-[12px] text-blue-600 font-bold mt-1">→ {d.hint}</p>}</>}
               </div>
             </motion.div>
           ))}
@@ -536,15 +542,17 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
       {/* 7. MODEL PLUIM */}
       <div className="space-y-3">
         <div className="flex items-end justify-between px-1">
-          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Model Pluim</h3>
-          <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">harmonie · icon · arome</span>
+          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Model Pluim</h3>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">harmonie · icon · arome</span>
         </div>
-        <ModelPluim hourly={weather.hourly} sunrise={weather.sunrise} sunset={weather.sunset} />
+        <div className="rounded-3xl bg-white/95 backdrop-blur-md shadow-xl p-6 border border-slate-200">
+           <ModelPluim hourly={weather.hourly} sunrise={weather.sunrise} sunset={weather.sunset} />
+        </div>
       </div>
 
       {/* 8. VOLLEDIGE 48-UURS UURVOORSPELLING */}
       <div className="space-y-4">
-        <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">48-uurs uur-voor-uur</h3><span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">scroll →</span></div>
+        <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">48-uurs uur-voor-uur</h3><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">scroll →</span></div>
         <div className="flex gap-3 overflow-x-auto overflow-y-hidden -mx-4 px-4 pb-4 snap-x scroll-smooth" style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-x", scrollbarWidth: "none" }}>
           {weather.hourly.slice(0, 48).map((h, i) => {
             const d = new Date(h.time);
@@ -556,14 +564,14 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
             const stormy = (h.windSpeed ?? 0) >= 50;
             return (
               <div key={h.time} className="flex flex-col items-stretch w-[88px] flex-shrink-0 snap-start">
-                {showDayLabel && <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-1.5 pl-1">{dateLabel(d)}</span>}
+                {showDayLabel && <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 pl-1">{dateLabel(d)}</span>}
                 {!showDayLabel && <span className="block h-[18px] mb-1.5" />}
-                <div className={`flex flex-col items-center p-4 rounded-2xl border ${isFirst ? "border-sky-300/70 bg-sky-200/30" : "card"}`}>
-                  <span className="text-[10px] font-black text-text-muted mb-2">{isFirst ? "NU" : formatHour(h.time)}</span>
+                <div className={`flex flex-col items-center p-4 rounded-3xl border shadow-sm ${isFirst ? "border-blue-300/70 bg-blue-50" : "bg-white/95 backdrop-blur border-slate-100"}`}>
+                  <span className="text-[10px] font-black text-slate-400 mb-2">{isFirst ? "NU" : formatHour(h.time)}</span>
                   <span className="text-3xl mb-2 drop-shadow-lg">{getWeatherEmoji(h.weatherCode, isDay)}</span>
-                  <span className="text-lg font-black text-text-primary">{h.temperature}°</span>
-                  <span className={`text-[10px] font-bold mt-1.5 ${wet ? "text-accent-cyan" : "text-text-muted"}`}>{wet ? `${h.precipitation.toFixed(1)}mm` : "—"}</span>
-                  <span className={`text-[10px] font-bold mt-0.5 ${stormy ? "text-orange-300" : "text-text-muted"}`}>{h.windSpeed} km/h</span>
+                  <span className="text-lg font-black text-slate-900">{h.temperature}°</span>
+                  <span className={`text-[10px] font-bold mt-1.5 ${wet ? "text-blue-500" : "text-slate-400"}`}>{wet ? `${h.precipitation.toFixed(1)}mm` : "—"}</span>
+                  <span className={`text-[10px] font-bold mt-0.5 ${stormy ? "text-orange-500" : "text-slate-400"}`}>{h.windSpeed} km/h</span>
                 </div>
               </div>
             );

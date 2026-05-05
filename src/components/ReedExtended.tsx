@@ -10,6 +10,7 @@ import { useSession } from "@/lib/session-context";
 import { persistCity } from "@/lib/persist-city";
 import ModelPluim from "@/components/ModelPluim";
 import ReedExtremeCharts from "@/components/ReedExtremeCharts";
+import MeteoMapsDashboard from "@/components/MeteoMapsDashboard";
 
 type Alert = { icon: React.ReactNode; title: string; detail: string; severity: "red" | "orange" };
 
@@ -246,6 +247,14 @@ export default function ReedExtended({ initialWeather, initialCity }: ReedProps)
               <span className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">CAPE · Neerslag · Wind</span>
             </div>
             <ReedExtremeCharts hourly={weather.hourly} />
+          </div>
+
+          <div className="space-y-3 mt-8">
+            <div className="flex items-end justify-between px-1">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Spatial Meteo Maps</h3>
+              <span className="text-[10px] font-bold text-accent-cyan uppercase tracking-widest">Harmonie · Icon · Arome</span>
+            </div>
+            <MeteoMapsDashboard lat={city.lat} lon={city.lon} city={city.name} />
           </div>
         </div>
       )}

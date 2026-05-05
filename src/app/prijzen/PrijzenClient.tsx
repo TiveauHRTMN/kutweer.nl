@@ -33,10 +33,31 @@ const FAQS: Array<[string, string]> = [
   ["Wat is het verschil met Buienradar of Weerplaza?", "Weerzone is reclamevrij en is afgestemd op jouw situatie: je postcode en de voorkeuren die je bij aanmelden hebt doorgegeven."],
 ];
 
+import { useEffect, useState } from "react";
+import { getSavedCity } from "@/lib/persist-city";
+import { loadWeather } from "@/lib/weatherCache";
+
 function PageShell({ children }: { children: React.ReactNode }) {
+  const [weatherCode, setWeatherCode] = useState(2);
+  const [isDay, setIsDay] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    const city = getSavedCity();
+    if (city) {
+      loadWeather(city.lat, city.lon, () => {}, (fresh) => {
+        if (!cancelled && fresh) {
+          setWeatherCode(fresh.current.weatherCode);
+          setIsDay(fresh.current.isDay);
+        }
+      }).catch(() => {});
+    }
+    return () => { cancelled = true; };
+  }, []);
+
   return (
     <div className="min-h-screen relative overflow-x-hidden">
-      <WeatherBackground weatherCode={2} isDay={true} />
+      <WeatherBackground weatherCode={weatherCode} isDay={isDay} />
       <NavBar />
       <div className="relative z-10 pt-24">
         {children}
