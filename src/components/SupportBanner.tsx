@@ -22,10 +22,10 @@ export default function SupportBanner() {
           </div>
           <div>
             <h4 className="text-sm font-black text-white leading-tight mb-0.5 uppercase tracking-tighter">
-              Groei jij mee? 🍪
+              Support voor een koekje 🍪
             </h4>
             <p className="text-[11px] text-white/60 font-medium leading-tight">
-              Samen bouwen we aan het beste weer van Nederland.
+              Groei jij mee?!
             </p>
           </div>
         </div>
