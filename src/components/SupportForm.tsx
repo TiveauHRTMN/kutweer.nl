@@ -29,17 +29,23 @@ export default function SupportForm() {
     const REVOLUT_USERNAME = "hrtmnofficial"; 
     const PHANTOM_ADDRESS = "DkXHDeAjgXWKFcqpG7ziJ4D9gWEW5ifxjNfq3A6kJg1K";
 
-    // We pass the amount to the URL.
-    setTimeout(async () => {
-      if (method === "phantom") {
-        navigator.clipboard.writeText(PHANTOM_ADDRESS);
+    // 3. Afhandelen
+    if (method === "phantom") {
+      navigator.clipboard.writeText(PHANTOM_ADDRESS).then(() => {
         setCopied(true);
         setLoading(false);
         setTimeout(() => setCopied(false), 3000);
-      } else if (method === "revolut") {
-        window.location.href = `https://revolut.me/${REVOLUT_USERNAME}/${finalAmount}`;
-      }
-    }, 500);
+      }).catch(err => {
+        console.error("Clipboard failed", err);
+        alert("Kopiëren mislukt. Het adres is: " + PHANTOM_ADDRESS);
+        setLoading(false);
+      });
+    } else if (method === "revolut") {
+      // Directe navigatie
+      window.location.href = `https://revolut.me/${REVOLUT_USERNAME}/${finalAmount}`;
+      // In het geval dat de browser de navigatie blokkeert of traag is
+      setTimeout(() => setLoading(false), 2000);
+    }
   };
 
   return (
