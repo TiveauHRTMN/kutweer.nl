@@ -9,7 +9,7 @@ export default function SupportForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [method, setMethod] = useState<"revolut" | "phantom" | "ideal">("ideal");
+  const [method, setMethod] = useState<"revolut" | "phantom" | "tikkie">("tikkie");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -38,23 +38,11 @@ export default function SupportForm() {
         setTimeout(() => setCopied(false), 3000);
       } else if (method === "revolut") {
         window.location.href = `https://revolut.me/${REVOLUT_USERNAME}/${finalAmount}`;
-      } else if (method === "ideal") {
-        try {
-          const res = await fetch("/api/support/checkout", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ amount: finalAmount, name, email, message })
-          });
-          const data = await res.json();
-          if (data.url) {
-            window.location.href = data.url;
-          } else {
-            throw new Error(data.error || "Kon betaallink niet genereren");
-          }
-        } catch (err) {
-          alert("Er ging iets mis bij het starten van de betaling: " + (err instanceof Error ? err.message : "onbekende fout"));
-          setLoading(false);
-        }
+      } else if (method === "tikkie") {
+        // Hier kun je een Bunq.me of Tikkie link neerzetten
+        const TIKKIE_LINK = "https://tikkie.me/pay/weerzone"; 
+        window.location.href = TIKKIE_LINK;
+        setLoading(false);
       }
     }, 500);
   };
@@ -134,12 +122,12 @@ export default function SupportForm() {
           <div className="grid grid-cols-3 gap-2 mb-2">
             <button
               type="button"
-              onClick={() => setMethod("ideal")}
+              onClick={() => setMethod("tikkie")}
               className={`py-3 rounded-xl font-bold flex items-center justify-center gap-2 border-2 transition-all ${
-                method === "ideal" ? "border-amber-600 bg-amber-50 text-amber-700 shadow-md" : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
+                method === "tikkie" ? "border-amber-600 bg-amber-50 text-amber-700 shadow-md" : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
               }`}
             >
-              iDEAL
+              Tikkie
             </button>
             <button
               type="button"
@@ -191,7 +179,7 @@ export default function SupportForm() {
         </button>
         {method !== "phantom" && (
             <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">
-              Veilig betalen via {method === "ideal" ? "Mollie (iDEAL)" : "Revolut.me"}
+              Veilig betalen via {method === "tikkie" ? "Tikkie" : "Revolut.me"}
             </p>
         )}
       </form>
