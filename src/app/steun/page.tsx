@@ -2,16 +2,24 @@ import { Metadata } from "next";
 import Link from "next/link";
 import SupportForm from "@/components/SupportForm";
 import WeatherBackground from "@/components/WeatherBackground";
+import { fetchWeatherData } from "@/lib/weather";
+import { DUTCH_CITIES } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Laat ons groeien - Steun Weerzone",
   description: "Draag bij aan de groei van Weerzone met een vrijwillige bijdrage.",
 };
 
-export default function SteunPage() {
+export default async function SteunPage() {
+  const amsterdam = DUTCH_CITIES.find(c => c.name === "Amsterdam") || DUTCH_CITIES[0];
+  const weather = await fetchWeatherData(amsterdam.lat, amsterdam.lon).catch(() => null);
+
   return (
     <main className="min-h-screen relative overflow-hidden flex flex-col">
-      <WeatherBackground weatherCode={0} isDay={false} />
+      <WeatherBackground 
+        weatherCode={weather?.current.weatherCode ?? 0} 
+        isDay={weather?.current.isDay ?? true} 
+      />
       <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-blue-900/20 to-transparent pointer-events-none" />
       
       <div className="relative z-10 flex-1 max-w-2xl mx-auto w-full px-4 py-12 sm:py-20 flex flex-col items-center">
