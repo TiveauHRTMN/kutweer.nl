@@ -14,16 +14,15 @@ export default async function SteunPage() {
   const amsterdam = DUTCH_CITIES.find(c => c.name === "Amsterdam") || DUTCH_CITIES[0];
   const weather = await fetchWeatherData(amsterdam.lat, amsterdam.lon).catch(() => null);
 
+  const weatherCode = weather?.current.weatherCode ?? 0;
+  const isDay = weather?.current.isDay ?? true;
+
   return (
-    <main className="min-h-screen relative overflow-hidden flex flex-col">
-      <WeatherBackground 
-        weatherCode={weather?.current.weatherCode ?? 0} 
-        isDay={weather?.current.isDay ?? true} 
-      />
-      <div className="absolute top-0 inset-x-0 h-64 bg-gradient-to-b from-blue-900/20 to-transparent pointer-events-none" />
+    <div className="min-h-screen relative overflow-x-hidden">
+      <WeatherBackground weatherCode={weatherCode} isDay={isDay} />
       
-      <div className="relative z-10 flex-1 max-w-2xl mx-auto w-full px-4 py-12 sm:py-20 flex flex-col items-center">
-        <div className="text-center mb-10">
+      <div className="relative z-10 max-w-2xl mx-auto p-4 pb-20 sm:p-6 flex flex-col items-center">
+        <div className="text-center mt-12 mb-10">
           <Link href="/" className="inline-block mb-8 text-white/50 hover:text-white font-bold text-sm tracking-widest uppercase transition-colors">
             ← Terug naar Weerzone
           </Link>
@@ -36,7 +35,13 @@ export default async function SteunPage() {
         </div>
 
         <SupportForm />
+        
+        <div className="mt-12 text-center">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-white/30">
+            Groei jij mee?!
+          </p>
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
