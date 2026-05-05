@@ -35,10 +35,10 @@ export default async function ReedPage() {
   const provinceLabel = provinceSlug ? PROVINCE_SLUG_TO_KNMI[provinceSlug] ?? provinceSlug : "Nederland";
 
   const STATUS_TONE: Record<"GREEN" | KNMISeverity, { dot: string; chip: string; chipBg: string; border: string; line: string }> = {
-    GREEN:  { dot: "bg-emerald-500", chip: "text-emerald-700",  chipBg: "bg-emerald-50",  border: "border-b-emerald-500",  line: "Alles rustig — geen actieve waarschuwingen." },
-    YELLOW: { dot: "bg-yellow-400",  chip: "text-yellow-700",   chipBg: "bg-yellow-50",   border: "border-b-yellow-400",   line: "Eén of meer code geel-waarschuwingen actief voor jouw provincie." },
-    ORANGE: { dot: "bg-orange-500",  chip: "text-orange-700",   chipBg: "bg-orange-50",   border: "border-b-orange-500",   line: "Code oranje actief — neem maatregelen." },
-    RED:    { dot: "bg-rose-600",    chip: "text-rose-700",     chipBg: "bg-rose-50",     border: "border-b-rose-600",     line: "Code rood actief — extreem weer, hoogste alarm." },
+    GREEN:  { dot: "bg-emerald-500", chip: "text-emerald-400",  chipBg: "bg-emerald-500/10",  border: "border-b-emerald-500",  line: "Alles rustig — geen actieve waarschuwingen." },
+    YELLOW: { dot: "bg-amber-400",  chip: "text-amber-400",   chipBg: "bg-amber-400/10",   border: "border-b-amber-400",   line: "Eén of meer code geel-waarschuwingen actief voor jouw provincie." },
+    ORANGE: { dot: "bg-orange-500",  chip: "text-orange-500",   chipBg: "bg-orange-500/10",   border: "border-b-orange-500",   line: "Code oranje actief — neem maatregelen." },
+    RED:    { dot: "bg-rose-500",    chip: "text-rose-500",     chipBg: "bg-rose-500/10",     border: "border-b-rose-500",     line: "Code rood actief — extreem weer, hoogste alarm." },
   };
   const tone = STATUS_TONE[topSeverity ?? "GREEN"];
   const statusLabel = topSeverity ? SEVERITY_LABEL[topSeverity] : "Code groen";
@@ -54,24 +54,24 @@ export default async function ReedPage() {
         beforeFooter={
           <div className="space-y-6">
             {/* PAGE-HEADER — direct duidelijk: status voor jouw provincie */}
-            <div className={`rounded-3xl bg-white/95 backdrop-blur p-6 sm:p-8 shadow-xl border-b-4 ${tone.border}`}>
-              <div className="flex items-center gap-2 mb-3">
+            <div className={`card !p-8 shadow-2xl border-b-4 ${tone.border}`}>
+              <div className="flex items-center gap-2 mb-4">
                 <span className={`w-3 h-3 rounded-full ${tone.dot} ${topSeverity ? "animate-pulse" : ""}`} />
-                <span className={`text-xs font-black uppercase tracking-widest ${tone.chip} px-2 py-0.5 rounded ${tone.chipBg}`}>
+                <span className={`text-[11px] font-black uppercase tracking-[0.2em] ${tone.chip} px-3 py-1 rounded-md ${tone.chipBg}`}>
                   {statusLabel}
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight mb-2">
+              <h1 className="text-3xl sm:text-4xl font-black text-text-primary leading-tight mb-3 tracking-tight">
                 Waarschuwingen voor {provinceLabel}
               </h1>
-              <p className="text-sm text-slate-600 leading-relaxed mb-5">
+              <p className="text-base text-text-secondary leading-relaxed mb-6 font-medium">
                 {tone.line}{" "}
-                <span className="text-slate-400">Wij melden alleen storm, onweer, hitte, vorst of zware neerslag — geen ruis.</span>
+                <span className="text-text-muted">Wij filteren de ruis. Je ziet hier alleen storm, onweer, hitte, vorst of zware neerslag.</span>
               </p>
-              <div className="flex items-center gap-3 flex-wrap">
-                <LocateButton compact label="Andere provincie? Gebruik GPS" className="!text-slate-900 !bg-slate-100 !border-slate-200 hover:!bg-slate-200" />
-                <span className="text-[11px] text-slate-400 font-medium">
-                  Locatie: <strong className="text-slate-700">{activeLoc.name}</strong>
+              <div className="flex items-center gap-4 flex-wrap border-t border-white/10 pt-5">
+                <LocateButton compact label="Andere provincie?" className="!text-white/80 !bg-white/5 !border-white/10 hover:!bg-white/10" />
+                <span className="text-[11px] text-text-muted font-bold uppercase tracking-widest">
+                  Live data: <strong className="text-text-secondary">{activeLoc.name}</strong>
                 </span>
               </div>
             </div>

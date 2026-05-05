@@ -9,6 +9,8 @@ import type { KNMIWarningEnriched } from "@/lib/knmi-warnings";
 import { useSession } from "@/lib/session-context";
 import { persistCity } from "@/lib/persist-city";
 import ModelPluim from "@/components/ModelPluim";
+import ReedExtremeCharts from "@/components/ReedExtremeCharts";
+import MeteoMapsDashboard from "@/components/MeteoMapsDashboard";
 
 type Alert = { icon: React.ReactNode; title: string; detail: string; severity: "red" | "orange" };
 
@@ -230,12 +232,30 @@ export default function ReedExtended({ initialWeather, initialCity }: ReedProps)
 
       {/* Model Divergentie (Harmonie, Icon, Arome) */}
       {(!loading && weather) && (
-        <div className="space-y-3 animate-fade-in mb-6">
-          <div className="flex items-end justify-between px-1">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Model Divergentie & Pluim Analyse</h3>
-            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">harmonie · icon · arome</span>
+        <div className="space-y-6 animate-fade-in mb-6">
+          <div className="space-y-3">
+            <div className="flex items-end justify-between px-1">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Model Divergentie & Pluim Analyse</h3>
+              <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">harmonie · icon · arome</span>
+            </div>
+            <ModelPluim hourly={weather.hourly} sunrise={weather.sunrise} sunset={weather.sunset} />
           </div>
-          <ModelPluim hourly={weather.hourly} sunrise={weather.sunrise} sunset={weather.sunset} />
+          
+          <div className="space-y-3">
+            <div className="flex items-end justify-between px-1">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Impact & Extreme Weer Parameters</h3>
+              <span className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">CAPE · Neerslag · Wind</span>
+            </div>
+            <ReedExtremeCharts hourly={weather.hourly} />
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-end justify-between px-1">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Spatial Meteo Maps</h3>
+              <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Icon · ECMWF</span>
+            </div>
+            <MeteoMapsDashboard lat={city.lat} lon={city.lon} city={city.name} />
+          </div>
         </div>
       )}
 
