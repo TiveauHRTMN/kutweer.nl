@@ -23,7 +23,7 @@ import AffiliateCard from "./AffiliateCard";
 import AmazonStickyBar from "./AmazonStickyBar";
 import PietInlineTip from "./PietInlineTip";
 import EmailSubscribe from "./EmailSubscribe";
-import SupportCard from "./SupportCard";
+import SupportBanner from "./SupportBanner";
 import Footer from "./Footer";
 import dynamic from "next/dynamic";
 
@@ -276,6 +276,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
     <div className="min-h-screen relative overflow-x-hidden">
       <WeatherBackground weatherCode={weather.current.weatherCode} isDay={weather.current.isDay} />
       <div className="relative z-10 max-w-2xl mx-auto p-4 pb-20 sm:p-6 space-y-6">
+        <SupportBanner />
         {topContent}
 
         <div className="flex flex-col gap-6 animate-fade-in">
@@ -369,7 +370,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
             </div>
           </Link>
 
-          <SupportCard />
           <EmailSubscribe city={city} />
           <AffiliateCard weather={weather} placeName={city.name} />
               </>)}
