@@ -37,6 +37,7 @@ import { getPietDeepAnalysis } from "@/app/actions";
 import { useSession } from "@/lib/session-context";
 import ModelPluim from "@/components/ModelPluim";
 import RainRadar from "@/components/RainRadar";
+import TemperatureHeatmap from "@/components/TemperatureHeatmap";
 import { persistCity } from "@/lib/persist-city";
 
 
@@ -539,44 +540,22 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
         </div>
       </div>
 
-      {/* 7. MODEL PLUIM */}
+      {/* 7. TEMPERATUUR HEATMAP */}
+      <div className="space-y-3">
+        <div className="flex items-end justify-between px-1">
+          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Temperatuur</h3>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">48-uurs heatmap</span>
+        </div>
+        <TemperatureHeatmap hourly={weather.hourly} sunrise={weather.sunrise} sunset={weather.sunset} />
+      </div>
+
+      {/* 8. MODEL PLUIM */}
       <div className="space-y-3">
         <div className="flex items-end justify-between px-1">
           <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Model Pluim</h3>
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">harmonie · icon · arome</span>
         </div>
-        <div className="rounded-3xl bg-white/95 backdrop-blur-md shadow-xl p-6 border border-slate-200">
-           <ModelPluim hourly={weather.hourly} sunrise={weather.sunrise} sunset={weather.sunset} />
-        </div>
-      </div>
-
-      {/* 8. VOLLEDIGE 48-UURS UURVOORSPELLING */}
-      <div className="space-y-4">
-        <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">48-uurs uur-voor-uur</h3><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">scroll →</span></div>
-        <div className="flex gap-3 overflow-x-auto overflow-y-hidden -mx-4 px-4 pb-4 snap-x scroll-smooth" style={{ WebkitOverflowScrolling: "touch", touchAction: "pan-x", scrollbarWidth: "none" }}>
-          {weather.hourly.slice(0, 48).map((h, i) => {
-            const d = new Date(h.time);
-            const isMidnight = d.getHours() === 0;
-            const isFirst = i === 0;
-            const showDayLabel = isFirst || isMidnight;
-            const isDay = isDaylightHour(h.time, weather.sunrise, weather.sunset);
-            const wet = h.precipitation > 0.05;
-            const stormy = (h.windSpeed ?? 0) >= 50;
-            return (
-              <div key={h.time} className="flex flex-col items-stretch w-[88px] flex-shrink-0 snap-start">
-                {showDayLabel && <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1.5 pl-1">{dateLabel(d)}</span>}
-                {!showDayLabel && <span className="block h-[18px] mb-1.5" />}
-                <div className={`flex flex-col items-center p-4 rounded-3xl border shadow-sm ${isFirst ? "border-blue-300/70 bg-blue-50" : "bg-white/95 backdrop-blur border-slate-100"}`}>
-                  <span className="text-[10px] font-black text-slate-400 mb-2">{isFirst ? "NU" : formatHour(h.time)}</span>
-                  <span className="text-3xl mb-2 drop-shadow-lg">{getWeatherEmoji(h.weatherCode, isDay)}</span>
-                  <span className="text-lg font-black text-slate-900">{h.temperature}°</span>
-                  <span className={`text-[10px] font-bold mt-1.5 ${wet ? "text-blue-500" : "text-slate-400"}`}>{wet ? `${h.precipitation.toFixed(1)}mm` : "—"}</span>
-                  <span className={`text-[10px] font-bold mt-0.5 ${stormy ? "text-orange-500" : "text-slate-400"}`}>{h.windSpeed} km/h</span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <ModelPluim hourly={weather.hourly} sunrise={weather.sunrise} sunset={weather.sunset} />
       </div>
 
       <div className="pt-12 border-t border-white/10 flex justify-center">
