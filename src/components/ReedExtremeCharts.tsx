@@ -6,7 +6,7 @@ interface Props {
   hourly: HourlyForecast[];
 }
 
-function BarChart({ data, maxValue, label, unit, colorFn, threshold }: { data: number[], maxValue: number, label: string, unit: string, colorFn: (val: number) => string, threshold?: number }) {
+function BarChart({ data, maxValue, label, unit, colorFn, threshold, textStyle }: { data: number[], maxValue: number, label: string, unit: string, colorFn: (val: number) => string, threshold?: number, textStyle?: { label: string, unit: string } }) {
   const W = 500;
   const H = 80;
   const PT = 10;
@@ -19,8 +19,8 @@ function BarChart({ data, maxValue, label, unit, colorFn, threshold }: { data: n
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">{label}</span>
-        <span className="text-[10px] font-bold text-white/40">{Math.max(...data).toFixed(0)} {unit} max</span>
+        <span className={`text-[10px] font-black uppercase tracking-widest ${textStyle?.label || "text-text-muted"}`}>{label}</span>
+        <span className={`text-[10px] font-bold ${textStyle?.unit || "text-white/40"}`}>{Math.max(...data).toFixed(0)} {unit} max</span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto overflow-visible">
         {/* Threshold line */}
@@ -40,7 +40,7 @@ function BarChart({ data, maxValue, label, unit, colorFn, threshold }: { data: n
   );
 }
 
-function LineChart({ data, maxValue, label, unit, colorFn, threshold }: { data: number[], maxValue: number, label: string, unit: string, colorFn: (val: number) => string, threshold?: number }) {
+function LineChart({ data, maxValue, label, unit, colorFn, threshold, textStyle }: { data: number[], maxValue: number, label: string, unit: string, colorFn: (val: number) => string, threshold?: number, textStyle?: { label: string, unit: string } }) {
   const W = 500;
   const H = 80;
   const PT = 10;
@@ -60,8 +60,8 @@ function LineChart({ data, maxValue, label, unit, colorFn, threshold }: { data: 
   return (
     <div className="w-full">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">{label}</span>
-        <span className="text-[10px] font-bold text-white/40">{Math.max(...data).toFixed(0)} {unit} max</span>
+        <span className={`text-[10px] font-black uppercase tracking-widest ${textStyle?.label || "text-text-muted"}`}>{label}</span>
+        <span className={`text-[10px] font-bold ${textStyle?.unit || "text-white/40"}`}>{Math.max(...data).toFixed(0)} {unit} max</span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto overflow-visible">
         {/* Threshold line */}
@@ -93,7 +93,7 @@ export default function ReedExtremeCharts({ hourly }: Props) {
   const windData = hours.map(h => h.windSpeed ?? 0);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 bg-black/20 p-6 rounded-2xl border border-white/5">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 bg-white/95 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-xl border border-white/60">
       
       {/* CAPE Chart */}
       <BarChart 
@@ -102,7 +102,8 @@ export default function ReedExtremeCharts({ hourly }: Props) {
         label="CAPE (Onweer-Energie)" 
         unit="J/kg" 
         threshold={1000}
-        colorFn={(val) => val > 1500 ? "#f43f5e" : val > 500 ? "#f59e0b" : "#fbbf24"} 
+        colorFn={(val) => val > 1500 ? "#e11d48" : val > 500 ? "#ea580c" : "#d97706"} 
+        textStyle={{ label: "text-slate-500", unit: "text-slate-400" }}
       />
 
       {/* Neerslag Chart */}
@@ -112,7 +113,8 @@ export default function ReedExtremeCharts({ hourly }: Props) {
         label="Neerslagintensiteit" 
         unit="mm/u" 
         threshold={5}
-        colorFn={(val) => val > 5 ? "#f43f5e" : val > 1 ? "#3b82f6" : "#60a5fa"} 
+        colorFn={(val) => val > 5 ? "#e11d48" : val > 1 ? "#2563eb" : "#3b82f6"} 
+        textStyle={{ label: "text-slate-500", unit: "text-slate-400" }}
       />
 
       {/* Windkracht Chart */}
@@ -122,7 +124,8 @@ export default function ReedExtremeCharts({ hourly }: Props) {
         label="Windkracht" 
         unit="km/h" 
         threshold={50}
-        colorFn={(val) => val > 75 ? "#f43f5e" : val > 50 ? "#f59e0b" : "#60a5fa"} 
+        colorFn={(val) => val > 75 ? "#e11d48" : val > 50 ? "#ea580c" : "#3b82f6"} 
+        textStyle={{ label: "text-slate-500", unit: "text-slate-400" }}
       />
 
     </div>
