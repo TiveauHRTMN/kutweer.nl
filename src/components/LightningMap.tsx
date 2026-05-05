@@ -14,7 +14,8 @@ export default function LightningMap({ lat, lon }: Props) {
 
   if (!mounted) return <div className="h-[450px] bg-slate-100 animate-pulse rounded-2xl" />;
 
-  const src = `https://www.lightningmaps.org/#m=oss;t=3;s=0;o=0;b=;ts=0;y=${lat};x=${lon};z=6;d=2;dl=2;dc=0;`;
+  // Windy's "radar" overlay shows real-time precipitation PLUS live lightning strikes
+  const src = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=%C2%B0C&metricWind=km%2Fh&zoom=7&overlay=radar&lat=${lat}&lon=${lon}`;
 
   return (
     <div className="rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden">
