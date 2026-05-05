@@ -81,6 +81,28 @@ export async function createFirstPayment(opts: {
   });
 }
 
+export async function createSimplePayment(opts: {
+  amountCents: number;
+  description: string;
+  redirectUrl: string;
+  webhookUrl: string;
+  metadata?: Record<string, unknown>;
+}): Promise<MolliePayment> {
+  return mollie<MolliePayment>("/payments", {
+    method: "POST",
+    body: JSON.stringify({
+      amount: {
+        currency: "EUR",
+        value: (opts.amountCents / 100).toFixed(2),
+      },
+      description: opts.description,
+      redirectUrl: opts.redirectUrl,
+      webhookUrl: opts.webhookUrl,
+      metadata: opts.metadata ?? {},
+    }),
+  });
+}
+
 // ------------------------------------------------------------
 // Fetch payment (for webhook verification)
 // ------------------------------------------------------------

@@ -9,7 +9,7 @@ export default function SupportForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [method, setMethod] = useState<"revolut" | "phantom">("revolut");
+  const [method, setMethod] = useState<"revolut" | "phantom" | "ideal">("ideal");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -30,14 +30,31 @@ export default function SupportForm() {
     const PHANTOM_ADDRESS = "DkXHDeAjgXWKFcqpG7ziJ4D9gWEW5ifxjNfq3A6kJg1K";
 
     // We pass the amount to the URL.
-    setTimeout(() => {
+    setTimeout(async () => {
       if (method === "phantom") {
         navigator.clipboard.writeText(PHANTOM_ADDRESS);
         setCopied(true);
         setLoading(false);
         setTimeout(() => setCopied(false), 3000);
-      } else {
+      } else if (method === "revolut") {
         window.location.href = `https://revolut.me/${REVOLUT_USERNAME}/${finalAmount}`;
+      } else if (method === "ideal") {
+        try {
+          const res = await fetch("/api/support/checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount: finalAmount, name, email, message })
+          });
+          const data = await res.json();
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            throw new Error(data.error || "Kon betaallink niet genereren");
+          }
+        } catch (err) {
+          alert("Er ging iets mis bij het starten van de betaling: " + (err instanceof Error ? err.message : "onbekende fout"));
+          setLoading(false);
+        }
       }
     }, 500);
   };
@@ -114,7 +131,16 @@ export default function SupportForm() {
         {/* BETAALMETHODE */}
         <div>
           <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-3">3. Betaalmethode</label>
-          <div className="grid grid-cols-2 gap-2 mb-2">
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            <button
+              type="button"
+              onClick={() => setMethod("ideal")}
+              className={`py-3 rounded-xl font-bold flex items-center justify-center gap-2 border-2 transition-all ${
+                method === "ideal" ? "border-amber-600 bg-amber-50 text-amber-700 shadow-md" : "border-slate-100 bg-white text-slate-500 hover:border-slate-200"
+              }`}
+            >
+              iDEAL
+            </button>
             <button
               type="button"
               onClick={() => setMethod("revolut")}
@@ -164,9 +190,9 @@ export default function SupportForm() {
           )}
         </button>
         {method !== "phantom" && (
-          <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">
-            Veilig betalen via Revolut.me
-          </p>
+            <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-4">
+              Veilig betalen via {method === "ideal" ? "Mollie (iDEAL)" : "Revolut.me"}
+            </p>
         )}
       </form>
     </div>
