@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Props {
   weatherCode: number;
@@ -38,25 +38,27 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
   const showClouds = weatherCode >= 1 && weatherCode <= 86;
   const showRain =
     (weatherCode >= 51 && weatherCode <= 67) ||
-    (weatherCode >= 80 && weatherCode <= 82);
+    (weatherCode >= 80 && weatherCode <= 82) ||
+    weatherCode >= 95;
   const showHeavyRain = weatherCode >= 63 && weatherCode <= 67;
   const showSnow = weatherCode >= 71 && weatherCode <= 77;
   const showStorm = weatherCode >= 95;
   const showSun = weatherCode === 0 && isDay;
-  const showStars = !isDay;
+  const showMoon = weatherCode <= 2 && !isDay; 
+  const showStars = !isDay && weatherCode <= 2; 
 
   const cloudCount = weatherCode <= 2 ? 2 : weatherCode === 3 ? 4 : 3;
 
   const rainDrops = useMemo(
     () =>
-      Array.from({ length: showHeavyRain ? 35 : 20 }, (_, i) => ({
+      Array.from({ length: showHeavyRain || showStorm ? 40 : 20 }, (_, i) => ({
         id: i,
         left: (i * 4.85) % 100,
         delay: (i * 0.12) % 2.5,
-        duration: 0.5 + (i * 0.02) % 0.5,
+        duration: showStorm ? 0.4 + (i * 0.01) % 0.3 : 0.5 + (i * 0.02) % 0.5,
         size: 15 + (i * 4) % 15,
       })),
-    [showHeavyRain]
+    [showHeavyRain, showStorm]
   );
 
   const snowFlakes = useMemo(
@@ -73,12 +75,12 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
 
   const stars = useMemo(
     () =>
-      Array.from({ length: 25 }, (_, i) => ({
+      Array.from({ length: 50 }, (_, i) => ({
         id: i,
-        left: (i * 3.9) % 100,
-        top: (i * 11.3) % 60,
+        left: (i * 7.9) % 100,
+        top: (i * 11.3) % 55,
         delay: (i * 0.25) % 3,
-        size: 2 + (i % 2),
+        size: 2.5 + (i % 3),
       })),
     []
   );
@@ -87,77 +89,168 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
     <>
       <motion.div
         className="fixed inset-0 z-0"
-        style={{ background: `linear-gradient(170deg, ${theme.bg1} 0%, ${theme.bg2} 100%)` }}
+        initial={false}
         animate={{ background: `linear-gradient(170deg, ${theme.bg1} 0%, ${theme.bg2} 100%)` }}
-        transition={{ duration: 2, ease: "easeInOut" }}
+        transition={{ duration: 2.5, ease: "easeInOut" }}
       />
 
       <div className="fixed inset-0 z-[1] overflow-hidden pointer-events-none">
-        {showSun && (
-          <div className="sun-glow">
-            <div className="sun-core" />
-          </div>
-        )}
+        <AnimatePresence>
+          {showSun && (
+            <motion.div 
+              key="sun"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 2, ease: "easeOut" }}
+              className="sun-glow"
+            >
+              <div className="sun-core" />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        {showStars &&
-          mounted &&
-          stars.map((s) => (
-            <div
-              key={s.id}
-              className="star"
-              style={{
-                left: `${s.left}%`,
-                top: `${s.top}%`,
-                width: s.size,
-                height: s.size,
-                animationDelay: `${s.delay}s`,
+        <AnimatePresence>
+          {showMoon && (
+            <motion.div 
+              key="moon"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 2.5, ease: "easeOut" }}
+              className="moon-glow"
+              style={{ top: "10%" }} 
+            >
+              <div className="moon-core" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showStars && mounted && (
+            <motion.div
+              key="stars"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 2 }}
+            >
+              {stars.map((s) => (
+                <motion.div
+                  key={s.id}
+                  className="absolute rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                  style={{
+                    left: `${s.left}%`,
+                    top: `${s.top}%`,
+                    width: s.size,
+                    height: s.size,
+                  }}
+                  animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.4, 1] }}
+                  transition={{
+                    duration: 2 + (s.id % 2),
+                    repeat: Infinity,
+                    delay: s.delay,
+                    ease: "easeInOut",
+                  }}
+                />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showClouds && mounted && (
+            <motion.div 
+              key="clouds"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 2 }}
+            >
+              {Array.from({ length: cloudCount }, (_, i) => (
+                <div
+                  key={i}
+                  className={`cloud-shape cloud-${i + 1}`}
+                  style={{
+                    opacity: weatherCode <= 2 ? 0.2 : weatherCode === 3 ? 0.35 : 0.25,
+                  }}
+                />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showRain && mounted && (
+            <motion.div
+              key="rain"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+            >
+              {rainDrops.map((d) => (
+                <div
+                  key={d.id}
+                  className="rain-drop"
+                  style={{
+                    left: `${d.left}%`,
+                    animationDelay: `${d.delay}s`,
+                    animationDuration: `${d.duration}s`,
+                    height: d.size,
+                    background: showStorm ? "linear-gradient(transparent, rgba(200, 220, 255, 0.8))" : undefined
+                  }}
+                />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showSnow && mounted && (
+            <motion.div
+              key="snow"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 2 }}
+            >
+              {snowFlakes.map((s) => (
+                <div
+                  key={s.id}
+                  className="snow-flake"
+                  style={{
+                    left: `${s.left}%`,
+                    animationDelay: `${s.delay}s`,
+                    animationDuration: `${s.duration}s`,
+                    width: s.size,
+                    height: s.size,
+                  }}
+                />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showStorm && (
+            <motion.div
+              key="lightning"
+              className="absolute inset-0 bg-white z-50 mix-blend-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ 
+                opacity: [0, 1, 0, 0.8, 0, 0, 0, 0, 0, 0] 
+              }}
+              transition={{ 
+                duration: 6,
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "linear",
+                times: [0, 0.02, 0.04, 0.06, 0.1, 0.3, 0.5, 0.7, 0.9, 1] 
               }}
             />
-          ))}
-
-        {showClouds &&
-          Array.from({ length: cloudCount }, (_, i) => (
-            <div
-              key={i}
-              className={`cloud-shape cloud-${i + 1}`}
-              style={{
-                opacity: weatherCode <= 2 ? 0.2 : weatherCode === 3 ? 0.35 : 0.25,
-              }}
-            />
-          ))}
-
-        {(showRain || showStorm) &&
-          mounted &&
-          rainDrops.map((d) => (
-            <div
-              key={d.id}
-              className="rain-drop"
-              style={{
-                left: `${d.left}%`,
-                animationDelay: `${d.delay}s`,
-                animationDuration: `${d.duration}s`,
-                height: d.size,
-              }}
-            />
-          ))}
-
-        {showSnow &&
-          mounted &&
-          snowFlakes.map((s) => (
-            <div
-              key={s.id}
-              className="snow-flake"
-              style={{
-                left: `${s.left}%`,
-                animationDelay: `${s.delay}s`,
-                animationDuration: `${s.duration}s`,
-                width: s.size,
-                height: s.size,
-              }}
-            />
-          ))}
-
-        {showStorm && <div className="lightning-flash" />}
+          )}
+        </AnimatePresence>
       </div>
     </>
   );
