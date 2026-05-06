@@ -136,28 +136,6 @@ textarea::placeholder {
 }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); background-clip: padding-box; }
 
-/* Card — cloud style */
-.card {
-  background: var(--bg-card);
-  border: 1px solid var(--card-border);
-  border-radius: var(--card-radius);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.06),
-    0 8px 32px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  color: var(--text-primary);
-  transition: all 0.3s ease;
-}
-.card:hover {
-  background: var(--bg-card-hover);
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    0 12px 40px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
-}
-
 /* Nav item — zit IN een .card container, zelf geen glass */
 .nav-item {
   display: flex;
@@ -691,3 +669,58 @@ textarea::placeholder {
 .badge.sun   { background: #fff5c2; color: #8a6100; }
 .badge.ok    { background: var(--wz-success-bg); color: var(--wz-success); }
 .badge.warn  { background: var(--wz-warning-bg); color: var(--wz-warning); }
+
+/* ============================================================
+   EXTRA NUCLEAR PREMIUM OVERRIDE - FORCED AT END OF FILE
+   ============================================================ */
+.card {
+  position: relative !important;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(240, 248, 255, 0.90) 100%
+  ) !important;
+  border: 2px solid rgba(255, 255, 255, 0.9) !important;
+  border-radius: 32px !important; /* Slightly more rounded for premium feel */
+  backdrop-filter: blur(30px) !important;
+  -webkit-backdrop-filter: blur(30px) !important;
+  box-shadow:
+    0 10px 30px -10px rgba(0, 0, 0, 0.1),
+    0 20px 60px -15px rgba(0, 0, 0, 0.05),
+    inset 0 1px 2px rgba(255, 255, 255, 1) !important;
+  transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1) !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+}
+
+.card::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -150% !important;
+  width: 80% !important;
+  height: 100% !important;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0) 100%
+  ) !important;
+  transform: skewX(-25deg) !important;
+  z-index: 10 !important; /* Above background */
+  pointer-events: none !important;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.03) !important;
+  box-shadow:
+    0 20px 40px -15px rgba(0, 0, 0, 0.15),
+    0 40px 80px -20px rgba(0, 0, 0, 0.1),
+    inset 0 1px 3px rgba(255, 255, 255, 1) !important;
+  border-color: #ffffff !important;
+}
+
+.card:hover::before {
+  left: 200% !important;
+  transition: left 0.8s ease-in-out !important;
+}
