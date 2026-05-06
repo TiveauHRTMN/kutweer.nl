@@ -17,12 +17,16 @@ export default function PersonaCard({ tier, onSelect, compact = false, highlight
 
   return (
     <div
-      className={`relative rounded-2xl p-5 sm:p-6 border transition-all ${
-        highlighted
-          ? "bg-white border-white/80 shadow-2xl scale-[1.02]"
-          : "bg-white/80 border-white/50 hover:bg-white hover:shadow-xl"
-      }`}
-      style={highlighted ? { outline: `2px solid ${p.color}`, outlineOffset: "4px" } : undefined}
+      className="relative p-5 sm:p-6"
+      style={{
+        borderRadius: 20,
+        background: "#ffffff",
+        border: "none",
+        boxShadow: highlighted
+          ? "0 4px 14px rgba(0,0,0,0.09), 0 16px 44px rgba(0,0,0,0.11), 0 36px 72px rgba(0,0,0,0.07)"
+          : "0 2px 8px rgba(0,0,0,0.07), 0 8px 28px rgba(0,0,0,0.09), 0 24px 56px rgba(0,0,0,0.06)",
+        transition: "transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s ease, background 0.22s ease",
+      }}
     >
       {/* Kleurbalk bovenaan */}
       <div

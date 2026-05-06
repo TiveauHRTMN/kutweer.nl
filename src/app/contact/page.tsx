@@ -3,6 +3,8 @@ import Link from "next/link";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import ContactForm from "@/components/ContactForm";
 import { schemaContactPage, schemaBreadcrumb, schemaLd } from "@/lib/schema";
+import { DUTCH_CITIES } from "@/lib/types";
+import { fetchWeatherData } from "@/lib/weather";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -11,7 +13,10 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://weerzone.nl/contact" },
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const debilt = DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
+  const initialWeather = await fetchWeatherData(debilt.lat, debilt.lon).catch(() => undefined);
+
   return (
     <main>
       <script {...schemaLd([
@@ -23,9 +28,11 @@ export default function ContactPage() {
       ])} />
       <WeatherDashboard
         hideWeatherInfo
+        initialCity={debilt}
+        initialWeather={initialWeather}
         beforeFooter={
           <div className="space-y-6">
-            <div className="rounded-3xl bg-white/95 backdrop-blur p-6 sm:p-8 shadow-xl border-b-4 border-b-sky-500">
+            <div className="card p-6 sm:p-8">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-3 h-3 rounded-full bg-sky-500" />
                 <span className="text-xs font-black uppercase tracking-widest text-sky-600">
@@ -40,7 +47,7 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="rounded-3xl bg-white/95 backdrop-blur p-6 sm:p-8 shadow-xl border border-white/70">
+            <div className="card p-6 sm:p-8">
               <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">
                 E-mail
               </p>
@@ -55,12 +62,12 @@ export default function ContactPage() {
               </p>
             </div>
 
-            <div className="rounded-3xl bg-white/95 backdrop-blur p-6 sm:p-8 shadow-xl border border-white/70">
+            <div className="card p-6 sm:p-8">
               <h2 className="text-xl font-black text-slate-900 mb-3">Direct een bericht sturen</h2>
               <ContactForm />
             </div>
 
-            <div className="rounded-3xl bg-white/95 backdrop-blur p-6 shadow-xl border border-white/70">
+            <div className="card p-6">
               <p className="text-sm text-slate-500 leading-relaxed">
                 Door contact op te nemen ga je akkoord met verwerking van je bericht zoals beschreven in de{" "}
                 <Link href="/privacy" className="text-sky-600 hover:underline font-semibold">

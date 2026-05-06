@@ -127,7 +127,7 @@ export default async function MijnWeerPage() {
           hideWeatherInfo={true}
           topContent={
             <div className="space-y-6">
-              <div className="rounded-3xl bg-white/95 backdrop-blur p-6 sm:p-8 shadow-xl border-b-4 border-b-emerald-500">
+              <div className="card p-6 sm:p-8">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-3 h-3 rounded-full bg-emerald-500" />
                   <span className="text-xs font-black uppercase tracking-widest text-emerald-600">

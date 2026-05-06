@@ -10,8 +10,8 @@ import LocatieButton from "@/components/wz/LocatieButton";
 import { useSession } from "@/lib/session-context";
 import type { PersonaTier } from "@/lib/personas";
 
-const LOGO_H = 24;
-const BTN_H = 36;
+const LOGO_H = 26;
+const BTN_H = 38;
 
 const TIER_COLOR: Record<string, string> = {
   piet:    "#10b981",
@@ -51,32 +51,23 @@ function LogoBadge({ tier, isFounder }: { tier: PersonaTier | null; isFounder: b
 }
 
 const LINKS = [
-  { key: "home",    label: "Home",           href: "/homepage" },
   { key: "piet",    label: "Mijn Weer",      href: "/mijnweer" },
   { key: "reed",    label: "Waarschuwingen", href: "/waarschuwingen" },
   { key: "prijzen", label: "Prijzen",        href: "/prijzen" },
-  { key: "about",   label: "Over",           href: "/over" },
+  { key: "over",    label: "Over",           href: "/over" },
   { key: "contact", label: "Contact",        href: "/contact" },
 ];
 
 function isActive(pathname: string, key: string) {
-  if (key === "home")    return pathname === "/" || pathname.startsWith("/homepage");
   if (key === "piet")    return pathname.startsWith("/mijnweer") || pathname.startsWith("/jouwweer");
   if (key === "reed")    return pathname.startsWith("/waarschuwingen");
   if (key === "prijzen") return pathname.startsWith("/prijzen");
-  if (key === "about")   return pathname.startsWith("/over");
+  if (key === "over")    return pathname.startsWith("/over");
   if (key === "contact") return pathname.startsWith("/contact");
   return false;
 }
 
 const HIDDEN_PATHS = ["/app/login", "/app/signup", "/app/reset", "/app/verify", "/auth"];
-
-const GLASS_BTN = {
-  background: "rgba(255,255,255,0.6)",
-  border: "1px solid rgba(255,255,255,0.8)",
-  color: "var(--text-primary)",
-  boxShadow: "0 1px 3px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
-} as const;
 
 export default function GlobalNav() {
   const pathname = usePathname() ?? "/";
@@ -93,25 +84,25 @@ export default function GlobalNav() {
     <header
       className="sticky top-0 z-50"
       style={{
-        background: "rgba(255,255,255,0.88)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        border: "1px solid rgba(255,255,255,0.5)",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.7)",
-        color: "var(--text-primary)",
+        background: "linear-gradient(160deg, #ffe874 0%, #ffd21a 50%, #e8ba00 100%)",
+        borderBottom: "1px solid rgba(160,110,0,0.22)",
+        boxShadow:
+          "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.07)",
+        color: "#0f1a2c",
       }}
     >
       <NLPulse />
-      {/* Desktop */}
-      <div className="hidden md:flex items-center max-w-[1200px] mx-auto px-5 py-2" style={{ gap: 12 }}>
 
-        <Link href="/homepage" aria-label="Weerzone home">
+      {/* Desktop */}
+      <div className="hidden md:flex items-center max-w-[1200px] mx-auto px-6 py-2.5" style={{ gap: 16 }}>
+
+        <Link href="/homepage" aria-label="Weerzone home" className="shrink-0 transition-opacity hover:opacity-80">
           <LogoBadge tier={tier} isFounder={isFounder} />
         </Link>
 
-        <div className="w-px self-stretch my-1.5" style={{ background: "rgba(0,0,0,0.08)" }} />
+        <div className="w-px self-stretch my-1" style={{ background: "rgba(0,0,0,0.10)" }} />
 
-        <nav className="flex items-center gap-0.5 flex-1">
+        <nav className="flex items-center gap-1 flex-1">
           <LocatieButton active={pathname.startsWith("/weer")} />
           {LINKS.map(l => {
             const active = isActive(pathname, l.key);
@@ -119,13 +110,14 @@ export default function GlobalNav() {
               <Link
                 key={l.key}
                 href={l.href}
-                className="px-3 py-1.5 rounded-2xl text-[11px] font-black uppercase transition-all whitespace-nowrap"
+                className="px-3.5 py-2 rounded-xl text-[11px] font-black uppercase transition-all whitespace-nowrap"
                 style={{
-                  letterSpacing: "0.08em",
-                  color: active ? "var(--text-primary)" : "rgba(15,26,44,0.5)",
-                  background: active ? "rgba(255,255,255,0.7)" : "transparent",
-                  border: active ? "1px solid rgba(255,255,255,0.9)" : "1px solid transparent",
-                  boxShadow: active ? "0 1px 4px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)" : "none",
+                  letterSpacing: "0.07em",
+                  color: active ? "#0f1a2c" : "rgba(15,26,44,0.50)",
+                  background: active ? "rgba(0,0,0,0.11)" : "transparent",
+                  boxShadow: active
+                    ? "inset 0 1px 2px rgba(0,0,0,0.08), inset 0 -1px 0 rgba(255,255,255,0.4)"
+                    : "none",
                 }}
               >
                 {l.label}
@@ -139,10 +131,16 @@ export default function GlobalNav() {
             <>
               <Link
                 href="/app"
-                className="inline-flex items-center px-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all hover:brightness-95"
-                style={{ height: BTN_H, ...GLASS_BTN }}
+                className="inline-flex items-center px-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all hover:brightness-95"
+                style={{
+                  height: BTN_H,
+                  background: "rgba(0,0,0,0.08)",
+                  border: "1px solid rgba(0,0,0,0.10)",
+                  color: "#0f1a2c",
+                  letterSpacing: "0.07em",
+                }}
               >
-                Mijn Weerzone
+                Dashboard
               </Link>
               <button
                 onClick={async () => {
@@ -150,8 +148,13 @@ export default function GlobalNav() {
                   await createSupabaseBrowserClient().auth.signOut();
                   window.location.href = "/";
                 }}
-                className="inline-flex items-center px-4 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white transition-opacity hover:opacity-90"
-                style={{ background: "var(--wz-brand)", height: BTN_H }}
+                className="inline-flex items-center px-4 rounded-xl text-[11px] font-black uppercase tracking-widest text-white transition-all hover:brightness-110"
+                style={{
+                  background: "#0f1a2c",
+                  height: BTN_H,
+                  letterSpacing: "0.07em",
+                  boxShadow: "0 2px 8px rgba(15,26,44,0.25), inset 0 1px 0 rgba(255,255,255,0.08)",
+                }}
               >
                 Log uit
               </button>
@@ -160,15 +163,26 @@ export default function GlobalNav() {
             <>
               <Link
                 href="/app/login"
-                className="inline-flex items-center px-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all hover:brightness-95"
-                style={{ height: BTN_H, ...GLASS_BTN }}
+                className="inline-flex items-center px-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all hover:brightness-95"
+                style={{
+                  height: BTN_H,
+                  background: "rgba(0,0,0,0.08)",
+                  border: "1px solid rgba(0,0,0,0.10)",
+                  color: "#0f1a2c",
+                  letterSpacing: "0.07em",
+                }}
               >
                 Inloggen
               </Link>
               <Link
                 href="/app/signup"
-                className="inline-flex items-center px-4 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white transition-opacity hover:opacity-90"
-                style={{ background: "var(--wz-brand)", height: BTN_H }}
+                className="inline-flex items-center px-5 rounded-xl text-[11px] font-black uppercase tracking-widest text-white transition-all hover:brightness-110"
+                style={{
+                  background: "#0f1a2c",
+                  height: BTN_H,
+                  letterSpacing: "0.07em",
+                  boxShadow: "0 2px 8px rgba(15,26,44,0.25), inset 0 1px 0 rgba(255,255,255,0.08)",
+                }}
               >
                 Aanmelden
               </Link>
@@ -178,7 +192,7 @@ export default function GlobalNav() {
       </div>
 
       {/* Mobile */}
-      <div className="md:hidden flex items-center justify-between gap-2 px-4 py-2.5">
+      <div className="md:hidden flex items-center justify-between gap-2 px-4 py-3">
         <Link href="/homepage" aria-label="Weerzone home">
           <LogoBadge tier={tier} isFounder={isFounder} />
         </Link>
@@ -189,10 +203,11 @@ export default function GlobalNav() {
             onClick={() => setOpen(v => !v)}
             aria-label="Menu"
             aria-expanded={open}
-            className="w-9 h-9 flex items-center justify-center rounded-2xl transition-all"
-            style={open
-              ? { background: "rgba(0,0,0,0.06)", border: "1px solid rgba(0,0,0,0.08)", color: "var(--text-primary)" }
-              : { ...GLASS_BTN }
+            className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
+            style={
+              open
+                ? { background: "rgba(0,0,0,0.09)", border: "1px solid rgba(0,0,0,0.10)", color: "#0f1a2c" }
+                : { background: "rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.10)", color: "#0f1a2c" }
             }
           >
             {open ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -203,10 +218,10 @@ export default function GlobalNav() {
       {/* Mobile menu */}
       {open && (
         <div
-          className="md:hidden px-4 pb-4 pt-2"
-          style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}
+          className="md:hidden px-4 pb-5 pt-2"
+          style={{ borderTop: "1px solid rgba(0,0,0,0.08)" }}
         >
-          <nav className="grid gap-0.5 mb-3">
+          <nav className="grid gap-0.5 mb-4">
             <LocatieButton active={pathname.startsWith("/weer")} />
             {LINKS.map(l => {
               const active = isActive(pathname, l.key);
@@ -215,12 +230,14 @@ export default function GlobalNav() {
                   key={l.key}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="px-3.5 py-3 rounded-2xl text-[12px] font-black uppercase tracking-widest transition-all"
+                  className="px-4 py-3 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all"
                   style={{
-                    color: active ? "var(--text-primary)" : "rgba(15,26,44,0.55)",
-                    background: active ? "rgba(255,255,255,0.7)" : "transparent",
-                    border: active ? "1px solid rgba(255,255,255,0.9)" : "1px solid transparent",
-                    boxShadow: active ? "0 1px 4px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)" : "none",
+                    color: active ? "#0f1a2c" : "rgba(15,26,44,0.50)",
+                    background: active ? "rgba(0,0,0,0.09)" : "transparent",
+                    boxShadow: active
+                      ? "inset 0 1px 2px rgba(0,0,0,0.06), inset 0 -1px 0 rgba(255,255,255,0.35)"
+                      : "none",
+                    letterSpacing: "0.07em",
                   }}
                 >
                   {l.label}
@@ -228,19 +245,21 @@ export default function GlobalNav() {
               );
             })}
           </nav>
-          <div
-            className="grid grid-cols-2 gap-2 pt-3"
-            style={{ borderTop: "1px solid rgba(0,0,0,0.06)" }}
-          >
+          <div className="grid grid-cols-2 gap-2 pt-3" style={{ borderTop: "1px solid rgba(0,0,0,0.08)" }}>
             {user ? (
               <>
                 <Link
                   href="/app"
                   onClick={() => setOpen(false)}
-                  className="py-2.5 rounded-2xl text-center text-[11px] font-black uppercase tracking-widest transition-all hover:brightness-95"
-                  style={GLASS_BTN}
+                  className="py-3 rounded-xl text-center text-[11px] font-black uppercase tracking-widest transition-all"
+                  style={{
+                    background: "rgba(0,0,0,0.08)",
+                    border: "1px solid rgba(0,0,0,0.10)",
+                    color: "#0f1a2c",
+                    letterSpacing: "0.07em",
+                  }}
                 >
-                  Mijn Weerzone
+                  Dashboard
                 </Link>
                 <button
                   onClick={async () => {
@@ -249,8 +268,12 @@ export default function GlobalNav() {
                     await createSupabaseBrowserClient().auth.signOut();
                     window.location.href = "/";
                   }}
-                  className="py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest text-white"
-                  style={{ background: "var(--wz-brand)" }}
+                  className="py-3 rounded-xl text-[11px] font-black uppercase tracking-widest text-white"
+                  style={{
+                    background: "#0f1a2c",
+                    letterSpacing: "0.07em",
+                    boxShadow: "0 2px 8px rgba(15,26,44,0.25)",
+                  }}
                 >
                   Log uit
                 </button>
@@ -260,16 +283,25 @@ export default function GlobalNav() {
                 <Link
                   href="/app/login"
                   onClick={() => setOpen(false)}
-                  className="py-2.5 rounded-2xl text-center text-[11px] font-black uppercase tracking-widest transition-all hover:brightness-95"
-                  style={GLASS_BTN}
+                  className="py-3 rounded-xl text-center text-[11px] font-black uppercase tracking-widest transition-all"
+                  style={{
+                    background: "rgba(0,0,0,0.08)",
+                    border: "1px solid rgba(0,0,0,0.10)",
+                    color: "#0f1a2c",
+                    letterSpacing: "0.07em",
+                  }}
                 >
                   Inloggen
                 </Link>
                 <Link
                   href="/app/signup"
                   onClick={() => setOpen(false)}
-                  className="py-2.5 rounded-2xl text-center text-[11px] font-black uppercase tracking-widest text-white"
-                  style={{ background: "var(--wz-brand)" }}
+                  className="py-3 rounded-xl text-center text-[11px] font-black uppercase tracking-widest text-white"
+                  style={{
+                    background: "#0f1a2c",
+                    letterSpacing: "0.07em",
+                    boxShadow: "0 2px 8px rgba(15,26,44,0.25)",
+                  }}
                 >
                   Aanmelden
                 </Link>

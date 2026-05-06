@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PERSONAS, PERSONA_ORDER, formatPrice, daysUntilLaunch, FOUNDER_SLOTS } from "@/lib/personas";
+import HomePitchCTA from "./HomePitchCTA";
 
 /**
  * Korte pitch onder de homepage-dashboard. De dashboard is de demo,
@@ -15,7 +16,15 @@ export default function HomePitch() {
 
       {/* Lead */}
       <div className="text-center mb-10">
-        <h2 className="text-3xl sm:text-5xl font-black text-white leading-[1.05] mb-5 drop-shadow">
+        <h2
+          className="text-3xl sm:text-5xl font-black leading-[1.05] mb-5"
+          style={{
+            background: "linear-gradient(135deg, #ffe874 0%, #ffd21a 40%, #d1d5db 68%, #64748b 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          }}
+        >
           Weer voor keuzes.<br />
           Niet voor eindeloos scrollen.
         </h2>
@@ -35,8 +44,7 @@ export default function HomePitch() {
             <Link
               key={tier}
               href={`/app/signup?tier=${tier}`}
-              className="group rounded-3xl bg-white/95 backdrop-blur p-6 sm:p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all border-b-4"
-              style={{ borderBottomColor: p.color }}
+              className="card group p-6 sm:p-8"
             >
               <div className="flex items-center gap-2 mb-4">
                 <span className="w-3 h-3 rounded-full" style={{ background: p.color }} />
@@ -69,12 +77,7 @@ export default function HomePitch() {
 
       {/* CTA */}
       <div className="text-center">
-        <Link
-          href="/prijzen"
-          className="inline-block px-8 py-4 rounded-full bg-white text-slate-900 font-black text-sm shadow-2xl hover:bg-accent-orange hover:text-white transition-all transform hover:scale-105"
-        >
-          Vergelijk de weerhulpen →
-        </Link>
+        <HomePitchCTA />
       </div>
     </section>
   );

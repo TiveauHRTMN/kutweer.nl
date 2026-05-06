@@ -240,7 +240,7 @@ export default function AffiliateCard({ weather, placeName }: Props) {
               target="_blank"
               rel="noopener noreferrer sponsored"
               onClick={() => handleProductClick(deal.id)}
-              className="group flex flex-col p-3 rounded-2xl bg-white border border-black/5 hover:border-orange-500/30 transition-all hover:shadow-lg"
+              className="card group flex flex-col p-3"
             >
               <div className="flex justify-between items-start mb-2">
                 <span className="bg-red-100 text-red-600 text-[10px] font-black px-1.5 py-0.5 rounded shadow-sm">DEAL</span>

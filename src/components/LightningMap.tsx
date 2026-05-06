@@ -18,7 +18,7 @@ export default function LightningMap({ lat, lon }: Props) {
   const src = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=%C2%B0C&metricWind=km%2Fh&zoom=7&overlay=radar&lat=${lat}&lon=${lon}`;
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden">
+    <div className="card overflow-hidden">
       <div className="px-5 pt-5 pb-3 flex items-center justify-between">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">

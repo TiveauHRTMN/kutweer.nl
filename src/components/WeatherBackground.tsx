@@ -91,7 +91,7 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
         className="fixed inset-0 z-0"
         initial={false}
         animate={{ background: `linear-gradient(170deg, ${theme.bg1} 0%, ${theme.bg2} 100%)` }}
-        transition={{ duration: 2.5, ease: "easeInOut" }}
+        transition={{ duration: 1.2, ease: "easeInOut" }}
       />
 
       <div className="fixed inset-0 z-[1] overflow-hidden pointer-events-none">
@@ -145,9 +145,9 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
                     width: s.size,
                     height: s.size,
                   }}
-                  animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.4, 1] }}
+                  animate={{ opacity: [0.4, 0.9, 0.4], scale: [1, 1.15, 1] }}
                   transition={{
-                    duration: 2 + (s.id % 2),
+                    duration: 3 + (s.id % 2),
                     repeat: Infinity,
                     delay: s.delay,
                     ease: "easeInOut",

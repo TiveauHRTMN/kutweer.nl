@@ -119,7 +119,7 @@ export default function ModelPluim({ hourly, sunrise, sunset }: Props) {
   });
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-100 p-5 shadow-sm space-y-4">
+    <div className="card p-5 space-y-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>

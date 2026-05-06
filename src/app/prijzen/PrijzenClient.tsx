@@ -17,6 +17,8 @@ const UNAVAILABLE: PersonaTier[] = ["steve"];
 interface Props {
   userTier: PersonaTier | null;
   isFounder: boolean;
+  initialWeatherCode?: number;
+  initialIsDay?: boolean;
 }
 
 const STEPS: Array<[string, string, string]> = [
@@ -34,9 +36,9 @@ const FAQS: Array<[string, string]> = [
   ["Wat is het verschil met Buienradar of Weerplaza?", "Weerzone is reclamevrij en is afgestemd op jouw situatie: je postcode en de voorkeuren die je bij aanmelden hebt doorgegeven."],
 ];
 
-function PageShell({ children }: { children: React.ReactNode }) {
-  const [weatherCode, setWeatherCode] = useState(2);
-  const [isDay, setIsDay] = useState(true);
+function PageShell({ children, initialWeatherCode = 2, initialIsDay = true }: { children: React.ReactNode; initialWeatherCode?: number; initialIsDay?: boolean }) {
+  const [weatherCode, setWeatherCode] = useState(initialWeatherCode);
+  const [isDay, setIsDay] = useState(initialIsDay);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,7 +65,6 @@ function PageShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen relative overflow-x-hidden">
       <WeatherBackground weatherCode={weatherCode} isDay={isDay} />
-      <NavBar />
       <div className="relative z-10 pt-24">
         {children}
       </div>
@@ -71,10 +72,12 @@ function PageShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function PrijzenClient({ userTier, isFounder }: Props) {
+export default function PrijzenClient({ userTier, isFounder, initialWeatherCode, initialIsDay }: Props) {
+  const shellProps = { initialWeatherCode, initialIsDay };
+
   if (isFounder) {
     return (
-      <PageShell>
+      <PageShell {...shellProps}>
         <div className="min-h-screen flex flex-col items-center justify-center p-6">
           <div className="card p-10 text-center w-full" style={{ maxWidth: 420 }}>
             <div className="flex items-center justify-center gap-2 mb-5">
@@ -98,7 +101,7 @@ export default function PrijzenClient({ userTier, isFounder }: Props) {
   if (userTier === "reed" || userTier === "steve") {
     const p = PERSONAS[userTier];
     return (
-      <PageShell>
+      <PageShell {...shellProps}>
         <div className="min-h-screen flex flex-col items-center justify-center p-6">
           <div className="card p-10 text-center w-full" style={{ maxWidth: 460 }}>
             <div className="flex items-center justify-center gap-2 mb-5">
@@ -118,7 +121,7 @@ export default function PrijzenClient({ userTier, isFounder }: Props) {
   if (userTier === "piet") {
     const reed = PERSONAS.reed;
     return (
-      <PageShell>
+      <PageShell {...shellProps}>
         <div className="min-h-screen flex flex-col items-center justify-center p-6">
           <div className="card w-full" style={{ maxWidth: 500, padding: "clamp(24px,3vw,36px)" }}>
             <div className="text-center mb-6">
@@ -172,7 +175,7 @@ export default function PrijzenClient({ userTier, isFounder }: Props) {
 
   // Niet ingelogd: toon alle abonnementen
   return (
-    <PageShell>
+    <PageShell {...shellProps}>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "clamp(60px,8vw,100px) clamp(20px,4vw,48px) 0" }}>
 
         {/* Hero */}

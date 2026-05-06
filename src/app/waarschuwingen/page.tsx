@@ -54,7 +54,7 @@ export default async function ReedPage() {
         beforeFooter={
           <div className="space-y-6">
             {/* PAGE-HEADER — direct duidelijk: status voor jouw provincie */}
-            <div className={`rounded-3xl bg-white/95 backdrop-blur p-6 sm:p-8 shadow-xl border-b-4 ${tone.border}`}>
+            <div className="card p-6 sm:p-8">
               <div className="flex items-center gap-2 mb-3">
                 <span className={`w-3 h-3 rounded-full ${tone.dot} ${topSeverity ? "animate-pulse" : ""}`} />
                 <span className={`text-xs font-black uppercase tracking-widest ${tone.chip} px-2 py-0.5 rounded ${tone.chipBg}`}>

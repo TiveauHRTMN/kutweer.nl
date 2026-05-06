@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import WeatherDashboard from "@/components/WeatherDashboard";
+import { DUTCH_CITIES } from "@/lib/types";
+import { fetchWeatherData } from "@/lib/weather";
 
 export const metadata: Metadata = {
   title: "Over WEERZONE",
@@ -56,7 +58,9 @@ const PERSONAS = [
   },
 ];
 
-export default function OverPage() {
+export default async function OverPage() {
+  const debilt = DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
+  const initialWeather = await fetchWeatherData(debilt.lat, debilt.lon).catch(() => undefined);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "AboutPage",
@@ -90,9 +94,11 @@ export default function OverPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <WeatherDashboard
         hideWeatherInfo
+        initialCity={debilt}
+        initialWeather={initialWeather}
         beforeFooter={
           <div className="space-y-6">
-            <div className="rounded-3xl bg-white/95 backdrop-blur p-6 sm:p-8 shadow-xl border-b-4 border-b-sky-500">
+            <div className="card p-6 sm:p-8">
               <div className="flex items-center gap-2 mb-3">
                 <span className="w-3 h-3 rounded-full bg-sky-500" />
                 <span className="text-xs font-black uppercase tracking-widest text-sky-600">
@@ -108,7 +114,7 @@ export default function OverPage() {
               </p>
             </div>
 
-            <div className="rounded-3xl bg-white/95 backdrop-blur p-6 shadow-xl border border-white/70">
+            <div className="card p-6">
               <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">
                 Waar we voor staan
               </p>
@@ -121,7 +127,7 @@ export default function OverPage() {
               </p>
             </div>
 
-            <div className="rounded-3xl bg-white/95 backdrop-blur p-6 shadow-xl border border-white/70">
+            <div className="card p-6">
               <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">
                 Hoe het werkt
               </p>
@@ -146,7 +152,6 @@ export default function OverPage() {
                     key={persona.name}
                     href={persona.href}
                     className="card p-5 hover:scale-[1.01] transition-transform"
-                    style={{ borderBottom: `3px solid ${persona.color}` }}
                   >
                     <p className="text-[10px] font-black uppercase tracking-widest mb-1" style={{ color: persona.color }}>
                       {persona.name} · {persona.role}
@@ -157,19 +162,35 @@ export default function OverPage() {
               </div>
             </div>
 
-            <div className="rounded-3xl bg-white/95 backdrop-blur p-6 shadow-xl border border-white/70">
-              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">
-                Contact
+            <div id="faq">
+              <h2 className="text-2xl font-black text-white text-center mb-1">Veelgestelde vragen</h2>
+              <p className="text-white/50 text-center mb-6 text-xs font-bold uppercase tracking-widest">
+                Alles wat je wil weten over WEERZONE
               </p>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Voor vragen, feedback of samenwerking loopt contact via{" "}
-                <a href="mailto:info@weerzone.nl" className="text-sky-600 font-semibold hover:underline">
-                  info@weerzone.nl
-                </a>.
-              </p>
+              <div className="space-y-2">
+                {[
+                  ["Waarom maar 48 uur vooruit?", "Omdat die periode het meest bruikbaar is voor concrete keuzes per uur. Verder vooruit geeft richting, maar voorspellingen worden snel onbetrouwbaar — wij houden ons aan wat het KNMI HARMONIE-model accuraat kan zeggen."],
+                  ["Wat maakt WEERZONE anders dan Buienradar of Weerplaza?", "WEERZONE is reclamevrij en afgestemd op jouw situatie: postcode en de voorkeuren die je hebt doorgegeven. Geen eindeloze grafieken, maar één duidelijk antwoord op wat het weer vandaag en morgen voor jou betekent."],
+                  ["Hoe werkt de locatiebepaling?", "WEERZONE vraagt je eenmalig om een postcode of plaatsnaam. Je kunt dit altijd aanpassen via de locatieknop bovenin de pagina."],
+                  ["Is WEERZONE gratis?", "Tijdelijk gratis te proberen. Bekijk de abonnementspagina voor de tarieven na de bètaperiode."],
+                  ["Kan ik meerdere locaties opslaan?", "Op dit moment volgt WEERZONE één locatie tegelijk. Meerdere locaties is gepland voor een latere versie."],
+                  ["Hoe kan ik contact opnemen?", "Via info@weerzone.nl of via het contactformulier op de contactpagina. We antwoorden op werkdagen meestal binnen 24 uur."],
+                ].map(([q, a]) => (
+                  <details key={q} className="card group" style={{ padding: 0 }}>
+                    <summary
+                      className="flex justify-between items-center gap-3 cursor-pointer select-none list-none px-5 py-4"
+                      style={{ WebkitUserSelect: "none" }}
+                    >
+                      <span className="font-black text-text-primary text-sm">{q}</span>
+                      <span className="w-6 h-6 rounded-full flex items-center justify-center text-sm font-black text-text-muted shrink-0 transition-transform group-open:rotate-45" style={{ background: "rgba(0,0,0,0.06)" }}>+</span>
+                    </summary>
+                    <div className="text-sm text-text-muted leading-relaxed px-5 pb-4">{a}</div>
+                  </details>
+                ))}
+              </div>
             </div>
 
-            <div className="rounded-3xl bg-white/95 backdrop-blur p-6 text-center shadow-xl border border-white/70">
+            <div className="card p-6 text-center">
               <p className="text-slate-900 font-black text-lg mb-2">Meer weten of beginnen?</p>
               <p className="text-sm text-slate-600 leading-relaxed mb-5">
                 Bekijk het actuele weer, lees meer over de abonnementen of stuur direct een bericht naar info@weerzone.nl.

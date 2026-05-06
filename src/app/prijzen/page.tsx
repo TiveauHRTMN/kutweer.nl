@@ -2,6 +2,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isFounderEmail, FOUNDER_TIER } from "@/lib/founders";
 import type { PersonaTier } from "@/lib/personas";
 import { PERSONAS, TRIAL_END } from "@/lib/personas";
+import { DUTCH_CITIES } from "@/lib/types";
+import { fetchWeatherData } from "@/lib/weather";
 import PrijzenClient from "./PrijzenClient";
 
 export const dynamic = "force-dynamic";
@@ -64,7 +66,11 @@ const productSchemaLd = {
 };
 
 export default async function PrijzenPage() {
-  const supabase = await createSupabaseServerClient();
+  const debilt = DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
+  const [supabase, initialWeather] = await Promise.all([
+    createSupabaseServerClient(),
+    fetchWeatherData(debilt.lat, debilt.lon).catch(() => undefined),
+  ]);
   const { data: { user } } = await supabase.auth.getUser();
 
   let userTier: PersonaTier | null = null;
@@ -96,7 +102,12 @@ export default async function PrijzenPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchemaLd) }}
       />
-      <PrijzenClient userTier={userTier} isFounder={isFounder} />
+      <PrijzenClient
+        userTier={userTier}
+        isFounder={isFounder}
+        initialWeatherCode={initialWeather?.current.weatherCode}
+        initialIsDay={initialWeather?.current.isDay}
+      />
     </>
   );
 }

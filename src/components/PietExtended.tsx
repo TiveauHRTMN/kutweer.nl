@@ -264,7 +264,7 @@ function DayBlock({ title, daily, hourly, sunrise, sunset, uvIndex }: { title: s
   const rainTotal = hourly.reduce((s, h) => s + h.precipitation, 0);
   const maxWind = Math.max(...hourly.map(h => h.windSpeed ?? 0), 0);
   return (
-    <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-5">
+    <div className="card p-5">
       <div className="flex items-center justify-between mb-3">
         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">{title}</span>
         <span className="text-2xl">{getWeatherEmoji(daily.weatherCode, true)}</span>
@@ -420,7 +420,7 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
       )}
 
       {/* 2. PIET'S WEERVERHAAL */}
-      <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-7 sm:p-9 border-l-4 border-l-blue-500">
+      <div className="card p-7 sm:p-9 border-l-4 border-l-blue-500">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl">💬</div>
           <div>
@@ -442,7 +442,7 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
       </div>
 
       {/* 3. STATUS NU — compact */}
-      <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-6">
+      <div className="card p-6">
         <div className="flex items-center justify-between mb-4">
           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nu in {city.name}</span>
           <span className="text-[10px] font-bold text-slate-400">{nextRain?.headline}</span>
@@ -463,7 +463,7 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
 
       {/* 4. OUTFIT & UV */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-5">
+        <div className="card p-5">
           <div className="flex items-center gap-3 mb-2">
             <span className="text-3xl">{outfit.emoji}</span>
             <div>
@@ -472,7 +472,7 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
             </div>
           </div>
         </div>
-        <div className="rounded-2xl bg-white border border-slate-100 shadow-sm p-5">
+        <div className="card p-5">
           <div className="flex items-center justify-between mb-2">
             <div>
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Zon & UV-index</span>
@@ -499,7 +499,7 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
       </div>
 
       {/* 6. LEEFSTIJL SCORES */}
-      <div className="rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden">
+      <div className="card overflow-hidden">
         <div className="px-5 pt-5 pb-3">
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Leefstijl & Activiteiten</span>
           <p className="text-sm font-black text-slate-800 mt-0.5">Wat kun je vandaag doen?</p>
@@ -528,7 +528,7 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
       </div>
 
       {/* 7. DAGDELEN */}
-      <div className="rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden">
+      <div className="card overflow-hidden">
         <div className="flex items-end justify-between px-5 pt-5 pb-3">
           <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">De dagdelen</span>
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">vandaag → morgen</span>

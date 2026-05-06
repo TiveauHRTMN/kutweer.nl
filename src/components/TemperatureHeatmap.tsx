@@ -68,7 +68,7 @@ export default function TemperatureHeatmap({ hourly, sunrise, sunset }: Props) {
   });
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden">
+    <div className="card overflow-hidden">
       {/* Header */}
       <div className="px-5 pt-5 pb-3 flex items-center justify-between">
         <div>

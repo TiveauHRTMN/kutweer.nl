@@ -73,7 +73,7 @@ function ChartPanel({
   const barW = Math.max(3, (CW / n) - 2);
 
   return (
-    <div className="rounded-2xl bg-white border border-slate-100 p-5 shadow-sm">
+    <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
         <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">{title}</span>
         <span className="text-[11px] font-bold text-slate-400">{maxLabel} {unit}</span>

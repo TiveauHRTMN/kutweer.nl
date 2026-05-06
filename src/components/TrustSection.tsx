@@ -49,7 +49,15 @@ export default function TrustSection() {
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 mb-4">
             Transparantie over nauwkeurigheid
           </p>
-          <h2 className="text-4xl sm:text-5xl font-black text-white leading-tight mb-5">
+          <h2
+            className="text-4xl sm:text-5xl font-black leading-tight mb-5"
+            style={{
+              background: "linear-gradient(135deg, #ffe874 0%, #ffd21a 40%, #d1d5db 68%, #64748b 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}
+          >
             Gemaakt voor de uren
             <br />
             die je echt plant.

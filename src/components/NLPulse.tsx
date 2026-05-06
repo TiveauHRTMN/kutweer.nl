@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { getStationsWeather } from "@/app/actions";
 
-function weatherEmoji(code: number): string {
-  if (code === 0) return "☀️";
-  if (code <= 2) return "🌤️";
+function weatherEmoji(code: number, isDay: boolean): string {
+  if (code === 0) return isDay ? "☀️" : "🌙";
+  if (code <= 2)  return isDay ? "🌤️" : "🌤️";
   if (code === 3) return "☁️";
   if (code <= 48) return "🌫️";
   if (code <= 55) return "🌦️";
@@ -20,7 +20,7 @@ function weatherEmoji(code: number): string {
 }
 
 export default function NLPulse() {
-  const [stations, setStations] = useState<Array<{ name: string; temp: number; weatherCode: number }>>([]);
+  const [stations, setStations] = useState<Array<{ name: string; temp: number; weatherCode: number; isDay: boolean }>>([]);
 
   useEffect(() => {
     getStationsWeather().then(data => {
@@ -74,7 +74,7 @@ export default function NLPulse() {
       >
         {items.map((s, i) => (
           <span key={`${s.name}-${i}`} className="flex items-center gap-1 shrink-0">
-            <span>{weatherEmoji(s.weatherCode)}</span>
+            <span>{weatherEmoji(s.weatherCode, s.isDay)}</span>
             <span style={{ color: "var(--ink-800)", fontWeight: 600 }}>{s.name}</span>
             <span
               style={{
