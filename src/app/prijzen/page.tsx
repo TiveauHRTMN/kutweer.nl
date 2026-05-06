@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isFounderEmail, FOUNDER_TIER } from "@/lib/founders";
 import type { PersonaTier } from "@/lib/personas";
@@ -7,6 +8,35 @@ import { fetchWeatherData } from "@/lib/weather";
 import PrijzenClient from "./PrijzenClient";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Abonnementen — Piet, Reed en Steve | WEERZONE",
+  description:
+    "Kies je WEERZONE-abonnement. Piet voor dagelijks weer, Reed voor waarschuwingen bij extreem weer, Steve voor bedrijven. Nu tijdelijk gratis te proberen — geen creditcard nodig.",
+  keywords: [
+    "weerzone abonnement",
+    "weer abonnement nederland",
+    "persoonlijk weerbericht",
+    "weerzone prijzen",
+    "weerwaarschuwingen",
+  ],
+  alternates: { canonical: "https://weerzone.nl/prijzen" },
+  openGraph: {
+    title: "Abonnementen — Piet, Reed en Steve | WEERZONE",
+    description:
+      "Piet voor dagelijks weer, Reed voor waarschuwingen, Steve voor bedrijven. Nu gratis te proberen.",
+    type: "website",
+    locale: "nl_NL",
+    url: "https://weerzone.nl/prijzen",
+    siteName: "WEERZONE",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Abonnementen | WEERZONE",
+    description:
+      "Piet, Reed of Steve. Hyperlokale weerberichten op maat. Nu gratis te proberen — geen creditcard nodig.",
+  },
+};
 
 function buildOffer(tier: "piet" | "reed") {
   const p = PERSONAS[tier];
