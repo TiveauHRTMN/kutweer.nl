@@ -114,8 +114,10 @@ export default function LoginClient() {
       <h1 className="h-1 mb-2">Welkom terug.</h1>
       <p className="t-body mb-6">Voer je e-mailadres in om verder te gaan.</p>
 
+      {/* TODO: Supabase Pro Custom Domain benodigd voor clean OAuth
       <WzSocialButtons onGoogle={() => handleOAuth("google")} onApple={() => handleOAuth("apple")} loading={loading} />
       <WzDivider>of gebruik e-mail</WzDivider>
+      */}
 
       <form onSubmit={handleEmailNext} noValidate>
         <WzTextField
