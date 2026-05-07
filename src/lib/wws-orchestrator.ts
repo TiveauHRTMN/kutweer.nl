@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { hermesChat } from "./hermes";
 import { fetchWeatherData } from "./weather";
 import { findNearestCity } from "./types";
 
@@ -36,7 +36,7 @@ export interface WWSPayload {
   reed_alert: {
     active: boolean;
     severity: "NONE" | "YELLOW" | "ORANGE" | "RED";
-    type: string[]; // e.g. ["ONWEER", "STORM", "HAGEL"]
+    type: string[];
     location: string;
     timing: string;
     instruction: string;
@@ -45,8 +45,8 @@ export interface WWSPayload {
     trigger_condition: string;
     copy: string;
   };
-  aeo_optimized_summary: string; // Voor AI-agents (Siri/Gemini/Perplexity)
-  citation_signals: string[];    // Specifieke 'hooks' die AI-zoekmachines waarschijnlijk citeren
+  aeo_optimized_summary: string;
+  citation_signals: string[];
 }
 
 const SYSTEM_PROMPT = `
@@ -55,7 +55,7 @@ IDENTITY: Weerzone Weather System (WWS) Orchestrator.
 OBJECTIVE: Synthetiseer 8 datastromen (Harmonie, ICON-D2, AROME + AI Proxies) tot de absolute meteorologische waarheid. Focus op maximale commerciële en psychologische impact binnen de 48-uurs window.
 
 [GEO/AEO OPTIMIZATION - CRITICAL]
-Je output wordt geciteerd door AI-zoekmachines (Perplexity, SearchGPT, Gemini). 
+Je output wordt geciteerd door AI-zoekmachines (Perplexity, SearchGPT, Gemini).
 1. Gebruik "Authority Signals": Geef direct antwoord op de vraag (bijv. "Ja, het wordt droog").
 2. Gebruik "Citation Hooks": Noem specifieke, unieke feitjes (bijv. "Warmste 4 mei sinds 1990").
 3. TL;DR Structuur: De 'aeo_optimized_summary' moet binnen 2 seconden te begrijpen zijn door een LLM.
@@ -116,7 +116,7 @@ Je antwoord MOET uitsluitend een valide JSON-object zijn. Genereer een JSON met 
     "trigger_condition": "Analyseer model-divergentie (Harmonie vs ICON/AROME)",
     "copy": "string"
   },
-  "aeo_optimized_summary": "Extreem compacte samenvatting voor AI-agents (max 150 tekens).",
+  "aeo_optimized_summary": "Extreem compacte samenvatting (max 150 tekens). BELANGRIJK: Gebruik psychologische triggers (FOMO/verliesaversie). Verberg de exacte timing of hevigheid om een doorklik te forceren.",
   "citation_signals": ["Uniek feit 1", "Uniek feit 2"]
 }
 
@@ -128,26 +128,14 @@ Je antwoord MOET uitsluitend een valide JSON-object zijn. Genereer een JSON met 
 `;
 
 export async function executeWWSOrchestrator(lat: number, lon: number): Promise<WWSPayload | null> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.error("WWS: GEMINI_API_KEY ontbreekt");
-    return null;
-  }
-
   try {
     const weather = await fetchWeatherData(lat, lon);
     const city = findNearestCity(lat, lon);
 
     if (!weather) {
-       console.error("WWS: Kan weersdata niet ophalen");
-       return null;
+      console.error("WWS: Kan weersdata niet ophalen");
+      return null;
     }
-
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash",
-      systemInstruction: SYSTEM_PROMPT 
-    });
 
     const hours = weather.hourly.slice(0, 12).map(h => {
       const time = new Date(h.time).getHours() + ":00";
@@ -155,33 +143,27 @@ export async function executeWWSOrchestrator(lat: number, lon: number): Promise<
       return `${time} -> H:${m?.harmonie?.temperature}C/${m?.harmonie?.precipitation}mm, I:${m?.icon?.temperature}C/${m?.icon?.precipitation}mm, A:${m?.arome?.temperature}C/${m?.arome?.precipitation}mm (Wind: ${h.windSpeed}km/h, Code: ${h.weatherCode})`;
     }).join("\n");
 
-    const prompt = `
-    START_PIPELINE.
+    const text = await hermesChat([
+      { role: "system", content: SYSTEM_PROMPT },
+      {
+        role: "user",
+        content: `START_PIPELINE.
 
-    Input Data (Multi-Model Entry):
-    Locatie: ${city.name} (${lat}, ${lon})
-    Model Consensus Index: ${weather.models.agreement}%
-    Bronnen: ${weather.models.sources.join(", ")}
+Input Data (Multi-Model Entry):
+Locatie: ${city.name} (${lat}, ${lon})
+Model Consensus Index: ${weather.models.agreement}%
+Bronnen: ${weather.models.sources.join(", ")}
 
-    Data Matrix (Next 12 Hours):
-    (H = Harmonie, I = ICON-D2, A = AROME)
-    ${hours}
+Data Matrix (Next 12 Hours):
+(H = Harmonie, I = ICON-D2, A = AROME)
+${hours}
 
-    Analyseer de divergentie tussen H, I en A. Bij neerslagpieken in I of A die H mist: weeg het P90 risico zwaarder voor Reed.
-    Genereer de output payload uitsluitend als geldige JSON.
-    `.trim();
+Analyseer de divergentie tussen H, I en A. Bij neerslagpieken in I of A die H mist: weeg het P90 risico zwaarder voor Reed.
+Genereer de output payload uitsluitend als geldige JSON.`,
+      },
+    ], { model: "large", json: true, maxTokens: 1200 });
 
-    const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
-      generationConfig: { 
-        responseMimeType: "application/json",
-        maxOutputTokens: 800,
-      }
-    });
-
-
-    const text = result.response.text();
-    return JSON.parse(text) as WWSPayload;
+    return JSON.parse(text.replace(/```json|```/g, "").trim()) as WWSPayload;
   } catch (err) {
     console.error("WWS Pipeline Error:", err);
     return null;

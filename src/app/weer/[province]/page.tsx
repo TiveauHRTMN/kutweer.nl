@@ -78,6 +78,13 @@ export default async function ProvincePage({ params }: { params: Promise<{ provi
     if (province === "zeeland") return `Zeeland: ${temp}°C. Altijd die wind hè? ${wind} km/u. Als je niet wilt wegwaaien bij de Neeltje Jans, blijf je nu binnen.`;
     if (province === "friesland") return `Friesland: ${temp}°C. Prachtig dat water, maar met ${rain}mm regen zijn zelfs de Friezen niet blij vandaag.`;
     if (province === "noord-brabant") return `Brabant: ${temp}°C. Gezelligheid kent geen tijd, maar met dit weer is de kroeg de enige optie.`;
+    if (province === "drenthe") return `Drenthe: ${temp}°C. Open vlaktes, geen gebouwen om achter te schuilen. ${wind > 25 ? `${wind} km/u wind snijdt dwars door je heen — als je op de fiets wil, reken maar op tegenwind.` : "Het waait mee vandaag. Profiteer."}`;
+    if (province === "overijssel") return `Overijssel: ${temp}°C. Van de Sallandse Heuvelrug tot de IJssel — ${rain > 2 ? `${rain}mm neerslag verwacht, dus de fietsroutes worden modderig.` : "droog genoeg om het buitenleven op te zoeken."}`;
+    if (province === "flevoland") return `Flevoland: ${temp}°C. Nergens in Nederland staat je meer open aan de wind. ${wind} km/u zonder enige beschutting — de polder spaart niemand.`;
+    if (province === "gelderland") return `Gelderland: ${temp}°C. Veluwe, IJsselvallei, Nijmegen op de stuwwal — ${temp > 25 ? "de hitte stapelt zich op in de stadsdalen, drink genoeg." : temp < 5 ? "koud genoeg voor ijzel op de hogere delen, pas op onderweg." : "aangenaam gevarieerd vandaag."}`;
+    if (province === "utrecht") return `Utrecht: ${temp}°C. Dichtste provincie van Nederland. ${temp > 22 ? "Urban heat island op zijn best — in de stad voelt het minstens 3 graden warmer." : "Het drukste weerknooppunt van het land, plan je route."}`;
+    if (province === "noord-holland") return `Noord-Holland: ${temp}°C. Van Texel tot Amsterdam — ${wind > 30 ? `${wind} km/u zeewind, zelfs de grachtengordel voelt het.` : rain > 3 ? "de lage polder houdt het vocht vast, paraplu mee." : "het IJ en de kust gedragen zich vandaag."}`;
+    if (province === "zuid-holland") return `Zuid-Holland: ${temp}°C. Rotterdam haven, Haagse boulevard, Leidse polders — ${rain > 2 ? `${rain}mm regen verwacht en die rivierwind maakt het kouder dan het lijkt.` : "het delta-klimaat werkt vandaag in je voordeel."}`;
     return `${label}: ${temp}°C. Piet's oordeel? ${wind > 30 ? "Stormachtig kut." : "Matig, niks om over naar huis te schrijven."} WeerZone expertise: bereid je voor op ${temp < 10 ? "kou" : "gedoe"}.`;
   })();
 

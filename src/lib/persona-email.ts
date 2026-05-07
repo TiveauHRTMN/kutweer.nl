@@ -195,17 +195,17 @@ function getTheme(tier: PersonaTier): Theme {
     };
   }
   return {
-    pageBg: "#f8fafc",
-    headerBg: "linear-gradient(180deg, #3b7ff0 0%, #2a5fc4 100%)",
+    pageBg: "#f0f9ff",
+    headerBg: "linear-gradient(180deg, #0ea5e9 0%, #0369a1 100%)",
     cardBg: "#ffffff",
     cardBorder: "rgba(0,0,0,0.06)",
-    accent: "#3b7ff0",
+    accent: "#10b981",
     accentText: "#ffffff",
     textPrimary: "#0f172a",
     textMuted: "#475569",
     textLabel: "#94a3b8",
-    narrativeBorder: "#3b7ff0",
-    ctaBg: "#3b7ff0",
+    narrativeBorder: "#10b981",
+    ctaBg: "#10b981",
   };
 }
 
@@ -248,14 +248,9 @@ export function buildPersonaEmailHtml(
 
     heroHtml = `
 <div style="background:${t.cardBg};border:1px solid ${t.cardBorder};border-radius:24px;padding:32px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.03);">
-  <div style="display:table;width:100%;margin-bottom:20px;">
-    <div style="display:table-cell;vertical-align:middle;">
-        <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:${t.textLabel};margin-bottom:4px;">Micro-voorspelling</div>
-        <div style="font-size:24px;font-weight:900;color:${t.textPrimary};letter-spacing:-0.02em;">${esc(city)}</div>
-    </div>
-    <div style="display:table-cell;vertical-align:middle;text-align:right;">
-        <div style="display:inline-block;background:rgba(16,185,129,0.1);color:#10b981;font-size:10px;font-weight:900;padding:4px 10px;border-radius:6px;text-transform:uppercase;letter-spacing:1px;">1x1km Grid Precisie</div>
-    </div>
+  <div style="margin-bottom:20px;">
+    <div style="font-size:24px;font-weight:900;color:${t.textPrimary};letter-spacing:-0.02em;">${esc(city)}</div>
+    <div style="font-size:12px;font-weight:600;color:${t.textLabel};margin-top:2px;">${esc(date)}</div>
   </div>
 
   <table cellpadding="0" cellspacing="0" border="0" width="100%"><tr>
@@ -279,7 +274,7 @@ export function buildPersonaEmailHtml(
             <td style="width:33%;padding-right:10px;">
                 <div style="font-size:10px;font-weight:800;color:${t.textLabel};text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Regen</div>
                 <div style="font-size:15px;font-weight:900;color:${t.textPrimary};">${wd.current.precipitation > 0 ? `${wd.current.precipitation.toFixed(1)}` : "0.0"}<span style="font-size:10px;font-weight:700;margin-left:2px;">MM</span></div>
-                <div style="font-size:10px;color:${t.textLabel};font-weight:700;">ACTUEEL</div>
+                <div style="font-size:10px;color:${t.textLabel};font-weight:700;">NU</div>
             </td>
             <td style="width:33%;">
                 <div style="font-size:10px;font-weight:800;color:${t.textLabel};text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Lucht</div>
@@ -321,11 +316,8 @@ export function buildPersonaEmailHtml(
 
   const narrativeHtml = `
 <div style="background:${t.cardBg};border:1px solid ${t.cardBorder};border-radius:24px;padding:32px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.03);">
-  <div style="display:table;width:100%;margin-bottom:20px;">
-    <div style="display:table-cell;vertical-align:middle;">
-        <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:${t.textLabel};margin-bottom:4px;">Briefing van ${esc(p.name)}</div>
-        <div style="font-size:22px;font-weight:900;color:${t.textPrimary};line-height:1.2;letter-spacing:-0.02em;">${esc(brief.greeting)}</div>
-    </div>
+  <div style="margin-bottom:20px;">
+    <div style="font-size:22px;font-weight:900;color:${t.textPrimary};line-height:1.2;letter-spacing:-0.02em;">${esc(brief.greeting)}</div>
   </div>
   
   ${verdictHtml}
@@ -366,13 +358,18 @@ export function buildPersonaEmailHtml(
 </div>`;
   }
 
-  // ---- CTA ----
+  // ---- TOMORROW TEASER + CTA ----
   const ctaUrl =
     tier === "reed" ? "https://weerzone.nl/reed" : "https://weerzone.nl/piet";
+  const tomorrowTeaser = brief.preview_tomorrow ?? null;
   const ctaHtml = `
+${tomorrowTeaser ? `
+<div style="margin-bottom:20px;padding:20px 24px;background:rgba(0,0,0,0.02);border-radius:16px;border-left:3px solid ${t.accent};">
+  <div style="font-size:15px;font-weight:700;color:${t.textPrimary};line-height:1.5;">${esc(tomorrowTeaser)}</div>
+</div>` : ""}
 <div style="margin-bottom:32px;text-align:center;">
-    <a href="${esc(ctaUrl)}" style="display:inline-block;background:${t.ctaBg};color:#ffffff;text-decoration:none;font-weight:900;padding:20px 40px;border-radius:16px;font-size:16px;text-transform:uppercase;letter-spacing:1px;box-shadow:0 10px 25px ${tier === 'reed' ? 'rgba(239,68,68,0.3)' : 'rgba(59,127,240,0.3)'};">
-        Volledige 48-uurs Analyse &#8594;
+    <a href="${esc(ctaUrl)}" style="display:inline-block;background:${t.ctaBg};color:#ffffff;text-decoration:none;font-weight:900;padding:20px 40px;border-radius:16px;font-size:16px;box-shadow:0 10px 25px ${tier === 'reed' ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'};">
+        Bekijk de volledige vooruitblik &#8594;
     </a>
 </div>`;
 
@@ -398,7 +395,7 @@ export function buildPersonaEmailHtml(
       </td>
     </tr></table>
   </a>
-  <div style="font-size:10px;color:${t.textLabel};margin-top:10px;text-align:center;font-weight:600;text-transform:uppercase;letter-spacing:1px;">Powered by WEERZONE Affiliate Engine</div>
+  <div style="font-size:10px;color:${t.textLabel};margin-top:10px;text-align:center;font-weight:600;">Gesponsord · via Amazon</div>
 </div>`;
   }
 
@@ -416,17 +413,20 @@ export function buildPersonaEmailHtml(
 
   <!-- HEADER BRANDING -->
   <div style="background:${t.headerBg};padding:40px 32px 60px;text-align:center;">
-    <img src="https://weerzone.nl/logo-white.png" alt="WEERZONE" style="height:28px;width:auto;margin-bottom:20px;display:inline-block;" />
-    <div style="font-size:10px;font-weight:900;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:3px;">48 UUR VOORUIT · DE REST IS RUIS</div>
+    <img src="https://weerzone.nl/weerzone-logo.png" alt="WEERZONE" style="height:36px;width:auto;margin-bottom:20px;display:inline-block;" />
+    <div style="font-size:13px;font-weight:800;color:rgba(255,255,255,0.9);letter-spacing:0.5px;">${esc(brief.tagline || "48 uur vooruit · de rest is ruis")}</div>
   </div>
 
   <div style="padding:0 20px;margin-top:-30px;">
     
-    <div style="margin-bottom:20px;text-align:center;">
-        <span style="display:inline-block;background:${t.accent};color:${t.accentText};font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:2px;padding:6px 16px;border-radius:100px;box-shadow:0 4px 12px rgba(0,0,0,0.1);">${esc(p.name)} · ${esc(p.label)}</span>
-    </div>
 
     ${heroHtml}
+
+    ${brief.local_fact ? `
+<div style="background:${t.cardBg};border:1px solid ${t.cardBorder};border-left:3px solid ${t.accent};border-radius:12px;padding:16px 20px;margin-bottom:20px;">
+  <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:${t.textLabel};margin-bottom:6px;">📍 ${esc(city)}</div>
+  <div style="font-size:14px;color:${t.textMuted};font-weight:500;line-height:1.5;">${esc(brief.local_fact)}</div>
+</div>` : ""}
 
     ${narrativeHtml}
 
@@ -438,20 +438,19 @@ export function buildPersonaEmailHtml(
 
     <!-- FOOTER -->
     <div style="padding:40px 32px;text-align:center;border-top:1px solid ${t.cardBorder};">
-      <div style="font-size:12px;font-weight:800;color:${t.textPrimary};margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">WEERZONE INTEL</div>
       <div style="font-size:13px;color:${t.textLabel};line-height:1.6;max-width:300px;margin:0 auto 20px;">
-        Je ontvangt deze dagelijkse briefing omdat je bent aangemeld als Founder voor de regio ${esc(city)}.
+        Je ontvangt deze e-mail omdat je bent aangemeld bij Weerzone voor ${esc(city)}.
       </div>
-      <div style="display:table;width:100%;max-width:240px;margin:0 auto;">
+      <div style="display:table;width:100%;max-width:200px;margin:0 auto;">
         <div style="display:table-cell;padding:0 10px;">
-            <a href="https://weerzone.nl/app" style="font-size:11px;font-weight:900;color:${t.accent};text-decoration:none;text-transform:uppercase;letter-spacing:1px;">Dashboard</a>
+            <a href="https://weerzone.nl/mijnweer" style="font-size:11px;font-weight:700;color:${t.accent};text-decoration:none;">Mijn weer</a>
         </div>
         <div style="display:table-cell;padding:0 10px;border-left:1px solid ${t.cardBorder};">
-            <a href="${esc(unsubscribeUrl)}" style="font-size:11px;font-weight:900;color:${t.textLabel};text-decoration:none;text-transform:uppercase;letter-spacing:1px;">Uitschrijven</a>
+            <a href="${esc(unsubscribeUrl)}" style="font-size:11px;font-weight:700;color:${t.textLabel};text-decoration:none;">Uitschrijven</a>
         </div>
       </div>
-      <div style="margin-top:32px;font-size:10px;font-weight:700;color:${t.textLabel};text-transform:uppercase;letter-spacing:2px;">
-        &copy; ${new Date().getFullYear()} Tiveau & Google Intelligence
+      <div style="margin-top:32px;font-size:10px;color:${t.textLabel};">
+        &copy; ${new Date().getFullYear()} Weerzone
       </div>
     </div>
 

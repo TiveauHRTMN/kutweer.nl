@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { fetchWeatherData } from "@/lib/weather";
 import { ALL_PLACES } from "@/lib/places-data";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { hermesChat } from "@/lib/hermes";
+import { GoogleGenerativeAI } from "@google/generative-ai"; // Voor visual generation
 import { Resend } from "resend";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-// Buffer GraphQL IDs (bevestigd via /api/admin/buffer-check op 19-04-2026)
+// Buffer GraphQL IDs
 const BUFFER_ORG_ID = "69e51acfc3f39b8c8987146b";
 const BUFFER_CHANNELS = {
   x: "69e51ee4031bfa423c1f65c6", // @weerzone
@@ -18,49 +19,14 @@ import { amazonUrl, temuUrl, AFFILIATE_CONFIG } from "@/lib/affiliates";
 import { matchProducts } from "@/lib/amazon-matcher";
 import { productHref } from "@/lib/amazon-catalog";
 
-function buildDeterministicCaption(args: {
-  ochtend: number; middag: number; avond: number; nacht: number;
-  rainDay: number; product: string; affiliateUrl: string;
-}): string {
-  const { ochtend, middag, avond, nacht, rainDay, product, affiliateUrl } = args;
-  const droog = rainDay < 1;
-  const regen = rainDay >= 1 ? `${rainDay.toFixed(1)}mm regen.` : "Droog.";
-  return (
-    `Ochtend ${ochtend}° · middag ${middag}° · avond ${avond}° · nacht ${nacht}°. ${droog ? "Droog." : regen}\n\n` +
-    `Echte voorspelling op jouw postcode → weerzone.nl\n\n` +
-    `Tip bij dit weer (advertentie): ${product} → ${affiliateUrl}\n\n` +
-    `#weer #weerzone #nederland #weerbericht #knmi #buienradar #vandaag #ad`
-  );
-}
-
 const PERSONA_PROMPTS = {
   PIET: `
 Je bent Piet van WEERZONE. 
 STIJL: Vandaag Inside / PowNed. Brutaal, ongezouten mening, absolute weer-expertise. 
-Je focus: De harde realiteit. Als het kutweer is, zeg je het. 
+Je focus: De harde realiteit landelijk gezien. Als het kutweer is in het oosten maar droog in het westen, zeg je dat eerlijk.
 REGELLIJST: Max 240 tekens. Johan Derksen van het weer. Gebruik "virale" hooks. Max 2 emoji.
-`,
-  REED: `
-Je bent Reed van WEERZONE. 
-STIJL: Stormchaser / Survival Expert. Serieus, waarschuwend, actiegericht, tactisch.
-Je focus: Veiligheid en de brute kracht van de natuur. Geen grappen, alleen feiten en voorbereiding.
-REGELLIJST: Max 240 tekens. Gebruik termen als 'Impact', 'Code Rood', 'Paraat'. Zorg voor een gevoel van urgentie. Max 2 emoji (bijv. 🌪️).
-`,
-  STEVE: `
-Je bent Steve van WEERZONE. 
-STIJL: Lifestyle / Chill / Positief. Relaxte vibe, focus op genieten.
-Je focus: Het goede leven. Terrasjes, strand, barbecue en ijskoude drankjes. 
-REGELLIJST: Max 240 tekens. Focus op de "FOMO" van een mooie dag. Max 2 emoji (bijv. 🍺☀️).
-`,
+`.trim()
 };
-
-function getPersona(w: WeatherLite): "piet" | "reed" | "steve" {
-  const cur = w.current;
-  const d0 = w.daily[0];
-  if (cur.windSpeed > 60 || d0.tempMin < -5 || cur.weatherCode >= 80) return "reed";
-  if (d0.tempMax > 23 && cur.precipitation < 1) return "steve";
-  return "piet";
-}
 
 interface WeatherLite {
   current: { temperature: number; weatherCode: number; windSpeed: number; precipitation: number };
@@ -68,56 +34,45 @@ interface WeatherLite {
   hourly?: Array<{ temperature: number; weatherCode: number; precipitation: number }>;
 }
 
-export async function generatePlatformCaption(weather: WeatherLite, platform: 'x' | 'tiktok') {
-  if (!weather) throw new Error("No weather data provided to caption generator");
+interface RegionalWeather {
+  region: string;
+  weather: WeatherLite;
+}
+
+export async function generatePlatformCaption(regions: RegionalWeather[], platform: 'x' | 'tiktok') {
+  if (!regions || regions.length === 0) throw new Error("No weather data provided");
   const isTikTok = platform === 'tiktok';
-  
-  const cur = weather.current || {};
-  const d0 = weather.daily?.[0] || {};
-  const h = weather.hourly || [];
+  const persona = "piet";
+  const personaPrompt = PERSONA_PROMPTS.PIET;
 
-  const ochtend = Math.round(h[8]?.temperature ?? cur.temperature ?? 10);
-  const middag = Math.round(h[13]?.temperature ?? d0.tempMax ?? 15);
-  const avond = Math.round(h[19]?.temperature ?? cur.temperature ?? 10);
-  const nacht = Math.round(h[25]?.temperature ?? d0.tempMin ?? 5);
-
-  const persona = getPersona(weather);
-  const personaPrompt = PERSONA_PROMPTS[persona.toUpperCase() as keyof typeof PERSONA_PROMPTS];
-
-  // Match products
-  const { products } = matchProducts(weather as any, 1, new Date(), persona);
+  // Gebruik Midden-Nederland (of eerste regio) voor affiliate product match proxy
+  const proxyWeather = regions.find(r => r.region === "Midden")?.weather || regions[0].weather;
+  const { products } = matchProducts(proxyWeather as any, 1, new Date(), persona);
   const deal = products[0];
   const affiliateUrl = deal ? productHref(deal) : (isTikTok ? temuUrl("regenjas") : amazonUrl("regenjas"));
   const productLabel = deal ? deal.title : "Waterdichte regenjas";
 
-  const deterministicCaption = buildDeterministicCaption({
-    ochtend, middag, avond, nacht,
-    rainDay: d0.precipitationSum ?? 0,
-    product: productLabel,
-    affiliateUrl,
-  });
+  const regionalSummary = regions.map(r => {
+    const temp = r.weather.current?.temperature ?? 10;
+    const max = r.weather.daily?.[0]?.tempMax ?? 15;
+    const rain = r.weather.daily?.[0]?.precipitationSum ?? 0;
+    return `- ${r.region}: Nu ${Math.round(temp)}°, Verwacht max: ${Math.round(max)}°, Regen: ${rain}mm`;
+  }).join('\n');
 
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) return { caption: deterministicCaption, affiliateUrl, persona };
+  const dataContext = `REGIO DATA VANDAAG:\n${regionalSummary}\n\nTip bij dit weer (advertentie) om subtiel in de tekst te verwerken (inclusief URL): ${productLabel} → ${affiliateUrl}\nVergeet hashtags niet aan het einde: #weer #weerzone #nederland #weerbericht #knmi #buienradar #vandaag #ad`;
 
   try {
-    const genAI = new GoogleGenerativeAI(key);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Use stable model name
-    const res = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: `${personaPrompt}\n\nTEMPLATE:\n${deterministicCaption}` }] }],
-      generationConfig: { maxOutputTokens: 400, temperature: 0.8 },
-    });
-    const text = res.response.text()?.trim();
-    if (text && (text.includes("weerzone.nl") || text.includes("WEERZONE.NL"))) {
-      return { caption: text, affiliateUrl, persona };
-    }
-    return { caption: deterministicCaption, affiliateUrl, persona };
-  } catch {
-    return { caption: deterministicCaption, affiliateUrl, persona };
+    const text = await hermesChat([
+      { role: "system", content: personaPrompt },
+      { role: "user", content: `Schrijf een landelijke social media post in jouw stijl.\n\n${dataContext}` }
+    ], { model: "kimi", temperature: 0.8, maxTokens: 400 });
+    
+    return { caption: text.trim(), affiliateUrl, persona };
+  } catch (e) {
+    console.error("Caption generation error:", e);
+    return { caption: `Lokaal wisselvallig vandaag. Echte voorspelling op jouw postcode → weerzone.nl\nTip: ${productLabel} → ${affiliateUrl}\n#weer #weerzone #nederland #weerbericht #vandaag #ad`, affiliateUrl, persona };
   }
 }
-
-
 
 async function createBufferPost(channelId: string, text: string, imageUrls: string[]) {
   const token = process.env.BUFFER_API_TOKEN;
@@ -163,6 +118,17 @@ async function createBufferPost(channelId: string, text: string, imageUrls: stri
   return body.data;
 }
 
+const KNMI_REGIONS = [
+  { name: "Noordwest", lat: 52.63, lon: 4.75 }, // Alkmaar
+  { name: "Noordoost", lat: 53.22, lon: 6.57 }, // Groningen
+  { name: "Oost", lat: 52.22, lon: 6.89 },      // Enschede
+  { name: "Zuidoost", lat: 51.44, lon: 5.48 },  // Eindhoven
+  { name: "Zuid", lat: 50.85, lon: 5.69 },      // Maastricht
+  { name: "West", lat: 51.92, lon: 4.48 },      // Rotterdam
+  { name: "Zuidwest", lat: 51.44, lon: 3.57 },  // Vlissingen
+  { name: "Midden", lat: 52.11, lon: 5.18 }     // De Bilt
+];
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const authParam = searchParams.get("auth");
@@ -180,27 +146,32 @@ export async function GET(req: Request) {
   const dryRun = searchParams.get("dry") === "1";
 
   try {
-    // De Bilt — landelijk centrum van NL (Landelijke Nieuws focus)
-    const deBilt = { name: "De Bilt", lat: 52.11, lon: 5.18 };
-    const weather = await fetchWeatherData(deBilt.lat, deBilt.lon);
-    if (!weather) throw new Error("Weather fetch failed");
+    // Haal landelijk weer op per KNMI regio
+    const regionalData: RegionalWeather[] = await Promise.all(
+      KNMI_REGIONS.map(async (r) => {
+        const data = await fetchWeatherData(r.lat, r.lon);
+        return { region: r.name, weather: data as unknown as WeatherLite };
+      })
+    );
 
-    // Stel de caption op (Piet Social 2.1: Brutaal & Landelijk)
+    // Stel de caption op (Piet Social 2.1: Brutaal & Echt Landelijk)
     const [xData, tiktokData] = await Promise.all([
-      generatePlatformCaption(weather as unknown as WeatherLite, 'x'),
-      generatePlatformCaption(weather as unknown as WeatherLite, 'tiktok'),
+      generatePlatformCaption(regionalData, 'x'),
+      generatePlatformCaption(regionalData, 'tiktok'),
     ]);
 
     const base = process.env.NEXT_PUBLIC_BASE_URL || "https://weerzone.nl";
     const bust = Date.now();
-    const citySlug = "debilt";
+    // Gebruik Midden/De Bilt voor de social slide images als fallback landelijk
+    const center = KNMI_REGIONS.find(r => r.name === "Midden")!;
+    const citySlug = "nederland";
     const xPersona = xData.persona;
     const ttPersona = tiktokData.persona;
 
-    const xSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=1&format=x&persona=${xPersona}&t=${bust}`;
-    const xSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=2&format=x&persona=${xPersona}&t=${bust}`;
-    const ttSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=1&format=tiktok&persona=${ttPersona}&t=${bust}`;
-    const ttSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${deBilt.lat}&lon=${deBilt.lon}&slide=2&format=tiktok&persona=${ttPersona}&t=${bust}`;
+    const xSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${center.lat}&lon=${center.lon}&slide=1&format=x&persona=${xPersona}&t=${bust}`;
+    const xSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${center.lat}&lon=${center.lon}&slide=2&format=x&persona=${xPersona}&t=${bust}`;
+    const ttSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${center.lat}&lon=${center.lon}&slide=1&format=tiktok&persona=${ttPersona}&t=${bust}`;
+    const ttSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${center.lat}&lon=${center.lon}&slide=2&format=tiktok&persona=${ttPersona}&t=${bust}`;
 
     // Nano Banana 2: Viral Visual Generation for Social
     let viralVisualUrl = "";
@@ -212,7 +183,7 @@ export async function GET(req: Request) {
         const promptRes = await model.generateContent(`
           Geef een KORTE Engelse prompt voor een virale weerfoto in Nederland.
           Gebaseerd op dit weerbericht: "${xData.caption}"
-          Locatie: De Bilt/Nederland.
+          Locatie: Nederland.
           Stijl: National Geographic, dramatic lighting, 8k, awe-inspiring. 
           Geen tekst in beeld.
         `);
@@ -251,11 +222,11 @@ export async function GET(req: Request) {
       await resend.emails.send({
         from: "Weerzone System <system@weerzone.nl>",
         to: "info@weerzone.nl",
-        subject: `🚀 Social Post Status: ${deBilt.name}`,
+        subject: `🚀 Social Post Status: Landelijk Weer`,
         html: `
           <div style="font-family:sans-serif; padding:20px;">
             <h1 style="color:#0ea5e9;">WeerZone Social Automator</h1>
-            <p>De dagelijkse social media posts zijn voorbereid en doorgestuurd naar Buffer.</p>
+            <p>De landelijke social media posts (Piet) zijn voorbereid en doorgestuurd naar Buffer.</p>
             
             <hr />
             

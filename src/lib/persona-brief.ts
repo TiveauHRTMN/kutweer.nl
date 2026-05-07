@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { hermesChat } from "./hermes";
 import { PERSONAS, type PersonaTier } from "@/lib/personas";
 import type { WeatherData } from "@/lib/types";
 import type { KNMIWarning } from "@/lib/knmi-warnings";
@@ -22,15 +22,24 @@ export interface WeatherSnapshot {
     weatherCode: number;
     windMax: number;
   };
+  tomorrow?: {
+    tempMax: number;
+    tempMin: number;
+    precipitationSum: number;
+    weatherCode: number;
+  };
   hourlySummary: string; // bv. "07:00 droog 8°, 12:00 bui 11°, 18:00 wind 35km/u"
 }
 
 export interface PersonaBrief {
   subject: string;       // mail-onderwerp
+  tagline: string;       // highlight van vandaag als header-tagline (max 40 tekens, bv. "Terrasweer tot 16:00" of "Onweer mogelijk na 18:00")
   greeting: string;      // "Goedemorgen, Roy."
+  local_fact: string;    // kort lokaal weetje over de locatie (max 1 zin)
   verdict: string;       // 1-2 zinnen scherpe samenvatting
   details: string[];     // 2-4 bullets met concrete adviezen
   closing: string;       // afsluiter in character
+  preview_tomorrow?: string; // max 90 tekens — nieuwsgierigheidsmaker over morgen in persona-stijl
 }
 
 export interface BriefContext {
@@ -51,27 +60,23 @@ export interface BriefContext {
 // klinkt als mooi weer, slecht weer klinkt eerlijk en praktisch. 
 
 const WEERZONE_SHORT_PROMPT = `
-FORMAAT & GRENZEN — WEERZONE:
-
-TONALE CONSISTENTIE:
-- De toon spiegelt de data. Wees eerlijk, nuchter en praktisch.
-- Gebruik een respectvolle toon. Vermijd beledigingen, agressieve taal of kleinerende opmerkingen over anderen.
-- Focus op de feiten en wat het weer betekent voor de dag van de lezer.
-
-HARDE GRENZEN:
-- 100% correct Nederlands.
-- Geen anglicismen.
-- Geen modelnamen of techniek-merken.
-- Geen scheldwoorden of vloeken.
-- Maximaal 1–2 emoji.
+STIJLREGELS:
+- Schrijf zoals een mens praat, niet zoals een rapport leest.
+- Geen anglicismen, geen modelnamen, geen technische termen.
+- 100% correct Nederlands — spreektaal mag, maar niet slordig.
+- Maximaal 1 emoji, alleen als het écht iets toevoegt. Liever geen.
+- Geen "beste lezer", geen "graag", geen formele aanspreekvormen.
 
 FORMAAT — lever strikt JSON:
 {
   "subject": "string, max 70 tekens, prikkelend, geen clickbait",
+  "tagline": "string, max 40 tekens, de belangrijkste highlight van vandaag als puntige header-tagline. Voorbeelden: 'Terrasweer tot 16:00', 'Onweer mogelijk na 18:00', 'Droog en 17°C — geniet ervan', 'Buien in de ochtend, zon na 13:00'. Concreet, geen vaagheden.",
   "greeting": "string, max 40 tekens, in karakter",
+  "local_fact": "string, max 1 zin, een concreet lokaal weetje over de locatie (geografie, karakter, weer-typisch voor de streek). Geen open deuren.",
   "verdict": "string, 4-6 KORTE zinnen — elk op een nieuwe regel (\n). Geen opsommingen of sterretjes.",
   "details": ["string","string","string"],
-  "closing": "string, max 90 tekens, droog, in karakter"
+  "closing": "string, max 90 tekens, droog, in karakter",
+  "preview_tomorrow": "string, max 90 tekens, een nieuwsgierigheidszin over morgen die de lezer triggert om door te klikken. Hou het vaag maar concreet genoeg — maak nieuwsgierig, niet volledig. Bv: 'Morgen is een heel ander verhaal — check het zelf.' of 'Morgen trekt er iets aan vanuit het westen.' Geen opsomming."
 }
 Lever UITSLUITEND dat JSON-object. Geen code fence, geen uitleg eromheen.
 `.trim();
@@ -80,15 +85,28 @@ Lever UITSLUITEND dat JSON-object. Geen code fence, geen uitleg eromheen.
 const SHARED_STYLE = WEERZONE_SHORT_PROMPT;
 
 const PIET_SYSTEM = `
-Je bent Piet — de stem van de 'Meteorological Truth' bij Weerzone. 
-Jouw unique selling point is extreme precisie. 
+Je bent Piet — een echte Nederlander die het weer kent zoals zijn achtertuin. Je schrijft aan een vriend, niet aan een abonnee.
 
-STIJL & TOON:
-- Gebruik exacte tijdstippen en metrics: Zeg niet "het waait hard", maar "windstoten tot 72 km/u vanaf 15:30".
-- Geen fluff: Vermijd clichés als "zonnetje" of "jas is geen overbodige luxe".
-- Nuchter & Eerlijk: Vertel precies wat de impact is op de fietstocht, de was of de planning van de lezer.
+TOON:
+- Menselijk en direct. Schrijf zoals je een appje stuurt aan iemand die je kent.
+- Geen meteorologie-jargon, geen bullet-point-denken, geen "er is een kans op".
+- Concreet: zeg "neem een jas mee voor de avond" niet "het wordt kouder".
+- Gebruik de voornaam van de lezer als het past, maar overdrijf het niet.
+- Verwijs naar hun dagelijks leven (fiets, tuin, hond) alsof je het gewoon weet.
+- Geen AI-taal, geen formeel rapport. Gewoon Piet die even typt.
 
-AFSLUITER: "— Piet, voor Weerzone".
+VOORBEELDEN VAN GOEDE ZINNEN:
+- "Die fiets mag vandaag uit de schuur."
+- "De was kan gerust buiten, maar haal hem voor half vijf binnen."
+- "Morgen wordt een andere dag — pak je regenjas maar alvast."
+
+VERBODEN:
+- "Er is een verhoogde kans op..."
+- "Meteorologisch gezien..."
+- "Het systeem verwacht..."
+- Opsommingstekens of sterretjes in de verdichttekst
+
+AFSLUITER: kort, droog, menselijk. Eindig altijd met "— Piet".
 `.trim();
 
 const REED_SYSTEM = `
@@ -169,11 +187,15 @@ function estofexToPrompt(est: EstofexBeneluxSummary | null | undefined): string 
 }
 
 function weatherToPrompt(w: WeatherSnapshot, neural?: WeatherData["neuralData"]): string {
-  let base = [
+  const lines = [
     `Nu: ${w.current.temperature}°C (voelt ${w.current.feelsLike}°), wind ${w.current.windSpeed} km/u (vlagen ${w.current.windGusts}), neerslag ${w.current.precipitation} mm, vocht ${w.current.humidity}%, code ${w.current.weatherCode}.`,
     `Vandaag: min ${w.daily.tempMin}°, max ${w.daily.tempMax}°, neerslag ${w.daily.precipitationSum} mm, wind-max ${w.daily.windMax} km/u, code ${w.daily.weatherCode}.`,
     `Verloop: ${w.hourlySummary}`,
-  ].join("\n");
+  ];
+  if (w.tomorrow) {
+    lines.push(`Morgen: min ${w.tomorrow.tempMin}°, max ${w.tomorrow.tempMax}°, neerslag ${w.tomorrow.precipitationSum} mm, code ${w.tomorrow.weatherCode}. (Gebruik dit alleen voor preview_tomorrow — schrijf er geen volledig verhaal over.)`);
+  }
+  let base = lines.join("\n");
 
   // Nowcast + scenario-hints blijven welkom als extra context, maar ZONDER
   // de bronlabels die het model verleiden om "MetNet-3" in de tekst te zetten.
@@ -189,9 +211,6 @@ function weatherToPrompt(w: WeatherSnapshot, neural?: WeatherData["neuralData"])
 export async function generatePersonaBrief(
   ctx: BriefContext & { neural?: WeatherData["neuralData"] },
 ): Promise<PersonaBrief> {
-  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY;
-  if (!apiKey) throw new Error("GEMINI_API_KEY ontbreekt");
-
   const persona = PERSONAS[ctx.tier];
   const system = systemFor(ctx.tier);
 
@@ -207,8 +226,6 @@ export async function generatePersonaBrief(
     month: "long",
   });
 
-  // Tonale hint uit de echte data — voorkomt dat het model een somber verhaal
-  // schrijft bij mooi weer, of overdrijft bij een normale bui.
   const zonnig = ctx.weather.current.weatherCode === 0 || ctx.weather.current.weatherCode === 1;
   const maxT = ctx.weather.daily.tempMax;
   const rainT = ctx.weather.daily.precipitationSum;
@@ -237,27 +254,26 @@ TONALE HINT (volg deze, komt uit de data): ${mood}.
 ${SHARED_STYLE}
 `.trim();
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
-    systemInstruction: system,
-    generationConfig: {
-      temperature: 0.6,
-      maxOutputTokens: 800,
-      responseMimeType: "application/json",
-    },
-  });
+  const raw = await hermesChat([
+    { role: "system", content: system },
+    { role: "user", content: userPrompt },
+  ], { model: "kimi", temperature: 0.6, maxTokens: 2000, json: true });
 
-  const result = await model.generateContent(userPrompt);
-  const raw = result.response.text().trim();
-  const parsed = JSON.parse(raw) as PersonaBrief;
+  const cleaned = raw.replace(/```json|```/g, "").trim();
+  // Kimi kan een object wrappen in uitleg — zoek het eerste { ... }
+  const match = cleaned.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error(`Geen JSON gevonden in Kimi-response: ${cleaned.slice(0, 100)}`);
+  const parsed = JSON.parse(match[0]) as PersonaBrief;
 
   // Defensieve sanering
   return {
     subject: (parsed.subject ?? `${persona.name} — ${ctx.city}`).slice(0, 100),
+    tagline: (parsed.tagline ?? "").slice(0, 60),
     greeting: (parsed.greeting ?? `Goedemorgen${ctx.firstName ? `, ${ctx.firstName}` : ""}.`).slice(0, 80),
+    local_fact: (parsed.local_fact ?? "").slice(0, 200),
     verdict: parsed.verdict ?? "",
     details: Array.isArray(parsed.details) ? parsed.details.slice(0, 4) : [],
     closing: (parsed.closing ?? "").slice(0, 140),
+    preview_tomorrow: parsed.preview_tomorrow ? (parsed.preview_tomorrow as string).slice(0, 120) : undefined,
   };
 }

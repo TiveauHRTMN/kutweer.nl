@@ -70,12 +70,10 @@ export async function GET(request: NextRequest) {
   const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const RESEND_KEY = process.env.RESEND_API_KEY;
-  const GEMINI_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_GEMINI_API_KEY;
 
   if (!SUPABASE_URL || !SERVICE_KEY)
     return NextResponse.json({ error: "SUPABASE_SERVICE_ROLE_KEY ontbreekt" }, { status: 500 });
   if (!RESEND_KEY) return NextResponse.json({ error: "RESEND_API_KEY ontbreekt" }, { status: 500 });
-  if (!GEMINI_KEY) return NextResponse.json({ error: "GEMINI_API_KEY ontbreekt" }, { status: 500 });
 
   const resend = new Resend(RESEND_KEY);
   const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
@@ -174,6 +172,12 @@ export async function GET(request: NextRequest) {
             return `${hh} ${h.temperature}° ${h.precipitation}mm wind ${h.windSpeed}km/u`;
           })
           .join(", "),
+        tomorrow: weather.daily[1] ? {
+          tempMax: weather.daily[1].tempMax,
+          tempMin: weather.daily[1].tempMin,
+          precipitationSum: weather.daily[1].precipitationSum,
+          weatherCode: weather.daily[1].weatherCode,
+        } : undefined,
       };
 
       const firstName =
@@ -253,7 +257,7 @@ export async function GET(request: NextRequest) {
 
       const fromName = PERSONAS[sub.tier].name;
       const { data: mail, error: mailErr } = await resend.emails.send({
-        from: `${fromName} | WEERZONE <info@weerzone.nl>`,
+        from: `${fromName} van Weerzone <info@weerzone.nl>`,
         to: profile.email,
         subject: brief.subject,
         html,
