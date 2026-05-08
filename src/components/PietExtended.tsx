@@ -37,6 +37,7 @@ import {
   getTerrasScore, getWandelScore, getHardloopScore, getOutfitAdvice, getUvLabel,
 } from "@/lib/commentary";
 
+import RainMap from "@/components/RainMap";
 
 function getSavedCity(): City | null {
   if (typeof window === "undefined") return null;
