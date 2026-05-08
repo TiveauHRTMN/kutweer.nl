@@ -12,7 +12,6 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
   const place = findPlace(province, slug);
   const cityName = place ? place.name : slug.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
 
-  // Load the provided WEERZONE logo
   const logoPath = path.join(process.cwd(), "public", "logo-full.png");
   let logoSrc = "";
   try {
@@ -22,11 +21,18 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
     console.error("Could not load logo for OpenGraph", e);
   }
 
+  // Raw SVG path for a nice, fluffy cloud
+  const cloudSvg = (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+      <path d="M17.5 19c2.485 0 4.5-2.015 4.5-4.5 0-2.31-1.748-4.225-4-4.475V10c0-3.314-2.686-6-6-6-2.94 0-5.385 2.115-5.91 4.905C3.398 9.38 1.5 11.662 1.5 14.5 1.5 16.985 3.515 19 6 19h11.5z" />
+    </svg>
+  );
+
   return new ImageResponse(
     (
       <div
         style={{
-          background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)", // Sky blue gradient
+          background: "linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)", 
           width: "100%",
           height: "100%",
           display: "flex",
@@ -39,16 +45,24 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
           overflow: "hidden",
         }}
       >
-        {/* Subtle cloud 1 (top left) */}
-        <div style={{ position: "absolute", top: "-150px", left: "-100px", width: "600px", height: "600px", background: "radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 70%)" }} />
-        {/* Subtle cloud 2 (middle right) */}
-        <div style={{ position: "absolute", top: "15%", right: "-150px", width: "800px", height: "500px", background: "radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%)" }} />
-        {/* Subtle cloud 3 (bottom left) */}
-        <div style={{ position: "absolute", bottom: "-200px", left: "15%", width: "900px", height: "450px", background: "radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%)" }} />
+        {/* SVG Cloud 1 (top left) */}
+        <div style={{ position: "absolute", top: "-50px", left: "-80px", width: "400px", height: "400px", color: "rgba(255,255,255,0.15)", display: "flex" }}>
+          {cloudSvg}
+        </div>
+        
+        {/* SVG Cloud 2 (middle right) */}
+        <div style={{ position: "absolute", top: "15%", right: "-120px", width: "500px", height: "500px", color: "rgba(255,255,255,0.1)", display: "flex" }}>
+          {cloudSvg}
+        </div>
+        
+        {/* SVG Cloud 3 (bottom left) */}
+        <div style={{ position: "absolute", bottom: "-100px", left: "15%", width: "450px", height: "450px", color: "rgba(255,255,255,0.12)", display: "flex" }}>
+          {cloudSvg}
+        </div>
 
         {/* WEERZONE Brand Badge (Image) */}
         {logoSrc ? (
-          <img src={logoSrc} alt="WEERZONE" width={320} style={{ marginBottom: "16px" }} />
+          <img src={logoSrc} alt="WEERZONE" width={320} style={{ marginBottom: "16px", zIndex: 10 }} />
         ) : (
           <div
             style={{
@@ -61,6 +75,7 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
               letterSpacing: "4px",
               marginBottom: "40px",
               display: "flex",
+              zIndex: 10,
             }}
           >
             WEERZONE
@@ -72,12 +87,14 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
           style={{
             fontSize: "120px",
             fontWeight: 900,
-            color: "#ffffff", // White text for the sky blue background
+            color: "#ffffff", 
             letterSpacing: "-4px",
             lineHeight: 1.1,
             marginBottom: "16px",
             textAlign: "center",
             display: "flex",
+            zIndex: 10,
+            textShadow: "0 10px 30px rgba(0,0,0,0.15)",
           }}
         >
           {cityName}
@@ -88,11 +105,13 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
           style={{
             fontSize: "42px",
             fontWeight: 600,
-            color: "rgba(255, 255, 255, 0.9)", // Dimmed white text
+            color: "rgba(255, 255, 255, 0.9)", 
             letterSpacing: "1px",
             textAlign: "center",
             marginBottom: "60px",
             display: "flex",
+            zIndex: 10,
+            textShadow: "0 4px 15px rgba(0,0,0,0.1)",
           }}
         >
           Bekijk of jij vanmiddag droog blijft.
@@ -101,8 +120,8 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
         {/* Click-forcing CTA Button (Sun Yellow) */}
         <div
           style={{
-            background: "#ffd60a", // Zon-geel CTA
-            color: "#0f172a", // Dark slate text for maximum contrast
+            background: "#ffd60a", 
+            color: "#0f172a", 
             padding: "24px 64px",
             borderRadius: "32px",
             fontSize: "36px",
@@ -111,6 +130,7 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
             display: "flex",
             alignItems: "center",
             boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",
+            zIndex: 10,
           }}
         >
           Live Radar Bekijken &rarr;
