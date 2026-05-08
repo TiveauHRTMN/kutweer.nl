@@ -4,7 +4,7 @@ const MODELS = {
   large: "nousresearch/hermes-4-405b",  // complexe taken (WWS, orchestrator)
   fast:  "nousresearch/hermes-4-70b",   // snelle taken
   seo:   "nousresearch/hermes-4-70b",   // batch SEO
-  kimi:  "deepseek/deepseek-v4-flash",   // persona briefs (Piet/Reed/Steve)
+  persona: "deepseek/deepseek-v4-flash", // persona briefs (Piet/Reed/Steve)
 } as const;
 
 export type HermesModel = keyof typeof MODELS;
@@ -15,7 +15,7 @@ function getClient() {
   return new OpenAI({
     baseURL: "https://openrouter.ai/api/v1",
     apiKey,
-    timeout: 180000, // 3 min — Kimi K2.6 reasoning kan lang duren
+    timeout: 180000, // 3 min — DeepSeek reasoning kan soms lang duren
     defaultHeaders: {
       "HTTP-Referer": "https://weerzone.nl",
       "X-Title": "Weerzone",

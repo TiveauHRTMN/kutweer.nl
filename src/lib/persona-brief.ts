@@ -257,12 +257,12 @@ ${SHARED_STYLE}
   const raw = await hermesChat([
     { role: "system", content: system },
     { role: "user", content: userPrompt },
-  ], { model: "kimi", temperature: 0.6, maxTokens: 2000, json: true });
+  ], { model: "persona", temperature: 0.6, maxTokens: 2000, json: true });
 
   const cleaned = raw.replace(/```json|```/g, "").trim();
-  // Kimi kan een object wrappen in uitleg — zoek het eerste { ... }
+  // DeepSeek/LLM kan een object wrappen in uitleg — zoek het eerste { ... }
   const match = cleaned.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error(`Geen JSON gevonden in Kimi-response: ${cleaned.slice(0, 100)}`);
+  if (!match) throw new Error(`Geen JSON gevonden in LLM-response: ${cleaned.slice(0, 100)}`);
   const parsed = JSON.parse(match[0]) as PersonaBrief;
 
   // Defensieve sanering

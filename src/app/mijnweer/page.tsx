@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import PietExtended from "@/components/PietExtended";
 import PremiumGate from "@/components/PremiumGate";
+import LoadingScreen from "@/components/LoadingScreen";
 import { getSavedLocationServer } from "@/lib/location-cookies";
-import { DUTCH_CITIES } from "@/lib/types";
+import { DUTCH_CITIES, type City } from "@/lib/types";
 import { fetchWeatherData } from "@/lib/weather";
 import { fetchKNMIWarnings, warningsForProvince, nearestProvinceSlug, PROVINCE_SLUG_TO_KNMI } from "@/lib/knmi-warnings";
 import KnmiWarningBanner from "@/components/KnmiWarningBanner";
@@ -87,6 +89,22 @@ export default async function MijnWeerPage() {
   const loc = await getSavedLocationServer().catch(() => null);
   const activeLoc = loc || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
 
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <main>
+        <Suspense fallback={<LoadingScreen />}>
+          <MijnWeerAsync activeLoc={activeLoc} loc={loc} />
+        </Suspense>
+      </main>
+    </>
+  );
+}
+
+async function MijnWeerAsync({ activeLoc, loc }: { activeLoc: City, loc: City | null }) {
   const lat = typeof activeLoc.lat === "number" && !isNaN(activeLoc.lat) ? activeLoc.lat : 52.1;
   const lon = typeof activeLoc.lon === "number" && !isNaN(activeLoc.lon) ? activeLoc.lon : 5.18;
   const [initialWeather, allWarnings, provinceSlug] = await Promise.all([
@@ -115,131 +133,122 @@ export default async function MijnWeerPage() {
   }
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <main>
-        <WeatherDashboard
-          initialCity={activeLoc}
-          initialWeather={initialWeather}
-          hideWeatherInfo={true}
-          beforeFooter={
-            <div className="space-y-4 mt-8">
-              <div className="card p-6 sm:p-8">
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">
-                  Hoe werkt Mijn Weer
-                </p>
-                <h2 className="text-xl font-black text-slate-900 mb-3">
-                  48 uur vooruit — niet meer, niet minder
-                </h2>
-                <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                  WEERZONE focust bewust op de komende 48 uur. Dat is de periode waarin een weersverwachting
-                  nog bruikbaar is voor concrete beslissingen: of je de was buiten hangt, de auto meeneemt,
-                  of een afspraak buiten plant. Verder vooruit wordt het giswerk — wij doen niet aan giswerk.
-                </p>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  De weerdata komt rechtstreeks van het KNMI HARMONIE-model, aangevuld met ICON-D2 en Arome.
-                  Drie modellen samen geven een nauwkeuriger beeld dan één model alleen. Weerzone vergelijkt
-                  ze en toont je het meest betrouwbare resultaat — per uur, op jouw locatie.
-                </p>
-              </div>
+    <WeatherDashboard
+      initialCity={activeLoc}
+      initialWeather={initialWeather}
+      hideWeatherInfo={true}
+      beforeFooter={
+        <div className="space-y-4 mt-8">
+          <div className="card p-6 sm:p-8">
+            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">
+              Hoe werkt Mijn Weer
+            </p>
+            <h2 className="text-xl font-black text-slate-900 mb-3">
+              48 uur vooruit — niet meer, niet minder
+            </h2>
+            <p className="text-sm text-slate-600 leading-relaxed mb-4">
+              WEERZONE focust bewust op de komende 48 uur. Dat is de periode waarin een weersverwachting
+              nog bruikbaar is voor concrete beslissingen: of je de was buiten hangt, de auto meeneemt,
+              of een afspraak buiten plant. Verder vooruit wordt het giswerk — wij doen niet aan giswerk.
+            </p>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              De weerdata komt rechtstreeks van het KNMI HARMONIE-model, aangevuld met ICON-D2 en Arome.
+              Drie modellen samen geven een nauwkeuriger beeld dan één model alleen. Weerzone vergelijkt
+              ze en toont je het meest betrouwbare resultaat — per uur, op jouw locatie.
+            </p>
+          </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="card p-5">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">Locatie</p>
-                  <p className="font-black text-slate-900 mb-1">Hyperlokaal op 1×1 km</p>
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    Niet het weer voor de regio of de provincie — maar voor jouw specifieke postcode.
-                    Regen kan twee kilometer verderop vallen terwijl het bij jou droog blijft.
-                    WEERZONE maakt dat verschil zichtbaar.
-                  </p>
-                </div>
-                <div className="card p-5">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">Geen ruis</p>
-                  <p className="font-black text-slate-900 mb-1">Alleen wat telt vandaag</p>
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    Geen eindeloze grafieken of 14-daagse voorspellingen die morgen al kloppen van geen
-                    kanten. Mijn Weer toont temperatuur, neerslag, wind en UV — per uur, in gewone taal,
-                    zonder reclame of tracking.
-                  </p>
-                </div>
-                <div className="card p-5">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">KNMI-waarschuwingen</p>
-                  <p className="font-black text-slate-900 mb-1">Direct bovenin bij gevaar</p>
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    Als het KNMI een waarschuwing uitgeeft voor jouw provincie — storm, onweer, hitte,
-                    gladheid — zie je dat direct bovenin Mijn Weer. Geen aparte app of website nodig.
-                  </p>
-                </div>
-                <div className="card p-5">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">Nauwkeurigheid</p>
-                  <p className="font-black text-slate-900 mb-1">92–98% voor de komende 48 uur</p>
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    Voor de komende 24 uur zijn onze voorspellingen 95–98% nauwkeurig. Voor 24–48 uur
-                    is dat 92–95%. Daarna neemt de betrouwbaarheid snel af — vandaar onze bewuste keuze
-                    voor die tijdshorizon.
-                  </p>
-                </div>
-              </div>
-
-              <div className="card p-6">
-                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">
-                  Meer uit Weerzone halen
-                </p>
-                <p className="text-slate-900 font-black text-lg mb-2">
-                  Waarschuwingen die er echt toe doen
-                </p>
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Met Reed ontvang je een bericht zodra het weer over jouw persoonlijke drempel gaat —
-                  of dat nu zware neerslag, harde wind, hitte of onweer is. Je stelt zelf in wanneer
-                  je gewaarschuwd wilt worden. Geen ruis, alleen meldingen die voor jou relevant zijn.
-                </p>
-              </div>
-            </div>
-          }
-          topContent={
-            <div className="space-y-6">
-              <div className="card p-6 sm:p-8">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="w-3 h-3 rounded-full bg-emerald-500" />
-                  <span className="text-xs font-black uppercase tracking-widest text-emerald-600">
-                    Mijn Weer · 48 uur
-                  </span>
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight mb-2">
-                  {greetingName !== "jou" ? `Hoi ${greetingName}, dit is jouw weer` : "Dit is jouw weer"}
-                </h1>
-                <p className="text-sm text-slate-500 leading-relaxed mb-5">
-                  Hyperlokale 48-uurs voorspelling voor <strong className="text-slate-900">{activeLoc.name}</strong>
-                  {provinceSlug && PROVINCE_SLUG_TO_KNMI[provinceSlug] && ` · ${PROVINCE_SLUG_TO_KNMI[provinceSlug]}`}.
-                  Per uur bijgewerkt, in gewone taal.
-                </p>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <LocateButton compact label="Gebruik mijn GPS" className="!text-slate-900 !bg-slate-100 !border-slate-200 hover:!bg-slate-200" />
-                  <span className="text-[11px] text-slate-400 font-medium">
-                    Niet de juiste plaats? Klik hierboven.
-                  </span>
-                </div>
-              </div>
-
-              {provinceWarnings.length > 0 && (
-                <KnmiWarningBanner warnings={provinceWarnings} />
-              )}
-
-              <PremiumGate>
-                <PietExtended initialCity={loc || undefined} hideLocate />
-              </PremiumGate>
-
-              <p className="text-center text-white/40 text-xs font-medium pb-4">
-                Verder dan 48 uur kijken we niet vooruit - dan wordt het gokken.
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="card p-5">
+              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">Locatie</p>
+              <p className="font-black text-slate-900 mb-1">Hyperlokaal op 1×1 km</p>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Niet het weer voor de regio of de provincie — maar voor jouw specifieke postcode.
+                Regen kan twee kilometer verderop vallen terwijl het bij jou droog blijft.
+                WEERZONE maakt dat verschil zichtbaar.
               </p>
             </div>
-          }
-        />
-      </main>
+            <div className="card p-5">
+              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">Geen ruis</p>
+              <p className="font-black text-slate-900 mb-1">Alleen wat telt vandaag</p>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Geen eindeloze grafieken of 14-daagse voorspellingen die morgen al kloppen van geen
+                kanten. Mijn Weer toont temperatuur, neerslag, wind en UV — per uur, in gewone taal,
+                zonder reclame of tracking.
+              </p>
+            </div>
+            <div className="card p-5">
+              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">KNMI-waarschuwingen</p>
+              <p className="font-black text-slate-900 mb-1">Direct bovenin bij gevaar</p>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Als het KNMI een waarschuwing uitgeeft voor jouw provincie — storm, onweer, hitte,
+                gladheid — zie je dat direct bovenin Mijn Weer. Geen aparte app of website nodig.
+              </p>
+            </div>
+            <div className="card p-5">
+              <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-2">Nauwkeurigheid</p>
+              <p className="font-black text-slate-900 mb-1">92–98% voor de komende 48 uur</p>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Voor de komende 24 uur zijn onze voorspellingen 95–98% nauwkeurig. Voor 24–48 uur
+                is dat 92–95%. Daarna neemt de betrouwbaarheid snel af — vandaar onze bewuste keuze
+                voor die tijdshorizon.
+              </p>
+            </div>
+          </div>
 
-    </>
+          <div className="card p-6">
+            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">
+              Meer uit Weerzone halen
+            </p>
+            <p className="text-slate-900 font-black text-lg mb-2">
+              Waarschuwingen die er echt toe doen
+            </p>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Met Reed ontvang je een bericht zodra het weer over jouw persoonlijke drempel gaat —
+              of dat nu zware neerslag, harde wind, hitte of onweer is. Je stelt zelf in wanneer
+              je gewaarschuwd wilt worden. Geen ruis, alleen meldingen die voor jou relevant zijn.
+            </p>
+          </div>
+        </div>
+      }
+      topContent={
+        <div className="space-y-6">
+          <div className="card p-6 sm:p-8">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="w-3 h-3 rounded-full bg-emerald-500" />
+              <span className="text-xs font-black uppercase tracking-widest text-emerald-600">
+                Mijn Weer · 48 uur
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight mb-2">
+              {greetingName !== "jou" ? `Hoi ${greetingName}, dit is jouw weer` : "Dit is jouw weer"}
+            </h1>
+            <p className="text-sm text-slate-500 leading-relaxed mb-5">
+              Hyperlokale 48-uurs voorspelling voor <strong className="text-slate-900">{activeLoc.name}</strong>
+              {provinceSlug && PROVINCE_SLUG_TO_KNMI[provinceSlug] && ` · ${PROVINCE_SLUG_TO_KNMI[provinceSlug]}`}.
+              Per uur bijgewerkt, in gewone taal.
+            </p>
+            <div className="flex items-center gap-3 flex-wrap">
+              <LocateButton compact label="Gebruik mijn GPS" className="!text-slate-900 !bg-slate-100 !border-slate-200 hover:!bg-slate-200" />
+              <span className="text-[11px] text-slate-400 font-medium">
+                Niet de juiste plaats? Klik hierboven.
+              </span>
+            </div>
+          </div>
+
+          {provinceWarnings.length > 0 && (
+            <KnmiWarningBanner warnings={provinceWarnings} />
+          )}
+
+          <PremiumGate>
+            <PietExtended initialCity={loc || undefined} hideLocate />
+          </PremiumGate>
+
+          <p className="text-center text-white/40 text-xs font-medium pb-4">
+            Verder dan 48 uur kijken we niet vooruit - dan wordt het gokken.
+          </p>
+        </div>
+      }
+    />
   );
 }
