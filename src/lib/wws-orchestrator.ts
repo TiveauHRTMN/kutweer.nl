@@ -161,7 +161,7 @@ ${hours}
 Analyseer de divergentie tussen H, I en A. Bij neerslagpieken in I of A die H mist: weeg het P90 risico zwaarder voor Reed.
 Genereer de output payload uitsluitend als geldige JSON.`,
       },
-    ], { model: "large", json: true, maxTokens: 1200 });
+    ], { model: "persona", json: true, maxTokens: 1200 });
 
     return JSON.parse(text.replace(/```json|```/g, "").trim()) as WWSPayload;
   } catch (err) {
