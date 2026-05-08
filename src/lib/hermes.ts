@@ -15,7 +15,7 @@ function getClient() {
   return new OpenAI({
     baseURL: "https://openrouter.ai/api/v1",
     apiKey,
-    timeout: 180000, // 3 min — DeepSeek reasoning kan soms lang duren
+    timeout: 60000, // 60 sec — DeepSeek V4 flash is snel (voorheen 3 min voor Kimi)
     defaultHeaders: {
       "HTTP-Referer": "https://weerzone.nl",
       "X-Title": "Weerzone",
