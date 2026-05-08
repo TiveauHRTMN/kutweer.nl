@@ -46,17 +46,17 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
         }}
       >
         {/* SVG Cloud 1 (top left) */}
-        <div style={{ position: "absolute", top: "-50px", left: "-80px", width: "400px", height: "400px", color: "rgba(255,255,255,0.15)", display: "flex" }}>
+        <div style={{ position: "absolute", top: "-150px", left: "-200px", width: "1200px", height: "1200px", color: "rgba(255,255,255,0.18)", display: "flex" }}>
           {cloudSvg}
         </div>
         
         {/* SVG Cloud 2 (middle right) */}
-        <div style={{ position: "absolute", top: "15%", right: "-120px", width: "500px", height: "500px", color: "rgba(255,255,255,0.1)", display: "flex" }}>
+        <div style={{ position: "absolute", top: "-50px", right: "-300px", width: "1500px", height: "1500px", color: "rgba(255,255,255,0.15)", display: "flex" }}>
           {cloudSvg}
         </div>
         
         {/* SVG Cloud 3 (bottom left) */}
-        <div style={{ position: "absolute", bottom: "-100px", left: "15%", width: "450px", height: "450px", color: "rgba(255,255,255,0.12)", display: "flex" }}>
+        <div style={{ position: "absolute", bottom: "-300px", left: "0px", width: "1400px", height: "1400px", color: "rgba(255,255,255,0.12)", display: "flex" }}>
           {cloudSvg}
         </div>
 
