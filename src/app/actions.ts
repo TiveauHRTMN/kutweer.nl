@@ -502,16 +502,16 @@ export async function getImpactAnalysisAction(lat: number, lon: number) {
 export async function getLocationSEOContent(placeName: string, province: string, character?: string): Promise<string> {
   const supabase = createSupabaseAdminClient();
   
-  // 1. Check cache (gebruik de ai_strategy kolom of meta_description als fallback)
+  // 1. Check cache (gebruik de ai_strategy kolom mits het geen interne tracking string is)
   try {
     const { data: existing } = await supabase
       .from("seo_injections")
-      .select("ai_strategy, meta_description")
+      .select("ai_strategy")
       .eq("place_name", placeName)
       .eq("province", province)
       .maybeSingle();
 
-    if (existing?.ai_strategy) {
+    if (existing?.ai_strategy && !existing.ai_strategy.includes("Batch SEO")) {
       return existing.ai_strategy;
     }
   } catch (err) {
@@ -538,20 +538,9 @@ export async function getLocationSEOContent(placeName: string, province: string,
     const result = await model.generateContent(prompt);
     const text = result.response.text().trim();
 
-    // 3. Store in cache for next time
-    if (text) {
-      const { error: upsertErr } = await supabase
-        .from("seo_injections")
-        .upsert({
-          place_name: placeName,
-          province: province,
-          ai_strategy: text,
-          meta_description: `Actueel weerbericht voor ${placeName}.`,
-          json_ld: {}
-        }, { onConflict: 'place_name,province' });
-      if (upsertErr) console.error("SEO cache write failed:", upsertErr);
-    }
-
+    // 3. We slaan dit specifieke stukje content tijdelijk niet meer op in ai_strategy via deze route
+    // omdat de SEO batch cronjob die overschrijft met tracking logs. We returnen het gewoon direct voor de render.
+    
     return text;
   } catch (error) {
     console.error("getLocationSEOContent error:", error);
