@@ -1,13 +1,26 @@
 import { ImageResponse } from "next/og";
 import { findPlace } from "@/lib/places-data";
+import { readFileSync } from "fs";
+import path from "path";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+export const runtime = "nodejs";
 
 export default async function OgImage({ params }: { params: Promise<{ province: string; place: string }> }) {
   const { province, place: slug } = await params;
   const place = findPlace(province, slug);
   const cityName = place ? place.name : slug.replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+
+  // Load the provided WEERZONE logo
+  const logoPath = path.join(process.cwd(), "public", "logo-full.png");
+  let logoSrc = "";
+  try {
+    const logoBuffer = readFileSync(logoPath);
+    logoSrc = `data:image/png;base64,${logoBuffer.toString("base64")}`;
+  } catch (e) {
+    console.error("Could not load logo for OpenGraph", e);
+  }
 
   return new ImageResponse(
     (
@@ -50,23 +63,27 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
             position: "relative",
           }}
         >
-          {/* WEERZONE Brand Badge */}
-          <div
-            style={{
-              background: "#ffd60a", // Dominant Yellow
-              color: "black",
-              padding: "12px 28px",
-              borderRadius: "99px",
-              fontSize: "18px",
-              fontWeight: 900,
-              letterSpacing: "4px",
-              marginBottom: "40px",
-              display: "flex",
-              boxShadow: "0 10px 30px rgba(255, 214, 10, 0.3)",
-            }}
-          >
-            WEERZONE
-          </div>
+          {/* WEERZONE Brand Badge (Image) */}
+          {logoSrc ? (
+            <img src={logoSrc} alt="WEERZONE" width={280} style={{ marginBottom: "32px" }} />
+          ) : (
+            <div
+              style={{
+                background: "#ffd60a",
+                color: "black",
+                padding: "12px 28px",
+                borderRadius: "99px",
+                fontSize: "18px",
+                fontWeight: 900,
+                letterSpacing: "4px",
+                marginBottom: "40px",
+                display: "flex",
+                boxShadow: "0 10px 30px rgba(255, 214, 10, 0.3)",
+              }}
+            >
+              WEERZONE
+            </div>
+          )}
 
           {/* Dynamic City Name */}
           <div

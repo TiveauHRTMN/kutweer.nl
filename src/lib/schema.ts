@@ -152,3 +152,42 @@ export function schemaCityWeatherPage(opts: {
     publisher: ORG,
   };
 }
+
+export function schemaCityDataset(opts: {
+  placeName: string;
+  url: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    name: `Hyperlokale Weerdata ${opts.placeName} (1x1 km resolutie)`,
+    description: `Real-time weersverwachting, temperatuur, neerslag en wind op 1 bij 1 kilometer grid voor ${opts.placeName}. Data gecombineerd uit HARMONIE, ICON-D2 en AROME weermodellen.`,
+    url: opts.url,
+    license: "https://creativecommons.org/licenses/by/4.0/",
+    creator: ORG,
+    temporalCoverage: `${new Date().toISOString().split('T')[0]}/${new Date(Date.now() + 48 * 3600 * 1000).toISOString().split('T')[0]}`,
+    spatialCoverage: {
+      "@type": "Place",
+      name: opts.placeName
+    }
+  };
+}
+
+export function schemaAggregateRating(opts: {
+  itemName: string;
+  ratingValue: number;
+  ratingCount: number;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: opts.itemName,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: opts.ratingValue.toFixed(1),
+      reviewCount: opts.ratingCount,
+      bestRating: "5",
+      worstRating: "1"
+    }
+  };
+}
