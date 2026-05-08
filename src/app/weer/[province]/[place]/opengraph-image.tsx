@@ -40,11 +40,11 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
         }}
       >
         {/* Subtle cloud 1 (top left) */}
-        <div style={{ position: "absolute", top: "-100px", left: "-50px", width: "400px", height: "400px", background: "radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%)" }} />
+        <div style={{ position: "absolute", top: "-150px", left: "-100px", width: "600px", height: "600px", background: "radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 70%)" }} />
         {/* Subtle cloud 2 (middle right) */}
-        <div style={{ position: "absolute", top: "20%", right: "-100px", width: "500px", height: "300px", background: "radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%)" }} />
+        <div style={{ position: "absolute", top: "15%", right: "-150px", width: "800px", height: "500px", background: "radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%)" }} />
         {/* Subtle cloud 3 (bottom left) */}
-        <div style={{ position: "absolute", bottom: "-150px", left: "20%", width: "600px", height: "350px", background: "radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%)" }} />
+        <div style={{ position: "absolute", bottom: "-200px", left: "15%", width: "900px", height: "450px", background: "radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%)" }} />
 
         {/* WEERZONE Brand Badge (Image) */}
         {logoSrc ? (
