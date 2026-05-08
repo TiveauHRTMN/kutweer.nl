@@ -102,7 +102,7 @@ Je antwoord MOET uitsluitend een valide JSON-object zijn. Genereer een JSON met 
   "piet_update": {
     "title": "string",
     "content": "Piet's hyper-lokale interpretatie. Nuchter, warm, concreet.",
-    "closing": "— Piet, voor Weerzone"
+    "closing": "— Piet van Weerzone"
   },
   "reed_alert": {
     "active": true of false,

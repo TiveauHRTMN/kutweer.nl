@@ -177,7 +177,7 @@ INHOUD:
 - Begin elk dagdeel met de naam in vet (bv. "**Ochtend.**").
 - 200–300 woorden in totaal. Wees to-the-point voor snelheid. Max 1 emoji.
 
-- Ondertekenen met "— Piet, voor Weerzone".`
+- Ondertekenen met "— Piet van Weerzone".`
         },
         { role: "user", content: prompt }
       ],

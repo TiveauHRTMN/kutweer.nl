@@ -383,8 +383,8 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
   if (loading || !weather) return <div className="card p-6 text-center"><RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2 text-text-secondary" /><p className="text-sm text-text-secondary">Piet laadt jouw locatie…</p></div>;
 
   const narrative = aiNarrative || wws?.piet_update?.content || pietAnalysis || getMainCommentary(weather);
-  const narrativeTitle = wws?.piet_update?.title || "Het volledige weerverhaal";
-  const narrativeClosing = wws?.piet_update?.closing || "— Piet, voor Weerzone";
+  const narrativeTitle = wws?.piet_update?.title || (user?.user_metadata?.full_name ? `Piet's verwachting voor ${user.user_metadata.full_name.split(' ')[0]}` : "Piet's verwachting voor jou");
+  const narrativeClosing = wws?.piet_update?.closing || "— Piet van Weerzone";
 
   const _pad = (n: number) => String(n).padStart(2, "0");
   const _now = new Date();
