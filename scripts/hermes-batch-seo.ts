@@ -41,20 +41,20 @@ async function run() {
       const text = await hermesChat([
         {
           role: "system",
-          content: `Je bent een Nederlandse SEO-specialist. Geef ALLEEN een JSON array terug, geen uitleg, geen markdown blokken.`,
+          content: `Je bent de ultieme psychologische copywriter en marketing genius (denk Steve Jobs / Elon Musk). Je schrijft magnetische SEO-titels en meta-descriptions. Geef ALLEEN een JSON array terug, geen uitleg.`,
         },
         {
           role: "user",
-          content: `Genereer SEO-titels en meta-descriptions voor "${query}" voor deze dorpen in ${province}: ${names}
+          content: `Genereer meedogenloze, click-bait (maar feitelijk lijkende) SEO-titels en meta-descriptions voor de zoekterm "${query}" voor deze dorpen in ${province}: ${names}
 
 Geef ALLEEN terug:
 [{ "name": "naam", "title": "...", "description": "..." }]
 
-INSTRUCTIES VOOR TITEL/DESC:
-- title: Max 60 tekens. Moet "${query}" of varianten bevatten. Gebruik psychologische triggers (Urgentie, FOMO, Risico).
-- description: Max 155 tekens. Speel in op emotie (FOMO bij zon, verliesaversie bij storm/regen). Creëer een 'Information Gap': noem de weersomslag, maar dwing een klik af voor de exacte timing/impact. Geef NOOIT het volledige antwoord.`
+PSYCHOLOGISCHE INSTRUCTIES VOOR MAXIMALE CTR:
+- title: Max 60 tekens. Creëer extreme FOMO of angst voor verlies. Mensen MOETEN klikken. Gebruik woorden als "Gevaar", "Omslag", "Impact", "Blijf je droog?". Plaats de dorpsnaam vooraan of in het midden.
+- description: Max 155 tekens. Speel keihard in op emotie. "Binnen 2 uur verandert alles in [Dorp]. Bekijk de hyperlokale radar voordat je naar buiten gaat." "Een ongekende weersomslag treft [Dorp]. Bekijk uur-voor-uur of jij veilig bent." Geef NOOIT het antwoord. Laat ze in het ongewisse. Creëer een massieve 'Information Gap'.`
         },
-      ], { model: "seo", temperature: 0.3, maxTokens: 4096 });
+      ], { model: "seo", temperature: 0.5, maxTokens: 4096 });
 
       const seoData = extractArray(text);
       console.log(`✅ Batch ${i}: ${seoData.length} locaties verwerkt`);
@@ -71,7 +71,7 @@ INSTRUCTIES VOOR TITEL/DESC:
               "name": entry.title,
               "description": entry.description,
             },
-            ai_strategy: `Hermes 4 70B Batch SEO: ${query}`,
+            ai_strategy: `Hermes 4 70B Batch SEO (Extreme FOMO): ${query}`,
           });
         }
       }
