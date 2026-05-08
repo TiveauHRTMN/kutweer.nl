@@ -7,6 +7,7 @@ const PROVINCES = [
   "groningen", "friesland", "drenthe", "overijssel", "flevoland",
   "gelderland", "utrecht", "noord-holland", "zuid-holland", "zeeland",
   "noord-brabant", "limburg",
+  "antwerpen", "limburg-be", "oost-vlaanderen", "vlaams-brabant", "west-vlaanderen",
 ] as const;
 
 const THEME_SLUGS = [

@@ -29,7 +29,12 @@ export type Province =
   | "zuid-holland"
   | "zeeland"
   | "noord-brabant"
-  | "limburg";
+  | "limburg"
+  | "antwerpen"
+  | "limburg-be"
+  | "oost-vlaanderen"
+  | "vlaams-brabant"
+  | "west-vlaanderen";
 
 export const PROVINCE_LABELS: Record<Province, string> = {
   groningen: "Groningen",
@@ -43,7 +48,12 @@ export const PROVINCE_LABELS: Record<Province, string> = {
   "zuid-holland": "Zuid-Holland",
   zeeland: "Zeeland",
   "noord-brabant": "Noord-Brabant",
-  limburg: "Limburg",
+  limburg: "Limburg (NL)",
+  antwerpen: "Antwerpen",
+  "limburg-be": "Limburg (BE)",
+  "oost-vlaanderen": "Oost-Vlaanderen",
+  "vlaams-brabant": "Vlaams-Brabant",
+  "west-vlaanderen": "West-Vlaanderen",
 };
 
 // ============================================================

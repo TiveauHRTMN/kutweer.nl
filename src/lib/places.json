@@ -54653,5 +54653,8471 @@
     "lat": 51.8153,
     "lon": 4.63,
     "population": 45000
+  },
+  {
+    "name": "Brussel",
+    "province": "vlaams-brabant",
+    "lat": 50.8427501,
+    "lon": 4.3515499
+  },
+  {
+    "name": "Laken",
+    "province": "vlaams-brabant",
+    "lat": 50.884218,
+    "lon": 4.3580002
+  },
+  {
+    "name": "Schaarbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.86744,
+    "lon": 4.37727
+  },
+  {
+    "name": "Etterbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.83259,
+    "lon": 4.38899
+  },
+  {
+    "name": "Elsene",
+    "province": "vlaams-brabant",
+    "lat": 50.8270563,
+    "lon": 4.372308
+  },
+  {
+    "name": "Sint-Gillis",
+    "province": "vlaams-brabant",
+    "lat": 50.8301436,
+    "lon": 4.3402184
+  },
+  {
+    "name": "Anderlecht",
+    "province": "vlaams-brabant",
+    "lat": 50.8365808,
+    "lon": 4.308187
+  },
+  {
+    "name": "Sint-Jans-Molenbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8522009,
+    "lon": 4.3303277
+  },
+  {
+    "name": "Koekelberg",
+    "province": "vlaams-brabant",
+    "lat": 50.8633811,
+    "lon": 4.330338
+  },
+  {
+    "name": "Sint-Agatha-Berchem",
+    "province": "vlaams-brabant",
+    "lat": 50.8657821,
+    "lon": 4.2925975
+  },
+  {
+    "name": "Ganshoren",
+    "province": "vlaams-brabant",
+    "lat": 50.87113,
+    "lon": 4.30253
+  },
+  {
+    "name": "Jette",
+    "province": "vlaams-brabant",
+    "lat": 50.8808582,
+    "lon": 4.3227894
+  },
+  {
+    "name": "Neder-Over-Heembeek",
+    "province": "vlaams-brabant",
+    "lat": 50.89622,
+    "lon": 4.37188
+  },
+  {
+    "name": "Haren",
+    "province": "vlaams-brabant",
+    "lat": 50.8922905,
+    "lon": 4.4176727
+  },
+  {
+    "name": "Evere",
+    "province": "vlaams-brabant",
+    "lat": 50.8739353,
+    "lon": 4.4009421
+  },
+  {
+    "name": "Sint-Pieters-Woluwe",
+    "province": "vlaams-brabant",
+    "lat": 50.8299809,
+    "lon": 4.4335038
+  },
+  {
+    "name": "Oudergem",
+    "province": "vlaams-brabant",
+    "lat": 50.81643,
+    "lon": 4.42649
+  },
+  {
+    "name": "Watermaal-Bosvoorde",
+    "province": "vlaams-brabant",
+    "lat": 50.7881573,
+    "lon": 4.4180065
+  },
+  {
+    "name": "Ukkel",
+    "province": "vlaams-brabant",
+    "lat": 50.80241,
+    "lon": 4.34067
+  },
+  {
+    "name": "Vorst",
+    "province": "vlaams-brabant",
+    "lat": 50.81745,
+    "lon": 4.32675
+  },
+  {
+    "name": "Sint-Lambrechts-Woluwe",
+    "province": "vlaams-brabant",
+    "lat": 50.8489094,
+    "lon": 4.4320883
+  },
+  {
+    "name": "Sint-Joost-Ten-Noode",
+    "province": "vlaams-brabant",
+    "lat": 50.8537715,
+    "lon": 4.3704657
+  },
+  {
+    "name": "Halle",
+    "province": "vlaams-brabant",
+    "lat": 50.7324848,
+    "lon": 4.2349129
+  },
+  {
+    "name": "Buizingen",
+    "province": "vlaams-brabant",
+    "lat": 50.741419,
+    "lon": 4.2500475
+  },
+  {
+    "name": "Lembeek",
+    "province": "vlaams-brabant",
+    "lat": 50.7140616,
+    "lon": 4.2200436
+  },
+  {
+    "name": "Herfelingen",
+    "province": "vlaams-brabant",
+    "lat": 50.7477711,
+    "lon": 4.0998655
+  },
+  {
+    "name": "Herne",
+    "province": "vlaams-brabant",
+    "lat": 50.7233164,
+    "lon": 4.0536565
+  },
+  {
+    "name": "Sint-Pieters-Kapelle",
+    "province": "vlaams-brabant",
+    "lat": 50.7070524,
+    "lon": 3.9899741
+  },
+  {
+    "name": "Bever",
+    "province": "vlaams-brabant",
+    "lat": 50.7169522,
+    "lon": 3.9406874
+  },
+  {
+    "name": "Hoeilaart",
+    "province": "vlaams-brabant",
+    "lat": 50.7674863,
+    "lon": 4.4740458
+  },
+  {
+    "name": "Galmaarden",
+    "province": "vlaams-brabant",
+    "lat": 50.7529396,
+    "lon": 3.9709478
+  },
+  {
+    "name": "Tollembeek",
+    "province": "vlaams-brabant",
+    "lat": 50.7410978,
+    "lon": 4.006775
+  },
+  {
+    "name": "Vollezele",
+    "province": "vlaams-brabant",
+    "lat": 50.7607201,
+    "lon": 4.0252744
+  },
+  {
+    "name": "Oudenaken",
+    "province": "vlaams-brabant",
+    "lat": 50.78068,
+    "lon": 4.19938
+  },
+  {
+    "name": "Sint-Laureins-Berchem",
+    "province": "vlaams-brabant",
+    "lat": 50.78681,
+    "lon": 4.19938
+  },
+  {
+    "name": "Sint-Pieters-Leeuw",
+    "province": "vlaams-brabant",
+    "lat": 50.7842441,
+    "lon": 4.242743
+  },
+  {
+    "name": "Ruisbroek",
+    "province": "vlaams-brabant",
+    "lat": 50.79035,
+    "lon": 4.29862
+  },
+  {
+    "name": "Vlezenbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.80785,
+    "lon": 4.23213
+  },
+  {
+    "name": "Drogenbos",
+    "province": "vlaams-brabant",
+    "lat": 50.7875382,
+    "lon": 4.3164506
+  },
+  {
+    "name": "Linkebeek",
+    "province": "vlaams-brabant",
+    "lat": 50.7660264,
+    "lon": 4.3456087
+  },
+  {
+    "name": "Sint-Genesius-Rode",
+    "province": "vlaams-brabant",
+    "lat": 50.74594,
+    "lon": 4.35753
+  },
+  {
+    "name": "Beersel",
+    "province": "vlaams-brabant",
+    "lat": 50.7686913,
+    "lon": 4.3120069
+  },
+  {
+    "name": "Lot",
+    "province": "vlaams-brabant",
+    "lat": 50.76778,
+    "lon": 4.27707
+  },
+  {
+    "name": "Alsemberg",
+    "province": "vlaams-brabant",
+    "lat": 50.74163,
+    "lon": 4.33613
+  },
+  {
+    "name": "Dworp",
+    "province": "vlaams-brabant",
+    "lat": 50.72949,
+    "lon": 4.30109
+  },
+  {
+    "name": "Huizingen",
+    "province": "vlaams-brabant",
+    "lat": 50.74657,
+    "lon": 4.27369
+  },
+  {
+    "name": "Bogaarden",
+    "province": "vlaams-brabant",
+    "lat": 50.74,
+    "lon": 4.13632
+  },
+  {
+    "name": "Heikruis",
+    "province": "vlaams-brabant",
+    "lat": 50.73504,
+    "lon": 4.11211
+  },
+  {
+    "name": "Pepingen",
+    "province": "vlaams-brabant",
+    "lat": 50.7360287,
+    "lon": 4.1360863
+  },
+  {
+    "name": "Elingen",
+    "province": "vlaams-brabant",
+    "lat": 50.77926,
+    "lon": 4.17119
+  },
+  {
+    "name": "Beert",
+    "province": "vlaams-brabant",
+    "lat": 50.74103,
+    "lon": 4.18184
+  },
+  {
+    "name": "Bellingen",
+    "province": "vlaams-brabant",
+    "lat": 50.7408,
+    "lon": 4.15399
+  },
+  {
+    "name": "Dilbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8464512,
+    "lon": 4.2620632
+  },
+  {
+    "name": "Sint-Martens-Bodegem",
+    "province": "vlaams-brabant",
+    "lat": 50.8614672,
+    "lon": 4.2128916
+  },
+  {
+    "name": "Sint-Ulriks-Kapelle",
+    "province": "vlaams-brabant",
+    "lat": 50.8790042,
+    "lon": 4.2182047
+  },
+  {
+    "name": "Itterbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8381387,
+    "lon": 4.2500689
+  },
+  {
+    "name": "Groot-Bijgaarden",
+    "province": "vlaams-brabant",
+    "lat": 50.8719066,
+    "lon": 4.2500012
+  },
+  {
+    "name": "Schepdaal",
+    "province": "vlaams-brabant",
+    "lat": 50.8383485,
+    "lon": 4.1958272
+  },
+  {
+    "name": "Asse",
+    "province": "vlaams-brabant",
+    "lat": 50.9054755,
+    "lon": 4.2048959
+  },
+  {
+    "name": "Bekkerzeel",
+    "province": "vlaams-brabant",
+    "lat": 50.88523,
+    "lon": 4.23803
+  },
+  {
+    "name": "Kobbegem",
+    "province": "vlaams-brabant",
+    "lat": 50.90862,
+    "lon": 4.25104
+  },
+  {
+    "name": "Mollem",
+    "province": "vlaams-brabant",
+    "lat": 50.9313,
+    "lon": 4.22636
+  },
+  {
+    "name": "Relegem",
+    "province": "vlaams-brabant",
+    "lat": 50.89908,
+    "lon": 4.27702
+  },
+  {
+    "name": "Zellik",
+    "province": "vlaams-brabant",
+    "lat": 50.88449,
+    "lon": 4.27401
+  },
+  {
+    "name": "Highco Data",
+    "province": "vlaams-brabant",
+    "lat": 50.8985334,
+    "lon": 4.2185564
+  },
+  {
+    "name": "Ternat",
+    "province": "vlaams-brabant",
+    "lat": 50.8698353,
+    "lon": 4.1808317
+  },
+  {
+    "name": "Wambeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8532484,
+    "lon": 4.1628356
+  },
+  {
+    "name": "Sint-Katherina-Lombeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8732586,
+    "lon": 4.1559883
+  },
+  {
+    "name": "Mazenzele",
+    "province": "vlaams-brabant",
+    "lat": 50.942789,
+    "lon": 4.1711583
+  },
+  {
+    "name": "Opwijk",
+    "province": "vlaams-brabant",
+    "lat": 50.971588,
+    "lon": 4.186911
+  },
+  {
+    "name": "Gaasbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.79987,
+    "lon": 4.18893
+  },
+  {
+    "name": "Lennik",
+    "province": "vlaams-brabant",
+    "lat": 50.8086929,
+    "lon": 4.161434
+  },
+  {
+    "name": "Sint-Kwintens-Lennik",
+    "province": "vlaams-brabant",
+    "lat": 50.80422,
+    "lon": 4.15481
+  },
+  {
+    "name": "Sint-Martens-Lennik",
+    "province": "vlaams-brabant",
+    "lat": 50.8127052,
+    "lon": 4.1686333
+  },
+  {
+    "name": "Gooik",
+    "province": "vlaams-brabant",
+    "lat": 50.7952811,
+    "lon": 4.1180489
+  },
+  {
+    "name": "Kester",
+    "province": "vlaams-brabant",
+    "lat": 50.76428,
+    "lon": 4.11935
+  },
+  {
+    "name": "Leerbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.77787,
+    "lon": 4.11943
+  },
+  {
+    "name": "Oetingen",
+    "province": "vlaams-brabant",
+    "lat": 50.77347,
+    "lon": 4.06312
+  },
+  {
+    "name": "Onze-Lieve-Vrouw-Lombeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8197588,
+    "lon": 4.1101502
+  },
+  {
+    "name": "Pamel",
+    "province": "vlaams-brabant",
+    "lat": 50.84495,
+    "lon": 4.07101
+  },
+  {
+    "name": "Roosdaal",
+    "province": "vlaams-brabant",
+    "lat": 50.8314294,
+    "lon": 4.0879776
+  },
+  {
+    "name": "Strijtem",
+    "province": "vlaams-brabant",
+    "lat": 50.8412507,
+    "lon": 4.1173658
+  },
+  {
+    "name": "Borchtlombeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8475374,
+    "lon": 4.139768
+  },
+  {
+    "name": "Liedekerke",
+    "province": "vlaams-brabant",
+    "lat": 50.86891,
+    "lon": 4.08729
+  },
+  {
+    "name": "Wemmel",
+    "province": "vlaams-brabant",
+    "lat": 50.91032,
+    "lon": 4.30096
+  },
+  {
+    "name": "Brussegem",
+    "province": "vlaams-brabant",
+    "lat": 50.92574,
+    "lon": 4.26608
+  },
+  {
+    "name": "Hamme",
+    "province": "vlaams-brabant",
+    "lat": 50.92042,
+    "lon": 4.28061
+  },
+  {
+    "name": "Merchtem",
+    "province": "vlaams-brabant",
+    "lat": 50.95842,
+    "lon": 4.23244
+  },
+  {
+    "name": "Affligem",
+    "province": "vlaams-brabant",
+    "lat": 50.9084,
+    "lon": 4.11281
+  },
+  {
+    "name": "Essene",
+    "province": "vlaams-brabant",
+    "lat": 50.9015743,
+    "lon": 4.1364265
+  },
+  {
+    "name": "Hekelgem",
+    "province": "vlaams-brabant",
+    "lat": 50.9072267,
+    "lon": 4.1084956
+  },
+  {
+    "name": "Teralfene",
+    "province": "vlaams-brabant",
+    "lat": 50.8922688,
+    "lon": 4.0987022
+  },
+  {
+    "name": "Peutie",
+    "province": "vlaams-brabant",
+    "lat": 50.927361,
+    "lon": 4.455442
+  },
+  {
+    "name": "Vilvoorde",
+    "province": "vlaams-brabant",
+    "lat": 50.9272511,
+    "lon": 4.4257868
+  },
+  {
+    "name": "Cargovil",
+    "province": "vlaams-brabant",
+    "lat": 50.947259,
+    "lon": 4.427268
+  },
+  {
+    "name": "Vtm",
+    "province": "vlaams-brabant",
+    "lat": 50.9136056,
+    "lon": 4.3981412
+  },
+  {
+    "name": "Melsbroek",
+    "province": "vlaams-brabant",
+    "lat": 50.91535,
+    "lon": 4.4787175
+  },
+  {
+    "name": "Perk",
+    "province": "vlaams-brabant",
+    "lat": 50.93488,
+    "lon": 4.49592
+  },
+  {
+    "name": "Steenokkerzeel",
+    "province": "vlaams-brabant",
+    "lat": 50.90793,
+    "lon": 4.51349
+  },
+  {
+    "name": "Machelen",
+    "province": "vlaams-brabant",
+    "lat": 50.9125185,
+    "lon": 4.4376749
+  },
+  {
+    "name": "Diegem",
+    "province": "vlaams-brabant",
+    "lat": 50.8940397,
+    "lon": 4.4362628
+  },
+  {
+    "name": "Londerzeel",
+    "province": "vlaams-brabant",
+    "lat": 51.00311,
+    "lon": 4.3026
+  },
+  {
+    "name": "Malderen",
+    "province": "vlaams-brabant",
+    "lat": 51.02033,
+    "lon": 4.24629
+  },
+  {
+    "name": "Steenhuffel",
+    "province": "vlaams-brabant",
+    "lat": 50.99577,
+    "lon": 4.26716
+  },
+  {
+    "name": "Grimbergen",
+    "province": "vlaams-brabant",
+    "lat": 50.9356235,
+    "lon": 4.3785596
+  },
+  {
+    "name": "Humbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.9672327,
+    "lon": 4.3795118
+  },
+  {
+    "name": "Beigem",
+    "province": "vlaams-brabant",
+    "lat": 50.9528364,
+    "lon": 4.3660653
+  },
+  {
+    "name": "Strombeek-Bever",
+    "province": "vlaams-brabant",
+    "lat": 50.910465,
+    "lon": 4.357792
+  },
+  {
+    "name": "Meise",
+    "province": "vlaams-brabant",
+    "lat": 50.9478621,
+    "lon": 4.3302827
+  },
+  {
+    "name": "Wolvertem",
+    "province": "vlaams-brabant",
+    "lat": 50.95088,
+    "lon": 4.30927
+  },
+  {
+    "name": "Kapelle-Op-Den-Bos",
+    "province": "vlaams-brabant",
+    "lat": 51.01324,
+    "lon": 4.35541
+  },
+  {
+    "name": "Nieuwenrode",
+    "province": "vlaams-brabant",
+    "lat": 50.97857,
+    "lon": 4.35229
+  },
+  {
+    "name": "Ramsdonk",
+    "province": "vlaams-brabant",
+    "lat": 51.01483,
+    "lon": 4.33519
+  },
+  {
+    "name": "Berg",
+    "province": "vlaams-brabant",
+    "lat": 50.9316005,
+    "lon": 4.5377032
+  },
+  {
+    "name": "Buken",
+    "province": "vlaams-brabant",
+    "lat": 50.9403268,
+    "lon": 4.6169484
+  },
+  {
+    "name": "Kampenhout",
+    "province": "vlaams-brabant",
+    "lat": 50.9338827,
+    "lon": 4.5605498
+  },
+  {
+    "name": "Nederokkerzeel",
+    "province": "vlaams-brabant",
+    "lat": 50.9220293,
+    "lon": 4.5633381
+  },
+  {
+    "name": "Nossegem",
+    "province": "vlaams-brabant",
+    "lat": 50.8781921,
+    "lon": 4.5074739
+  },
+  {
+    "name": "Zaventem",
+    "province": "vlaams-brabant",
+    "lat": 50.8795024,
+    "lon": 4.4826212
+  },
+  {
+    "name": "Brucargo",
+    "province": "vlaams-brabant",
+    "lat": 50.903293,
+    "lon": 4.452214
+  },
+  {
+    "name": "Sint-Stevens-Woluwe",
+    "province": "vlaams-brabant",
+    "lat": 50.8691972,
+    "lon": 4.4502354
+  },
+  {
+    "name": "Sterrebeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8654294,
+    "lon": 4.47262
+  },
+  {
+    "name": "Office Exchange Brussels Airport Remailing",
+    "province": "vlaams-brabant",
+    "lat": 50.8969448,
+    "lon": 4.4843148
+  },
+  {
+    "name": "Corporate Village",
+    "province": "vlaams-brabant",
+    "lat": 50.889898,
+    "lon": 4.4580055
+  },
+  {
+    "name": "Kraainem",
+    "province": "vlaams-brabant",
+    "lat": 50.8610856,
+    "lon": 4.4592974
+  },
+  {
+    "name": "Wezembeek-Oppem",
+    "province": "vlaams-brabant",
+    "lat": 50.85092,
+    "lon": 4.48742
+  },
+  {
+    "name": "Eppegem",
+    "province": "vlaams-brabant",
+    "lat": 50.9621231,
+    "lon": 4.4544329
+  },
+  {
+    "name": "Zemst",
+    "province": "vlaams-brabant",
+    "lat": 50.985535,
+    "lon": 4.455834
+  },
+  {
+    "name": "Hofstade",
+    "province": "vlaams-brabant",
+    "lat": 50.9916699,
+    "lon": 4.4924542
+  },
+  {
+    "name": "Elewijt",
+    "province": "vlaams-brabant",
+    "lat": 50.9618503,
+    "lon": 4.4964542
+  },
+  {
+    "name": "Weerde",
+    "province": "vlaams-brabant",
+    "lat": 50.9721843,
+    "lon": 4.4793294
+  },
+  {
+    "name": "Antwerpen",
+    "province": "antwerpen",
+    "lat": 51.2198771,
+    "lon": 4.4011356
+  },
+  {
+    "name": "Antwerpen",
+    "province": "antwerpen",
+    "lat": 51.2037695,
+    "lon": 4.4112637
+  },
+  {
+    "name": "Antwerpen",
+    "province": "antwerpen",
+    "lat": 51.1890846,
+    "lon": 4.3836284
+  },
+  {
+    "name": "Antwerpen",
+    "province": "antwerpen",
+    "lat": 51.2763963,
+    "lon": 4.3624604
+  },
+  {
+    "name": "Antwerpen",
+    "province": "antwerpen",
+    "lat": 51.3418306,
+    "lon": 4.2964605
+  },
+  {
+    "name": "Berendrecht",
+    "province": "antwerpen",
+    "lat": 51.34287,
+    "lon": 4.31409
+  },
+  {
+    "name": "Lillo",
+    "province": "antwerpen",
+    "lat": 51.30436,
+    "lon": 4.28026
+  },
+  {
+    "name": "Zandvliet",
+    "province": "antwerpen",
+    "lat": 51.35965,
+    "lon": 4.30716
+  },
+  {
+    "name": "Antwerpen",
+    "province": "antwerpen",
+    "lat": 51.2287575,
+    "lon": 4.3740221
+  },
+  {
+    "name": "Antwerpen",
+    "province": "antwerpen",
+    "lat": 51.2269388,
+    "lon": 4.4276298
+  },
+  {
+    "name": "Burcht",
+    "province": "antwerpen",
+    "lat": 51.20367,
+    "lon": 4.34148
+  },
+  {
+    "name": "Zwijndrecht",
+    "province": "antwerpen",
+    "lat": 51.2164116,
+    "lon": 4.3335905
+  },
+  {
+    "name": "Antwerpen X",
+    "province": "antwerpen",
+    "lat": 51.2083343,
+    "lon": 4.4111603
+  },
+  {
+    "name": "Deurne",
+    "province": "antwerpen",
+    "lat": 51.2207104,
+    "lon": 4.4648012
+  },
+  {
+    "name": "Wijnegem",
+    "province": "antwerpen",
+    "lat": 51.2298182,
+    "lon": 4.5108974
+  },
+  {
+    "name": "Borgerhout",
+    "province": "antwerpen",
+    "lat": 51.2143174,
+    "lon": 4.4348985
+  },
+  {
+    "name": "Borsbeek",
+    "province": "antwerpen",
+    "lat": 51.1966684,
+    "lon": 4.4856299
+  },
+  {
+    "name": "Wommelgem",
+    "province": "antwerpen",
+    "lat": 51.2021676,
+    "lon": 4.5219648
+  },
+  {
+    "name": "Merksem",
+    "province": "antwerpen",
+    "lat": 51.2512741,
+    "lon": 4.448539
+  },
+  {
+    "name": "Ekeren",
+    "province": "antwerpen",
+    "lat": 51.2807314,
+    "lon": 4.4184495
+  },
+  {
+    "name": "Herentals",
+    "province": "antwerpen",
+    "lat": 51.1768785,
+    "lon": 4.835648
+  },
+  {
+    "name": "Morkhoven",
+    "province": "antwerpen",
+    "lat": 51.1200863,
+    "lon": 4.8207292
+  },
+  {
+    "name": "Noorderwijk",
+    "province": "antwerpen",
+    "lat": 51.1393923,
+    "lon": 4.8388348
+  },
+  {
+    "name": "Hallaar",
+    "province": "antwerpen",
+    "lat": 51.08464,
+    "lon": 4.73293
+  },
+  {
+    "name": "Heist-Op-Den-Berg",
+    "province": "antwerpen",
+    "lat": 51.0633847,
+    "lon": 4.7210601
+  },
+  {
+    "name": "Booischot",
+    "province": "antwerpen",
+    "lat": 51.05151,
+    "lon": 4.77523
+  },
+  {
+    "name": "Itegem",
+    "province": "antwerpen",
+    "lat": 51.10321,
+    "lon": 4.72927
+  },
+  {
+    "name": "Wiekevorst",
+    "province": "antwerpen",
+    "lat": 51.10914,
+    "lon": 4.7944915
+  },
+  {
+    "name": "Schriek",
+    "province": "antwerpen",
+    "lat": 51.02745,
+    "lon": 4.69272
+  },
+  {
+    "name": "Herselt",
+    "province": "antwerpen",
+    "lat": 51.05238,
+    "lon": 4.88068
+  },
+  {
+    "name": "Ramsel",
+    "province": "antwerpen",
+    "lat": 51.03211,
+    "lon": 4.8328
+  },
+  {
+    "name": "Houtvenne",
+    "province": "antwerpen",
+    "lat": 51.04208,
+    "lon": 4.80894
+  },
+  {
+    "name": "Hulshout",
+    "province": "antwerpen",
+    "lat": 51.0647242,
+    "lon": 4.816508
+  },
+  {
+    "name": "Westmeerbeek",
+    "province": "antwerpen",
+    "lat": 51.06032,
+    "lon": 4.8351
+  },
+  {
+    "name": "Massenhoven",
+    "province": "antwerpen",
+    "lat": 51.1986273,
+    "lon": 4.6364247
+  },
+  {
+    "name": "Viersel",
+    "province": "antwerpen",
+    "lat": 51.1890184,
+    "lon": 4.6523097
+  },
+  {
+    "name": "Zandhoven",
+    "province": "antwerpen",
+    "lat": 51.2021793,
+    "lon": 4.6554212
+  },
+  {
+    "name": "Pulderbos",
+    "province": "antwerpen",
+    "lat": 51.2165685,
+    "lon": 4.6919
+  },
+  {
+    "name": "Pulle",
+    "province": "antwerpen",
+    "lat": 51.2032977,
+    "lon": 4.7137397
+  },
+  {
+    "name": "Olen",
+    "province": "antwerpen",
+    "lat": 51.1440245,
+    "lon": 4.8599119
+  },
+  {
+    "name": "Oevel",
+    "province": "antwerpen",
+    "lat": 51.1387198,
+    "lon": 4.9042615
+  },
+  {
+    "name": "Tongerlo",
+    "province": "antwerpen",
+    "lat": 51.10533,
+    "lon": 4.91565
+  },
+  {
+    "name": "Westerlo",
+    "province": "antwerpen",
+    "lat": 51.0899524,
+    "lon": 4.9143395
+  },
+  {
+    "name": "Zoerle-Parwijs",
+    "province": "antwerpen",
+    "lat": 51.08879,
+    "lon": 4.86894
+  },
+  {
+    "name": "Herenthout",
+    "province": "antwerpen",
+    "lat": 51.1394506,
+    "lon": 4.7564892
+  },
+  {
+    "name": "Gierle",
+    "province": "antwerpen",
+    "lat": 51.2671512,
+    "lon": 4.8677063
+  },
+  {
+    "name": "Lille",
+    "province": "antwerpen",
+    "lat": 51.2420452,
+    "lon": 4.8232254
+  },
+  {
+    "name": "Poederlee",
+    "province": "antwerpen",
+    "lat": 51.2263125,
+    "lon": 4.8353147
+  },
+  {
+    "name": "Wechelderzande",
+    "province": "antwerpen",
+    "lat": 51.2645356,
+    "lon": 4.7999275
+  },
+  {
+    "name": "Grobbendonk",
+    "province": "antwerpen",
+    "lat": 51.1832616,
+    "lon": 4.7349959
+  },
+  {
+    "name": "Bouwel",
+    "province": "antwerpen",
+    "lat": 51.1719684,
+    "lon": 4.7420582
+  },
+  {
+    "name": "Vorselaar",
+    "province": "antwerpen",
+    "lat": 51.2025247,
+    "lon": 4.7708827
+  },
+  {
+    "name": "Turnhout",
+    "province": "antwerpen",
+    "lat": 51.3216509,
+    "lon": 4.9375577
+  },
+  {
+    "name": "Rijkevorsel",
+    "province": "antwerpen",
+    "lat": 51.3480582,
+    "lon": 4.7605267
+  },
+  {
+    "name": "Hoogstraten",
+    "province": "antwerpen",
+    "lat": 51.403297,
+    "lon": 4.7468218
+  },
+  {
+    "name": "Meer",
+    "province": "antwerpen",
+    "lat": 51.4456,
+    "lon": 4.7383
+  },
+  {
+    "name": "Minderhout",
+    "province": "antwerpen",
+    "lat": 51.41654,
+    "lon": 4.76339
+  },
+  {
+    "name": "Wortel",
+    "province": "antwerpen",
+    "lat": 51.39751,
+    "lon": 4.79475
+  },
+  {
+    "name": "Meerle",
+    "province": "antwerpen",
+    "lat": 51.4733516,
+    "lon": 4.803769
+  },
+  {
+    "name": "Merksplas",
+    "province": "antwerpen",
+    "lat": 51.358185,
+    "lon": 4.8635657
+  },
+  {
+    "name": "Beerse",
+    "province": "antwerpen",
+    "lat": 51.31949,
+    "lon": 4.85482
+  },
+  {
+    "name": "Vlimmeren",
+    "province": "antwerpen",
+    "lat": 51.2971394,
+    "lon": 4.7820454
+  },
+  {
+    "name": "Vosselaar",
+    "province": "antwerpen",
+    "lat": 51.3030836,
+    "lon": 4.8834494
+  },
+  {
+    "name": "Oud-Turnhout",
+    "province": "antwerpen",
+    "lat": 51.3177601,
+    "lon": 4.982845
+  },
+  {
+    "name": "Arendonk",
+    "province": "antwerpen",
+    "lat": 51.322049,
+    "lon": 5.0863348
+  },
+  {
+    "name": "Ravels",
+    "province": "antwerpen",
+    "lat": 51.3762015,
+    "lon": 5.0185568
+  },
+  {
+    "name": "Weelde",
+    "province": "antwerpen",
+    "lat": 51.406763,
+    "lon": 4.9908357
+  },
+  {
+    "name": "Poppel",
+    "province": "antwerpen",
+    "lat": 51.4471741,
+    "lon": 5.0431801
+  },
+  {
+    "name": "Baarle-Hertog",
+    "province": "antwerpen",
+    "lat": 51.441832,
+    "lon": 4.931736
+  },
+  {
+    "name": "Malle",
+    "province": "antwerpen",
+    "lat": 51.2968136,
+    "lon": 4.6942633
+  },
+  {
+    "name": "Oostmalle",
+    "province": "antwerpen",
+    "lat": 51.301137,
+    "lon": 4.7337542
+  },
+  {
+    "name": "Westmalle",
+    "province": "antwerpen",
+    "lat": 51.2968136,
+    "lon": 4.6942633
+  },
+  {
+    "name": "Mol",
+    "province": "antwerpen",
+    "lat": 51.191087,
+    "lon": 5.1170647
+  },
+  {
+    "name": "Eindhout",
+    "province": "antwerpen",
+    "lat": 51.10334,
+    "lon": 4.9997
+  },
+  {
+    "name": "Laakdal",
+    "province": "antwerpen",
+    "lat": 51.0873823,
+    "lon": 5.0242977
+  },
+  {
+    "name": "Vorst",
+    "province": "antwerpen",
+    "lat": 51.07973,
+    "lon": 5.02024
+  },
+  {
+    "name": "Varendonk",
+    "province": "antwerpen",
+    "lat": 51.08397,
+    "lon": 4.9513
+  },
+  {
+    "name": "Veerle",
+    "province": "antwerpen",
+    "lat": 51.06994,
+    "lon": 4.98721
+  },
+  {
+    "name": "Geel",
+    "province": "antwerpen",
+    "lat": 51.16257,
+    "lon": 4.99084
+  },
+  {
+    "name": "Meerhout",
+    "province": "antwerpen",
+    "lat": 51.13219,
+    "lon": 5.07708
+  },
+  {
+    "name": "Kasterlee",
+    "province": "antwerpen",
+    "lat": 51.2405204,
+    "lon": 4.9674449
+  },
+  {
+    "name": "Lichtaart",
+    "province": "antwerpen",
+    "lat": 51.2197251,
+    "lon": 4.9108088
+  },
+  {
+    "name": "Tielen",
+    "province": "antwerpen",
+    "lat": 51.2434976,
+    "lon": 4.8976789
+  },
+  {
+    "name": "Retie",
+    "province": "antwerpen",
+    "lat": 51.2669664,
+    "lon": 5.0842508
+  },
+  {
+    "name": "Dessel",
+    "province": "antwerpen",
+    "lat": 51.23985,
+    "lon": 5.11269
+  },
+  {
+    "name": "Balen",
+    "province": "antwerpen",
+    "lat": 51.1578305,
+    "lon": 5.2100666
+  },
+  {
+    "name": "Olmen",
+    "province": "antwerpen",
+    "lat": 51.1420912,
+    "lon": 5.15072
+  },
+  {
+    "name": "Koningshooikt",
+    "province": "antwerpen",
+    "lat": 51.09522,
+    "lon": 4.61011
+  },
+  {
+    "name": "Lier",
+    "province": "antwerpen",
+    "lat": 51.1302138,
+    "lon": 4.5715092
+  },
+  {
+    "name": "Broechem",
+    "province": "antwerpen",
+    "lat": 51.1813334,
+    "lon": 4.6020124
+  },
+  {
+    "name": "Emblem",
+    "province": "antwerpen",
+    "lat": 51.1620413,
+    "lon": 4.605068
+  },
+  {
+    "name": "Oelegem",
+    "province": "antwerpen",
+    "lat": 51.2129972,
+    "lon": 4.5997149
+  },
+  {
+    "name": "Ranst",
+    "province": "antwerpen",
+    "lat": 51.189094,
+    "lon": 4.5609095
+  },
+  {
+    "name": "Boechout",
+    "province": "antwerpen",
+    "lat": 51.1664397,
+    "lon": 4.49717
+  },
+  {
+    "name": "Vremde",
+    "province": "antwerpen",
+    "lat": 51.17486,
+    "lon": 4.52311
+  },
+  {
+    "name": "Hove",
+    "province": "antwerpen",
+    "lat": 51.1539722,
+    "lon": 4.4711513
+  },
+  {
+    "name": "Lint",
+    "province": "antwerpen",
+    "lat": 51.12723,
+    "lon": 4.49669
+  },
+  {
+    "name": "Kontich",
+    "province": "antwerpen",
+    "lat": 51.1352235,
+    "lon": 4.4448202
+  },
+  {
+    "name": "Waarloos",
+    "province": "antwerpen",
+    "lat": 51.105061,
+    "lon": 4.4546959
+  },
+  {
+    "name": "Bevel",
+    "province": "antwerpen",
+    "lat": 51.13774,
+    "lon": 4.68038
+  },
+  {
+    "name": "Kessel",
+    "province": "antwerpen",
+    "lat": 51.13915,
+    "lon": 4.62968
+  },
+  {
+    "name": "Nijlen",
+    "province": "antwerpen",
+    "lat": 51.1613531,
+    "lon": 4.6706015
+  },
+  {
+    "name": "Duffel",
+    "province": "antwerpen",
+    "lat": 51.0953745,
+    "lon": 4.5052038
+  },
+  {
+    "name": "Beerzel",
+    "province": "antwerpen",
+    "lat": 51.05786,
+    "lon": 4.66764
+  },
+  {
+    "name": "Putte",
+    "province": "antwerpen",
+    "lat": 51.05476,
+    "lon": 4.62867
+  },
+  {
+    "name": "Berlaar",
+    "province": "antwerpen",
+    "lat": 51.11804,
+    "lon": 4.65752
+  },
+  {
+    "name": "Gestel",
+    "province": "antwerpen",
+    "lat": 51.1284,
+    "lon": 4.67316
+  },
+  {
+    "name": "Berchem",
+    "province": "antwerpen",
+    "lat": 51.189856,
+    "lon": 4.432951
+  },
+  {
+    "name": "Wilrijk",
+    "province": "antwerpen",
+    "lat": 51.1683102,
+    "lon": 4.3942868
+  },
+  {
+    "name": "Hemiksem",
+    "province": "antwerpen",
+    "lat": 51.14518,
+    "lon": 4.33834
+  },
+  {
+    "name": "Schelle",
+    "province": "antwerpen",
+    "lat": 51.1269186,
+    "lon": 4.3388412
+  },
+  {
+    "name": "Aartselaar",
+    "province": "antwerpen",
+    "lat": 51.1340539,
+    "lon": 4.3844742
+  },
+  {
+    "name": "Mortsel",
+    "province": "antwerpen",
+    "lat": 51.1728522,
+    "lon": 4.4665225
+  },
+  {
+    "name": "Edegem",
+    "province": "antwerpen",
+    "lat": 51.1559541,
+    "lon": 4.4318937
+  },
+  {
+    "name": "Hoboken",
+    "province": "antwerpen",
+    "lat": 51.1775732,
+    "lon": 4.34992
+  },
+  {
+    "name": "Mechelen",
+    "province": "antwerpen",
+    "lat": 51.0258791,
+    "lon": 4.4775365
+  },
+  {
+    "name": "Walem",
+    "province": "antwerpen",
+    "lat": 51.0676813,
+    "lon": 4.4572147
+  },
+  {
+    "name": "Heffen",
+    "province": "antwerpen",
+    "lat": 51.0468914,
+    "lon": 4.4137291
+  },
+  {
+    "name": "Hombeek",
+    "province": "antwerpen",
+    "lat": 51.014356,
+    "lon": 4.4427697
+  },
+  {
+    "name": "Leest",
+    "province": "antwerpen",
+    "lat": 51.0328978,
+    "lon": 4.4176682
+  },
+  {
+    "name": "Muizen",
+    "province": "antwerpen",
+    "lat": 51.0103798,
+    "lon": 4.5157593
+  },
+  {
+    "name": "Bonheiden",
+    "province": "antwerpen",
+    "lat": 51.02221,
+    "lon": 4.54803
+  },
+  {
+    "name": "Rijmenam",
+    "province": "antwerpen",
+    "lat": 51.0037609,
+    "lon": 4.5902677
+  },
+  {
+    "name": "Blaasveld",
+    "province": "antwerpen",
+    "lat": 51.05583,
+    "lon": 4.37719
+  },
+  {
+    "name": "Heindonk",
+    "province": "antwerpen",
+    "lat": 51.0673,
+    "lon": 4.40756
+  },
+  {
+    "name": "Tisselt",
+    "province": "antwerpen",
+    "lat": 51.03437,
+    "lon": 4.35717
+  },
+  {
+    "name": "Willebroek",
+    "province": "antwerpen",
+    "lat": 51.0597994,
+    "lon": 4.3640791
+  },
+  {
+    "name": "Reet",
+    "province": "antwerpen",
+    "lat": 51.1011334,
+    "lon": 4.4125882
+  },
+  {
+    "name": "Rumst",
+    "province": "antwerpen",
+    "lat": 51.0804212,
+    "lon": 4.4217895
+  },
+  {
+    "name": "Terhagen",
+    "province": "antwerpen",
+    "lat": 51.0791977,
+    "lon": 4.3992612
+  },
+  {
+    "name": "Niel",
+    "province": "antwerpen",
+    "lat": 51.11064,
+    "lon": 4.33207
+  },
+  {
+    "name": "Boom",
+    "province": "antwerpen",
+    "lat": 51.08608,
+    "lon": 4.36633
+  },
+  {
+    "name": "Sint-Katelijne-Waver",
+    "province": "antwerpen",
+    "lat": 51.0614235,
+    "lon": 4.5055555
+  },
+  {
+    "name": "Onze-Lieve-Vrouw-Waver",
+    "province": "antwerpen",
+    "lat": 51.0618859,
+    "lon": 4.5787019
+  },
+  {
+    "name": "Breendonk",
+    "province": "antwerpen",
+    "lat": 51.04309,
+    "lon": 4.32204
+  },
+  {
+    "name": "Liezele",
+    "province": "antwerpen",
+    "lat": 51.06082,
+    "lon": 4.28023
+  },
+  {
+    "name": "Ruisbroek",
+    "province": "antwerpen",
+    "lat": 51.08799,
+    "lon": 4.33107
+  },
+  {
+    "name": "Bornem",
+    "province": "antwerpen",
+    "lat": 51.0996057,
+    "lon": 4.2404586
+  },
+  {
+    "name": "Hingene",
+    "province": "antwerpen",
+    "lat": 51.1032985,
+    "lon": 4.2687874
+  },
+  {
+    "name": "Mariekerke",
+    "province": "antwerpen",
+    "lat": 51.0634883,
+    "lon": 4.1923418
+  },
+  {
+    "name": "Weert",
+    "province": "antwerpen",
+    "lat": 51.1034075,
+    "lon": 4.190123
+  },
+  {
+    "name": "Lippelo",
+    "province": "antwerpen",
+    "lat": 51.04215,
+    "lon": 4.2586
+  },
+  {
+    "name": "Oppuurs",
+    "province": "antwerpen",
+    "lat": 51.06607,
+    "lon": 4.24199
+  },
+  {
+    "name": "Schoten",
+    "province": "antwerpen",
+    "lat": 51.2497532,
+    "lon": 4.4977063
+  },
+  {
+    "name": "Essen",
+    "province": "antwerpen",
+    "lat": 51.46776,
+    "lon": 4.46844
+  },
+  {
+    "name": "Kalmthout",
+    "province": "antwerpen",
+    "lat": 51.38298,
+    "lon": 4.47518
+  },
+  {
+    "name": "Brasschaat",
+    "province": "antwerpen",
+    "lat": 51.29227,
+    "lon": 4.49419
+  },
+  {
+    "name": "Hoevenen",
+    "province": "antwerpen",
+    "lat": 51.3061855,
+    "lon": 4.4047295
+  },
+  {
+    "name": "Stabroek",
+    "province": "antwerpen",
+    "lat": 51.334729,
+    "lon": 4.371689
+  },
+  {
+    "name": "Kapellen",
+    "province": "antwerpen",
+    "lat": 51.314024,
+    "lon": 4.4323815
+  },
+  {
+    "name": "Brecht",
+    "province": "antwerpen",
+    "lat": 51.3496533,
+    "lon": 4.6377227
+  },
+  {
+    "name": "Sint-Job-In-'t-Goor",
+    "province": "antwerpen",
+    "lat": 51.29827,
+    "lon": 4.5732
+  },
+  {
+    "name": "Sint-Lenaarts",
+    "province": "antwerpen",
+    "lat": 51.34869,
+    "lon": 4.67703
+  },
+  {
+    "name": "'s Gravenwezel",
+    "province": "antwerpen",
+    "lat": 51.26292,
+    "lon": 4.56096
+  },
+  {
+    "name": "Schilde",
+    "province": "antwerpen",
+    "lat": 51.2407352,
+    "lon": 4.5834231
+  },
+  {
+    "name": "Halle",
+    "province": "antwerpen",
+    "lat": 51.2398459,
+    "lon": 4.6465058
+  },
+  {
+    "name": "Zoersel",
+    "province": "antwerpen",
+    "lat": 51.2682227,
+    "lon": 4.7125694
+  },
+  {
+    "name": "Loenhout",
+    "province": "antwerpen",
+    "lat": 51.3990063,
+    "lon": 4.6432288
+  },
+  {
+    "name": "Wuustwezel",
+    "province": "antwerpen",
+    "lat": 51.389404,
+    "lon": 4.5912302
+  },
+  {
+    "name": "Leuven",
+    "province": "vlaams-brabant",
+    "lat": 50.8815197,
+    "lon": 4.6967578
+  },
+  {
+    "name": "Heverlee",
+    "province": "vlaams-brabant",
+    "lat": 50.86386,
+    "lon": 4.69594
+  },
+  {
+    "name": "Kessel Lo",
+    "province": "vlaams-brabant",
+    "lat": 50.88514,
+    "lon": 4.73571
+  },
+  {
+    "name": "Wilsele",
+    "province": "vlaams-brabant",
+    "lat": 50.89047,
+    "lon": 4.69451
+  },
+  {
+    "name": "Wijgmaal",
+    "province": "vlaams-brabant",
+    "lat": 50.92624,
+    "lon": 4.70195
+  },
+  {
+    "name": "Herent",
+    "province": "vlaams-brabant",
+    "lat": 50.9092247,
+    "lon": 4.6768701
+  },
+  {
+    "name": "Veltem-Beisem",
+    "province": "vlaams-brabant",
+    "lat": 50.9063184,
+    "lon": 4.620825
+  },
+  {
+    "name": "Winksele",
+    "province": "vlaams-brabant",
+    "lat": 50.8974666,
+    "lon": 4.6435179
+  },
+  {
+    "name": "Huldenberg",
+    "province": "vlaams-brabant",
+    "lat": 50.7885995,
+    "lon": 4.5880687
+  },
+  {
+    "name": "Loonbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.80972,
+    "lon": 4.61029
+  },
+  {
+    "name": "Neerijse",
+    "province": "vlaams-brabant",
+    "lat": 50.81743,
+    "lon": 4.62345
+  },
+  {
+    "name": "Ottenburg",
+    "province": "vlaams-brabant",
+    "lat": 50.75199,
+    "lon": 4.61579
+  },
+  {
+    "name": "Sint-Agatha-Rode",
+    "province": "vlaams-brabant",
+    "lat": 50.78559,
+    "lon": 4.63408
+  },
+  {
+    "name": "Oud-Heverlee",
+    "province": "vlaams-brabant",
+    "lat": 50.8282606,
+    "lon": 4.659534
+  },
+  {
+    "name": "Sint-Joris-Weert",
+    "province": "vlaams-brabant",
+    "lat": 50.8027501,
+    "lon": 4.6528755
+  },
+  {
+    "name": "Blanden",
+    "province": "vlaams-brabant",
+    "lat": 50.82558,
+    "lon": 4.70916
+  },
+  {
+    "name": "Haasrode",
+    "province": "vlaams-brabant",
+    "lat": 50.83159,
+    "lon": 4.72988
+  },
+  {
+    "name": "Vaalbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.82553,
+    "lon": 4.68938
+  },
+  {
+    "name": "Bertem",
+    "province": "vlaams-brabant",
+    "lat": 50.8632924,
+    "lon": 4.6307637
+  },
+  {
+    "name": "Korbeek-Dijle",
+    "province": "vlaams-brabant",
+    "lat": 50.83807,
+    "lon": 4.6382
+  },
+  {
+    "name": "Leefdaal",
+    "province": "vlaams-brabant",
+    "lat": 50.84866,
+    "lon": 4.5939
+  },
+  {
+    "name": "Kortenberg",
+    "province": "vlaams-brabant",
+    "lat": 50.8855654,
+    "lon": 4.5374772
+  },
+  {
+    "name": "Erps-Kwerps",
+    "province": "vlaams-brabant",
+    "lat": 50.9006097,
+    "lon": 4.5607782
+  },
+  {
+    "name": "Everberg",
+    "province": "vlaams-brabant",
+    "lat": 50.8788296,
+    "lon": 4.5712345
+  },
+  {
+    "name": "Meerbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8818641,
+    "lon": 4.5892898
+  },
+  {
+    "name": "Duisburg",
+    "province": "vlaams-brabant",
+    "lat": 50.81569,
+    "lon": 4.55184
+  },
+  {
+    "name": "Tervuren",
+    "province": "vlaams-brabant",
+    "lat": 50.8259264,
+    "lon": 4.5077781
+  },
+  {
+    "name": "Vossem",
+    "province": "vlaams-brabant",
+    "lat": 50.83577,
+    "lon": 4.56026
+  },
+  {
+    "name": "Overijse",
+    "province": "vlaams-brabant",
+    "lat": 50.7681029,
+    "lon": 4.5336216
+  },
+  {
+    "name": "Rotselaar",
+    "province": "vlaams-brabant",
+    "lat": 50.9535967,
+    "lon": 4.7215113
+  },
+  {
+    "name": "Wezemaal",
+    "province": "vlaams-brabant",
+    "lat": 50.9482,
+    "lon": 4.75541
+  },
+  {
+    "name": "Werchter",
+    "province": "vlaams-brabant",
+    "lat": 50.97278,
+    "lon": 4.70007
+  },
+  {
+    "name": "Tremelo",
+    "province": "vlaams-brabant",
+    "lat": 50.9956159,
+    "lon": 4.7159551
+  },
+  {
+    "name": "Baal",
+    "province": "vlaams-brabant",
+    "lat": 50.99555,
+    "lon": 4.75304
+  },
+  {
+    "name": "Begijnendijk",
+    "province": "vlaams-brabant",
+    "lat": 51.0188,
+    "lon": 4.78263
+  },
+  {
+    "name": "Betekom",
+    "province": "vlaams-brabant",
+    "lat": 50.98566,
+    "lon": 4.7817
+  },
+  {
+    "name": "Keerbergen",
+    "province": "vlaams-brabant",
+    "lat": 51.0057936,
+    "lon": 4.6320416
+  },
+  {
+    "name": "Haacht",
+    "province": "vlaams-brabant",
+    "lat": 50.97894,
+    "lon": 4.64134
+  },
+  {
+    "name": "Tildonk",
+    "province": "vlaams-brabant",
+    "lat": 50.94327,
+    "lon": 4.64449
+  },
+  {
+    "name": "Wespelaar",
+    "province": "vlaams-brabant",
+    "lat": 50.95991,
+    "lon": 4.63884
+  },
+  {
+    "name": "Boortmeerbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.9803397,
+    "lon": 4.5744373
+  },
+  {
+    "name": "Hever",
+    "province": "vlaams-brabant",
+    "lat": 50.995,
+    "lon": 4.55135
+  },
+  {
+    "name": "Aarschot",
+    "province": "vlaams-brabant",
+    "lat": 50.9806151,
+    "lon": 4.827381
+  },
+  {
+    "name": "Gelrode",
+    "province": "vlaams-brabant",
+    "lat": 50.96548,
+    "lon": 4.80272
+  },
+  {
+    "name": "Langdorp",
+    "province": "vlaams-brabant",
+    "lat": 50.99531,
+    "lon": 4.87083
+  },
+  {
+    "name": "Rillaar",
+    "province": "vlaams-brabant",
+    "lat": 50.97438,
+    "lon": 4.89422
+  },
+  {
+    "name": "Linden",
+    "province": "vlaams-brabant",
+    "lat": 50.89393,
+    "lon": 4.77215
+  },
+  {
+    "name": "Lubbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8813339,
+    "lon": 4.8292252
+  },
+  {
+    "name": "Binkom",
+    "province": "vlaams-brabant",
+    "lat": 50.87119,
+    "lon": 4.88439
+  },
+  {
+    "name": "Pellenberg",
+    "province": "vlaams-brabant",
+    "lat": 50.8715002,
+    "lon": 4.793849
+  },
+  {
+    "name": "Holsbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.9248584,
+    "lon": 4.7861502
+  },
+  {
+    "name": "Kortrijk-Dutsel",
+    "province": "vlaams-brabant",
+    "lat": 50.9266825,
+    "lon": 4.8055097
+  },
+  {
+    "name": "Sint-Pieters-Rode",
+    "province": "vlaams-brabant",
+    "lat": 50.93239,
+    "lon": 4.82057
+  },
+  {
+    "name": "Nieuwrode",
+    "province": "vlaams-brabant",
+    "lat": 50.94955,
+    "lon": 4.83339
+  },
+  {
+    "name": "Scherpenheuvel",
+    "province": "vlaams-brabant",
+    "lat": 50.9800833,
+    "lon": 4.9753544
+  },
+  {
+    "name": "Scherpenheuvel-Zichem",
+    "province": "vlaams-brabant",
+    "lat": 50.9742707,
+    "lon": 4.9785767
+  },
+  {
+    "name": "Averbode",
+    "province": "vlaams-brabant",
+    "lat": 51.0305467,
+    "lon": 4.977454
+  },
+  {
+    "name": "Zichem",
+    "province": "vlaams-brabant",
+    "lat": 51.0006721,
+    "lon": 4.9830118
+  },
+  {
+    "name": "Messelbroek",
+    "province": "vlaams-brabant",
+    "lat": 50.9933331,
+    "lon": 4.9274801
+  },
+  {
+    "name": "Testelt",
+    "province": "vlaams-brabant",
+    "lat": 51.016921,
+    "lon": 4.9549334
+  },
+  {
+    "name": "Deurne",
+    "province": "vlaams-brabant",
+    "lat": 51.03936,
+    "lon": 5.09648
+  },
+  {
+    "name": "Diest",
+    "province": "vlaams-brabant",
+    "lat": 51.0010401,
+    "lon": 5.0852169
+  },
+  {
+    "name": "Schaffen",
+    "province": "vlaams-brabant",
+    "lat": 50.99975,
+    "lon": 5.08484
+  },
+  {
+    "name": "Webbekom",
+    "province": "vlaams-brabant",
+    "lat": 50.9722766,
+    "lon": 5.0720072
+  },
+  {
+    "name": "Kaggevinne",
+    "province": "vlaams-brabant",
+    "lat": 50.97937,
+    "lon": 5.01896
+  },
+  {
+    "name": "Molenstede",
+    "province": "vlaams-brabant",
+    "lat": 51.00378,
+    "lon": 5.01347
+  },
+  {
+    "name": "Bost",
+    "province": "vlaams-brabant",
+    "lat": 50.78839,
+    "lon": 4.94063
+  },
+  {
+    "name": "Goetsenhoven",
+    "province": "vlaams-brabant",
+    "lat": 50.76781,
+    "lon": 4.95114
+  },
+  {
+    "name": "Hakendover",
+    "province": "vlaams-brabant",
+    "lat": 50.79706,
+    "lon": 4.98525
+  },
+  {
+    "name": "Kumtich",
+    "province": "vlaams-brabant",
+    "lat": 50.82246,
+    "lon": 4.88742
+  },
+  {
+    "name": "Oorbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.79811,
+    "lon": 4.8924
+  },
+  {
+    "name": "Oplinter",
+    "province": "vlaams-brabant",
+    "lat": 50.82923,
+    "lon": 4.98757
+  },
+  {
+    "name": "Sint-Margriete-Houtem",
+    "province": "vlaams-brabant",
+    "lat": 50.82836,
+    "lon": 4.95539
+  },
+  {
+    "name": "Tienen",
+    "province": "vlaams-brabant",
+    "lat": 50.81057,
+    "lon": 4.93622
+  },
+  {
+    "name": "Vissenaken",
+    "province": "vlaams-brabant",
+    "lat": 50.83768,
+    "lon": 4.90484
+  },
+  {
+    "name": "Hoegaarden",
+    "province": "vlaams-brabant",
+    "lat": 50.7806488,
+    "lon": 4.8685676
+  },
+  {
+    "name": "Meldert",
+    "province": "vlaams-brabant",
+    "lat": 50.78801,
+    "lon": 4.83772
+  },
+  {
+    "name": "Outgaarden",
+    "province": "vlaams-brabant",
+    "lat": 50.76521,
+    "lon": 4.91793
+  },
+  {
+    "name": "Drieslinter",
+    "province": "vlaams-brabant",
+    "lat": 50.84605,
+    "lon": 5.05048
+  },
+  {
+    "name": "Linter",
+    "province": "vlaams-brabant",
+    "lat": 50.84151,
+    "lon": 5.03661
+  },
+  {
+    "name": "Melkwezer",
+    "province": "vlaams-brabant",
+    "lat": 50.8252947,
+    "lon": 5.0613545
+  },
+  {
+    "name": "Neerhespen",
+    "province": "vlaams-brabant",
+    "lat": 50.7918055,
+    "lon": 5.0548854
+  },
+  {
+    "name": "Neerlinter",
+    "province": "vlaams-brabant",
+    "lat": 50.8398055,
+    "lon": 5.022197
+  },
+  {
+    "name": "Orsmaal-Gussenhoven",
+    "province": "vlaams-brabant",
+    "lat": 50.8033315,
+    "lon": 5.0620563
+  },
+  {
+    "name": "Overhespen",
+    "province": "vlaams-brabant",
+    "lat": 50.7954085,
+    "lon": 5.0360799
+  },
+  {
+    "name": "Wommersom",
+    "province": "vlaams-brabant",
+    "lat": 50.8134204,
+    "lon": 5.017952
+  },
+  {
+    "name": "Bierbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8279,
+    "lon": 4.75981
+  },
+  {
+    "name": "Korbeek-Lo",
+    "province": "vlaams-brabant",
+    "lat": 50.8601903,
+    "lon": 4.7626896
+  },
+  {
+    "name": "Lovenjoel",
+    "province": "vlaams-brabant",
+    "lat": 50.85813,
+    "lon": 4.78148
+  },
+  {
+    "name": "Opvelp",
+    "province": "vlaams-brabant",
+    "lat": 50.81009,
+    "lon": 4.79333
+  },
+  {
+    "name": "Boutersem",
+    "province": "vlaams-brabant",
+    "lat": 50.84109,
+    "lon": 4.83471
+  },
+  {
+    "name": "Kerkom",
+    "province": "vlaams-brabant",
+    "lat": 50.85519,
+    "lon": 4.87451
+  },
+  {
+    "name": "Neervelp",
+    "province": "vlaams-brabant",
+    "lat": 50.821,
+    "lon": 4.80811
+  },
+  {
+    "name": "Roosbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.83564,
+    "lon": 4.86231
+  },
+  {
+    "name": "Vertrijk",
+    "province": "vlaams-brabant",
+    "lat": 50.82976,
+    "lon": 4.83455
+  },
+  {
+    "name": "Willebringen",
+    "province": "vlaams-brabant",
+    "lat": 50.81281,
+    "lon": 4.84491
+  },
+  {
+    "name": "Bunsbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.842165,
+    "lon": 4.9426464
+  },
+  {
+    "name": "Glabbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.8602725,
+    "lon": 4.9583256
+  },
+  {
+    "name": "Kapellen",
+    "province": "vlaams-brabant",
+    "lat": 50.8852681,
+    "lon": 4.9501898
+  },
+  {
+    "name": "Attenrode",
+    "province": "vlaams-brabant",
+    "lat": 50.8771186,
+    "lon": 4.9242614
+  },
+  {
+    "name": "Houwaart",
+    "province": "vlaams-brabant",
+    "lat": 50.9328147,
+    "lon": 4.8580637
+  },
+  {
+    "name": "Sint-Joris-Winge",
+    "province": "vlaams-brabant",
+    "lat": 50.9077298,
+    "lon": 4.8768396
+  },
+  {
+    "name": "Tielt",
+    "province": "vlaams-brabant",
+    "lat": 50.940892,
+    "lon": 4.9046956
+  },
+  {
+    "name": "Tielt-Winge",
+    "province": "vlaams-brabant",
+    "lat": 50.9206968,
+    "lon": 4.8866603
+  },
+  {
+    "name": "Meensel-Kiezegem",
+    "province": "vlaams-brabant",
+    "lat": 50.8964842,
+    "lon": 4.9257825
+  },
+  {
+    "name": "Eliksem",
+    "province": "vlaams-brabant",
+    "lat": 50.78487,
+    "lon": 5.00968
+  },
+  {
+    "name": "Ezemaal",
+    "province": "vlaams-brabant",
+    "lat": 50.77609,
+    "lon": 5.00016
+  },
+  {
+    "name": "Laar",
+    "province": "vlaams-brabant",
+    "lat": 50.77158,
+    "lon": 5.02572
+  },
+  {
+    "name": "Landen",
+    "province": "vlaams-brabant",
+    "lat": 50.7628602,
+    "lon": 5.042102
+  },
+  {
+    "name": "Neerwinden",
+    "province": "vlaams-brabant",
+    "lat": 50.76616,
+    "lon": 5.04434
+  },
+  {
+    "name": "Overwinden",
+    "province": "vlaams-brabant",
+    "lat": 50.75318,
+    "lon": 5.0489
+  },
+  {
+    "name": "Rumsdorp",
+    "province": "vlaams-brabant",
+    "lat": 50.76619,
+    "lon": 5.07623
+  },
+  {
+    "name": "Wange",
+    "province": "vlaams-brabant",
+    "lat": 50.78598,
+    "lon": 5.03176
+  },
+  {
+    "name": "Waasmont",
+    "province": "vlaams-brabant",
+    "lat": 50.72724,
+    "lon": 5.06231
+  },
+  {
+    "name": "Walsbets",
+    "province": "vlaams-brabant",
+    "lat": 50.73723,
+    "lon": 5.08528
+  },
+  {
+    "name": "Walshoutem",
+    "province": "vlaams-brabant",
+    "lat": 50.72373,
+    "lon": 5.09553
+  },
+  {
+    "name": "Wezeren",
+    "province": "vlaams-brabant",
+    "lat": 50.73008,
+    "lon": 5.10485
+  },
+  {
+    "name": "Attenhoven",
+    "province": "vlaams-brabant",
+    "lat": 50.76652,
+    "lon": 5.09308
+  },
+  {
+    "name": "Neerlanden",
+    "province": "vlaams-brabant",
+    "lat": 50.77812,
+    "lon": 5.07901
+  },
+  {
+    "name": "Budingen",
+    "province": "vlaams-brabant",
+    "lat": 50.8654,
+    "lon": 5.09811
+  },
+  {
+    "name": "Dormaal",
+    "province": "vlaams-brabant",
+    "lat": 50.80722,
+    "lon": 5.0985
+  },
+  {
+    "name": "Halle-Booienhoven",
+    "province": "vlaams-brabant",
+    "lat": 50.80475,
+    "lon": 5.11168
+  },
+  {
+    "name": "Helen-Bos",
+    "province": "vlaams-brabant",
+    "lat": 50.81823,
+    "lon": 5.0822
+  },
+  {
+    "name": "Zoutleeuw",
+    "province": "vlaams-brabant",
+    "lat": 50.83231,
+    "lon": 5.10442
+  },
+  {
+    "name": "Geetbets",
+    "province": "vlaams-brabant",
+    "lat": 50.8902757,
+    "lon": 5.1095641
+  },
+  {
+    "name": "Grazen",
+    "province": "vlaams-brabant",
+    "lat": 50.8752077,
+    "lon": 5.1308353
+  },
+  {
+    "name": "Rummen",
+    "province": "vlaams-brabant",
+    "lat": 50.8889069,
+    "lon": 5.1656281
+  },
+  {
+    "name": "Assent",
+    "province": "vlaams-brabant",
+    "lat": 50.9526086,
+    "lon": 5.0159442
+  },
+  {
+    "name": "Bekkevoort",
+    "province": "vlaams-brabant",
+    "lat": 50.9426234,
+    "lon": 4.985641
+  },
+  {
+    "name": "Molenbeek-Wersbeek",
+    "province": "vlaams-brabant",
+    "lat": 50.9184738,
+    "lon": 4.9415359
+  },
+  {
+    "name": "Kortenaken",
+    "province": "vlaams-brabant",
+    "lat": 50.8973765,
+    "lon": 5.0663974
+  },
+  {
+    "name": "Ransberg",
+    "province": "vlaams-brabant",
+    "lat": 50.8743562,
+    "lon": 5.0377616
+  },
+  {
+    "name": "Sint-Margriete-Houtem",
+    "province": "vlaams-brabant",
+    "lat": 50.8128004,
+    "lon": 3.2790522
+  },
+  {
+    "name": "Hoeleden",
+    "province": "vlaams-brabant",
+    "lat": 50.8681697,
+    "lon": 4.9869044
+  },
+  {
+    "name": "Kersbeek-Miskom",
+    "province": "vlaams-brabant",
+    "lat": 50.8858124,
+    "lon": 4.9958008
+  },
+  {
+    "name": "Waanrode",
+    "province": "vlaams-brabant",
+    "lat": 50.9161837,
+    "lon": 5.004692
+  },
+  {
+    "name": "Hasselt",
+    "province": "limburg",
+    "lat": 50.9215166,
+    "lon": 5.3447405
+  },
+  {
+    "name": "Sint-Lambrechts-Herk",
+    "province": "limburg",
+    "lat": 50.89841,
+    "lon": 5.30741
+  },
+  {
+    "name": "Wimmertingen",
+    "province": "limburg",
+    "lat": 50.8831759,
+    "lon": 5.3526453
+  },
+  {
+    "name": "Kermt",
+    "province": "limburg",
+    "lat": 50.94767,
+    "lon": 5.24676
+  },
+  {
+    "name": "Spalbeek",
+    "province": "limburg",
+    "lat": 50.9486672,
+    "lon": 5.2247223
+  },
+  {
+    "name": "Kuringen",
+    "province": "limburg",
+    "lat": 50.94387,
+    "lon": 5.29789
+  },
+  {
+    "name": "Stokrooie",
+    "province": "limburg",
+    "lat": 50.96619,
+    "lon": 5.28134
+  },
+  {
+    "name": "Stevoort",
+    "province": "limburg",
+    "lat": 50.9183,
+    "lon": 5.25316
+  },
+  {
+    "name": "Zonhoven",
+    "province": "limburg",
+    "lat": 50.98707,
+    "lon": 5.36716
+  },
+  {
+    "name": "Helchteren",
+    "province": "limburg",
+    "lat": 51.0565512,
+    "lon": 5.3826921
+  },
+  {
+    "name": "Houthalen",
+    "province": "limburg",
+    "lat": 51.0314627,
+    "lon": 5.3763541
+  },
+  {
+    "name": "Houthalen-Helchteren",
+    "province": "limburg",
+    "lat": 51.0312424,
+    "lon": 5.3765453
+  },
+  {
+    "name": "Berbroek",
+    "province": "limburg",
+    "lat": 50.9503306,
+    "lon": 5.2083451
+  },
+  {
+    "name": "Donk",
+    "province": "limburg",
+    "lat": 50.9382225,
+    "lon": 5.1344391
+  },
+  {
+    "name": "Herk-De-Stad",
+    "province": "limburg",
+    "lat": 50.93923,
+    "lon": 5.16712
+  },
+  {
+    "name": "Schulen",
+    "province": "limburg",
+    "lat": 50.959958,
+    "lon": 5.1904844
+  },
+  {
+    "name": "Halen",
+    "province": "limburg",
+    "lat": 50.9485,
+    "lon": 5.11117
+  },
+  {
+    "name": "Loksbergen",
+    "province": "limburg",
+    "lat": 50.9342585,
+    "lon": 5.0695638
+  },
+  {
+    "name": "Zelem",
+    "province": "limburg",
+    "lat": 50.9781579,
+    "lon": 5.1057744
+  },
+  {
+    "name": "Heusden",
+    "province": "limburg",
+    "lat": 51.0354099,
+    "lon": 5.283057
+  },
+  {
+    "name": "Heusden-Zolder",
+    "province": "limburg",
+    "lat": 51.0384819,
+    "lon": 5.2904127
+  },
+  {
+    "name": "Zolder",
+    "province": "limburg",
+    "lat": 51.0229535,
+    "lon": 5.3097324
+  },
+  {
+    "name": "Linkhout",
+    "province": "limburg",
+    "lat": 50.96812,
+    "lon": 5.13687
+  },
+  {
+    "name": "Lummen",
+    "province": "limburg",
+    "lat": 50.98761,
+    "lon": 5.19511
+  },
+  {
+    "name": "Meldert",
+    "province": "limburg",
+    "lat": 50.99867,
+    "lon": 5.1418
+  },
+  {
+    "name": "Alken",
+    "province": "limburg",
+    "lat": 50.87609,
+    "lon": 5.30767
+  },
+  {
+    "name": "Beringen",
+    "province": "limburg",
+    "lat": 51.0473373,
+    "lon": 5.2214769
+  },
+  {
+    "name": "Beverlo",
+    "province": "limburg",
+    "lat": 51.0873,
+    "lon": 5.21898
+  },
+  {
+    "name": "Koersel",
+    "province": "limburg",
+    "lat": 51.05844,
+    "lon": 5.27176
+  },
+  {
+    "name": "Paal",
+    "province": "limburg",
+    "lat": 51.03953,
+    "lon": 5.17165
+  },
+  {
+    "name": "Diepenbeek",
+    "province": "limburg",
+    "lat": 50.91083,
+    "lon": 5.41336
+  },
+  {
+    "name": "Genk",
+    "province": "limburg",
+    "lat": 50.96613,
+    "lon": 5.5021
+  },
+  {
+    "name": "Gellik",
+    "province": "limburg",
+    "lat": 50.8839114,
+    "lon": 5.6103183
+  },
+  {
+    "name": "Lanaken",
+    "province": "limburg",
+    "lat": 50.8919602,
+    "lon": 5.6398572
+  },
+  {
+    "name": "Neerharen",
+    "province": "limburg",
+    "lat": 50.9088851,
+    "lon": 5.6808314
+  },
+  {
+    "name": "Veldwezelt",
+    "province": "limburg",
+    "lat": 50.8677788,
+    "lon": 5.6305961
+  },
+  {
+    "name": "Rekem",
+    "province": "limburg",
+    "lat": 50.9224749,
+    "lon": 5.6957272
+  },
+  {
+    "name": "Eisden",
+    "province": "limburg",
+    "lat": 50.9854566,
+    "lon": 5.7140769
+  },
+  {
+    "name": "Leut",
+    "province": "limburg",
+    "lat": 50.9900244,
+    "lon": 5.7350908
+  },
+  {
+    "name": "Maasmechelen",
+    "province": "limburg",
+    "lat": 50.969278,
+    "lon": 5.6619185
+  },
+  {
+    "name": "Mechelen-Aan-De-Maas",
+    "province": "limburg",
+    "lat": 50.9797588,
+    "lon": 5.7018567
+  },
+  {
+    "name": "Meeswijk",
+    "province": "limburg",
+    "lat": 50.9995012,
+    "lon": 5.7496822
+  },
+  {
+    "name": "Opgrimbie",
+    "province": "limburg",
+    "lat": 50.9432913,
+    "lon": 5.6809579
+  },
+  {
+    "name": "Vucht",
+    "province": "limburg",
+    "lat": 50.9787264,
+    "lon": 5.7106715
+  },
+  {
+    "name": "Boorsem",
+    "province": "limburg",
+    "lat": 50.9408237,
+    "lon": 5.7197843
+  },
+  {
+    "name": "Uikhoven",
+    "province": "limburg",
+    "lat": 50.923677,
+    "lon": 5.7183356
+  },
+  {
+    "name": "Kessenich",
+    "province": "limburg",
+    "lat": 51.15142,
+    "lon": 5.82297
+  },
+  {
+    "name": "Kinrooi",
+    "province": "limburg",
+    "lat": 51.14552,
+    "lon": 5.74113
+  },
+  {
+    "name": "Molenbeersel",
+    "province": "limburg",
+    "lat": 51.17002,
+    "lon": 5.73758
+  },
+  {
+    "name": "Ophoven",
+    "province": "limburg",
+    "lat": 51.12559,
+    "lon": 5.80204
+  },
+  {
+    "name": "Dilsen",
+    "province": "limburg",
+    "lat": 51.03747,
+    "lon": 5.72215
+  },
+  {
+    "name": "Dilsen-Stokkem",
+    "province": "limburg",
+    "lat": 51.0301998,
+    "lon": 5.7000888
+  },
+  {
+    "name": "Elen",
+    "province": "limburg",
+    "lat": 51.06655,
+    "lon": 5.75083
+  },
+  {
+    "name": "Lanklaar",
+    "province": "limburg",
+    "lat": 51.0188,
+    "lon": 5.7262
+  },
+  {
+    "name": "Rotem",
+    "province": "limburg",
+    "lat": 51.05297,
+    "lon": 5.74118
+  },
+  {
+    "name": "Stokkem",
+    "province": "limburg",
+    "lat": 51.02364,
+    "lon": 5.74418
+  },
+  {
+    "name": "As",
+    "province": "limburg",
+    "lat": 50.9997751,
+    "lon": 5.5715438
+  },
+  {
+    "name": "Niel-Bij-As",
+    "province": "limburg",
+    "lat": 51.0176272,
+    "lon": 5.6045057
+  },
+  {
+    "name": "Ellikom",
+    "province": "limburg",
+    "lat": 51.12719,
+    "lon": 5.52366
+  },
+  {
+    "name": "Meeuwen",
+    "province": "limburg",
+    "lat": 51.09867,
+    "lon": 5.5205
+  },
+  {
+    "name": "Meeuwen-Gruitrode",
+    "province": "limburg",
+    "lat": 51.09495,
+    "lon": 5.54784
+  },
+  {
+    "name": "Neerglabbeek",
+    "province": "limburg",
+    "lat": 51.09144,
+    "lon": 5.61676
+  },
+  {
+    "name": "Wijshagen",
+    "province": "limburg",
+    "lat": 51.10461,
+    "lon": 5.55881
+  },
+  {
+    "name": "Maaseik",
+    "province": "limburg",
+    "lat": 51.0983909,
+    "lon": 5.7837625
+  },
+  {
+    "name": "Neeroeteren",
+    "province": "limburg",
+    "lat": 51.0918046,
+    "lon": 5.6995386
+  },
+  {
+    "name": "Opoeteren",
+    "province": "limburg",
+    "lat": 51.0675622,
+    "lon": 5.6594443
+  },
+  {
+    "name": "Zutendaal",
+    "province": "limburg",
+    "lat": 50.93196,
+    "lon": 5.57227
+  },
+  {
+    "name": "'s Herenelderen",
+    "province": "limburg",
+    "lat": 50.8089063,
+    "lon": 5.5032825
+  },
+  {
+    "name": "Berg",
+    "province": "limburg",
+    "lat": 50.79183,
+    "lon": 5.49494
+  },
+  {
+    "name": "Diets-Heur",
+    "province": "limburg",
+    "lat": 50.7453303,
+    "lon": 5.4828472
+  },
+  {
+    "name": "Haren",
+    "province": "limburg",
+    "lat": 50.7979251,
+    "lon": 5.4020478
+  },
+  {
+    "name": "Henis",
+    "province": "limburg",
+    "lat": 50.7992,
+    "lon": 5.47122
+  },
+  {
+    "name": "Kolmont",
+    "province": "limburg",
+    "lat": 50.8041,
+    "lon": 5.42373
+  },
+  {
+    "name": "Koninksem",
+    "province": "limburg",
+    "lat": 50.76531,
+    "lon": 5.43997
+  },
+  {
+    "name": "Lauw",
+    "province": "limburg",
+    "lat": 50.7392355,
+    "lon": 5.4148753
+  },
+  {
+    "name": "Mal",
+    "province": "limburg",
+    "lat": 50.7684738,
+    "lon": 5.5214638
+  },
+  {
+    "name": "Neerrepen",
+    "province": "limburg",
+    "lat": 50.8110492,
+    "lon": 5.444214
+  },
+  {
+    "name": "Nerem",
+    "province": "limburg",
+    "lat": 50.7649963,
+    "lon": 5.5104893
+  },
+  {
+    "name": "Overrepen",
+    "province": "limburg",
+    "lat": 50.8070423,
+    "lon": 5.4315896
+  },
+  {
+    "name": "Piringen",
+    "province": "limburg",
+    "lat": 50.7864119,
+    "lon": 5.4178871
+  },
+  {
+    "name": "Riksingen",
+    "province": "limburg",
+    "lat": 50.8051007,
+    "lon": 5.4632976
+  },
+  {
+    "name": "Rutten",
+    "province": "limburg",
+    "lat": 50.7478825,
+    "lon": 5.4423901
+  },
+  {
+    "name": "Sluizen",
+    "province": "limburg",
+    "lat": 50.7653436,
+    "lon": 5.5314429
+  },
+  {
+    "name": "Tongeren",
+    "province": "limburg",
+    "lat": 50.78419,
+    "lon": 5.47449
+  },
+  {
+    "name": "Vreren",
+    "province": "limburg",
+    "lat": 50.7515842,
+    "lon": 5.4974649
+  },
+  {
+    "name": "Widooie",
+    "province": "limburg",
+    "lat": 50.7713726,
+    "lon": 5.4084338
+  },
+  {
+    "name": "Herstappe",
+    "province": "limburg",
+    "lat": 50.72653,
+    "lon": 5.426
+  },
+  {
+    "name": "Kortessem",
+    "province": "limburg",
+    "lat": 50.8625531,
+    "lon": 5.3781216
+  },
+  {
+    "name": "Vliermaalroot",
+    "province": "limburg",
+    "lat": 50.8637784,
+    "lon": 5.4240097
+  },
+  {
+    "name": "Wintershoven",
+    "province": "limburg",
+    "lat": 50.85263,
+    "lon": 5.41968
+  },
+  {
+    "name": "Guigoven",
+    "province": "limburg",
+    "lat": 50.8390899,
+    "lon": 5.399157
+  },
+  {
+    "name": "Vliermaal",
+    "province": "limburg",
+    "lat": 50.8394948,
+    "lon": 5.4289047
+  },
+  {
+    "name": "Hoeselt",
+    "province": "limburg",
+    "lat": 50.8497352,
+    "lon": 5.4911243
+  },
+  {
+    "name": "Romershoven",
+    "province": "limburg",
+    "lat": 50.855984,
+    "lon": 5.4598837
+  },
+  {
+    "name": "Sint-Huibrechts-Hern",
+    "province": "limburg",
+    "lat": 50.82985,
+    "lon": 5.4492483
+  },
+  {
+    "name": "Werm",
+    "province": "limburg",
+    "lat": 50.8328482,
+    "lon": 5.4802846
+  },
+  {
+    "name": "Schalkhoven",
+    "province": "limburg",
+    "lat": 50.8414306,
+    "lon": 5.4495653
+  },
+  {
+    "name": "Beverst",
+    "province": "limburg",
+    "lat": 50.8902246,
+    "lon": 5.475171
+  },
+  {
+    "name": "Bilzen",
+    "province": "limburg",
+    "lat": 50.8719054,
+    "lon": 5.5166463
+  },
+  {
+    "name": "Eigenbilzen",
+    "province": "limburg",
+    "lat": 50.8746121,
+    "lon": 5.5746355
+  },
+  {
+    "name": "Grote-Spouwen",
+    "province": "limburg",
+    "lat": 50.8315692,
+    "lon": 5.5519685
+  },
+  {
+    "name": "Hees",
+    "province": "limburg",
+    "lat": 50.8466302,
+    "lon": 5.609372
+  },
+  {
+    "name": "Kleine-Spouwen",
+    "province": "limburg",
+    "lat": 50.8381087,
+    "lon": 5.5483654
+  },
+  {
+    "name": "Mopertingen",
+    "province": "limburg",
+    "lat": 50.8606327,
+    "lon": 5.5756295
+  },
+  {
+    "name": "Munsterbilzen",
+    "province": "limburg",
+    "lat": 50.8897326,
+    "lon": 5.5261669
+  },
+  {
+    "name": "Rijkhoven",
+    "province": "limburg",
+    "lat": 50.8329777,
+    "lon": 5.5150984
+  },
+  {
+    "name": "Rosmeer",
+    "province": "limburg",
+    "lat": 50.8456546,
+    "lon": 5.5806307
+  },
+  {
+    "name": "Waltwilder",
+    "province": "limburg",
+    "lat": 50.8658211,
+    "lon": 5.5441802
+  },
+  {
+    "name": "Martenslinde",
+    "province": "limburg",
+    "lat": 50.8565985,
+    "lon": 5.5332305
+  },
+  {
+    "name": "Hoelbeek",
+    "province": "limburg",
+    "lat": 50.8718626,
+    "lon": 5.5564999
+  },
+  {
+    "name": "Genoelselderen",
+    "province": "limburg",
+    "lat": 50.80297,
+    "lon": 5.538845
+  },
+  {
+    "name": "Herderen",
+    "province": "limburg",
+    "lat": 50.8065724,
+    "lon": 5.5723296
+  },
+  {
+    "name": "Kanne",
+    "province": "limburg",
+    "lat": 50.814055,
+    "lon": 5.6693136
+  },
+  {
+    "name": "Membruggen",
+    "province": "limburg",
+    "lat": 50.8141975,
+    "lon": 5.5343399
+  },
+  {
+    "name": "Millen",
+    "province": "limburg",
+    "lat": 50.7856375,
+    "lon": 5.5561104
+  },
+  {
+    "name": "Riemst",
+    "province": "limburg",
+    "lat": 50.8089945,
+    "lon": 5.6012328
+  },
+  {
+    "name": "Val-Meer",
+    "province": "limburg",
+    "lat": 50.7862227,
+    "lon": 5.59628
+  },
+  {
+    "name": "Vlijtingen",
+    "province": "limburg",
+    "lat": 50.8320854,
+    "lon": 5.5842906
+  },
+  {
+    "name": "Vroenhoven",
+    "province": "limburg",
+    "lat": 50.8263221,
+    "lon": 5.6400304
+  },
+  {
+    "name": "Zichen-Zussen-Bolder",
+    "province": "limburg",
+    "lat": 50.7933496,
+    "lon": 5.6245555
+  },
+  {
+    "name": "Moelingen",
+    "province": "limburg",
+    "lat": 50.7570096,
+    "lon": 5.7134973
+  },
+  {
+    "name": "Sint-Martens-Voeren",
+    "province": "limburg",
+    "lat": 50.7485199,
+    "lon": 5.8122336
+  },
+  {
+    "name": "Voeren",
+    "province": "limburg",
+    "lat": 50.7464187,
+    "lon": 5.8409039
+  },
+  {
+    "name": "Remersdaal",
+    "province": "limburg",
+    "lat": 50.7315308,
+    "lon": 5.8808478
+  },
+  {
+    "name": "Sint-Pieters-Voeren",
+    "province": "limburg",
+    "lat": 50.738357,
+    "lon": 5.8226791
+  },
+  {
+    "name": "Teuven",
+    "province": "limburg",
+    "lat": 50.7518324,
+    "lon": 5.8759546
+  },
+  {
+    "name": "S Gravenvoeren",
+    "province": "limburg",
+    "lat": 50.7587829,
+    "lon": 5.7611628
+  },
+  {
+    "name": "Aalst",
+    "province": "limburg",
+    "lat": 50.78166,
+    "lon": 5.20898
+  },
+  {
+    "name": "Brustem",
+    "province": "limburg",
+    "lat": 50.80565,
+    "lon": 5.22187
+  },
+  {
+    "name": "Engelmanshoven",
+    "province": "limburg",
+    "lat": 50.77134,
+    "lon": 5.25092
+  },
+  {
+    "name": "Gelinden",
+    "province": "limburg",
+    "lat": 50.76552,
+    "lon": 5.26092
+  },
+  {
+    "name": "Groot-Gelmen",
+    "province": "limburg",
+    "lat": 50.78525,
+    "lon": 5.26296
+  },
+  {
+    "name": "Halmaal",
+    "province": "limburg",
+    "lat": 50.80589,
+    "lon": 5.15574
+  },
+  {
+    "name": "Kerkom-Bij-Sint-Truiden",
+    "province": "limburg",
+    "lat": 50.77429,
+    "lon": 5.17787
+  },
+  {
+    "name": "Ordingen",
+    "province": "limburg",
+    "lat": 50.81285,
+    "lon": 5.23521
+  },
+  {
+    "name": "Sint-Truiden",
+    "province": "limburg",
+    "lat": 50.8019192,
+    "lon": 5.2202655
+  },
+  {
+    "name": "Zepperen",
+    "province": "limburg",
+    "lat": 50.82116,
+    "lon": 5.24767
+  },
+  {
+    "name": "Duras",
+    "province": "limburg",
+    "lat": 50.83552,
+    "lon": 5.14638
+  },
+  {
+    "name": "Gorsem",
+    "province": "limburg",
+    "lat": 50.83483,
+    "lon": 5.16195
+  },
+  {
+    "name": "Runkelen",
+    "province": "limburg",
+    "lat": 50.84681,
+    "lon": 5.15088
+  },
+  {
+    "name": "Wilderen",
+    "province": "limburg",
+    "lat": 50.81587,
+    "lon": 5.14136
+  },
+  {
+    "name": "Velm",
+    "province": "limburg",
+    "lat": 50.77931,
+    "lon": 5.13162
+  },
+  {
+    "name": "Berlingen",
+    "province": "limburg",
+    "lat": 50.81971,
+    "lon": 5.31121
+  },
+  {
+    "name": "Wellen",
+    "province": "limburg",
+    "lat": 50.8436052,
+    "lon": 5.3362409
+  },
+  {
+    "name": "Ulbeek",
+    "province": "limburg",
+    "lat": 50.84381,
+    "lon": 5.30465
+  },
+  {
+    "name": "Bommershoven",
+    "province": "limburg",
+    "lat": 50.788,
+    "lon": 5.37904
+  },
+  {
+    "name": "Borgloon",
+    "province": "limburg",
+    "lat": 50.80613,
+    "lon": 5.34302
+  },
+  {
+    "name": "Broekom",
+    "province": "limburg",
+    "lat": 50.78238,
+    "lon": 5.33176
+  },
+  {
+    "name": "Gors-Opleeuw",
+    "province": "limburg",
+    "lat": 50.8233766,
+    "lon": 5.3967118
+  },
+  {
+    "name": "Gotem",
+    "province": "limburg",
+    "lat": 50.80515,
+    "lon": 5.31351
+  },
+  {
+    "name": "Groot-Loon",
+    "province": "limburg",
+    "lat": 50.79247,
+    "lon": 5.36338
+  },
+  {
+    "name": "Haren",
+    "province": "limburg",
+    "lat": 50.79274,
+    "lon": 5.39953
+  },
+  {
+    "name": "Hendrieken",
+    "province": "limburg",
+    "lat": 50.79889,
+    "lon": 5.32811
+  },
+  {
+    "name": "Hoepertingen",
+    "province": "limburg",
+    "lat": 50.81235,
+    "lon": 5.28368
+  },
+  {
+    "name": "Jesseren",
+    "province": "limburg",
+    "lat": 50.80594,
+    "lon": 5.38989
+  },
+  {
+    "name": "Kerniel",
+    "province": "limburg",
+    "lat": 50.81632,
+    "lon": 5.36368
+  },
+  {
+    "name": "Kolmont",
+    "province": "limburg",
+    "lat": 50.8031485,
+    "lon": 5.4230892
+  },
+  {
+    "name": "Kuttekoven",
+    "province": "limburg",
+    "lat": 50.809,
+    "lon": 5.32603
+  },
+  {
+    "name": "Rijkel",
+    "province": "limburg",
+    "lat": 50.80989,
+    "lon": 5.26083
+  },
+  {
+    "name": "Voort",
+    "province": "limburg",
+    "lat": 50.79478,
+    "lon": 5.31971
+  },
+  {
+    "name": "Binderveld",
+    "province": "limburg",
+    "lat": 50.8608,
+    "lon": 5.16481
+  },
+  {
+    "name": "Kozen",
+    "province": "limburg",
+    "lat": 50.87496,
+    "lon": 5.23985
+  },
+  {
+    "name": "Nieuwerkerken",
+    "province": "limburg",
+    "lat": 50.86475,
+    "lon": 5.18869
+  },
+  {
+    "name": "Wijer",
+    "province": "limburg",
+    "lat": 50.89838,
+    "lon": 5.22391
+  },
+  {
+    "name": "Batsheers",
+    "province": "limburg",
+    "lat": 50.73855,
+    "lon": 5.28134
+  },
+  {
+    "name": "Bovelingen",
+    "province": "limburg",
+    "lat": 50.7375212,
+    "lon": 5.2600349
+  },
+  {
+    "name": "Gutshoven",
+    "province": "limburg",
+    "lat": 50.77389,
+    "lon": 5.31713
+  },
+  {
+    "name": "Heers",
+    "province": "limburg",
+    "lat": 50.75368,
+    "lon": 5.30209
+  },
+  {
+    "name": "Heks",
+    "province": "limburg",
+    "lat": 50.7701,
+    "lon": 5.35751
+  },
+  {
+    "name": "Horpmaal",
+    "province": "limburg",
+    "lat": 50.76049,
+    "lon": 5.33567
+  },
+  {
+    "name": "Klein-Gelmen",
+    "province": "limburg",
+    "lat": 50.76978,
+    "lon": 5.27694
+  },
+  {
+    "name": "Mechelen-Bovelingen",
+    "province": "limburg",
+    "lat": 50.74054,
+    "lon": 5.26049
+  },
+  {
+    "name": "Mettekoven",
+    "province": "limburg",
+    "lat": 50.78103,
+    "lon": 5.29062
+  },
+  {
+    "name": "Opheers",
+    "province": "limburg",
+    "lat": 50.73972,
+    "lon": 5.29766
+  },
+  {
+    "name": "Rukkelingen-Loon",
+    "province": "limburg",
+    "lat": 50.72784,
+    "lon": 5.25444
+  },
+  {
+    "name": "Vechmaal",
+    "province": "limburg",
+    "lat": 50.76141,
+    "lon": 5.37466
+  },
+  {
+    "name": "Veulen",
+    "province": "limburg",
+    "lat": 50.76371,
+    "lon": 5.30578
+  },
+  {
+    "name": "Boekhout",
+    "province": "limburg",
+    "lat": 50.74568,
+    "lon": 5.23353
+  },
+  {
+    "name": "Gingelom",
+    "province": "limburg",
+    "lat": 50.74988,
+    "lon": 5.1332
+  },
+  {
+    "name": "Jeuk",
+    "province": "limburg",
+    "lat": 50.73427,
+    "lon": 5.20969
+  },
+  {
+    "name": "Kortijs",
+    "province": "limburg",
+    "lat": 50.70745,
+    "lon": 5.14944
+  },
+  {
+    "name": "Montenaken",
+    "province": "limburg",
+    "lat": 50.72101,
+    "lon": 5.12721
+  },
+  {
+    "name": "Niel-Bij-Sint-Truiden",
+    "province": "limburg",
+    "lat": 50.74217,
+    "lon": 5.14205
+  },
+  {
+    "name": "Vorsen",
+    "province": "limburg",
+    "lat": 50.70391,
+    "lon": 5.16858
+  },
+  {
+    "name": "Borlo",
+    "province": "limburg",
+    "lat": 50.74216,
+    "lon": 5.18135
+  },
+  {
+    "name": "Buvingen",
+    "province": "limburg",
+    "lat": 50.75294,
+    "lon": 5.17767
+  },
+  {
+    "name": "Mielen-Boven-Aalst",
+    "province": "limburg",
+    "lat": 50.7554353,
+    "lon": 5.2150212
+  },
+  {
+    "name": "Muizen",
+    "province": "limburg",
+    "lat": 50.76024,
+    "lon": 5.17944
+  },
+  {
+    "name": "Sint-Huibrechts-Lille",
+    "province": "limburg",
+    "lat": 51.22251,
+    "lon": 5.49576
+  },
+  {
+    "name": "Lommel",
+    "province": "limburg",
+    "lat": 51.2304193,
+    "lon": 5.3110063
+  },
+  {
+    "name": "Achel",
+    "province": "limburg",
+    "lat": 51.25224,
+    "lon": 5.47953
+  },
+  {
+    "name": "Hamont",
+    "province": "limburg",
+    "lat": 51.25272,
+    "lon": 5.54953
+  },
+  {
+    "name": "Hamont-Achel",
+    "province": "limburg",
+    "lat": 51.2697668,
+    "lon": 5.5154222
+  },
+  {
+    "name": "Hechtel",
+    "province": "limburg",
+    "lat": 51.1252349,
+    "lon": 5.3661124
+  },
+  {
+    "name": "Hechtel-Eksel",
+    "province": "limburg",
+    "lat": 51.1105222,
+    "lon": 5.3295958
+  },
+  {
+    "name": "Eksel",
+    "province": "limburg",
+    "lat": 51.1546138,
+    "lon": 5.3943545
+  },
+  {
+    "name": "Ham",
+    "province": "limburg",
+    "lat": 51.1038173,
+    "lon": 5.1777363
+  },
+  {
+    "name": "Kwaadmechelen",
+    "province": "limburg",
+    "lat": 51.10072,
+    "lon": 5.14416
+  },
+  {
+    "name": "Oostham",
+    "province": "limburg",
+    "lat": 51.10373,
+    "lon": 5.18022
+  },
+  {
+    "name": "Bocholt",
+    "province": "limburg",
+    "lat": 51.17291,
+    "lon": 5.57899
+  },
+  {
+    "name": "Kaulille",
+    "province": "limburg",
+    "lat": 51.18717,
+    "lon": 5.52568
+  },
+  {
+    "name": "Reppel",
+    "province": "limburg",
+    "lat": 51.15506,
+    "lon": 5.56309
+  },
+  {
+    "name": "Bree",
+    "province": "limburg",
+    "lat": 51.14099,
+    "lon": 5.59802
+  },
+  {
+    "name": "Gerdingen",
+    "province": "limburg",
+    "lat": 51.14804,
+    "lon": 5.5802
+  },
+  {
+    "name": "Opitter",
+    "province": "limburg",
+    "lat": 51.11657,
+    "lon": 5.64972
+  },
+  {
+    "name": "Tongerlo",
+    "province": "limburg",
+    "lat": 51.12856,
+    "lon": 5.66145
+  },
+  {
+    "name": "Leopoldsburg",
+    "province": "limburg",
+    "lat": 51.1183684,
+    "lon": 5.250695
+  },
+  {
+    "name": "Heppen",
+    "province": "limburg",
+    "lat": 51.1088735,
+    "lon": 5.2285739
+  },
+  {
+    "name": "Tessenderlo",
+    "province": "limburg",
+    "lat": 51.0642666,
+    "lon": 5.0881938
+  },
+  {
+    "name": "Grote-Brogel",
+    "province": "limburg",
+    "lat": 51.15435,
+    "lon": 5.50838
+  },
+  {
+    "name": "Kleine-Brogel",
+    "province": "limburg",
+    "lat": 51.17258,
+    "lon": 5.45019
+  },
+  {
+    "name": "Peer",
+    "province": "limburg",
+    "lat": 51.1329,
+    "lon": 5.4536
+  },
+  {
+    "name": "Wijchmaal",
+    "province": "limburg",
+    "lat": 51.13556,
+    "lon": 5.41311
+  },
+  {
+    "name": "Brugge",
+    "province": "west-vlaanderen",
+    "lat": 51.2093488,
+    "lon": 3.2247013
+  },
+  {
+    "name": "Koolkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.2403327,
+    "lon": 3.248109
+  },
+  {
+    "name": "Hertsberge",
+    "province": "west-vlaanderen",
+    "lat": 51.1053969,
+    "lon": 3.2730671
+  },
+  {
+    "name": "Oostkamp",
+    "province": "west-vlaanderen",
+    "lat": 51.1545056,
+    "lon": 3.2334111
+  },
+  {
+    "name": "Ruddervoorde",
+    "province": "west-vlaanderen",
+    "lat": 51.095941,
+    "lon": 3.2065193
+  },
+  {
+    "name": "Waardamme",
+    "province": "west-vlaanderen",
+    "lat": 51.1133317,
+    "lon": 3.2193165
+  },
+  {
+    "name": "Sint-Andries",
+    "province": "west-vlaanderen",
+    "lat": 51.1972024,
+    "lon": 3.1794755
+  },
+  {
+    "name": "Sint-Michiels",
+    "province": "west-vlaanderen",
+    "lat": 51.1858939,
+    "lon": 3.2082098
+  },
+  {
+    "name": "Loppem",
+    "province": "west-vlaanderen",
+    "lat": 51.1559088,
+    "lon": 3.1959225
+  },
+  {
+    "name": "Veldegem",
+    "province": "west-vlaanderen",
+    "lat": 51.1045154,
+    "lon": 3.1595129
+  },
+  {
+    "name": "Zedelgem",
+    "province": "west-vlaanderen",
+    "lat": 51.1423355,
+    "lon": 3.1369128
+  },
+  {
+    "name": "Aartrijke",
+    "province": "west-vlaanderen",
+    "lat": 51.1191688,
+    "lon": 3.0900794
+  },
+  {
+    "name": "Knokke",
+    "province": "west-vlaanderen",
+    "lat": 51.3467441,
+    "lon": 3.2894423
+  },
+  {
+    "name": "Knokke-Heist",
+    "province": "west-vlaanderen",
+    "lat": 51.3467441,
+    "lon": 3.2894423
+  },
+  {
+    "name": "Westkapelle",
+    "province": "west-vlaanderen",
+    "lat": 51.3157028,
+    "lon": 3.3028853
+  },
+  {
+    "name": "Heist-Aan-Zee",
+    "province": "west-vlaanderen",
+    "lat": 51.3403638,
+    "lon": 3.2400417
+  },
+  {
+    "name": "Ramskapelle",
+    "province": "west-vlaanderen",
+    "lat": 51.3136364,
+    "lon": 3.2516251
+  },
+  {
+    "name": "Assebroek",
+    "province": "west-vlaanderen",
+    "lat": 51.2020234,
+    "lon": 3.2550607
+  },
+  {
+    "name": "Sint-Kruis",
+    "province": "west-vlaanderen",
+    "lat": 51.214297,
+    "lon": 3.2512976
+  },
+  {
+    "name": "Damme",
+    "province": "west-vlaanderen",
+    "lat": 51.2513634,
+    "lon": 3.2813763
+  },
+  {
+    "name": "Hoeke",
+    "province": "west-vlaanderen",
+    "lat": 51.2916219,
+    "lon": 3.336729
+  },
+  {
+    "name": "Lapscheure",
+    "province": "west-vlaanderen",
+    "lat": 51.2776457,
+    "lon": 3.3568337
+  },
+  {
+    "name": "Moerkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.2430573,
+    "lon": 3.340071
+  },
+  {
+    "name": "Oostkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.2785542,
+    "lon": 3.2938857
+  },
+  {
+    "name": "Sijsele",
+    "province": "west-vlaanderen",
+    "lat": 51.2015613,
+    "lon": 3.3212461
+  },
+  {
+    "name": "Blankenberge",
+    "province": "west-vlaanderen",
+    "lat": 51.3123743,
+    "lon": 3.1327685
+  },
+  {
+    "name": "Uitkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.3033,
+    "lon": 3.1429
+  },
+  {
+    "name": "Houtave",
+    "province": "west-vlaanderen",
+    "lat": 51.2359799,
+    "lon": 3.1104678
+  },
+  {
+    "name": "Meetkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.2350824,
+    "lon": 3.1514099
+  },
+  {
+    "name": "Nieuwmunster",
+    "province": "west-vlaanderen",
+    "lat": 51.273778,
+    "lon": 3.0986683
+  },
+  {
+    "name": "Zuienkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.2649386,
+    "lon": 3.153933
+  },
+  {
+    "name": "Dudzele",
+    "province": "west-vlaanderen",
+    "lat": 51.2736603,
+    "lon": 3.2247366
+  },
+  {
+    "name": "Lissewege",
+    "province": "west-vlaanderen",
+    "lat": 51.2941105,
+    "lon": 3.1923223
+  },
+  {
+    "name": "Zeebrugge",
+    "province": "west-vlaanderen",
+    "lat": 51.3189468,
+    "lon": 3.2068507
+  },
+  {
+    "name": "Oostende",
+    "province": "west-vlaanderen",
+    "lat": 51.21543,
+    "lon": 2.928656
+  },
+  {
+    "name": "Stene",
+    "province": "west-vlaanderen",
+    "lat": 51.2026843,
+    "lon": 2.914688
+  },
+  {
+    "name": "Zandvoorde",
+    "province": "west-vlaanderen",
+    "lat": 51.2012273,
+    "lon": 2.9750305
+  },
+  {
+    "name": "De Haan",
+    "province": "west-vlaanderen",
+    "lat": 51.2500373,
+    "lon": 3.0380713
+  },
+  {
+    "name": "Klemskerke",
+    "province": "west-vlaanderen",
+    "lat": 51.2433832,
+    "lon": 3.0229766
+  },
+  {
+    "name": "Wenduine",
+    "province": "west-vlaanderen",
+    "lat": 51.2976457,
+    "lon": 3.0830791
+  },
+  {
+    "name": "Vlissegem",
+    "province": "west-vlaanderen",
+    "lat": 51.2535272,
+    "lon": 3.0571336
+  },
+  {
+    "name": "Middelkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.1798869,
+    "lon": 2.8060231
+  },
+  {
+    "name": "Wilskerke",
+    "province": "west-vlaanderen",
+    "lat": 51.1796383,
+    "lon": 2.825943
+  },
+  {
+    "name": "Leffinge",
+    "province": "west-vlaanderen",
+    "lat": 51.17567,
+    "lon": 2.87711
+  },
+  {
+    "name": "Mannekensvere",
+    "province": "west-vlaanderen",
+    "lat": 51.1259337,
+    "lon": 2.8181826
+  },
+  {
+    "name": "Schore",
+    "province": "west-vlaanderen",
+    "lat": 51.1117368,
+    "lon": 2.8392235
+  },
+  {
+    "name": "Sint-Pieters-Kapelle",
+    "province": "west-vlaanderen",
+    "lat": 51.1262331,
+    "lon": 2.8759234
+  },
+  {
+    "name": "Slijpe",
+    "province": "west-vlaanderen",
+    "lat": 51.1553124,
+    "lon": 2.8472073
+  },
+  {
+    "name": "Lombardsijde",
+    "province": "west-vlaanderen",
+    "lat": 51.1478198,
+    "lon": 2.7565537
+  },
+  {
+    "name": "Westende",
+    "province": "west-vlaanderen",
+    "lat": 51.1595084,
+    "lon": 2.7690346
+  },
+  {
+    "name": "Bredene",
+    "province": "west-vlaanderen",
+    "lat": 51.2345015,
+    "lon": 2.9728359
+  },
+  {
+    "name": "Ettelgem",
+    "province": "west-vlaanderen",
+    "lat": 51.1795852,
+    "lon": 3.0302382
+  },
+  {
+    "name": "Oudenburg",
+    "province": "west-vlaanderen",
+    "lat": 51.1836837,
+    "lon": 3.0068564
+  },
+  {
+    "name": "Roksem",
+    "province": "west-vlaanderen",
+    "lat": 51.1674713,
+    "lon": 3.0276368
+  },
+  {
+    "name": "Westkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.1644881,
+    "lon": 3.0154519
+  },
+  {
+    "name": "Gistel",
+    "province": "west-vlaanderen",
+    "lat": 51.1562662,
+    "lon": 2.9676432
+  },
+  {
+    "name": "Moere",
+    "province": "west-vlaanderen",
+    "lat": 51.1225897,
+    "lon": 2.9559016
+  },
+  {
+    "name": "Snaaskerke",
+    "province": "west-vlaanderen",
+    "lat": 51.1775854,
+    "lon": 2.939082
+  },
+  {
+    "name": "Zevekote",
+    "province": "west-vlaanderen",
+    "lat": 51.1375112,
+    "lon": 2.9200416
+  },
+  {
+    "name": "Bekegem",
+    "province": "west-vlaanderen",
+    "lat": 51.1597289,
+    "lon": 3.0453899
+  },
+  {
+    "name": "Eernegem",
+    "province": "west-vlaanderen",
+    "lat": 51.1295248,
+    "lon": 3.0274313
+  },
+  {
+    "name": "Ichtegem",
+    "province": "west-vlaanderen",
+    "lat": 51.0928542,
+    "lon": 3.0106022
+  },
+  {
+    "name": "Jabbeke",
+    "province": "west-vlaanderen",
+    "lat": 51.1829867,
+    "lon": 3.0948244
+  },
+  {
+    "name": "Snellegem",
+    "province": "west-vlaanderen",
+    "lat": 51.1690484,
+    "lon": 3.1230877
+  },
+  {
+    "name": "Stalhille",
+    "province": "west-vlaanderen",
+    "lat": 51.2140395,
+    "lon": 3.0721578
+  },
+  {
+    "name": "Varsenare",
+    "province": "west-vlaanderen",
+    "lat": 51.1891579,
+    "lon": 3.1421014
+  },
+  {
+    "name": "Zerkegem",
+    "province": "west-vlaanderen",
+    "lat": 51.1665002,
+    "lon": 3.0693013
+  },
+  {
+    "name": "Kortrijk",
+    "province": "west-vlaanderen",
+    "lat": 50.8194894,
+    "lon": 3.2577076
+  },
+  {
+    "name": "Bissegem",
+    "province": "west-vlaanderen",
+    "lat": 50.8241103,
+    "lon": 3.2280954
+  },
+  {
+    "name": "Heule",
+    "province": "west-vlaanderen",
+    "lat": 50.8431958,
+    "lon": 3.23472
+  },
+  {
+    "name": "Bellegem",
+    "province": "west-vlaanderen",
+    "lat": 50.776603,
+    "lon": 3.2784441
+  },
+  {
+    "name": "Kooigem",
+    "province": "west-vlaanderen",
+    "lat": 50.7396942,
+    "lon": 3.3313161
+  },
+  {
+    "name": "Marke",
+    "province": "west-vlaanderen",
+    "lat": 50.8070105,
+    "lon": 3.2335928
+  },
+  {
+    "name": "Rollegem",
+    "province": "west-vlaanderen",
+    "lat": 50.7659873,
+    "lon": 3.2634359
+  },
+  {
+    "name": "Aalbeke",
+    "province": "west-vlaanderen",
+    "lat": 50.7784023,
+    "lon": 3.2299377
+  },
+  {
+    "name": "Kuurne",
+    "province": "west-vlaanderen",
+    "lat": 50.85397,
+    "lon": 3.287
+  },
+  {
+    "name": "Harelbeke",
+    "province": "west-vlaanderen",
+    "lat": 50.8455798,
+    "lon": 3.3121073
+  },
+  {
+    "name": "Bavikhove",
+    "province": "west-vlaanderen",
+    "lat": 50.8754986,
+    "lon": 3.3112054
+  },
+  {
+    "name": "Hulste",
+    "province": "west-vlaanderen",
+    "lat": 50.8804452,
+    "lon": 3.2982426
+  },
+  {
+    "name": "Deerlijk",
+    "province": "west-vlaanderen",
+    "lat": 50.85374,
+    "lon": 3.35335
+  },
+  {
+    "name": "Zwevegem",
+    "province": "west-vlaanderen",
+    "lat": 50.8080392,
+    "lon": 3.3505258
+  },
+  {
+    "name": "Heestert",
+    "province": "west-vlaanderen",
+    "lat": 50.7826441,
+    "lon": 3.410366
+  },
+  {
+    "name": "Moen",
+    "province": "west-vlaanderen",
+    "lat": 50.7699733,
+    "lon": 3.3974267
+  },
+  {
+    "name": "Otegem",
+    "province": "west-vlaanderen",
+    "lat": 50.8081889,
+    "lon": 3.4239803
+  },
+  {
+    "name": "Sint-Denijs",
+    "province": "west-vlaanderen",
+    "lat": 50.7530651,
+    "lon": 3.3653137
+  },
+  {
+    "name": "Gullegem",
+    "province": "west-vlaanderen",
+    "lat": 50.8447689,
+    "lon": 3.1989718
+  },
+  {
+    "name": "Moorsele",
+    "province": "west-vlaanderen",
+    "lat": 50.8405959,
+    "lon": 3.1646335
+  },
+  {
+    "name": "Wevelgem",
+    "province": "west-vlaanderen",
+    "lat": 50.8089296,
+    "lon": 3.1836033
+  },
+  {
+    "name": "Anzegem",
+    "province": "west-vlaanderen",
+    "lat": 50.8335097,
+    "lon": 3.4789005
+  },
+  {
+    "name": "Gijzelbrechtegem",
+    "province": "west-vlaanderen",
+    "lat": 50.8285391,
+    "lon": 3.5058127
+  },
+  {
+    "name": "Ingooigem",
+    "province": "west-vlaanderen",
+    "lat": 50.8173718,
+    "lon": 3.4342331
+  },
+  {
+    "name": "Vichte",
+    "province": "west-vlaanderen",
+    "lat": 50.8378727,
+    "lon": 3.4030323
+  },
+  {
+    "name": "Kaster",
+    "province": "west-vlaanderen",
+    "lat": 50.8131679,
+    "lon": 3.4938322
+  },
+  {
+    "name": "Tiegem",
+    "province": "west-vlaanderen",
+    "lat": 50.8086089,
+    "lon": 3.4752664
+  },
+  {
+    "name": "Avelgem",
+    "province": "west-vlaanderen",
+    "lat": 50.7790895,
+    "lon": 3.4511795
+  },
+  {
+    "name": "Kerkhove",
+    "province": "west-vlaanderen",
+    "lat": 50.7983592,
+    "lon": 3.5006455
+  },
+  {
+    "name": "Waarmaarde",
+    "province": "west-vlaanderen",
+    "lat": 50.7908774,
+    "lon": 3.4854501
+  },
+  {
+    "name": "Outrijve",
+    "province": "west-vlaanderen",
+    "lat": 50.7560066,
+    "lon": 3.4292885
+  },
+  {
+    "name": "Bossuit",
+    "province": "west-vlaanderen",
+    "lat": 50.7481174,
+    "lon": 3.4072881
+  },
+  {
+    "name": "Helkijn",
+    "province": "west-vlaanderen",
+    "lat": 50.7321848,
+    "lon": 3.3811463
+  },
+  {
+    "name": "Spiere",
+    "province": "west-vlaanderen",
+    "lat": 50.7184934,
+    "lon": 3.35537
+  },
+  {
+    "name": "Spiere-Helkijn",
+    "province": "west-vlaanderen",
+    "lat": 50.7297543,
+    "lon": 3.3595085
+  },
+  {
+    "name": "Beerst",
+    "province": "west-vlaanderen",
+    "lat": 51.0589145,
+    "lon": 2.8868758
+  },
+  {
+    "name": "Diksmuide",
+    "province": "west-vlaanderen",
+    "lat": 51.033331,
+    "lon": 2.8658393
+  },
+  {
+    "name": "Driekapellen",
+    "province": "west-vlaanderen",
+    "lat": 50.7063183,
+    "lon": 3.9862194
+  },
+  {
+    "name": "Esen",
+    "province": "west-vlaanderen",
+    "lat": 51.0294434,
+    "lon": 2.9021449
+  },
+  {
+    "name": "Kaaskerke",
+    "province": "west-vlaanderen",
+    "lat": 51.0357927,
+    "lon": 2.8364554
+  },
+  {
+    "name": "Keiem",
+    "province": "west-vlaanderen",
+    "lat": 51.0807421,
+    "lon": 2.8821755
+  },
+  {
+    "name": "Lampernisse",
+    "province": "west-vlaanderen",
+    "lat": 51.0325467,
+    "lon": 2.7685298
+  },
+  {
+    "name": "Leke",
+    "province": "west-vlaanderen",
+    "lat": 51.1004367,
+    "lon": 2.8904342
+  },
+  {
+    "name": "Nieuwkapelle",
+    "province": "west-vlaanderen",
+    "lat": 50.999433,
+    "lon": 2.7999063
+  },
+  {
+    "name": "Oostkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.0464297,
+    "lon": 2.7972622
+  },
+  {
+    "name": "Oudekapelle",
+    "province": "west-vlaanderen",
+    "lat": 51.0135407,
+    "lon": 2.8080138
+  },
+  {
+    "name": "Pervijze",
+    "province": "west-vlaanderen",
+    "lat": 51.0733467,
+    "lon": 2.7941219
+  },
+  {
+    "name": "Sint-Jacobs-Kapelle",
+    "province": "west-vlaanderen",
+    "lat": 51.0164049,
+    "lon": 2.8338522
+  },
+  {
+    "name": "Stuivekenskerke",
+    "province": "west-vlaanderen",
+    "lat": 51.0767668,
+    "lon": 2.825052
+  },
+  {
+    "name": "Vladslo",
+    "province": "west-vlaanderen",
+    "lat": 51.0464012,
+    "lon": 2.916271
+  },
+  {
+    "name": "Woumen",
+    "province": "west-vlaanderen",
+    "lat": 50.9983803,
+    "lon": 2.8697759
+  },
+  {
+    "name": "Handzame",
+    "province": "west-vlaanderen",
+    "lat": 51.025671,
+    "lon": 3.0031283
+  },
+  {
+    "name": "Kortemark",
+    "province": "west-vlaanderen",
+    "lat": 51.0284499,
+    "lon": 3.0441091
+  },
+  {
+    "name": "Werken",
+    "province": "west-vlaanderen",
+    "lat": 51.0291439,
+    "lon": 2.9646703
+  },
+  {
+    "name": "Zarren",
+    "province": "west-vlaanderen",
+    "lat": 51.0184331,
+    "lon": 2.9589059
+  },
+  {
+    "name": "Nieuwpoort",
+    "province": "west-vlaanderen",
+    "lat": 51.1285059,
+    "lon": 2.7480064
+  },
+  {
+    "name": "Ramskapelle",
+    "province": "west-vlaanderen",
+    "lat": 51.1095483,
+    "lon": 2.7620106
+  },
+  {
+    "name": "Sint-Joris",
+    "province": "west-vlaanderen",
+    "lat": 51.1291298,
+    "lon": 2.7723581
+  },
+  {
+    "name": "Avekapelle",
+    "province": "west-vlaanderen",
+    "lat": 51.0663475,
+    "lon": 2.7329511
+  },
+  {
+    "name": "Booitshoeke",
+    "province": "west-vlaanderen",
+    "lat": 51.0869455,
+    "lon": 2.7332623
+  },
+  {
+    "name": "Bulskamp",
+    "province": "west-vlaanderen",
+    "lat": 51.0413505,
+    "lon": 2.6500228
+  },
+  {
+    "name": "De Moeren",
+    "province": "west-vlaanderen",
+    "lat": 51.041709,
+    "lon": 2.600584
+  },
+  {
+    "name": "Eggewaartskapelle",
+    "province": "west-vlaanderen",
+    "lat": 51.0496759,
+    "lon": 2.7218286
+  },
+  {
+    "name": "Houtem",
+    "province": "west-vlaanderen",
+    "lat": 51.0104746,
+    "lon": 2.6096642
+  },
+  {
+    "name": "Steenkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.0574271,
+    "lon": 2.6892647
+  },
+  {
+    "name": "Veurne",
+    "province": "west-vlaanderen",
+    "lat": 51.0731945,
+    "lon": 2.6680059
+  },
+  {
+    "name": "Vinkem",
+    "province": "west-vlaanderen",
+    "lat": 51.0161527,
+    "lon": 2.6628519
+  },
+  {
+    "name": "Wulveringem",
+    "province": "west-vlaanderen",
+    "lat": 51.014517,
+    "lon": 2.6544608
+  },
+  {
+    "name": "Zoutenaaie",
+    "province": "west-vlaanderen",
+    "lat": 51.0485937,
+    "lon": 2.75075
+  },
+  {
+    "name": "Oostvleteren",
+    "province": "west-vlaanderen",
+    "lat": 50.9318028,
+    "lon": 2.7367963
+  },
+  {
+    "name": "Vleteren",
+    "province": "west-vlaanderen",
+    "lat": 50.9296908,
+    "lon": 2.7327547
+  },
+  {
+    "name": "Westvleteren",
+    "province": "west-vlaanderen",
+    "lat": 50.9276053,
+    "lon": 2.716907
+  },
+  {
+    "name": "Woesten",
+    "province": "west-vlaanderen",
+    "lat": 50.9006632,
+    "lon": 2.7891271
+  },
+  {
+    "name": "Lo",
+    "province": "west-vlaanderen",
+    "lat": 50.9806703,
+    "lon": 2.7489727
+  },
+  {
+    "name": "Lo-Reninge",
+    "province": "west-vlaanderen",
+    "lat": 50.9688486,
+    "lon": 2.7818969
+  },
+  {
+    "name": "Noordschote",
+    "province": "west-vlaanderen",
+    "lat": 50.9546429,
+    "lon": 2.810466
+  },
+  {
+    "name": "Pollinkhove",
+    "province": "west-vlaanderen",
+    "lat": 50.9710805,
+    "lon": 2.7322734
+  },
+  {
+    "name": "Reninge",
+    "province": "west-vlaanderen",
+    "lat": 50.97334,
+    "lon": 2.77157
+  },
+  {
+    "name": "Houthulst",
+    "province": "west-vlaanderen",
+    "lat": 50.9773885,
+    "lon": 2.9457764
+  },
+  {
+    "name": "Klerken",
+    "province": "west-vlaanderen",
+    "lat": 50.9980304,
+    "lon": 2.9041727
+  },
+  {
+    "name": "Merkem",
+    "province": "west-vlaanderen",
+    "lat": 50.9528136,
+    "lon": 2.8523982
+  },
+  {
+    "name": "Adinkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.0751267,
+    "lon": 2.6034114
+  },
+  {
+    "name": "De Panne",
+    "province": "west-vlaanderen",
+    "lat": 51.0962794,
+    "lon": 2.5905629
+  },
+  {
+    "name": "Koksijde",
+    "province": "west-vlaanderen",
+    "lat": 51.1053908,
+    "lon": 2.6500795
+  },
+  {
+    "name": "Oostduinkerke",
+    "province": "west-vlaanderen",
+    "lat": 51.1158173,
+    "lon": 2.6824907
+  },
+  {
+    "name": "Wulpen",
+    "province": "west-vlaanderen",
+    "lat": 51.1007563,
+    "lon": 2.6991737
+  },
+  {
+    "name": "Bovekerke",
+    "province": "west-vlaanderen",
+    "lat": 51.0544659,
+    "lon": 2.9627034
+  },
+  {
+    "name": "Koekelare",
+    "province": "west-vlaanderen",
+    "lat": 51.0929033,
+    "lon": 2.9795835
+  },
+  {
+    "name": "Zande",
+    "province": "west-vlaanderen",
+    "lat": 51.1200517,
+    "lon": 2.9222322
+  },
+  {
+    "name": "Alveringem",
+    "province": "west-vlaanderen",
+    "lat": 51.0122085,
+    "lon": 2.7130822
+  },
+  {
+    "name": "Hoogstade",
+    "province": "west-vlaanderen",
+    "lat": 50.9795594,
+    "lon": 2.6916569
+  },
+  {
+    "name": "Oeren",
+    "province": "west-vlaanderen",
+    "lat": 51.0230442,
+    "lon": 2.7052385
+  },
+  {
+    "name": "Sint-Rijkers",
+    "province": "west-vlaanderen",
+    "lat": 50.9915951,
+    "lon": 2.687814
+  },
+  {
+    "name": "Beveren-Aan-De-Ijzer",
+    "province": "west-vlaanderen",
+    "lat": 50.9392045,
+    "lon": 2.6397658
+  },
+  {
+    "name": "Gijverinkhove",
+    "province": "west-vlaanderen",
+    "lat": 50.9761349,
+    "lon": 2.6725749
+  },
+  {
+    "name": "Izenberge",
+    "province": "west-vlaanderen",
+    "lat": 50.9942337,
+    "lon": 2.6547262
+  },
+  {
+    "name": "Leisele",
+    "province": "west-vlaanderen",
+    "lat": 50.9855486,
+    "lon": 2.6234329
+  },
+  {
+    "name": "Stavele",
+    "province": "west-vlaanderen",
+    "lat": 50.938552,
+    "lon": 2.6699315
+  },
+  {
+    "name": "Aarsele",
+    "province": "west-vlaanderen",
+    "lat": 50.9969343,
+    "lon": 3.4224989
+  },
+  {
+    "name": "Kanegem",
+    "province": "west-vlaanderen",
+    "lat": 51.0134353,
+    "lon": 3.4033279
+  },
+  {
+    "name": "Schuiferskapelle",
+    "province": "west-vlaanderen",
+    "lat": 51.0328997,
+    "lon": 3.33383
+  },
+  {
+    "name": "Tielt",
+    "province": "west-vlaanderen",
+    "lat": 51.0001519,
+    "lon": 3.3263821
+  },
+  {
+    "name": "Ooigem",
+    "province": "west-vlaanderen",
+    "lat": 50.8933706,
+    "lon": 3.3365046
+  },
+  {
+    "name": "Sint-Baafs-Vijve",
+    "province": "west-vlaanderen",
+    "lat": 50.9103986,
+    "lon": 3.3907682
+  },
+  {
+    "name": "Wielsbeke",
+    "province": "west-vlaanderen",
+    "lat": 50.9099543,
+    "lon": 3.3724687
+  },
+  {
+    "name": "Dentergem",
+    "province": "west-vlaanderen",
+    "lat": 50.9636458,
+    "lon": 3.4186283
+  },
+  {
+    "name": "Markegem",
+    "province": "west-vlaanderen",
+    "lat": 50.9458591,
+    "lon": 3.4026412
+  },
+  {
+    "name": "Oeselgem",
+    "province": "west-vlaanderen",
+    "lat": 50.9350995,
+    "lon": 3.4319099
+  },
+  {
+    "name": "Wakken",
+    "province": "west-vlaanderen",
+    "lat": 50.9306218,
+    "lon": 3.3979722
+  },
+  {
+    "name": "Beernem",
+    "province": "west-vlaanderen",
+    "lat": 51.1424812,
+    "lon": 3.3409529
+  },
+  {
+    "name": "Oedelem",
+    "province": "west-vlaanderen",
+    "lat": 51.1685563,
+    "lon": 3.3397246
+  },
+  {
+    "name": "Sint-Joris",
+    "province": "west-vlaanderen",
+    "lat": 51.1275828,
+    "lon": 3.3683708
+  },
+  {
+    "name": "Egem",
+    "province": "west-vlaanderen",
+    "lat": 51.0148444,
+    "lon": 3.2590301
+  },
+  {
+    "name": "Pittem",
+    "province": "west-vlaanderen",
+    "lat": 50.9942681,
+    "lon": 3.2666639
+  },
+  {
+    "name": "Wingene",
+    "province": "west-vlaanderen",
+    "lat": 51.05865,
+    "lon": 3.2748
+  },
+  {
+    "name": "Zwevezele",
+    "province": "west-vlaanderen",
+    "lat": 51.03609,
+    "lon": 3.21047
+  },
+  {
+    "name": "Ruiselede",
+    "province": "west-vlaanderen",
+    "lat": 51.0413098,
+    "lon": 3.3970513
+  },
+  {
+    "name": "Meulebeke",
+    "province": "west-vlaanderen",
+    "lat": 50.9506,
+    "lon": 3.28637
+  },
+  {
+    "name": "Ingelmunster",
+    "province": "west-vlaanderen",
+    "lat": 50.92325,
+    "lon": 3.26284
+  },
+  {
+    "name": "Oostrozebeke",
+    "province": "west-vlaanderen",
+    "lat": 50.9202012,
+    "lon": 3.3346008
+  },
+  {
+    "name": "Waregem",
+    "province": "west-vlaanderen",
+    "lat": 50.8869521,
+    "lon": 3.4231317
+  },
+  {
+    "name": "Beveren",
+    "province": "west-vlaanderen",
+    "lat": 50.873981,
+    "lon": 3.3465118
+  },
+  {
+    "name": "Desselgem",
+    "province": "west-vlaanderen",
+    "lat": 50.8868997,
+    "lon": 3.3494059
+  },
+  {
+    "name": "Sint-Eloois-Vijve",
+    "province": "west-vlaanderen",
+    "lat": 50.9034885,
+    "lon": 3.4098713
+  },
+  {
+    "name": "Beveren",
+    "province": "west-vlaanderen",
+    "lat": 50.9685498,
+    "lon": 3.1443098
+  },
+  {
+    "name": "Oekene",
+    "province": "west-vlaanderen",
+    "lat": 50.9202542,
+    "lon": 3.1609844
+  },
+  {
+    "name": "Roeselare",
+    "province": "west-vlaanderen",
+    "lat": 50.949931,
+    "lon": 3.129445
+  },
+  {
+    "name": "Rumbeke",
+    "province": "west-vlaanderen",
+    "lat": 50.9332448,
+    "lon": 3.1560374
+  },
+  {
+    "name": "Lichtervelde",
+    "province": "west-vlaanderen",
+    "lat": 51.0277074,
+    "lon": 3.1439095
+  },
+  {
+    "name": "Torhout",
+    "province": "west-vlaanderen",
+    "lat": 51.06498,
+    "lon": 3.10157
+  },
+  {
+    "name": "Gits",
+    "province": "west-vlaanderen",
+    "lat": 50.9970116,
+    "lon": 3.0999918
+  },
+  {
+    "name": "Hooglede",
+    "province": "west-vlaanderen",
+    "lat": 50.9785141,
+    "lon": 3.0814646
+  },
+  {
+    "name": "Oostnieuwkerke",
+    "province": "west-vlaanderen",
+    "lat": 50.9423778,
+    "lon": 3.0642828
+  },
+  {
+    "name": "Staden",
+    "province": "west-vlaanderen",
+    "lat": 50.9745786,
+    "lon": 3.014488
+  },
+  {
+    "name": "Westrozebeke",
+    "province": "west-vlaanderen",
+    "lat": 50.931897,
+    "lon": 3.012283
+  },
+  {
+    "name": "Ardooie",
+    "province": "west-vlaanderen",
+    "lat": 50.979065,
+    "lon": 3.1988027
+  },
+  {
+    "name": "Koolskamp",
+    "province": "west-vlaanderen",
+    "lat": 51.0019392,
+    "lon": 3.2117867
+  },
+  {
+    "name": "Lendelede",
+    "province": "west-vlaanderen",
+    "lat": 50.8862994,
+    "lon": 3.2381931
+  },
+  {
+    "name": "Emelgem",
+    "province": "west-vlaanderen",
+    "lat": 50.9271506,
+    "lon": 3.2178679
+  },
+  {
+    "name": "Izegem",
+    "province": "west-vlaanderen",
+    "lat": 50.9180785,
+    "lon": 3.2132192
+  },
+  {
+    "name": "Kachtem",
+    "province": "west-vlaanderen",
+    "lat": 50.9318824,
+    "lon": 3.1924033
+  },
+  {
+    "name": "Ledegem",
+    "province": "west-vlaanderen",
+    "lat": 50.8549568,
+    "lon": 3.1274573
+  },
+  {
+    "name": "Rollegem-Kapelle",
+    "province": "west-vlaanderen",
+    "lat": 50.8682853,
+    "lon": 3.1449509
+  },
+  {
+    "name": "Sint-Eloois-Winkel",
+    "province": "west-vlaanderen",
+    "lat": 50.8762769,
+    "lon": 3.1823566
+  },
+  {
+    "name": "Dadizele",
+    "province": "west-vlaanderen",
+    "lat": 50.8516407,
+    "lon": 3.0944555
+  },
+  {
+    "name": "Moorslede",
+    "province": "west-vlaanderen",
+    "lat": 50.891147,
+    "lon": 3.0632369
+  },
+  {
+    "name": "Brielen",
+    "province": "west-vlaanderen",
+    "lat": 50.867386,
+    "lon": 2.8501053
+  },
+  {
+    "name": "Dikkebus",
+    "province": "west-vlaanderen",
+    "lat": 50.8205936,
+    "lon": 2.8318862
+  },
+  {
+    "name": "Ieper",
+    "province": "west-vlaanderen",
+    "lat": 50.8492265,
+    "lon": 2.8779465
+  },
+  {
+    "name": "Sint-Jan",
+    "province": "west-vlaanderen",
+    "lat": 50.866914,
+    "lon": 2.9021437
+  },
+  {
+    "name": "Hollebeke",
+    "province": "west-vlaanderen",
+    "lat": 50.8053761,
+    "lon": 2.9371958
+  },
+  {
+    "name": "Voormezele",
+    "province": "west-vlaanderen",
+    "lat": 50.8165607,
+    "lon": 2.875805
+  },
+  {
+    "name": "Zillebeke",
+    "province": "west-vlaanderen",
+    "lat": 50.8345035,
+    "lon": 2.9225399
+  },
+  {
+    "name": "Boezinge",
+    "province": "west-vlaanderen",
+    "lat": 50.8967457,
+    "lon": 2.8547932
+  },
+  {
+    "name": "Zuidschote",
+    "province": "west-vlaanderen",
+    "lat": 50.9130344,
+    "lon": 2.8295441
+  },
+  {
+    "name": "Elverdinge",
+    "province": "west-vlaanderen",
+    "lat": 50.8858801,
+    "lon": 2.817508
+  },
+  {
+    "name": "Holsbeek",
+    "province": "west-vlaanderen",
+    "lat": 50.9248584,
+    "lon": 4.7861502
+  },
+  {
+    "name": "Kortrijk-Dutsel",
+    "province": "west-vlaanderen",
+    "lat": 50.9266825,
+    "lon": 4.8055097
+  },
+  {
+    "name": "Sint-Pieters-Rode",
+    "province": "west-vlaanderen",
+    "lat": 50.93239,
+    "lon": 4.82057
+  },
+  {
+    "name": "Nieuwrode",
+    "province": "west-vlaanderen",
+    "lat": 50.94955,
+    "lon": 4.83339
+  },
+  {
+    "name": "Elverdinge",
+    "province": "west-vlaanderen",
+    "lat": 50.8858801,
+    "lon": 2.817508
+  },
+  {
+    "name": "Vlamertinge",
+    "province": "west-vlaanderen",
+    "lat": 50.8536639,
+    "lon": 2.8243473
+  },
+  {
+    "name": "Bikschote",
+    "province": "west-vlaanderen",
+    "lat": 50.9258047,
+    "lon": 2.8646858
+  },
+  {
+    "name": "Langemark",
+    "province": "west-vlaanderen",
+    "lat": 50.9135965,
+    "lon": 2.920005
+  },
+  {
+    "name": "Langemark-Poelkapelle",
+    "province": "west-vlaanderen",
+    "lat": 50.9135674,
+    "lon": 2.9200127
+  },
+  {
+    "name": "Poelkapelle",
+    "province": "west-vlaanderen",
+    "lat": 50.9176532,
+    "lon": 2.9565978
+  },
+  {
+    "name": "Lauwe",
+    "province": "west-vlaanderen",
+    "lat": 50.7946478,
+    "lon": 3.1849946
+  },
+  {
+    "name": "Menen",
+    "province": "west-vlaanderen",
+    "lat": 50.7961693,
+    "lon": 3.1214422
+  },
+  {
+    "name": "Rekkem",
+    "province": "west-vlaanderen",
+    "lat": 50.782807,
+    "lon": 3.1641132
+  },
+  {
+    "name": "Geluwe",
+    "province": "west-vlaanderen",
+    "lat": 50.8099859,
+    "lon": 3.0767048
+  },
+  {
+    "name": "Wervik",
+    "province": "west-vlaanderen",
+    "lat": 50.7841386,
+    "lon": 3.0448969
+  },
+  {
+    "name": "Heuvelland",
+    "province": "west-vlaanderen",
+    "lat": 50.733506,
+    "lon": 2.8250977
+  },
+  {
+    "name": "Nieuwkerke",
+    "province": "west-vlaanderen",
+    "lat": 50.7460655,
+    "lon": 2.8252871
+  },
+  {
+    "name": "Dranouter",
+    "province": "west-vlaanderen",
+    "lat": 50.7659194,
+    "lon": 2.7829724
+  },
+  {
+    "name": "Wulvergem",
+    "province": "west-vlaanderen",
+    "lat": 50.7601685,
+    "lon": 2.8524263
+  },
+  {
+    "name": "Wijtschate",
+    "province": "west-vlaanderen",
+    "lat": 50.7858578,
+    "lon": 2.8831131
+  },
+  {
+    "name": "Westouter",
+    "province": "west-vlaanderen",
+    "lat": 50.7971484,
+    "lon": 2.7464372
+  },
+  {
+    "name": "Kemmel",
+    "province": "west-vlaanderen",
+    "lat": 50.7832795,
+    "lon": 2.8286179
+  },
+  {
+    "name": "Mesen",
+    "province": "west-vlaanderen",
+    "lat": 50.7638555,
+    "lon": 2.8976699
+  },
+  {
+    "name": "Loker",
+    "province": "west-vlaanderen",
+    "lat": 50.7817391,
+    "lon": 2.7721461
+  },
+  {
+    "name": "Poperinge",
+    "province": "west-vlaanderen",
+    "lat": 50.8452065,
+    "lon": 2.7211761
+  },
+  {
+    "name": "Reningelst",
+    "province": "west-vlaanderen",
+    "lat": 50.8170545,
+    "lon": 2.7634047
+  },
+  {
+    "name": "Krombeke",
+    "province": "west-vlaanderen",
+    "lat": 50.9148551,
+    "lon": 2.6885943
+  },
+  {
+    "name": "Proven",
+    "province": "west-vlaanderen",
+    "lat": 50.8904872,
+    "lon": 2.6560368
+  },
+  {
+    "name": "Roesbrugge-Haringe",
+    "province": "west-vlaanderen",
+    "lat": 50.918879,
+    "lon": 2.6247955
+  },
+  {
+    "name": "Watou",
+    "province": "west-vlaanderen",
+    "lat": 50.8588172,
+    "lon": 2.6206457
+  },
+  {
+    "name": "Beselare",
+    "province": "west-vlaanderen",
+    "lat": 50.84788,
+    "lon": 3.024675
+  },
+  {
+    "name": "Geluveld",
+    "province": "west-vlaanderen",
+    "lat": 50.8338478,
+    "lon": 2.9939124
+  },
+  {
+    "name": "Passendale",
+    "province": "west-vlaanderen",
+    "lat": 50.9002575,
+    "lon": 3.0207328
+  },
+  {
+    "name": "Zandvoorde",
+    "province": "west-vlaanderen",
+    "lat": 50.8123365,
+    "lon": 2.9816989
+  },
+  {
+    "name": "Zonnebeke",
+    "province": "west-vlaanderen",
+    "lat": 50.8727334,
+    "lon": 2.9874714
+  },
+  {
+    "name": "Gent",
+    "province": "oost-vlaanderen",
+    "lat": 51.0678307,
+    "lon": 3.7290914
+  },
+  {
+    "name": "Mariakerke",
+    "province": "oost-vlaanderen",
+    "lat": 51.0736204,
+    "lon": 3.680642
+  },
+  {
+    "name": "Drongen",
+    "province": "oost-vlaanderen",
+    "lat": 51.05048,
+    "lon": 3.6633
+  },
+  {
+    "name": "Wondelgem",
+    "province": "oost-vlaanderen",
+    "lat": 51.0905009,
+    "lon": 3.7160657
+  },
+  {
+    "name": "Sint-Amandsberg",
+    "province": "oost-vlaanderen",
+    "lat": 51.0593304,
+    "lon": 3.7509905
+  },
+  {
+    "name": "Oostakker",
+    "province": "oost-vlaanderen",
+    "lat": 51.099713,
+    "lon": 3.7642304
+  },
+  {
+    "name": "Desteldonk",
+    "province": "oost-vlaanderen",
+    "lat": 51.1220868,
+    "lon": 3.7825691
+  },
+  {
+    "name": "Mendonk",
+    "province": "oost-vlaanderen",
+    "lat": 51.1447934,
+    "lon": 3.8193015
+  },
+  {
+    "name": "Sint-Kruis-Winkel",
+    "province": "oost-vlaanderen",
+    "lat": 51.1558401,
+    "lon": 3.8158001
+  },
+  {
+    "name": "Gentbrugge",
+    "province": "oost-vlaanderen",
+    "lat": 51.0342951,
+    "lon": 3.7640148
+  },
+  {
+    "name": "Ledeberg",
+    "province": "oost-vlaanderen",
+    "lat": 51.0371743,
+    "lon": 3.7412237
+  },
+  {
+    "name": "Afsnee",
+    "province": "oost-vlaanderen",
+    "lat": 51.0305603,
+    "lon": 3.6661568
+  },
+  {
+    "name": "Sint-Denijs-Westrem",
+    "province": "oost-vlaanderen",
+    "lat": 51.0200854,
+    "lon": 3.6695793
+  },
+  {
+    "name": "Zwijnaarde",
+    "province": "oost-vlaanderen",
+    "lat": 50.9998062,
+    "lon": 3.7106183
+  },
+  {
+    "name": "Zelzate",
+    "province": "oost-vlaanderen",
+    "lat": 51.1987114,
+    "lon": 3.8119772
+  },
+  {
+    "name": "Destelbergen",
+    "province": "oost-vlaanderen",
+    "lat": 51.0609335,
+    "lon": 3.7977646
+  },
+  {
+    "name": "Heusden",
+    "province": "oost-vlaanderen",
+    "lat": 51.0327975,
+    "lon": 3.8036959
+  },
+  {
+    "name": "Beervelde",
+    "province": "oost-vlaanderen",
+    "lat": 51.0800983,
+    "lon": 3.8805757
+  },
+  {
+    "name": "Lochristi",
+    "province": "oost-vlaanderen",
+    "lat": 51.0974848,
+    "lon": 3.8378336
+  },
+  {
+    "name": "Zaffelare",
+    "province": "oost-vlaanderen",
+    "lat": 51.1324891,
+    "lon": 3.8618077
+  },
+  {
+    "name": "Zeveneken",
+    "province": "oost-vlaanderen",
+    "lat": 51.1074665,
+    "lon": 3.8988663
+  },
+  {
+    "name": "Gontrode",
+    "province": "oost-vlaanderen",
+    "lat": 50.9834948,
+    "lon": 3.7972911
+  },
+  {
+    "name": "Melle",
+    "province": "oost-vlaanderen",
+    "lat": 51.0036716,
+    "lon": 3.8003144
+  },
+  {
+    "name": "Nieuwkerken-Waas",
+    "province": "oost-vlaanderen",
+    "lat": 51.1935108,
+    "lon": 4.1775401
+  },
+  {
+    "name": "Sint-Niklaas",
+    "province": "oost-vlaanderen",
+    "lat": 51.1559033,
+    "lon": 4.1544255
+  },
+  {
+    "name": "Belsele",
+    "province": "oost-vlaanderen",
+    "lat": 51.1428369,
+    "lon": 4.0861828
+  },
+  {
+    "name": "Sinaai-Waas",
+    "province": "oost-vlaanderen",
+    "lat": 51.1563307,
+    "lon": 4.0444238
+  },
+  {
+    "name": "Beveren-Waas",
+    "province": "oost-vlaanderen",
+    "lat": 51.2175194,
+    "lon": 4.2520903
+  },
+  {
+    "name": "Haasdonk",
+    "province": "oost-vlaanderen",
+    "lat": 51.1810333,
+    "lon": 4.2378789
+  },
+  {
+    "name": "Kallo",
+    "province": "oost-vlaanderen",
+    "lat": 51.2526476,
+    "lon": 4.2786812
+  },
+  {
+    "name": "Melsele",
+    "province": "oost-vlaanderen",
+    "lat": 51.2224882,
+    "lon": 4.2822314
+  },
+  {
+    "name": "Vrasene",
+    "province": "oost-vlaanderen",
+    "lat": 51.2193961,
+    "lon": 4.1944794
+  },
+  {
+    "name": "Doel",
+    "province": "oost-vlaanderen",
+    "lat": 51.3105976,
+    "lon": 4.2649749
+  },
+  {
+    "name": "Kallo",
+    "province": "oost-vlaanderen",
+    "lat": 51.2531035,
+    "lon": 4.2567081
+  },
+  {
+    "name": "Kieldrecht",
+    "province": "oost-vlaanderen",
+    "lat": 51.2894202,
+    "lon": 4.1755238
+  },
+  {
+    "name": "Verrebroek",
+    "province": "oost-vlaanderen",
+    "lat": 51.2555891,
+    "lon": 4.1888455
+  },
+  {
+    "name": "Elversele",
+    "province": "oost-vlaanderen",
+    "lat": 51.1145439,
+    "lon": 4.1433446
+  },
+  {
+    "name": "Steendorp",
+    "province": "oost-vlaanderen",
+    "lat": 51.1258102,
+    "lon": 4.2706342
+  },
+  {
+    "name": "Temse",
+    "province": "oost-vlaanderen",
+    "lat": 51.12955,
+    "lon": 4.21275
+  },
+  {
+    "name": "Tielrode",
+    "province": "oost-vlaanderen",
+    "lat": 51.114781,
+    "lon": 4.1639796
+  },
+  {
+    "name": "Bazel",
+    "province": "oost-vlaanderen",
+    "lat": 51.147512,
+    "lon": 4.2983585
+  },
+  {
+    "name": "Kruibeke",
+    "province": "oost-vlaanderen",
+    "lat": 51.1706378,
+    "lon": 4.3123069
+  },
+  {
+    "name": "Rupelmonde",
+    "province": "oost-vlaanderen",
+    "lat": 51.1274074,
+    "lon": 4.2903448
+  },
+  {
+    "name": "Daknam",
+    "province": "oost-vlaanderen",
+    "lat": 51.1278368,
+    "lon": 3.987354
+  },
+  {
+    "name": "Eksaarde",
+    "province": "oost-vlaanderen",
+    "lat": 51.1471563,
+    "lon": 3.9586263
+  },
+  {
+    "name": "Lokeren",
+    "province": "oost-vlaanderen",
+    "lat": 51.1024238,
+    "lon": 3.9940517
+  },
+  {
+    "name": "De Klinge",
+    "province": "oost-vlaanderen",
+    "lat": 51.256206,
+    "lon": 4.0900407
+  },
+  {
+    "name": "Meerdonk",
+    "province": "oost-vlaanderen",
+    "lat": 51.2607213,
+    "lon": 4.145993
+  },
+  {
+    "name": "Sint-Gillis-Waas",
+    "province": "oost-vlaanderen",
+    "lat": 51.2199257,
+    "lon": 4.1242507
+  },
+  {
+    "name": "Sint-Pauwels",
+    "province": "oost-vlaanderen",
+    "lat": 51.193303,
+    "lon": 4.0977458
+  },
+  {
+    "name": "Moerbeke-Waas",
+    "province": "oost-vlaanderen",
+    "lat": 51.1734692,
+    "lon": 3.9342837
+  },
+  {
+    "name": "Wachtebeke",
+    "province": "oost-vlaanderen",
+    "lat": 51.17095,
+    "lon": 3.86055
+  },
+  {
+    "name": "Kemzeke",
+    "province": "oost-vlaanderen",
+    "lat": 51.2062441,
+    "lon": 4.0756996
+  },
+  {
+    "name": "Stekene",
+    "province": "oost-vlaanderen",
+    "lat": 51.2063826,
+    "lon": 4.040883
+  },
+  {
+    "name": "Appels",
+    "province": "oost-vlaanderen",
+    "lat": 51.0293011,
+    "lon": 4.0541409
+  },
+  {
+    "name": "Baasrode",
+    "province": "oost-vlaanderen",
+    "lat": 51.0378102,
+    "lon": 4.1577249
+  },
+  {
+    "name": "Dendermonde",
+    "province": "oost-vlaanderen",
+    "lat": 51.0254867,
+    "lon": 4.1019931
+  },
+  {
+    "name": "Grembergen",
+    "province": "oost-vlaanderen",
+    "lat": 51.0550925,
+    "lon": 4.1056631
+  },
+  {
+    "name": "Mespelare",
+    "province": "oost-vlaanderen",
+    "lat": 50.9960845,
+    "lon": 4.0691846
+  },
+  {
+    "name": "Oudegem",
+    "province": "oost-vlaanderen",
+    "lat": 51.0091316,
+    "lon": 4.0612485
+  },
+  {
+    "name": "Schoonaarde",
+    "province": "oost-vlaanderen",
+    "lat": 51.0035338,
+    "lon": 4.0151259
+  },
+  {
+    "name": "Sint-Gillis-Dendermonde",
+    "province": "oost-vlaanderen",
+    "lat": 51.02156,
+    "lon": 4.108014
+  },
+  {
+    "name": "Hamme",
+    "province": "oost-vlaanderen",
+    "lat": 51.090201,
+    "lon": 4.1402689
+  },
+  {
+    "name": "Moerzeke",
+    "province": "oost-vlaanderen",
+    "lat": 51.0666518,
+    "lon": 4.1557302
+  },
+  {
+    "name": "Massemen",
+    "province": "oost-vlaanderen",
+    "lat": 50.9808891,
+    "lon": 3.8734909
+  },
+  {
+    "name": "Westrem",
+    "province": "oost-vlaanderen",
+    "lat": 50.969757,
+    "lon": 3.8613947
+  },
+  {
+    "name": "Wetteren",
+    "province": "oost-vlaanderen",
+    "lat": 51.0028673,
+    "lon": 3.8896461
+  },
+  {
+    "name": "Zele",
+    "province": "oost-vlaanderen",
+    "lat": 51.0700632,
+    "lon": 4.0402907
+  },
+  {
+    "name": "Waasmunster",
+    "province": "oost-vlaanderen",
+    "lat": 51.1094708,
+    "lon": 4.0844665
+  },
+  {
+    "name": "Buggenhout",
+    "province": "oost-vlaanderen",
+    "lat": 51.0136735,
+    "lon": 4.2010994
+  },
+  {
+    "name": "Opdorp",
+    "province": "oost-vlaanderen",
+    "lat": 51.02806,
+    "lon": 4.21918
+  },
+  {
+    "name": "Schellebelle",
+    "province": "oost-vlaanderen",
+    "lat": 51.0115409,
+    "lon": 3.9288305
+  },
+  {
+    "name": "Serskamp",
+    "province": "oost-vlaanderen",
+    "lat": 50.99082,
+    "lon": 3.9221247
+  },
+  {
+    "name": "Wichelen",
+    "province": "oost-vlaanderen",
+    "lat": 51.0048213,
+    "lon": 3.9735809
+  },
+  {
+    "name": "Kalken",
+    "province": "oost-vlaanderen",
+    "lat": 51.0383253,
+    "lon": 3.9183591
+  },
+  {
+    "name": "Laarne",
+    "province": "oost-vlaanderen",
+    "lat": 51.0304277,
+    "lon": 3.8535642
+  },
+  {
+    "name": "Denderbelle",
+    "province": "oost-vlaanderen",
+    "lat": 51.0009562,
+    "lon": 4.0907494
+  },
+  {
+    "name": "Lebbeke",
+    "province": "oost-vlaanderen",
+    "lat": 51.0005702,
+    "lon": 4.1292201
+  },
+  {
+    "name": "Wieze",
+    "province": "oost-vlaanderen",
+    "lat": 50.9786176,
+    "lon": 4.0836695
+  },
+  {
+    "name": "Berlare",
+    "province": "oost-vlaanderen",
+    "lat": 51.0174273,
+    "lon": 4.0058218
+  },
+  {
+    "name": "Overmere",
+    "province": "oost-vlaanderen",
+    "lat": 51.0465707,
+    "lon": 3.9466434
+  },
+  {
+    "name": "Uitbergen",
+    "province": "oost-vlaanderen",
+    "lat": 51.022548,
+    "lon": 3.9541747
+  },
+  {
+    "name": "Aalst",
+    "province": "oost-vlaanderen",
+    "lat": 50.937793,
+    "lon": 4.0409133
+  },
+  {
+    "name": "Gijzegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9837657,
+    "lon": 4.051058
+  },
+  {
+    "name": "Hofstade",
+    "province": "oost-vlaanderen",
+    "lat": 50.9608451,
+    "lon": 4.0317903
+  },
+  {
+    "name": "Baardegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9549555,
+    "lon": 4.141577
+  },
+  {
+    "name": "Herdersem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9700983,
+    "lon": 4.0659206
+  },
+  {
+    "name": "Meldert",
+    "province": "oost-vlaanderen",
+    "lat": 50.934325,
+    "lon": 4.1354329
+  },
+  {
+    "name": "Moorsel",
+    "province": "oost-vlaanderen",
+    "lat": 50.9478217,
+    "lon": 4.0983842
+  },
+  {
+    "name": "Erembodegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9206095,
+    "lon": 4.060892
+  },
+  {
+    "name": "Nieuwerkerken",
+    "province": "oost-vlaanderen",
+    "lat": 50.9234243,
+    "lon": 4.0046831
+  },
+  {
+    "name": "Impe",
+    "province": "oost-vlaanderen",
+    "lat": 50.9604418,
+    "lon": 3.9498849
+  },
+  {
+    "name": "Lede",
+    "province": "oost-vlaanderen",
+    "lat": 50.9658713,
+    "lon": 3.9773269
+  },
+  {
+    "name": "Oordegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9565245,
+    "lon": 3.9028634
+  },
+  {
+    "name": "Smetlede",
+    "province": "oost-vlaanderen",
+    "lat": 50.9660082,
+    "lon": 3.9277109
+  },
+  {
+    "name": "Wanzele",
+    "province": "oost-vlaanderen",
+    "lat": 50.9741071,
+    "lon": 3.9558401
+  },
+  {
+    "name": "Appelterre-Eichem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8187951,
+    "lon": 3.9669736
+  },
+  {
+    "name": "Denderwindeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.7980879,
+    "lon": 4.0247359
+  },
+  {
+    "name": "Lieferinge",
+    "province": "oost-vlaanderen",
+    "lat": 50.7919279,
+    "lon": 4.0525752
+  },
+  {
+    "name": "Nederhasselt",
+    "province": "oost-vlaanderen",
+    "lat": 50.8468981,
+    "lon": 3.9751089
+  },
+  {
+    "name": "Ninove",
+    "province": "oost-vlaanderen",
+    "lat": 50.8336435,
+    "lon": 4.018803
+  },
+  {
+    "name": "Okegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8554922,
+    "lon": 4.0555127
+  },
+  {
+    "name": "Voorde",
+    "province": "oost-vlaanderen",
+    "lat": 50.8246285,
+    "lon": 3.9448617
+  },
+  {
+    "name": "Pollare",
+    "province": "oost-vlaanderen",
+    "lat": 50.8172312,
+    "lon": 4.0068855
+  },
+  {
+    "name": "Meerbeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.8238384,
+    "lon": 4.0407347
+  },
+  {
+    "name": "Neigem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8033904,
+    "lon": 4.0618153
+  },
+  {
+    "name": "Aspelare",
+    "province": "oost-vlaanderen",
+    "lat": 50.8433311,
+    "lon": 3.957471
+  },
+  {
+    "name": "Outer",
+    "province": "oost-vlaanderen",
+    "lat": 50.8416281,
+    "lon": 3.9993364
+  },
+  {
+    "name": "Aaigem",
+    "province": "oost-vlaanderen",
+    "lat": 50.889158,
+    "lon": 3.9372245
+  },
+  {
+    "name": "Bambrugge",
+    "province": "oost-vlaanderen",
+    "lat": 50.9218777,
+    "lon": 3.9287832
+  },
+  {
+    "name": "Burst",
+    "province": "oost-vlaanderen",
+    "lat": 50.9134028,
+    "lon": 3.9202801
+  },
+  {
+    "name": "Erondegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9408215,
+    "lon": 3.9554259
+  },
+  {
+    "name": "Erpe",
+    "province": "oost-vlaanderen",
+    "lat": 50.9338285,
+    "lon": 3.9768861
+  },
+  {
+    "name": "Erpe-Mere",
+    "province": "oost-vlaanderen",
+    "lat": 50.914137,
+    "lon": 3.9568328
+  },
+  {
+    "name": "Mere",
+    "province": "oost-vlaanderen",
+    "lat": 50.9224188,
+    "lon": 3.968053
+  },
+  {
+    "name": "Ottergem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9338291,
+    "lon": 3.9446055
+  },
+  {
+    "name": "Vlekkem",
+    "province": "oost-vlaanderen",
+    "lat": 50.936432,
+    "lon": 3.931606
+  },
+  {
+    "name": "Denderhoutem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8709652,
+    "lon": 4.0184815
+  },
+  {
+    "name": "Haaltert",
+    "province": "oost-vlaanderen",
+    "lat": 50.90244,
+    "lon": 4.0056515
+  },
+  {
+    "name": "Heldergem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8749786,
+    "lon": 3.960628
+  },
+  {
+    "name": "Kerksken",
+    "province": "oost-vlaanderen",
+    "lat": 50.8902903,
+    "lon": 3.9920928
+  },
+  {
+    "name": "Denderleeuw",
+    "province": "oost-vlaanderen",
+    "lat": 50.884149,
+    "lon": 4.0707683
+  },
+  {
+    "name": "Iddergem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8745041,
+    "lon": 4.0487529
+  },
+  {
+    "name": "Welle",
+    "province": "oost-vlaanderen",
+    "lat": 50.8990369,
+    "lon": 4.055587
+  },
+  {
+    "name": "Geraardsbergen",
+    "province": "oost-vlaanderen",
+    "lat": 50.7705978,
+    "lon": 3.8871336
+  },
+  {
+    "name": "Goeferdinge",
+    "province": "oost-vlaanderen",
+    "lat": 50.7673697,
+    "lon": 3.8414944
+  },
+  {
+    "name": "Moerbeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.752437,
+    "lon": 3.9179326
+  },
+  {
+    "name": "Nederboelare",
+    "province": "oost-vlaanderen",
+    "lat": 50.7707473,
+    "lon": 3.8630757
+  },
+  {
+    "name": "Onkerzele",
+    "province": "oost-vlaanderen",
+    "lat": 50.7854778,
+    "lon": 3.9164649
+  },
+  {
+    "name": "Ophasselt",
+    "province": "oost-vlaanderen",
+    "lat": 50.8211821,
+    "lon": 3.8913282
+  },
+  {
+    "name": "Overboelare",
+    "province": "oost-vlaanderen",
+    "lat": 50.7622737,
+    "lon": 3.8630955
+  },
+  {
+    "name": "Viane",
+    "province": "oost-vlaanderen",
+    "lat": 50.7435153,
+    "lon": 3.9227668
+  },
+  {
+    "name": "Zarlardinge",
+    "province": "oost-vlaanderen",
+    "lat": 50.7621167,
+    "lon": 3.8286395
+  },
+  {
+    "name": "Grimminge",
+    "province": "oost-vlaanderen",
+    "lat": 50.7938805,
+    "lon": 3.9441263
+  },
+  {
+    "name": "Idegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.7999931,
+    "lon": 3.9267805
+  },
+  {
+    "name": "Nieuwenhove",
+    "province": "oost-vlaanderen",
+    "lat": 50.7875782,
+    "lon": 3.9866164
+  },
+  {
+    "name": "Schendelbeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.7957523,
+    "lon": 3.8948669
+  },
+  {
+    "name": "Smeerebbe-Vloerzegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.815712,
+    "lon": 3.9210352
+  },
+  {
+    "name": "Waarbeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.7782217,
+    "lon": 3.9687964
+  },
+  {
+    "name": "Zandbergen",
+    "province": "oost-vlaanderen",
+    "lat": 50.8026594,
+    "lon": 3.9662751
+  },
+  {
+    "name": "Bavegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9442706,
+    "lon": 3.8657862
+  },
+  {
+    "name": "Oombergen",
+    "province": "oost-vlaanderen",
+    "lat": 50.9090041,
+    "lon": 3.8450079
+  },
+  {
+    "name": "Sint-Lievens-Houtem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9206626,
+    "lon": 3.8544167
+  },
+  {
+    "name": "Vlierzele",
+    "province": "oost-vlaanderen",
+    "lat": 50.9312501,
+    "lon": 3.8956082
+  },
+  {
+    "name": "Zonnegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9262262,
+    "lon": 3.9087653
+  },
+  {
+    "name": "Letterhoutem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9263891,
+    "lon": 3.8820403
+  },
+  {
+    "name": "Herzele",
+    "province": "oost-vlaanderen",
+    "lat": 50.8535314,
+    "lon": 3.8986569
+  },
+  {
+    "name": "Hillegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8955518,
+    "lon": 3.8541872
+  },
+  {
+    "name": "Sint-Antelinks",
+    "province": "oost-vlaanderen",
+    "lat": 50.850217,
+    "lon": 3.9253359
+  },
+  {
+    "name": "Sint-Lievens-Esse",
+    "province": "oost-vlaanderen",
+    "lat": 50.8570756,
+    "lon": 3.8855951
+  },
+  {
+    "name": "Steenhuize-Wijnhuize",
+    "province": "oost-vlaanderen",
+    "lat": 50.8457249,
+    "lon": 3.8757417
+  },
+  {
+    "name": "Woubrechtegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8729342,
+    "lon": 3.9158202
+  },
+  {
+    "name": "Ressegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8920412,
+    "lon": 3.9096039
+  },
+  {
+    "name": "Borsbeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.9048954,
+    "lon": 3.8932
+  },
+  {
+    "name": "Deftinge",
+    "province": "oost-vlaanderen",
+    "lat": 50.7873351,
+    "lon": 3.8396638
+  },
+  {
+    "name": "Lierde",
+    "province": "oost-vlaanderen",
+    "lat": 50.8190695,
+    "lon": 3.8381658
+  },
+  {
+    "name": "Sint-Maria-Lierde",
+    "province": "oost-vlaanderen",
+    "lat": 50.8183551,
+    "lon": 3.8390631
+  },
+  {
+    "name": "Hemelveerdegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8069634,
+    "lon": 3.8569442
+  },
+  {
+    "name": "Sint-Martens-Lierde",
+    "province": "oost-vlaanderen",
+    "lat": 50.8046682,
+    "lon": 3.8227044
+  },
+  {
+    "name": "Ronse",
+    "province": "oost-vlaanderen",
+    "lat": 50.7505367,
+    "lon": 3.6005095
+  },
+  {
+    "name": "Elene",
+    "province": "oost-vlaanderen",
+    "lat": 50.890414,
+    "lon": 3.8102911
+  },
+  {
+    "name": "Erwetegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8534264,
+    "lon": 3.8187486
+  },
+  {
+    "name": "Godveerdegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.862263,
+    "lon": 3.8299361
+  },
+  {
+    "name": "Grotenberge",
+    "province": "oost-vlaanderen",
+    "lat": 50.8730328,
+    "lon": 3.8334131
+  },
+  {
+    "name": "Leeuwergem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8881102,
+    "lon": 3.8302773
+  },
+  {
+    "name": "Oombergen",
+    "province": "oost-vlaanderen",
+    "lat": 50.8990217,
+    "lon": 3.8370058
+  },
+  {
+    "name": "Sint-Goriks-Oudenhove",
+    "province": "oost-vlaanderen",
+    "lat": 50.853451,
+    "lon": 3.7861968
+  },
+  {
+    "name": "Sint-Maria-Oudenhove",
+    "province": "oost-vlaanderen",
+    "lat": 50.8332892,
+    "lon": 3.7961149
+  },
+  {
+    "name": "Strijpen",
+    "province": "oost-vlaanderen",
+    "lat": 50.8680225,
+    "lon": 3.7876333
+  },
+  {
+    "name": "Velzeke-Ruddershove",
+    "province": "oost-vlaanderen",
+    "lat": 50.8856442,
+    "lon": 3.7808616
+  },
+  {
+    "name": "Zottegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8695474,
+    "lon": 3.8107094
+  },
+  {
+    "name": "Beerlegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9058963,
+    "lon": 3.7167363
+  },
+  {
+    "name": "Dikkele",
+    "province": "oost-vlaanderen",
+    "lat": 50.9041388,
+    "lon": 3.7421149
+  },
+  {
+    "name": "Hundelgem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8895095,
+    "lon": 3.7483584
+  },
+  {
+    "name": "Meilegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9049599,
+    "lon": 3.6989579
+  },
+  {
+    "name": "Munkzwalm",
+    "province": "oost-vlaanderen",
+    "lat": 50.8778017,
+    "lon": 3.7330622
+  },
+  {
+    "name": "Paulatem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8962994,
+    "lon": 3.7156505
+  },
+  {
+    "name": "Roborst",
+    "province": "oost-vlaanderen",
+    "lat": 50.8626053,
+    "lon": 3.7637433
+  },
+  {
+    "name": "Rozebeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.8496528,
+    "lon": 3.7527652
+  },
+  {
+    "name": "Sint-Blasius-Boekel",
+    "province": "oost-vlaanderen",
+    "lat": 50.8516744,
+    "lon": 3.719383
+  },
+  {
+    "name": "Sint-Denijs-Boekel",
+    "province": "oost-vlaanderen",
+    "lat": 50.8649078,
+    "lon": 3.711336
+  },
+  {
+    "name": "Sint-Maria-Latem",
+    "province": "oost-vlaanderen",
+    "lat": 50.890211,
+    "lon": 3.7068644
+  },
+  {
+    "name": "Zwalm",
+    "province": "oost-vlaanderen",
+    "lat": 50.8799184,
+    "lon": 3.7288705
+  },
+  {
+    "name": "Nederzwalm-Hermelgem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8875058,
+    "lon": 3.6863847
+  },
+  {
+    "name": "Brakel",
+    "province": "oost-vlaanderen",
+    "lat": 50.80276,
+    "lon": 3.76382
+  },
+  {
+    "name": "Elst",
+    "province": "oost-vlaanderen",
+    "lat": 50.8312919,
+    "lon": 3.7386165
+  },
+  {
+    "name": "Everbeek",
+    "province": "oost-vlaanderen",
+    "lat": 50.7629802,
+    "lon": 3.8082788
+  },
+  {
+    "name": "Michelbeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.8334231,
+    "lon": 3.7629436
+  },
+  {
+    "name": "Nederbrakel",
+    "province": "oost-vlaanderen",
+    "lat": 50.8030762,
+    "lon": 3.7521934
+  },
+  {
+    "name": "Opbrakel",
+    "province": "oost-vlaanderen",
+    "lat": 50.7970364,
+    "lon": 3.7569851
+  },
+  {
+    "name": "Sint-Maria-Oudenhove",
+    "province": "oost-vlaanderen",
+    "lat": 50.8212854,
+    "lon": 3.7846312
+  },
+  {
+    "name": "Zegelsem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8188341,
+    "lon": 3.7181357
+  },
+  {
+    "name": "Parike",
+    "province": "oost-vlaanderen",
+    "lat": 50.7848195,
+    "lon": 3.7979447
+  },
+  {
+    "name": "Horebeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.8372,
+    "lon": 3.68672
+  },
+  {
+    "name": "Sint-Kornelis-Horebeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.834426,
+    "lon": 3.6983276
+  },
+  {
+    "name": "Sint-Maria-Horebeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.84049,
+    "lon": 3.691596
+  },
+  {
+    "name": "Etikhove",
+    "province": "oost-vlaanderen",
+    "lat": 50.812527,
+    "lon": 3.6266634
+  },
+  {
+    "name": "Maarke-Kerkem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8159061,
+    "lon": 3.6543619
+  },
+  {
+    "name": "Maarkedal",
+    "province": "oost-vlaanderen",
+    "lat": 50.7992486,
+    "lon": 3.6442007
+  },
+  {
+    "name": "Nukerke",
+    "province": "oost-vlaanderen",
+    "lat": 50.79703,
+    "lon": 3.5947056
+  },
+  {
+    "name": "Schorisse",
+    "province": "oost-vlaanderen",
+    "lat": 50.8044682,
+    "lon": 3.6769838
+  },
+  {
+    "name": "Berchem",
+    "province": "oost-vlaanderen",
+    "lat": 50.7901621,
+    "lon": 3.5095443
+  },
+  {
+    "name": "Kluisbergen",
+    "province": "oost-vlaanderen",
+    "lat": 50.7784304,
+    "lon": 3.4935589
+  },
+  {
+    "name": "Kwaremont",
+    "province": "oost-vlaanderen",
+    "lat": 50.7767287,
+    "lon": 3.5253769
+  },
+  {
+    "name": "Ruien",
+    "province": "oost-vlaanderen",
+    "lat": 50.770725,
+    "lon": 3.4829674
+  },
+  {
+    "name": "Zulzeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.7889651,
+    "lon": 3.5708891
+  },
+  {
+    "name": "Bevere",
+    "province": "oost-vlaanderen",
+    "lat": 50.8523695,
+    "lon": 3.5875451
+  },
+  {
+    "name": "Edelare",
+    "province": "oost-vlaanderen",
+    "lat": 50.8302334,
+    "lon": 3.6287307
+  },
+  {
+    "name": "Eine",
+    "province": "oost-vlaanderen",
+    "lat": 50.867937,
+    "lon": 3.620744
+  },
+  {
+    "name": "Ename",
+    "province": "oost-vlaanderen",
+    "lat": 50.8570277,
+    "lon": 3.6319101
+  },
+  {
+    "name": "Heurne",
+    "province": "oost-vlaanderen",
+    "lat": 50.8837448,
+    "lon": 3.6287389
+  },
+  {
+    "name": "Leupegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8329265,
+    "lon": 3.6018007
+  },
+  {
+    "name": "Mater",
+    "province": "oost-vlaanderen",
+    "lat": 50.8424603,
+    "lon": 3.6635537
+  },
+  {
+    "name": "Melden",
+    "province": "oost-vlaanderen",
+    "lat": 50.8138095,
+    "lon": 3.5642799
+  },
+  {
+    "name": "Mullem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8912265,
+    "lon": 3.6030581
+  },
+  {
+    "name": "Nederename",
+    "province": "oost-vlaanderen",
+    "lat": 50.8667191,
+    "lon": 3.6348815
+  },
+  {
+    "name": "Ooike",
+    "province": "oost-vlaanderen",
+    "lat": 50.8675682,
+    "lon": 3.5771661
+  },
+  {
+    "name": "Oudenaarde",
+    "province": "oost-vlaanderen",
+    "lat": 50.8469306,
+    "lon": 3.6014367
+  },
+  {
+    "name": "Volkegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8393802,
+    "lon": 3.6427814
+  },
+  {
+    "name": "Welden",
+    "province": "oost-vlaanderen",
+    "lat": 50.8784011,
+    "lon": 3.6555399
+  },
+  {
+    "name": "Huise",
+    "province": "oost-vlaanderen",
+    "lat": 50.8993266,
+    "lon": 3.5896534
+  },
+  {
+    "name": "Ouwegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9115762,
+    "lon": 3.5992209
+  },
+  {
+    "name": "Nokere",
+    "province": "oost-vlaanderen",
+    "lat": 50.8850943,
+    "lon": 3.5105895
+  },
+  {
+    "name": "Wannegem-Lede",
+    "province": "oost-vlaanderen",
+    "lat": 50.889802,
+    "lon": 3.5515066
+  },
+  {
+    "name": "Elsegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8245725,
+    "lon": 3.5353615
+  },
+  {
+    "name": "Moregem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8504552,
+    "lon": 3.5614071
+  },
+  {
+    "name": "Ooike",
+    "province": "oost-vlaanderen",
+    "lat": 50.8698651,
+    "lon": 3.5510607
+  },
+  {
+    "name": "Petegem-Aan-De-Schelde",
+    "province": "oost-vlaanderen",
+    "lat": 50.8333051,
+    "lon": 3.556078
+  },
+  {
+    "name": "Wortegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8520887,
+    "lon": 3.5102432
+  },
+  {
+    "name": "Wortegem-Petegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.8445045,
+    "lon": 3.5268826
+  },
+  {
+    "name": "Astene",
+    "province": "oost-vlaanderen",
+    "lat": 50.9837892,
+    "lon": 3.5604333
+  },
+  {
+    "name": "Bachte-Maria-Leerne",
+    "province": "oost-vlaanderen",
+    "lat": 51.0108541,
+    "lon": 3.5783676
+  },
+  {
+    "name": "Gottem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9649581,
+    "lon": 3.461345
+  },
+  {
+    "name": "Grammene",
+    "province": "oost-vlaanderen",
+    "lat": 50.9771417,
+    "lon": 3.4648864
+  },
+  {
+    "name": "Meigem",
+    "province": "oost-vlaanderen",
+    "lat": 51.0168961,
+    "lon": 3.5404289
+  },
+  {
+    "name": "Petegem-Aan-De-Leie",
+    "province": "oost-vlaanderen",
+    "lat": 50.9800082,
+    "lon": 3.5338779
+  },
+  {
+    "name": "Sint-Martens-Leerne",
+    "province": "oost-vlaanderen",
+    "lat": 51.0154398,
+    "lon": 3.5877172
+  },
+  {
+    "name": "Vinkt",
+    "province": "oost-vlaanderen",
+    "lat": 51.0081641,
+    "lon": 3.4793989
+  },
+  {
+    "name": "Wontergem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9794219,
+    "lon": 3.4445577
+  },
+  {
+    "name": "Zeveren",
+    "province": "oost-vlaanderen",
+    "lat": 50.9962852,
+    "lon": 3.5011056
+  },
+  {
+    "name": "Eke",
+    "province": "oost-vlaanderen",
+    "lat": 50.9580565,
+    "lon": 3.6374551
+  },
+  {
+    "name": "Nazareth",
+    "province": "oost-vlaanderen",
+    "lat": 50.9597659,
+    "lon": 3.5951408
+  },
+  {
+    "name": "Bottelare",
+    "province": "oost-vlaanderen",
+    "lat": 50.9631988,
+    "lon": 3.7537909
+  },
+  {
+    "name": "Lemberge",
+    "province": "oost-vlaanderen",
+    "lat": 50.9781227,
+    "lon": 3.7729677
+  },
+  {
+    "name": "Melsen",
+    "province": "oost-vlaanderen",
+    "lat": 50.9563191,
+    "lon": 3.6940645
+  },
+  {
+    "name": "Merelbeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.9945472,
+    "lon": 3.7455438
+  },
+  {
+    "name": "Munte",
+    "province": "oost-vlaanderen",
+    "lat": 50.9450049,
+    "lon": 3.7441552
+  },
+  {
+    "name": "Schelderode",
+    "province": "oost-vlaanderen",
+    "lat": 50.9713789,
+    "lon": 3.7155352
+  },
+  {
+    "name": "Sint-Martens-Latem",
+    "province": "oost-vlaanderen",
+    "lat": 51.0135066,
+    "lon": 3.6287716
+  },
+  {
+    "name": "Deurle",
+    "province": "oost-vlaanderen",
+    "lat": 51.0092272,
+    "lon": 3.6043494
+  },
+  {
+    "name": "De Pinte",
+    "province": "oost-vlaanderen",
+    "lat": 50.99177,
+    "lon": 3.64936
+  },
+  {
+    "name": "Zevergem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9791445,
+    "lon": 3.6961517
+  },
+  {
+    "name": "Hansbeke",
+    "province": "oost-vlaanderen",
+    "lat": 51.0747168,
+    "lon": 3.5356476
+  },
+  {
+    "name": "Landegem",
+    "province": "oost-vlaanderen",
+    "lat": 51.0567048,
+    "lon": 3.5731481
+  },
+  {
+    "name": "Merendree",
+    "province": "oost-vlaanderen",
+    "lat": 51.0777421,
+    "lon": 3.577022
+  },
+  {
+    "name": "Poesele",
+    "province": "oost-vlaanderen",
+    "lat": 51.033991,
+    "lon": 3.5161497
+  },
+  {
+    "name": "Vosselare",
+    "province": "oost-vlaanderen",
+    "lat": 51.0294647,
+    "lon": 3.5574385
+  },
+  {
+    "name": "Balegem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9204927,
+    "lon": 3.7934984
+  },
+  {
+    "name": "Gijzenzele",
+    "province": "oost-vlaanderen",
+    "lat": 50.9710111,
+    "lon": 3.8165185
+  },
+  {
+    "name": "Landskouter",
+    "province": "oost-vlaanderen",
+    "lat": 50.9683883,
+    "lon": 3.7928735
+  },
+  {
+    "name": "Moortsele",
+    "province": "oost-vlaanderen",
+    "lat": 50.9590134,
+    "lon": 3.779462
+  },
+  {
+    "name": "Oosterzele",
+    "province": "oost-vlaanderen",
+    "lat": 50.9467656,
+    "lon": 3.815505
+  },
+  {
+    "name": "Scheldewindeke",
+    "province": "oost-vlaanderen",
+    "lat": 50.9380652,
+    "lon": 3.7847942
+  },
+  {
+    "name": "Machelen",
+    "province": "oost-vlaanderen",
+    "lat": 50.958822,
+    "lon": 3.4880452
+  },
+  {
+    "name": "Olsene",
+    "province": "oost-vlaanderen",
+    "lat": 50.9362129,
+    "lon": 3.4657328
+  },
+  {
+    "name": "Zulte",
+    "province": "oost-vlaanderen",
+    "lat": 50.9219215,
+    "lon": 3.4437734
+  },
+  {
+    "name": "Lotenhulle",
+    "province": "oost-vlaanderen",
+    "lat": 51.0483873,
+    "lon": 3.4655772
+  },
+  {
+    "name": "Poeke",
+    "province": "oost-vlaanderen",
+    "lat": 51.040935,
+    "lon": 3.4440488
+  },
+  {
+    "name": "Bellem",
+    "province": "oost-vlaanderen",
+    "lat": 51.0884355,
+    "lon": 3.4906454
+  },
+  {
+    "name": "Asper",
+    "province": "oost-vlaanderen",
+    "lat": 50.9160245,
+    "lon": 3.6510321
+  },
+  {
+    "name": "Baaigem",
+    "province": "oost-vlaanderen",
+    "lat": 50.9296017,
+    "lon": 3.7219346
+  },
+  {
+    "name": "Dikkelvenne",
+    "province": "oost-vlaanderen",
+    "lat": 50.9190023,
+    "lon": 3.6874247
+  },
+  {
+    "name": "Gavere",
+    "province": "oost-vlaanderen",
+    "lat": 50.9283314,
+    "lon": 3.6599198
+  },
+  {
+    "name": "Semmerzake",
+    "province": "oost-vlaanderen",
+    "lat": 50.9430929,
+    "lon": 3.6647202
+  },
+  {
+    "name": "Vurste",
+    "province": "oost-vlaanderen",
+    "lat": 50.9490931,
+    "lon": 3.6843031
+  },
+  {
+    "name": "Eeklo",
+    "province": "oost-vlaanderen",
+    "lat": 51.1852719,
+    "lon": 3.5638899
+  },
+  {
+    "name": "Ursel",
+    "province": "oost-vlaanderen",
+    "lat": 51.1294092,
+    "lon": 3.4856153
+  },
+  {
+    "name": "Lovendegem",
+    "province": "oost-vlaanderen",
+    "lat": 51.1075935,
+    "lon": 3.6285575
+  },
+  {
+    "name": "Vinderhoute",
+    "province": "oost-vlaanderen",
+    "lat": 51.0869089,
+    "lon": 3.6407214
+  },
+  {
+    "name": "Oostwinkel",
+    "province": "oost-vlaanderen",
+    "lat": 51.1508463,
+    "lon": 3.5252604
+  },
+  {
+    "name": "Ronsele",
+    "province": "oost-vlaanderen",
+    "lat": 51.1309736,
+    "lon": 3.5516605
+  },
+  {
+    "name": "Ertvelde",
+    "province": "oost-vlaanderen",
+    "lat": 51.1787632,
+    "lon": 3.7466865
+  },
+  {
+    "name": "Evergem",
+    "province": "oost-vlaanderen",
+    "lat": 51.1101028,
+    "lon": 3.7067231
+  },
+  {
+    "name": "Kluizen",
+    "province": "oost-vlaanderen",
+    "lat": 51.1557298,
+    "lon": 3.7303321
+  },
+  {
+    "name": "Sleidinge",
+    "province": "oost-vlaanderen",
+    "lat": 51.1319702,
+    "lon": 3.6789117
+  },
+  {
+    "name": "Assenede",
+    "province": "oost-vlaanderen",
+    "lat": 51.2269806,
+    "lon": 3.7510157
+  },
+  {
+    "name": "Boekhoute",
+    "province": "oost-vlaanderen",
+    "lat": 51.2581738,
+    "lon": 3.7181501
+  },
+  {
+    "name": "Bassevelde",
+    "province": "oost-vlaanderen",
+    "lat": 51.2300624,
+    "lon": 3.6777432
+  },
+  {
+    "name": "Oosteeklo",
+    "province": "oost-vlaanderen",
+    "lat": 51.1920171,
+    "lon": 3.6883778
+  },
+  {
+    "name": "Kaprijke",
+    "province": "oost-vlaanderen",
+    "lat": 51.223075,
+    "lon": 3.6186057
+  },
+  {
+    "name": "Lembeke",
+    "province": "oost-vlaanderen",
+    "lat": 51.1945809,
+    "lon": 3.6330207
+  },
+  {
+    "name": "Sint-Laureins",
+    "province": "oost-vlaanderen",
+    "lat": 51.2361689,
+    "lon": 3.5329424
+  },
+  {
+    "name": "Sint-Margriete",
+    "province": "oost-vlaanderen",
+    "lat": 51.2803944,
+    "lon": 3.5469357
+  },
+  {
+    "name": "Sint-Jan-In-Eremo",
+    "province": "oost-vlaanderen",
+    "lat": 51.2737009,
+    "lon": 3.5768505
+  },
+  {
+    "name": "Waterland-Oudeman",
+    "province": "oost-vlaanderen",
+    "lat": 51.2888925,
+    "lon": 3.5902999
+  },
+  {
+    "name": "Watervliet",
+    "province": "oost-vlaanderen",
+    "lat": 51.2765175,
+    "lon": 3.6270198
+  },
+  {
+    "name": "Maldegem",
+    "province": "oost-vlaanderen",
+    "lat": 51.209082,
+    "lon": 3.4486611
+  },
+  {
+    "name": "Adegem",
+    "province": "oost-vlaanderen",
+    "lat": 51.2046849,
+    "lon": 3.4868397
+  },
+  {
+    "name": "Middelburg",
+    "province": "oost-vlaanderen",
+    "lat": 51.2547106,
+    "lon": 3.4150935
+  },
+  {
+    "name": "Hasselt",
+    "province": "limburg-be",
+    "lat": 50.9215166,
+    "lon": 5.3447405
+  },
+  {
+    "name": "Sint-Lambrechts-Herk",
+    "province": "limburg-be",
+    "lat": 50.89841,
+    "lon": 5.30741
+  },
+  {
+    "name": "Wimmertingen",
+    "province": "limburg-be",
+    "lat": 50.8831759,
+    "lon": 5.3526453
+  },
+  {
+    "name": "Kermt",
+    "province": "limburg-be",
+    "lat": 50.94767,
+    "lon": 5.24676
+  },
+  {
+    "name": "Spalbeek",
+    "province": "limburg-be",
+    "lat": 50.9486672,
+    "lon": 5.2247223
+  },
+  {
+    "name": "Kuringen",
+    "province": "limburg-be",
+    "lat": 50.94387,
+    "lon": 5.29789
+  },
+  {
+    "name": "Stokrooie",
+    "province": "limburg-be",
+    "lat": 50.96619,
+    "lon": 5.28134
+  },
+  {
+    "name": "Stevoort",
+    "province": "limburg-be",
+    "lat": 50.9183,
+    "lon": 5.25316
+  },
+  {
+    "name": "Zonhoven",
+    "province": "limburg-be",
+    "lat": 50.98707,
+    "lon": 5.36716
+  },
+  {
+    "name": "Helchteren",
+    "province": "limburg-be",
+    "lat": 51.0565512,
+    "lon": 5.3826921
+  },
+  {
+    "name": "Houthalen",
+    "province": "limburg-be",
+    "lat": 51.0314627,
+    "lon": 5.3763541
+  },
+  {
+    "name": "Houthalen-Helchteren",
+    "province": "limburg-be",
+    "lat": 51.0312424,
+    "lon": 5.3765453
+  },
+  {
+    "name": "Berbroek",
+    "province": "limburg-be",
+    "lat": 50.9503306,
+    "lon": 5.2083451
+  },
+  {
+    "name": "Donk",
+    "province": "limburg-be",
+    "lat": 50.9382225,
+    "lon": 5.1344391
+  },
+  {
+    "name": "Herk-De-Stad",
+    "province": "limburg-be",
+    "lat": 50.93923,
+    "lon": 5.16712
+  },
+  {
+    "name": "Schulen",
+    "province": "limburg-be",
+    "lat": 50.959958,
+    "lon": 5.1904844
+  },
+  {
+    "name": "Halen",
+    "province": "limburg-be",
+    "lat": 50.9485,
+    "lon": 5.11117
+  },
+  {
+    "name": "Loksbergen",
+    "province": "limburg-be",
+    "lat": 50.9342585,
+    "lon": 5.0695638
+  },
+  {
+    "name": "Zelem",
+    "province": "limburg-be",
+    "lat": 50.9781579,
+    "lon": 5.1057744
+  },
+  {
+    "name": "Heusden",
+    "province": "limburg-be",
+    "lat": 51.0354099,
+    "lon": 5.283057
+  },
+  {
+    "name": "Heusden-Zolder",
+    "province": "limburg-be",
+    "lat": 51.0384819,
+    "lon": 5.2904127
+  },
+  {
+    "name": "Zolder",
+    "province": "limburg-be",
+    "lat": 51.0229535,
+    "lon": 5.3097324
+  },
+  {
+    "name": "Linkhout",
+    "province": "limburg-be",
+    "lat": 50.96812,
+    "lon": 5.13687
+  },
+  {
+    "name": "Lummen",
+    "province": "limburg-be",
+    "lat": 50.98761,
+    "lon": 5.19511
+  },
+  {
+    "name": "Meldert",
+    "province": "limburg-be",
+    "lat": 50.99867,
+    "lon": 5.1418
+  },
+  {
+    "name": "Alken",
+    "province": "limburg-be",
+    "lat": 50.87609,
+    "lon": 5.30767
+  },
+  {
+    "name": "Beringen",
+    "province": "limburg-be",
+    "lat": 51.0473373,
+    "lon": 5.2214769
+  },
+  {
+    "name": "Beverlo",
+    "province": "limburg-be",
+    "lat": 51.0873,
+    "lon": 5.21898
+  },
+  {
+    "name": "Koersel",
+    "province": "limburg-be",
+    "lat": 51.05844,
+    "lon": 5.27176
+  },
+  {
+    "name": "Paal",
+    "province": "limburg-be",
+    "lat": 51.03953,
+    "lon": 5.17165
+  },
+  {
+    "name": "Diepenbeek",
+    "province": "limburg-be",
+    "lat": 50.91083,
+    "lon": 5.41336
+  },
+  {
+    "name": "Genk",
+    "province": "limburg-be",
+    "lat": 50.96613,
+    "lon": 5.5021
+  },
+  {
+    "name": "Gellik",
+    "province": "limburg-be",
+    "lat": 50.8839114,
+    "lon": 5.6103183
+  },
+  {
+    "name": "Lanaken",
+    "province": "limburg-be",
+    "lat": 50.8919602,
+    "lon": 5.6398572
+  },
+  {
+    "name": "Neerharen",
+    "province": "limburg-be",
+    "lat": 50.9088851,
+    "lon": 5.6808314
+  },
+  {
+    "name": "Veldwezelt",
+    "province": "limburg-be",
+    "lat": 50.8677788,
+    "lon": 5.6305961
+  },
+  {
+    "name": "Rekem",
+    "province": "limburg-be",
+    "lat": 50.9224749,
+    "lon": 5.6957272
+  },
+  {
+    "name": "Eisden",
+    "province": "limburg-be",
+    "lat": 50.9854566,
+    "lon": 5.7140769
+  },
+  {
+    "name": "Leut",
+    "province": "limburg-be",
+    "lat": 50.9900244,
+    "lon": 5.7350908
+  },
+  {
+    "name": "Maasmechelen",
+    "province": "limburg-be",
+    "lat": 50.969278,
+    "lon": 5.6619185
+  },
+  {
+    "name": "Mechelen-Aan-De-Maas",
+    "province": "limburg-be",
+    "lat": 50.9797588,
+    "lon": 5.7018567
+  },
+  {
+    "name": "Meeswijk",
+    "province": "limburg-be",
+    "lat": 50.9995012,
+    "lon": 5.7496822
+  },
+  {
+    "name": "Opgrimbie",
+    "province": "limburg-be",
+    "lat": 50.9432913,
+    "lon": 5.6809579
+  },
+  {
+    "name": "Vucht",
+    "province": "limburg-be",
+    "lat": 50.9787264,
+    "lon": 5.7106715
+  },
+  {
+    "name": "Boorsem",
+    "province": "limburg-be",
+    "lat": 50.9408237,
+    "lon": 5.7197843
+  },
+  {
+    "name": "Uikhoven",
+    "province": "limburg-be",
+    "lat": 50.923677,
+    "lon": 5.7183356
+  },
+  {
+    "name": "Kessenich",
+    "province": "limburg-be",
+    "lat": 51.15142,
+    "lon": 5.82297
+  },
+  {
+    "name": "Kinrooi",
+    "province": "limburg-be",
+    "lat": 51.14552,
+    "lon": 5.74113
+  },
+  {
+    "name": "Molenbeersel",
+    "province": "limburg-be",
+    "lat": 51.17002,
+    "lon": 5.73758
+  },
+  {
+    "name": "Ophoven",
+    "province": "limburg-be",
+    "lat": 51.12559,
+    "lon": 5.80204
+  },
+  {
+    "name": "Dilsen",
+    "province": "limburg-be",
+    "lat": 51.03747,
+    "lon": 5.72215
+  },
+  {
+    "name": "Dilsen-Stokkem",
+    "province": "limburg-be",
+    "lat": 51.0301998,
+    "lon": 5.7000888
+  },
+  {
+    "name": "Elen",
+    "province": "limburg-be",
+    "lat": 51.06655,
+    "lon": 5.75083
+  },
+  {
+    "name": "Lanklaar",
+    "province": "limburg-be",
+    "lat": 51.0188,
+    "lon": 5.7262
+  },
+  {
+    "name": "Rotem",
+    "province": "limburg-be",
+    "lat": 51.05297,
+    "lon": 5.74118
+  },
+  {
+    "name": "Stokkem",
+    "province": "limburg-be",
+    "lat": 51.02364,
+    "lon": 5.74418
+  },
+  {
+    "name": "As",
+    "province": "limburg-be",
+    "lat": 50.9997751,
+    "lon": 5.5715438
+  },
+  {
+    "name": "Niel-Bij-As",
+    "province": "limburg-be",
+    "lat": 51.0176272,
+    "lon": 5.6045057
+  },
+  {
+    "name": "Ellikom",
+    "province": "limburg-be",
+    "lat": 51.12719,
+    "lon": 5.52366
+  },
+  {
+    "name": "Meeuwen",
+    "province": "limburg-be",
+    "lat": 51.09867,
+    "lon": 5.5205
+  },
+  {
+    "name": "Meeuwen-Gruitrode",
+    "province": "limburg-be",
+    "lat": 51.09495,
+    "lon": 5.54784
+  },
+  {
+    "name": "Neerglabbeek",
+    "province": "limburg-be",
+    "lat": 51.09144,
+    "lon": 5.61676
+  },
+  {
+    "name": "Wijshagen",
+    "province": "limburg-be",
+    "lat": 51.10461,
+    "lon": 5.55881
+  },
+  {
+    "name": "Maaseik",
+    "province": "limburg-be",
+    "lat": 51.0983909,
+    "lon": 5.7837625
+  },
+  {
+    "name": "Neeroeteren",
+    "province": "limburg-be",
+    "lat": 51.0918046,
+    "lon": 5.6995386
+  },
+  {
+    "name": "Opoeteren",
+    "province": "limburg-be",
+    "lat": 51.0675622,
+    "lon": 5.6594443
+  },
+  {
+    "name": "Zutendaal",
+    "province": "limburg-be",
+    "lat": 50.93196,
+    "lon": 5.57227
+  },
+  {
+    "name": "'s Herenelderen",
+    "province": "limburg-be",
+    "lat": 50.8089063,
+    "lon": 5.5032825
+  },
+  {
+    "name": "Berg",
+    "province": "limburg-be",
+    "lat": 50.79183,
+    "lon": 5.49494
+  },
+  {
+    "name": "Diets-Heur",
+    "province": "limburg-be",
+    "lat": 50.7453303,
+    "lon": 5.4828472
+  },
+  {
+    "name": "Haren",
+    "province": "limburg-be",
+    "lat": 50.7979251,
+    "lon": 5.4020478
+  },
+  {
+    "name": "Henis",
+    "province": "limburg-be",
+    "lat": 50.7992,
+    "lon": 5.47122
+  },
+  {
+    "name": "Kolmont",
+    "province": "limburg-be",
+    "lat": 50.8041,
+    "lon": 5.42373
+  },
+  {
+    "name": "Koninksem",
+    "province": "limburg-be",
+    "lat": 50.76531,
+    "lon": 5.43997
+  },
+  {
+    "name": "Lauw",
+    "province": "limburg-be",
+    "lat": 50.7392355,
+    "lon": 5.4148753
+  },
+  {
+    "name": "Mal",
+    "province": "limburg-be",
+    "lat": 50.7684738,
+    "lon": 5.5214638
+  },
+  {
+    "name": "Neerrepen",
+    "province": "limburg-be",
+    "lat": 50.8110492,
+    "lon": 5.444214
+  },
+  {
+    "name": "Nerem",
+    "province": "limburg-be",
+    "lat": 50.7649963,
+    "lon": 5.5104893
+  },
+  {
+    "name": "Overrepen",
+    "province": "limburg-be",
+    "lat": 50.8070423,
+    "lon": 5.4315896
+  },
+  {
+    "name": "Piringen",
+    "province": "limburg-be",
+    "lat": 50.7864119,
+    "lon": 5.4178871
+  },
+  {
+    "name": "Riksingen",
+    "province": "limburg-be",
+    "lat": 50.8051007,
+    "lon": 5.4632976
+  },
+  {
+    "name": "Rutten",
+    "province": "limburg-be",
+    "lat": 50.7478825,
+    "lon": 5.4423901
+  },
+  {
+    "name": "Sluizen",
+    "province": "limburg-be",
+    "lat": 50.7653436,
+    "lon": 5.5314429
+  },
+  {
+    "name": "Tongeren",
+    "province": "limburg-be",
+    "lat": 50.78419,
+    "lon": 5.47449
+  },
+  {
+    "name": "Vreren",
+    "province": "limburg-be",
+    "lat": 50.7515842,
+    "lon": 5.4974649
+  },
+  {
+    "name": "Widooie",
+    "province": "limburg-be",
+    "lat": 50.7713726,
+    "lon": 5.4084338
+  },
+  {
+    "name": "Herstappe",
+    "province": "limburg-be",
+    "lat": 50.72653,
+    "lon": 5.426
+  },
+  {
+    "name": "Kortessem",
+    "province": "limburg-be",
+    "lat": 50.8625531,
+    "lon": 5.3781216
+  },
+  {
+    "name": "Vliermaalroot",
+    "province": "limburg-be",
+    "lat": 50.8637784,
+    "lon": 5.4240097
+  },
+  {
+    "name": "Wintershoven",
+    "province": "limburg-be",
+    "lat": 50.85263,
+    "lon": 5.41968
+  },
+  {
+    "name": "Guigoven",
+    "province": "limburg-be",
+    "lat": 50.8390899,
+    "lon": 5.399157
+  },
+  {
+    "name": "Vliermaal",
+    "province": "limburg-be",
+    "lat": 50.8394948,
+    "lon": 5.4289047
+  },
+  {
+    "name": "Hoeselt",
+    "province": "limburg-be",
+    "lat": 50.8497352,
+    "lon": 5.4911243
+  },
+  {
+    "name": "Romershoven",
+    "province": "limburg-be",
+    "lat": 50.855984,
+    "lon": 5.4598837
+  },
+  {
+    "name": "Sint-Huibrechts-Hern",
+    "province": "limburg-be",
+    "lat": 50.82985,
+    "lon": 5.4492483
+  },
+  {
+    "name": "Werm",
+    "province": "limburg-be",
+    "lat": 50.8328482,
+    "lon": 5.4802846
+  },
+  {
+    "name": "Schalkhoven",
+    "province": "limburg-be",
+    "lat": 50.8414306,
+    "lon": 5.4495653
+  },
+  {
+    "name": "Beverst",
+    "province": "limburg-be",
+    "lat": 50.8902246,
+    "lon": 5.475171
+  },
+  {
+    "name": "Bilzen",
+    "province": "limburg-be",
+    "lat": 50.8719054,
+    "lon": 5.5166463
+  },
+  {
+    "name": "Eigenbilzen",
+    "province": "limburg-be",
+    "lat": 50.8746121,
+    "lon": 5.5746355
+  },
+  {
+    "name": "Grote-Spouwen",
+    "province": "limburg-be",
+    "lat": 50.8315692,
+    "lon": 5.5519685
+  },
+  {
+    "name": "Hees",
+    "province": "limburg-be",
+    "lat": 50.8466302,
+    "lon": 5.609372
+  },
+  {
+    "name": "Kleine-Spouwen",
+    "province": "limburg-be",
+    "lat": 50.8381087,
+    "lon": 5.5483654
+  },
+  {
+    "name": "Mopertingen",
+    "province": "limburg-be",
+    "lat": 50.8606327,
+    "lon": 5.5756295
+  },
+  {
+    "name": "Munsterbilzen",
+    "province": "limburg-be",
+    "lat": 50.8897326,
+    "lon": 5.5261669
+  },
+  {
+    "name": "Rijkhoven",
+    "province": "limburg-be",
+    "lat": 50.8329777,
+    "lon": 5.5150984
+  },
+  {
+    "name": "Rosmeer",
+    "province": "limburg-be",
+    "lat": 50.8456546,
+    "lon": 5.5806307
+  },
+  {
+    "name": "Waltwilder",
+    "province": "limburg-be",
+    "lat": 50.8658211,
+    "lon": 5.5441802
+  },
+  {
+    "name": "Martenslinde",
+    "province": "limburg-be",
+    "lat": 50.8565985,
+    "lon": 5.5332305
+  },
+  {
+    "name": "Hoelbeek",
+    "province": "limburg-be",
+    "lat": 50.8718626,
+    "lon": 5.5564999
+  },
+  {
+    "name": "Genoelselderen",
+    "province": "limburg-be",
+    "lat": 50.80297,
+    "lon": 5.538845
+  },
+  {
+    "name": "Herderen",
+    "province": "limburg-be",
+    "lat": 50.8065724,
+    "lon": 5.5723296
+  },
+  {
+    "name": "Kanne",
+    "province": "limburg-be",
+    "lat": 50.814055,
+    "lon": 5.6693136
+  },
+  {
+    "name": "Membruggen",
+    "province": "limburg-be",
+    "lat": 50.8141975,
+    "lon": 5.5343399
+  },
+  {
+    "name": "Millen",
+    "province": "limburg-be",
+    "lat": 50.7856375,
+    "lon": 5.5561104
+  },
+  {
+    "name": "Riemst",
+    "province": "limburg-be",
+    "lat": 50.8089945,
+    "lon": 5.6012328
+  },
+  {
+    "name": "Val-Meer",
+    "province": "limburg-be",
+    "lat": 50.7862227,
+    "lon": 5.59628
+  },
+  {
+    "name": "Vlijtingen",
+    "province": "limburg-be",
+    "lat": 50.8320854,
+    "lon": 5.5842906
+  },
+  {
+    "name": "Vroenhoven",
+    "province": "limburg-be",
+    "lat": 50.8263221,
+    "lon": 5.6400304
+  },
+  {
+    "name": "Zichen-Zussen-Bolder",
+    "province": "limburg-be",
+    "lat": 50.7933496,
+    "lon": 5.6245555
+  },
+  {
+    "name": "Moelingen",
+    "province": "limburg-be",
+    "lat": 50.7570096,
+    "lon": 5.7134973
+  },
+  {
+    "name": "Sint-Martens-Voeren",
+    "province": "limburg-be",
+    "lat": 50.7485199,
+    "lon": 5.8122336
+  },
+  {
+    "name": "Voeren",
+    "province": "limburg-be",
+    "lat": 50.7464187,
+    "lon": 5.8409039
+  },
+  {
+    "name": "Remersdaal",
+    "province": "limburg-be",
+    "lat": 50.7315308,
+    "lon": 5.8808478
+  },
+  {
+    "name": "Sint-Pieters-Voeren",
+    "province": "limburg-be",
+    "lat": 50.738357,
+    "lon": 5.8226791
+  },
+  {
+    "name": "Teuven",
+    "province": "limburg-be",
+    "lat": 50.7518324,
+    "lon": 5.8759546
+  },
+  {
+    "name": "S Gravenvoeren",
+    "province": "limburg-be",
+    "lat": 50.7587829,
+    "lon": 5.7611628
+  },
+  {
+    "name": "Aalst",
+    "province": "limburg-be",
+    "lat": 50.78166,
+    "lon": 5.20898
+  },
+  {
+    "name": "Brustem",
+    "province": "limburg-be",
+    "lat": 50.80565,
+    "lon": 5.22187
+  },
+  {
+    "name": "Engelmanshoven",
+    "province": "limburg-be",
+    "lat": 50.77134,
+    "lon": 5.25092
+  },
+  {
+    "name": "Gelinden",
+    "province": "limburg-be",
+    "lat": 50.76552,
+    "lon": 5.26092
+  },
+  {
+    "name": "Groot-Gelmen",
+    "province": "limburg-be",
+    "lat": 50.78525,
+    "lon": 5.26296
+  },
+  {
+    "name": "Halmaal",
+    "province": "limburg-be",
+    "lat": 50.80589,
+    "lon": 5.15574
+  },
+  {
+    "name": "Kerkom-Bij-Sint-Truiden",
+    "province": "limburg-be",
+    "lat": 50.77429,
+    "lon": 5.17787
+  },
+  {
+    "name": "Ordingen",
+    "province": "limburg-be",
+    "lat": 50.81285,
+    "lon": 5.23521
+  },
+  {
+    "name": "Sint-Truiden",
+    "province": "limburg-be",
+    "lat": 50.8019192,
+    "lon": 5.2202655
+  },
+  {
+    "name": "Zepperen",
+    "province": "limburg-be",
+    "lat": 50.82116,
+    "lon": 5.24767
+  },
+  {
+    "name": "Duras",
+    "province": "limburg-be",
+    "lat": 50.83552,
+    "lon": 5.14638
+  },
+  {
+    "name": "Gorsem",
+    "province": "limburg-be",
+    "lat": 50.83483,
+    "lon": 5.16195
+  },
+  {
+    "name": "Runkelen",
+    "province": "limburg-be",
+    "lat": 50.84681,
+    "lon": 5.15088
+  },
+  {
+    "name": "Wilderen",
+    "province": "limburg-be",
+    "lat": 50.81587,
+    "lon": 5.14136
+  },
+  {
+    "name": "Velm",
+    "province": "limburg-be",
+    "lat": 50.77931,
+    "lon": 5.13162
+  },
+  {
+    "name": "Berlingen",
+    "province": "limburg-be",
+    "lat": 50.81971,
+    "lon": 5.31121
+  },
+  {
+    "name": "Wellen",
+    "province": "limburg-be",
+    "lat": 50.8436052,
+    "lon": 5.3362409
+  },
+  {
+    "name": "Herten",
+    "province": "limburg-be",
+    "lat": 50.8320635,
+    "lon": 5.3321062
+  },
+  {
+    "name": "Ulbeek",
+    "province": "limburg-be",
+    "lat": 50.84381,
+    "lon": 5.30465
+  },
+  {
+    "name": "Bommershoven",
+    "province": "limburg-be",
+    "lat": 50.788,
+    "lon": 5.37904
+  },
+  {
+    "name": "Borgloon",
+    "province": "limburg-be",
+    "lat": 50.80613,
+    "lon": 5.34302
+  },
+  {
+    "name": "Broekom",
+    "province": "limburg-be",
+    "lat": 50.78238,
+    "lon": 5.33176
+  },
+  {
+    "name": "Gors-Opleeuw",
+    "province": "limburg-be",
+    "lat": 50.8233766,
+    "lon": 5.3967118
+  },
+  {
+    "name": "Gotem",
+    "province": "limburg-be",
+    "lat": 50.80515,
+    "lon": 5.31351
+  },
+  {
+    "name": "Groot-Loon",
+    "province": "limburg-be",
+    "lat": 50.79247,
+    "lon": 5.36338
+  },
+  {
+    "name": "Haren",
+    "province": "limburg-be",
+    "lat": 50.79274,
+    "lon": 5.39953
+  },
+  {
+    "name": "Hendrieken",
+    "province": "limburg-be",
+    "lat": 50.79889,
+    "lon": 5.32811
+  },
+  {
+    "name": "Hoepertingen",
+    "province": "limburg-be",
+    "lat": 50.81235,
+    "lon": 5.28368
+  },
+  {
+    "name": "Jesseren",
+    "province": "limburg-be",
+    "lat": 50.80594,
+    "lon": 5.38989
+  },
+  {
+    "name": "Kerniel",
+    "province": "limburg-be",
+    "lat": 50.81632,
+    "lon": 5.36368
+  },
+  {
+    "name": "Kolmont",
+    "province": "limburg-be",
+    "lat": 50.8031485,
+    "lon": 5.4230892
+  },
+  {
+    "name": "Kuttekoven",
+    "province": "limburg-be",
+    "lat": 50.809,
+    "lon": 5.32603
+  },
+  {
+    "name": "Rijkel",
+    "province": "limburg-be",
+    "lat": 50.80989,
+    "lon": 5.26083
+  },
+  {
+    "name": "Voort",
+    "province": "limburg-be",
+    "lat": 50.79478,
+    "lon": 5.31971
+  },
+  {
+    "name": "Binderveld",
+    "province": "limburg-be",
+    "lat": 50.8608,
+    "lon": 5.16481
+  },
+  {
+    "name": "Kozen",
+    "province": "limburg-be",
+    "lat": 50.87496,
+    "lon": 5.23985
+  },
+  {
+    "name": "Nieuwerkerken",
+    "province": "limburg-be",
+    "lat": 50.86475,
+    "lon": 5.18869
+  },
+  {
+    "name": "Wijer",
+    "province": "limburg-be",
+    "lat": 50.89838,
+    "lon": 5.22391
+  },
+  {
+    "name": "Batsheers",
+    "province": "limburg-be",
+    "lat": 50.73855,
+    "lon": 5.28134
+  },
+  {
+    "name": "Bovelingen",
+    "province": "limburg-be",
+    "lat": 50.7375212,
+    "lon": 5.2600349
+  },
+  {
+    "name": "Gutshoven",
+    "province": "limburg-be",
+    "lat": 50.77389,
+    "lon": 5.31713
+  },
+  {
+    "name": "Heers",
+    "province": "limburg-be",
+    "lat": 50.75368,
+    "lon": 5.30209
+  },
+  {
+    "name": "Heks",
+    "province": "limburg-be",
+    "lat": 50.7701,
+    "lon": 5.35751
+  },
+  {
+    "name": "Horpmaal",
+    "province": "limburg-be",
+    "lat": 50.76049,
+    "lon": 5.33567
+  },
+  {
+    "name": "Klein-Gelmen",
+    "province": "limburg-be",
+    "lat": 50.76978,
+    "lon": 5.27694
+  },
+  {
+    "name": "Mechelen-Bovelingen",
+    "province": "limburg-be",
+    "lat": 50.74054,
+    "lon": 5.26049
+  },
+  {
+    "name": "Mettekoven",
+    "province": "limburg-be",
+    "lat": 50.78103,
+    "lon": 5.29062
+  },
+  {
+    "name": "Opheers",
+    "province": "limburg-be",
+    "lat": 50.73972,
+    "lon": 5.29766
+  },
+  {
+    "name": "Rukkelingen-Loon",
+    "province": "limburg-be",
+    "lat": 50.72784,
+    "lon": 5.25444
+  },
+  {
+    "name": "Vechmaal",
+    "province": "limburg-be",
+    "lat": 50.76141,
+    "lon": 5.37466
+  },
+  {
+    "name": "Veulen",
+    "province": "limburg-be",
+    "lat": 50.76371,
+    "lon": 5.30578
+  },
+  {
+    "name": "Boekhout",
+    "province": "limburg-be",
+    "lat": 50.74568,
+    "lon": 5.23353
+  },
+  {
+    "name": "Gingelom",
+    "province": "limburg-be",
+    "lat": 50.74988,
+    "lon": 5.1332
+  },
+  {
+    "name": "Jeuk",
+    "province": "limburg-be",
+    "lat": 50.73427,
+    "lon": 5.20969
+  },
+  {
+    "name": "Kortijs",
+    "province": "limburg-be",
+    "lat": 50.70745,
+    "lon": 5.14944
+  },
+  {
+    "name": "Montenaken",
+    "province": "limburg-be",
+    "lat": 50.72101,
+    "lon": 5.12721
+  },
+  {
+    "name": "Niel-Bij-Sint-Truiden",
+    "province": "limburg-be",
+    "lat": 50.74217,
+    "lon": 5.14205
+  },
+  {
+    "name": "Vorsen",
+    "province": "limburg-be",
+    "lat": 50.70391,
+    "lon": 5.16858
+  },
+  {
+    "name": "Borlo",
+    "province": "limburg-be",
+    "lat": 50.74216,
+    "lon": 5.18135
+  },
+  {
+    "name": "Buvingen",
+    "province": "limburg-be",
+    "lat": 50.75294,
+    "lon": 5.17767
+  },
+  {
+    "name": "Mielen-Boven-Aalst",
+    "province": "limburg-be",
+    "lat": 50.7554353,
+    "lon": 5.2150212
+  },
+  {
+    "name": "Muizen",
+    "province": "limburg-be",
+    "lat": 50.76024,
+    "lon": 5.17944
+  },
+  {
+    "name": "Sint-Huibrechts-Lille",
+    "province": "limburg-be",
+    "lat": 51.22251,
+    "lon": 5.49576
+  },
+  {
+    "name": "Lommel",
+    "province": "limburg-be",
+    "lat": 51.2304193,
+    "lon": 5.3110063
+  },
+  {
+    "name": "Achel",
+    "province": "limburg-be",
+    "lat": 51.25224,
+    "lon": 5.47953
+  },
+  {
+    "name": "Hamont",
+    "province": "limburg-be",
+    "lat": 51.25272,
+    "lon": 5.54953
+  },
+  {
+    "name": "Hamont-Achel",
+    "province": "limburg-be",
+    "lat": 51.2697668,
+    "lon": 5.5154222
+  },
+  {
+    "name": "Hechtel",
+    "province": "limburg-be",
+    "lat": 51.1252349,
+    "lon": 5.3661124
+  },
+  {
+    "name": "Hechtel-Eksel",
+    "province": "limburg-be",
+    "lat": 51.1105222,
+    "lon": 5.3295958
+  },
+  {
+    "name": "Eksel",
+    "province": "limburg-be",
+    "lat": 51.1546138,
+    "lon": 5.3943545
+  },
+  {
+    "name": "Ham",
+    "province": "limburg-be",
+    "lat": 51.1038173,
+    "lon": 5.1777363
+  },
+  {
+    "name": "Kwaadmechelen",
+    "province": "limburg-be",
+    "lat": 51.10072,
+    "lon": 5.14416
+  },
+  {
+    "name": "Oostham",
+    "province": "limburg-be",
+    "lat": 51.10373,
+    "lon": 5.18022
+  },
+  {
+    "name": "Bocholt",
+    "province": "limburg-be",
+    "lat": 51.17291,
+    "lon": 5.57899
+  },
+  {
+    "name": "Kaulille",
+    "province": "limburg-be",
+    "lat": 51.18717,
+    "lon": 5.52568
+  },
+  {
+    "name": "Reppel",
+    "province": "limburg-be",
+    "lat": 51.15506,
+    "lon": 5.56309
+  },
+  {
+    "name": "Beek",
+    "province": "limburg-be",
+    "lat": 51.1558,
+    "lon": 5.60359
+  },
+  {
+    "name": "Bree",
+    "province": "limburg-be",
+    "lat": 51.14099,
+    "lon": 5.59802
+  },
+  {
+    "name": "Gerdingen",
+    "province": "limburg-be",
+    "lat": 51.14804,
+    "lon": 5.5802
+  },
+  {
+    "name": "Opitter",
+    "province": "limburg-be",
+    "lat": 51.11657,
+    "lon": 5.64972
+  },
+  {
+    "name": "Tongerlo",
+    "province": "limburg-be",
+    "lat": 51.12856,
+    "lon": 5.66145
+  },
+  {
+    "name": "Leopoldsburg",
+    "province": "limburg-be",
+    "lat": 51.1183684,
+    "lon": 5.250695
+  },
+  {
+    "name": "Heppen",
+    "province": "limburg-be",
+    "lat": 51.1088735,
+    "lon": 5.2285739
+  },
+  {
+    "name": "Tessenderlo",
+    "province": "limburg-be",
+    "lat": 51.0642666,
+    "lon": 5.0881938
+  },
+  {
+    "name": "Grote-Brogel",
+    "province": "limburg-be",
+    "lat": 51.15435,
+    "lon": 5.50838
+  },
+  {
+    "name": "Kleine-Brogel",
+    "province": "limburg-be",
+    "lat": 51.17258,
+    "lon": 5.45019
+  },
+  {
+    "name": "Peer",
+    "province": "limburg-be",
+    "lat": 51.1329,
+    "lon": 5.4536
+  },
+  {
+    "name": "Wijchmaal",
+    "province": "limburg-be",
+    "lat": 51.13556,
+    "lon": 5.41311
   }
 ]
