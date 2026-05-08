@@ -14,18 +14,18 @@ export default function LightningMap({ lat, lon }: Props) {
 
   if (!mounted) return <div className="h-[450px] bg-slate-100 animate-pulse rounded-2xl" />;
 
-  // Windy's "thunder" overlay shows thunderstorm forecasts and live lightning
-  const src = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=%C2%B0C&metricWind=km%2Fh&zoom=7&overlay=thunder&lat=${lat}&lon=${lon}`;
+  // Blitzortung.org is the raw live lightning network powering LightningMaps.org
+  const src = `https://map.blitzortung.org/#7/${lat}/${lon}`;
 
   return (
     <div className="card overflow-hidden">
       <div className="px-5 pt-5 pb-3 flex items-center justify-between">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">
-            Actuele en verwachte ontladingen
+            Actuele ontladingen (LightningMaps netwerk)
           </p>
           <h3 className="text-sm font-black text-slate-800 leading-none flex items-center gap-2">
-            Windy Onweer Radar
+            Live Bliksemradar
           </h3>
         </div>
         <div className="flex items-center gap-1.5">
