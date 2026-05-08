@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 
 const MODELS = {
-  large: "nousresearch/hermes-4-405b",  // complexe taken (WWS, orchestrator)
+  large: "nousresearch/hermes-4-70b",  // complexe taken (brein)
   fast:  "nousresearch/hermes-4-70b",   // snelle taken
   seo:   "nousresearch/hermes-4-70b",   // batch SEO
   persona: "deepseek/deepseek-v4-flash", // persona briefs (Piet/Reed/Steve)
