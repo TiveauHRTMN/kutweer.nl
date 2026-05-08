@@ -21,9 +21,8 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
     console.error("Could not load logo for OpenGraph", e);
   }
 
-  // Raw SVG path for a nice, fluffy cloud
-  const cloudSvg = (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+  const CloudSvg = ({ size, opacity }: { size: number, opacity: number }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" stroke="none" style={{ color: `rgba(255,255,255,${opacity})` }}>
       <path d="M17.5 19c2.485 0 4.5-2.015 4.5-4.5 0-2.31-1.748-4.225-4-4.475V10c0-3.314-2.686-6-6-6-2.94 0-5.385 2.115-5.91 4.905C3.398 9.38 1.5 11.662 1.5 14.5 1.5 16.985 3.515 19 6 19h11.5z" />
     </svg>
   );
@@ -46,18 +45,18 @@ export default async function OgImage({ params }: { params: Promise<{ province: 
         }}
       >
         {/* SVG Cloud 1 (top left) */}
-        <div style={{ position: "absolute", top: "-150px", left: "-200px", width: "1200px", height: "1200px", color: "rgba(255,255,255,0.18)", display: "flex" }}>
-          {cloudSvg}
+        <div style={{ position: "absolute", top: "-150px", left: "-100px", display: "flex" }}>
+          <CloudSvg size={800} opacity={0.25} />
         </div>
         
         {/* SVG Cloud 2 (middle right) */}
-        <div style={{ position: "absolute", top: "-50px", right: "-300px", width: "1500px", height: "1500px", color: "rgba(255,255,255,0.15)", display: "flex" }}>
-          {cloudSvg}
+        <div style={{ position: "absolute", top: "-50px", right: "-200px", display: "flex" }}>
+          <CloudSvg size={1000} opacity={0.2} />
         </div>
         
         {/* SVG Cloud 3 (bottom left) */}
-        <div style={{ position: "absolute", bottom: "-300px", left: "0px", width: "1400px", height: "1400px", color: "rgba(255,255,255,0.12)", display: "flex" }}>
-          {cloudSvg}
+        <div style={{ position: "absolute", bottom: "-250px", left: "-50px", display: "flex" }}>
+          <CloudSvg size={900} opacity={0.25} />
         </div>
 
         {/* WEERZONE Brand Badge (Image) */}
