@@ -302,55 +302,69 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
   useEffect(() => {
     let cancelled = false;
     if (!weather) setLoading(true);
-    Promise.all([
-      loadWeather(city.lat, city.lon, () => {}, (fresh) => { if (!cancelled) setWeather(fresh); }, (neural) => { if (!cancelled) setWeather((prev) => (prev ? { ...prev, neuralData: neural } : prev)); }, true),
-      loadWWS(city.lat, city.lon)
-    ]).then(([w, wwsPayload]) => {
-      if (!cancelled) {
-        setWeather(w);
-        setWWS(wwsPayload);
-        setLoading(false);
-        if (wwsPayload?.piet_update?.content) { setPietAnalysis(wwsPayload.piet_update.content); return; }
-        if (w.deepAnalysis) { setPietAnalysis(w.deepAnalysis); return; }
 
-        // SECURITY & COST CONTROL: Voer Vertex AI uitsluitend uit voor betalende abonnees of de Founder
-        const hasPaidTier = tier === "piet" || tier === "reed" || tier === "steve" || isFounder;
-        if (!hasPaidTier) {
-           return; // Niet-betalende gebruikers zien wazige content, we besparen Vertex AI kosten.
-        }
+    // 1. Load fast weather data immediately to unblock UI
+    loadWeather(
+      city.lat,
+      city.lon,
+      () => {},
+      (fresh) => { if (!cancelled) { setWeather(fresh); setLoading(false); } },
+      (neural) => { if (!cancelled) setWeather((prev) => (prev ? { ...prev, neuralData: neural } : prev)); },
+      true
+    ).then((w) => {
+      if (cancelled) return;
+      setWeather(w);
+      setLoading(false);
 
-        // Haal live data op van Gemini 1.5 Pro via onze Vertex AI route
-        fetch('/api/persona/piet', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ weather: w, city: city.name, userName: user?.user_metadata?.full_name || 'gebruiker' })
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (!cancelled && data.narrative) {
-              setAiNarrative(data.narrative);
-              patchCacheDeep(city.lat, city.lon, data.narrative);
-            } else if (!cancelled) {
-              // Fallback als Gemini faalt
-              getPietDeepAnalysis(w).then((analysis) => { 
-                setPietAnalysis(analysis); 
-                patchCacheDeep(city.lat, city.lon, analysis); 
-              });
-            }
-          })
-          .catch((err) => {
-             console.error("Vertex AI Error:", err);
-             if (!cancelled) {
-                getPietDeepAnalysis(w).then((analysis) => { 
-                  setPietAnalysis(analysis); 
-                  patchCacheDeep(city.lat, city.lon, analysis); 
-                });
-             }
-          });
+      if (w.deepAnalysis && !pietAnalysis) {
+        setPietAnalysis(w.deepAnalysis);
       }
+
+      // 2. Trigger slow AI analysis in background
+      const hasPaidTier = tier === "piet" || tier === "reed" || tier === "steve" || isFounder;
+      if (!hasPaidTier) return;
+
+      fetch('/api/persona/piet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ weather: w, city: city.name, userName: user?.user_metadata?.full_name || 'gebruiker' })
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        if (!cancelled && data.narrative) {
+          setAiNarrative(data.narrative);
+          patchCacheDeep(city.lat, city.lon, data.narrative);
+        } else if (!cancelled) {
+          getPietDeepAnalysis(w).then((analysis) => { 
+            setPietAnalysis(analysis); 
+            patchCacheDeep(city.lat, city.lon, analysis); 
+          });
+        }
+      })
+      .catch((err) => {
+        console.error("Vertex AI Error:", err);
+        if (!cancelled) {
+          getPietDeepAnalysis(w).then((analysis) => { 
+            setPietAnalysis(analysis); 
+            patchCacheDeep(city.lat, city.lon, analysis); 
+          });
+        }
+      });
+
     }).catch(() => !cancelled && setLoading(false));
+
+    // 3. Load WWS completely decoupled
+    loadWWS(city.lat, city.lon).then((wwsPayload) => {
+      if (!cancelled) {
+        setWWS(wwsPayload);
+        if (wwsPayload?.piet_update?.content && !aiNarrative) { 
+          setPietAnalysis(wwsPayload.piet_update.content); 
+        }
+      }
+    }).catch(() => {});
+
     return () => { cancelled = true; };
-  }, [city, user?.user_metadata?.full_name]);
+  }, [city, tier, isFounder, user?.user_metadata?.full_name]);
 
   const locate = () => {
     if (!("geolocation" in navigator)) return;

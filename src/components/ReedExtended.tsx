@@ -61,42 +61,52 @@ export default function ReedExtended({ initialWeather, initialCity }: ReedProps)
       .then(data => { if (!cancelled) setKnmiWarnings(data.warnings ?? []); })
       .catch(() => {});
 
-    Promise.all([
-      loadWeather(city.lat, city.lon, () => {}, (fresh) => { if (!cancelled) setWeather(fresh); }, undefined, true),
-      loadWWS(city.lat, city.lon)
-    ])
-    .then(([w, wwsPayload]) => {
-      if (!cancelled) {
-        setWeather(w);
-        setWWS(wwsPayload);
-        setLoading(false);
+    // 1. Load fast weather data immediately to unblock UI
+    loadWeather(
+      city.lat,
+      city.lon,
+      () => {},
+      (fresh) => { if (!cancelled) { setWeather(fresh); setLoading(false); } },
+      undefined,
+      true
+    ).then((w) => {
+      if (cancelled) return;
+      setWeather(w);
+      setLoading(false);
 
-        if (hasPaidTier && !aiNarrative) {
-            fetch('/api/persona/reed', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    weather: w,
-                    city: city.name,
-                    userName: user?.user_metadata?.full_name || 'gebruiker'
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (!cancelled) {
-                    if (data.narrative) {
-                        setAiNarrative(data.narrative);
-                        patchCacheDeep(city.lat, city.lon, data.narrative);
-                    } else {
-                        setAiError(true);
-                    }
-                }
-            })
-            .catch(err => { console.error("Reed AI Error:", err); if (!cancelled) setAiError(true); });
-        }
+      if (hasPaidTier && !aiNarrative) {
+        fetch('/api/persona/reed', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            weather: w,
+            city: city.name,
+            userName: user?.user_metadata?.full_name || 'gebruiker'
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (!cancelled) {
+            if (data.narrative) {
+              setAiNarrative(data.narrative);
+              patchCacheDeep(city.lat, city.lon, data.narrative);
+            } else {
+              setAiError(true);
+            }
+          }
+        })
+        .catch(err => { console.error("Reed AI Error:", err); if (!cancelled) setAiError(true); });
       }
-    })
-    .catch(() => !cancelled && setLoading(false));
+    }).catch(() => !cancelled && setLoading(false));
+
+    // 2. Load slow WWS orchestrator decoupled in the background
+    loadWWS(city.lat, city.lon)
+      .then((wwsPayload) => {
+        if (!cancelled) {
+          setWWS(wwsPayload);
+        }
+      })
+      .catch(() => {});
 
     return () => { cancelled = true; };
   }, [city, tier, isFounder, user?.user_metadata?.full_name]);
