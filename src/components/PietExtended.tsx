@@ -512,6 +512,9 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
         ))}
       </div>
 
+      {/* 5B. LIVE REGENRADAR */}
+      <RainMap lat={city.lat} lon={city.lon} />
+
       {/* 6. LEEFSTIJL SCORES */}
       <div className="card overflow-hidden">
         <div className="px-5 pt-5 pb-3">
