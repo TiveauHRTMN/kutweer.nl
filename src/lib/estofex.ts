@@ -65,6 +65,7 @@ async function fetchActiveForecasts(): Promise<EstofexForecast[]> {
     const res = await fetch(ESTOFEX_INDEX, {
       next: { revalidate: 1800 }, // 30 min — Estofex updatet 1-2× per dag
       headers: { "User-Agent": "WeerzoneBot/1.0 (+https://weerzone.nl)" },
+      signal: AbortSignal.timeout(3000),
     });
     if (!res.ok) return [];
     const html = await res.text();
@@ -101,6 +102,7 @@ async function fetchForecastDetail(forecast: EstofexForecast): Promise<{
     const res = await fetch(forecast.detailUrl, {
       next: { revalidate: 1800 },
       headers: { "User-Agent": "WeerzoneBot/1.0 (+https://weerzone.nl)" },
+      signal: AbortSignal.timeout(3000),
     });
     if (!res.ok) return null;
     const html = await res.text();

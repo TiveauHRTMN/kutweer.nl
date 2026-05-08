@@ -160,6 +160,7 @@ async function fetchProvincePage(slug: string): Promise<KNMIWarning[]> {
     const res = await fetch(url, {
       next: { revalidate: 300 },
       headers: { "User-Agent": "WeerzoneBot/1.0 (+https://weerzone.nl)" },
+      signal: AbortSignal.timeout(3000),
     });
     if (!res.ok) return [];
     const html = await res.text();

@@ -4,7 +4,8 @@ export async function fetchGoogleWeather(lat: number, lon: number) {
   
   try {
     const res = await fetch(`https://weather.googleapis.com/v1/forecast/hours:lookup?key=${apiKey}&location.latitude=${lat}&location.longitude=${lon}&hours=48&languageCode=nl`, {
-      next: { revalidate: 300 }
+      next: { revalidate: 300 },
+      signal: AbortSignal.timeout(3000)
     });
     if (!res.ok) {
         const body = await res.json().catch(() => ({}));

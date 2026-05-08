@@ -122,7 +122,10 @@ export async function fetchWeatherData(lat: number, lon: number, isBot: boolean 
       forecast_hours: "48",
     })}`;
     try {
-      const res = await fetch(url, { next: { revalidate: 600 } });
+      const res = await fetch(url, { 
+        next: { revalidate: 600 },
+        signal: AbortSignal.timeout(3000)
+      });
       if (!res.ok) {
         console.error("Open-Meteo non-ok", res.status, url.slice(0, 80));
         return null;
