@@ -71,6 +71,36 @@ export interface ModelComparison {
   sources: string[];
 }
 
+export interface PollenHour {
+  time: string;
+  grass: number | null;
+  birch: number | null;
+  alder: number | null;
+  mugwort: number | null;
+}
+
+export interface AirQualityData {
+  hourly: PollenHour[];
+  peakGrass: number | null;
+  peakBirch: number | null;
+  peakAlder: number | null;
+  peakMugwort: number | null;
+}
+
+export interface MarineHour {
+  time: string;
+  waveHeight: number | null;
+  waveDirection: number | null;
+  wavePeriod: number | null;
+  windWaveHeight: number | null;
+  swellWaveHeight: number | null;
+  seaSurfaceTemperature: number | null;
+}
+
+export interface MarineData {
+  hourly: MarineHour[];
+}
+
 export interface WWSPayload {
   timestamp: string;
   system_status: string;

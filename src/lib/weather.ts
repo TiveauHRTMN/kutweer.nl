@@ -1,4 +1,4 @@
-import type { WeatherData, HourlyForecast, MinutelyPrecipitation } from "./types";
+import type { WeatherData, HourlyForecast, MinutelyPrecipitation, AirQualityData, MarineData } from "./types";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import { fetchGoogleWeather, mapGoogleWeatherConditionToWMO } from "./google-weather";
@@ -422,6 +422,115 @@ export async function getNeuralInsights(lat: number, lon: number, weather: Weath
   } catch (e) {
     console.error("Neural Insights Error:", e);
     return undefined;
+  }
+}
+
+const AIR_QUALITY_BASE = "https://air-quality-api.open-meteo.com/v1/air-quality";
+const MARINE_BASE = "https://marine-api.open-meteo.com/v1/marine";
+
+export async function fetchAirQuality(lat: number, lon: number): Promise<AirQualityData | null> {
+  if (process.env.NEXT_PHASE === "phase-production-build") return null;
+  try {
+    const params = new URLSearchParams({
+      latitude: lat.toString(),
+      longitude: lon.toString(),
+      hourly: "grass_pollen,birch_pollen,alder_pollen,mugwort_pollen",
+      domains: "cams_europe",
+      timezone: "Europe/Amsterdam",
+      forecast_days: "5",
+    });
+    const res = await fetch(`${AIR_QUALITY_BASE}?${params}`, { next: { revalidate: 3600 } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const h = data.hourly;
+    const times: string[] = h.time ?? [];
+    const hourly = times.map((time, i) => ({
+      time,
+      grass: h.grass_pollen?.[i] ?? null,
+      birch: h.birch_pollen?.[i] ?? null,
+      alder: h.alder_pollen?.[i] ?? null,
+      mugwort: h.mugwort_pollen?.[i] ?? null,
+    }));
+    const peak = (arr: (number | null)[]) =>
+      arr.reduce<number | null>((max, v) => (v !== null && (max === null || v > max) ? v : max), null);
+    return {
+      hourly,
+      peakGrass: peak(hourly.map((r) => r.grass)),
+      peakBirch: peak(hourly.map((r) => r.birch)),
+      peakAlder: peak(hourly.map((r) => r.alder)),
+      peakMugwort: peak(hourly.map((r) => r.mugwort)),
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function getPollenLevel(grains: number | null, type: "grass" | "tree"): { label: string; level: 0 | 1 | 2 | 3 } {
+  if (grains === null) return { label: "Onbekend", level: 0 };
+  if (type === "grass") {
+    if (grains < 10) return { label: "Laag", level: 0 };
+    if (grains < 30) return { label: "Matig", level: 1 };
+    if (grains < 50) return { label: "Hoog", level: 2 };
+    return { label: "Zeer hoog", level: 3 };
+  }
+  // tree (birch, alder, mugwort)
+  if (grains < 10) return { label: "Laag", level: 0 };
+  if (grains < 50) return { label: "Matig", level: 1 };
+  if (grains < 200) return { label: "Hoog", level: 2 };
+  return { label: "Zeer hoog", level: 3 };
+}
+
+const NL_COASTAL_POINTS: [number, number][] = [
+  [51.44, 3.57],  // Vlissingen
+  [51.97, 4.12],  // Hoek van Holland
+  [52.10, 4.27],  // Scheveningen
+  [52.37, 4.53],  // Zandvoort
+  [52.46, 4.53],  // IJmuiden
+  [52.96, 4.75],  // Den Helder
+  [53.05, 4.80],  // Texel
+  [53.38, 5.22],  // Terschelling
+  [53.52, 6.20],  // Eemshaven
+];
+
+function nearestCoastalPoint(lat: number, lon: number): [number, number] {
+  let best = NL_COASTAL_POINTS[0];
+  let bestDist = Infinity;
+  for (const p of NL_COASTAL_POINTS) {
+    const d = (p[0] - lat) ** 2 + (p[1] - lon) ** 2;
+    if (d < bestDist) { bestDist = d; best = p; }
+  }
+  return best;
+}
+
+export async function fetchMarineData(lat: number, lon: number): Promise<MarineData | null> {
+  if (process.env.NEXT_PHASE === "phase-production-build") return null;
+  const [clat, clon] = nearestCoastalPoint(lat, lon);
+  try {
+    const params = new URLSearchParams({
+      latitude: clat.toString(),
+      longitude: clon.toString(),
+      hourly: "wave_height,wave_direction,wave_period,wind_wave_height,swell_wave_height,sea_surface_temperature",
+      timezone: "Europe/Amsterdam",
+      forecast_days: "5",
+    });
+    const res = await fetch(`${MARINE_BASE}?${params}`, { next: { revalidate: 3600 } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const h = data.hourly;
+    const times: string[] = h.time ?? [];
+    return {
+      hourly: times.map((time, i) => ({
+        time,
+        waveHeight: h.wave_height?.[i] ?? null,
+        waveDirection: h.wave_direction?.[i] ?? null,
+        wavePeriod: h.wave_period?.[i] ?? null,
+        windWaveHeight: h.wind_wave_height?.[i] ?? null,
+        swellWaveHeight: h.swell_wave_height?.[i] ?? null,
+        seaSurfaceTemperature: h.sea_surface_temperature?.[i] ?? null,
+      })),
+    };
+  } catch {
+    return null;
   }
 }
 
