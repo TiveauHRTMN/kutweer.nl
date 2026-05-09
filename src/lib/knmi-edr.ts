@@ -273,29 +273,38 @@ async function _fetchDailyRange(
 const FORECAST_DATASET = "short_term_weather_forecast";
 const FORECAST_VERSION = "1.0";
 
+function stripXmlTags(xml: string): string {
+  return xml.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
 /**
  * Fetches the latest KNMI short-term weather forecast text bulletin.
  * Published several times a day; covers today + tomorrow for the Netherlands.
+ * Prefers .txt files; falls back to .xml with tag stripping.
  * Returns the raw Dutch text, or null on failure.
  */
 export async function fetchKNMIShortForecast(): Promise<string | null> {
   const headers = odaHeaders();
 
   try {
+    // Fetch 5 recent files — KNMI publishes txt+xml pairs so txt may not be #1
     const listRes = await fetch(
-      `${ODA_BASE}/datasets/${FORECAST_DATASET}/versions/${FORECAST_VERSION}/files?orderBy=lastModified&sorting=desc&maxKeys=1`,
+      `${ODA_BASE}/datasets/${FORECAST_DATASET}/versions/${FORECAST_VERSION}/files?orderBy=lastModified&sorting=desc&maxKeys=5`,
       { headers, next: { revalidate: 1800 } }
     );
     if (!listRes.ok) return null;
     const listData = await listRes.json();
-    const file = listData?.files?.[0];
-    if (!file?.filename) return null;
+    const files: Array<{ filename: string }> = listData?.files ?? [];
+    if (!files.length) return null;
 
-    // Only txt files are useful for LLM consumption
-    if (!String(file.filename).endsWith(".txt")) return null;
+    // Prefer .txt; fall back to .xml
+    const pick =
+      files.find((f) => String(f.filename).endsWith(".txt")) ??
+      files.find((f) => String(f.filename).endsWith(".xml")) ??
+      files[0];
 
     const urlRes = await fetch(
-      `${ODA_BASE}/datasets/${FORECAST_DATASET}/versions/${FORECAST_VERSION}/files/${encodeURIComponent(file.filename)}/url`,
+      `${ODA_BASE}/datasets/${FORECAST_DATASET}/versions/${FORECAST_VERSION}/files/${encodeURIComponent(pick.filename)}/url`,
       { headers, next: { revalidate: 1800 } }
     );
     if (!urlRes.ok) return null;
@@ -305,9 +314,9 @@ export async function fetchKNMIShortForecast(): Promise<string | null> {
     const textRes = await fetch(downloadUrl);
     if (!textRes.ok) return null;
 
-    const text = await textRes.text();
-    // Trim and cap at 800 chars — the bulletin is short, but just in case
-    return text.trim().slice(0, 800) || null;
+    const raw = await textRes.text();
+    const text = pick.filename.endsWith(".xml") ? stripXmlTags(raw) : raw;
+    return text.trim().slice(0, 1000) || null;
   } catch {
     return null;
   }
