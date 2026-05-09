@@ -7,7 +7,6 @@ import { DUTCH_CITIES } from "@/lib/types";
 import { fetchWeatherData, fetchAirQuality, fetchMarineData } from "@/lib/weather";
 import { fetchKNMIWarnings, warningsForProvince, nearestProvinceSlug, PROVINCE_SLUG_TO_KNMI } from "@/lib/knmi-warnings";
 import KnmiWarningBanner from "@/components/KnmiWarningBanner";
-import LocateButton from "@/components/LocateButton";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import PollenWidget from "@/components/PollenWidget";
 import MarineWidget from "@/components/MarineWidget";
@@ -88,6 +87,14 @@ const jsonLd = {
     },
   ],
 };
+
+function timeGreeting(): string {
+  const h = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Amsterdam" })).getHours();
+  if (h >= 6 && h < 12) return "Goedemorgen";
+  if (h >= 12 && h < 18) return "Goedemiddag";
+  if (h >= 18 && h < 23) return "Goedenavond";
+  return "Hoi";
+}
 
 export default async function MijnWeerPage() {
   const loc = await getSavedLocationServer().catch(() => null);
@@ -216,25 +223,22 @@ export default async function MijnWeerPage() {
           topContent={
             <div className="space-y-6">
               <div className="card p-6 sm:p-8">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="w-3 h-3 rounded-full bg-emerald-500" />
-                  <span className="text-xs font-black uppercase tracking-widest text-emerald-600">
-                    Mijn Weer · 48 uur
-                  </span>
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-900 leading-tight mb-2">
-                  {greetingName !== "jou" ? `Hoi ${greetingName}, dit is jouw weer` : "Dit is jouw weer"}
-                </h1>
-                <p className="text-sm text-slate-500 leading-relaxed mb-5">
-                  Hyperlokale 48-uurs voorspelling voor <strong className="text-slate-900">{activeLoc.name}</strong>
-                  {provinceSlug && PROVINCE_SLUG_TO_KNMI[provinceSlug] && ` · ${PROVINCE_SLUG_TO_KNMI[provinceSlug]}`}.
-                  Per uur bijgewerkt, in gewone taal.
+                <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-5">
+                  Mijn Weer
                 </p>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <LocateButton compact label="Gebruik mijn GPS" className="!text-slate-900 !bg-slate-100 !border-slate-200 hover:!bg-slate-200" />
-                  <span className="text-[11px] text-slate-400 font-medium">
-                    Niet de juiste plaats? Klik hierboven.
-                  </span>
+                <h1 className="text-3xl sm:text-4xl font-black text-slate-900 leading-[1.15] mb-4">
+                  {greetingName !== "jou" ? (
+                    <>{timeGreeting()}, {greetingName}.<br /><span className="text-emerald-500">Dit is jouw dag.</span></>
+                  ) : (
+                    <>{timeGreeting()}.<br /><span className="text-emerald-500">Dit is jouw dag.</span></>
+                  )}
+                </h1>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                  <span className="text-sm font-bold text-slate-700">{activeLoc.name}</span>
+                  {provinceSlug && PROVINCE_SLUG_TO_KNMI[provinceSlug] && (
+                    <span className="text-sm text-slate-400">· {PROVINCE_SLUG_TO_KNMI[provinceSlug]}</span>
+                  )}
                 </div>
               </div>
 
