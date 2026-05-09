@@ -68,14 +68,14 @@ export default function KNMIRadarCard() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-sm font-black text-slate-900">Laatste meting: {timeStr}</p>
+        <p className="text-sm font-black text-slate-900">
+          Laatste meting: {timeStr}{" "}
           {minutesAgo <= 10 && (
-            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full align-middle">
               {minutesAgo === 0 ? "Net nu" : `${minutesAgo} min geleden`}
             </span>
           )}
-        </div>
+        </p>
         <p className="text-xs text-slate-400 truncate" title={data.filename}>
           {data.dataset} · {data.filename}
         </p>
