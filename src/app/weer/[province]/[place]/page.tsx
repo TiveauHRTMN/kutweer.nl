@@ -129,22 +129,22 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
   const nearby = nearbyPlaces(place, 12);
   const isTopCity = TOP_CITIES.includes(place.name);
 
-  // Initial weather fetch on server for instant LCP & Disaster SEO
-  // Bij bots skippen we de zware modellen om API limits (429) te voorkomen
-  const [initialWeather, allWarnings] = await Promise.all([
+  // Fetch weather, KNMI warnings, and SEO data all in parallel
+  const [initialWeather, allWarnings, hermesSEO, seoContent] = await Promise.all([
     fetchWeatherData(place.lat, place.lon, isBot).catch(() => undefined),
     fetchKNMIWarnings().catch(() => []),
+    getHermesSEO(place.name, province).catch(() => null),
+    getLocationSEOContent(place.name, provLabel, place.character).catch(() => ""),
   ]);
   const provinceWarnings = warningsForProvince(allWarnings, province);
 
   // Hermes Disaster SEO: Dynamic Schema Injection
   let schemaTitle = `Weer ${place.name} — WEERZONE`;
   let schemaDesc = `De nauwkeurigste 48-uurs weersvoorspelling voor ${place.name}, ${provLabel}. Op 1 bij 1 kilometer precies.`;
-  
+
   if (initialWeather) {
     const { getMisereScore } = await import("@/lib/commentary");
     const misery = getMisereScore(initialWeather);
-    // If the weather is highly disruptive, hijack the SERP schema
     if (misery.score >= 8) {
       schemaTitle = `🚨 ALARM: Extreem Weer ${place.name} — WEERZONE`;
       schemaDesc = `WAARSCHUWING voor ${place.name}: ${misery.label}. Bekijk de exacte 48-uurs voorspelling en extremiteiten-index.`;
@@ -152,13 +152,12 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
   }
 
   const weatherPageLd = schemaCityWeatherPage({ placeName: place.name, lat: place.lat, lon: place.lon, province, slug });
-  
-  // Safe, high-impact schema markup
+
   const datasetLd = schemaCityDataset({ placeName: place.name, url: `https://weerzone.nl/weer/${province}/${slug}` });
-  const ratingLd = schemaAggregateRating({ 
-    itemName: `WeerZone ${place.name} Radar & Data`, 
-    ratingValue: initialWeather ? 4.8 : 4.6, 
-    ratingCount: initialWeather ? 184 : 42 
+  const ratingLd = schemaAggregateRating({
+    itemName: `WeerZone ${place.name} Radar & Data`,
+    ratingValue: initialWeather ? 4.8 : 4.6,
+    ratingCount: initialWeather ? 184 : 42
   });
 
   const breadcrumbLd = schemaBreadcrumb([
@@ -169,8 +168,6 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
   ]);
 
   const city = { name: place.name, lat: place.lat, lon: place.lon };
-  const hermesSEO = await getHermesSEO(place.name, province);
-  const seoContent = await getLocationSEOContent(place.name, provLabel, place.character);
 
 
   return (

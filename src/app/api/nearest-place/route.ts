@@ -37,5 +37,7 @@ export async function GET(req: NextRequest) {
     name: nearest.name,
     province: nearest.province,
     slug: placeSlug(nearest.name),
+    lat: nearest.lat,
+    lon: nearest.lon,
   });
 }

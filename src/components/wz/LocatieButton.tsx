@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { MapPin, Loader2, AlertCircle } from "lucide-react";
+import { persistCity } from "@/lib/persist-city";
 
 interface Props {
   active?: boolean;
@@ -61,9 +62,10 @@ export default function LocatieButton({ active = false, compact = false }: Props
           const res = await fetch(`/api/nearest-place?lat=${lat}&lon=${lon}`);
           if (!res.ok) throw new Error("API fout");
           const place = await res.json();
-          if (place?.province && place?.slug) {
+          if (place?.province && place?.slug && place?.lat && place?.lon) {
             setFound(place.name);
             setState("found");
+            persistCity({ name: place.name, lat: place.lat, lon: place.lon });
             setTimeout(() => {
               window.location.href = `/weer/${place.province}/${place.slug}`;
             }, 800);
