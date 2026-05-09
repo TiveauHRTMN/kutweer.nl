@@ -31,7 +31,7 @@ const FAQS: Array<[string, string]> = [
   ["Waarom is het nu gratis?", "We zijn nog in opbouw. Je kunt je nu gratis aanmelden zonder creditcard."],
   ["Wat is het verschil tussen Piet, Reed en Steve?", "Piet schrijft een dagelijkse weermail voor thuis. Reed stuurt daarnaast alleen bericht als het weer over jouw drempel gaat. Steve doet hetzelfde voor bedrijven, inclusief advies per vestiging."],
   ["Kan ik wisselen van abonnement?", "Ja. Je kunt maandelijks upgraden of downgraden via je account. Als je nu bij de eerste aanmeldingen zit, behoud je de lage aanmeldprijs van je nieuwe abonnement."],
-  ["Waarom maar 48 uur vooruit?", "Omdat een voorspelling verder dan 48 uur onbetrouwbaar wordt. Wij houden ons aan wat met het KNMI HARMONIE-model accuraat te zeggen is — 48 uur op een raster van 2,5 km."],
+  ["Waarom maar 48 uur vooruit?", "Omdat een voorspelling verder dan 48 uur onbetrouwbaar wordt. Wij houden ons aan wat met de meest nauwkeurige Nederlandse weermodellen accuraat te zeggen is — 48 uur zeer lokaal per buurt."],
   ["Hoe gaat de betaling straks?", "Via Mollie: iDEAL, creditcard of Bancontact. Per maand of per jaar (jaar: twee maanden korting). Opzeggen kan op elk moment vanuit je account."],
   ["Wat is het verschil met Buienradar of Weerplaza?", "Weerzone is reclamevrij en is afgestemd op jouw situatie: je postcode en de voorkeuren die je bij aanmelden hebt doorgegeven."],
 ];
@@ -146,7 +146,6 @@ export default function PrijzenClient({ userTier, isFounder, initialWeatherCode,
               <div className="rounded-2xl p-3 mb-4" style={{ background: "rgba(0,0,0,0.04)" }}>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-lg font-black text-text-primary">Gratis tijdens bèta</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent-cyan/10 text-accent-cyan">bèta</span>
                 </div>
                 <p className="text-xs text-text-muted">Straks {formatPrice(reed.priceCents!)}/mnd — geen creditcard nodig</p>
               </div>

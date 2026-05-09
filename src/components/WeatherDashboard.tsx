@@ -27,8 +27,8 @@ import SupportBanner from "./SupportBanner";
 import Footer from "./Footer";
 import WeatherAdvice from "./WeatherAdvice";
 import dynamic from "next/dynamic";
+import WeatherBackground from "./WeatherBackground";
 
-const WeatherBackground = dynamic(() => import("./WeatherBackground"));
 const RainRadar = dynamic(() => import("./RainRadar"), {
   ssr: false,
   loading: () => <div className="card p-4 text-center text-xs text-text-secondary">Radar laadt…</div>,
@@ -303,9 +303,14 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-12">
                 <div className="flex flex-col items-start">
                   <div className="flex items-center gap-2 mb-6">
-                    <span className="text-[12px] font-black uppercase tracking-[0.3em] text-black bg-black/5 px-3 py-1 rounded">Actueel weer</span>
+                    <span 
+                      className="text-[12px] font-black uppercase tracking-[0.3em] text-white px-3 py-1.5 rounded-[10px] shadow-sm"
+                      style={{ background: "#3b7ff0" }}
+                    >
+                      Actueel weer
+                    </span>
                     {wws && (
-                        <div className="flex items-center gap-1.5 px-3 py-1 rounded bg-emerald-500/10 border border-emerald-500/20">
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-[10px] bg-emerald-500/10 border border-emerald-500/20">
                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Synthese Live</span>
                         </div>
@@ -326,7 +331,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
               <div className="flex flex-col gap-3">
                  <div className="flex flex-wrap items-center gap-5">
                    <span className="text-4xl font-black text-text-primary">{getWeatherDescription(weather.current.weatherCode)}</span>
-                   <span className="text-lg font-bold text-text-secondary bg-black/5 px-4 py-1.5 rounded-full shadow-inner">Voelt als {weather.current.feelsLike}°</span>
+                   <span className="text-lg font-bold text-text-secondary bg-[var(--wz-blue)]/5 px-4 py-1.5 rounded-full shadow-inner border border-[var(--wz-blue)]/10">Voelt als {weather.current.feelsLike}°</span>
                  </div>
                </div>
             </div>
@@ -360,17 +365,16 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
 
           {/* CTA: Waarschuwingen */}
           <Link href="/waarschuwingen" className="block group">
-            <div className="card p-8 sm:p-10">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-3xl">⚡</span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">Reed · Waarschuwingen</span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">Extreem weer? Wij zien het eerst.</h3>
-              <p className="text-sm text-text-secondary leading-relaxed mb-4">Reflectiviteit, CAPE, windstoten en KNMI-waarschuwingen — real-time op jouw locatie. Harmonie, ICON-D2 en Arome.</p>
-              <span className="inline-flex items-center text-sm font-black text-rose-500 group-hover:gap-3 gap-2 transition-all">Bekijk Waarschuwingen <span className="text-lg">→</span></span>
-            </div>
+          <div className="card p-8 sm:p-10">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-3xl">⚡</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">Reed · Waarschuwingen</span>
+          </div>
+          <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">Extreem weer? Wij zien het eerst.</h3>
+          <p className="text-sm text-text-secondary leading-relaxed mb-4">Reflectiviteit, CAPE, windstoten en KNMI-waarschuwingen — real-time op jouw locatie. Meerdere weermodellen tegelijk.</p>
+          <span className="inline-flex items-center text-sm font-black text-rose-500 group-hover:gap-3 gap-2 transition-all">Bekijk Waarschuwingen <span className="text-lg">→</span></span>
+          </div>
           </Link>
-
           <EmailSubscribe city={city} />
           <WeatherAdvice 
             temperature={weather.current.temperature} 

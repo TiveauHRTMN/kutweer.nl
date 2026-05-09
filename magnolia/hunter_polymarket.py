@@ -34,11 +34,13 @@ def scan_polymarket_opportunities(limit=10):
                 clob_rewards = market.get('clobTokenIds', '[]')
                 
                 if len(outcomes) == 2:
+                    raw_prices = market.get('outcomePrices', '[0,0]')
+                    prices = json.loads(raw_prices) if isinstance(raw_prices, str) else raw_prices
                     opportunities.append({
                         "question": market.get('question'),
                         "slug": market.get('slug'),
-                        "yes_price": market.get('outcomePrices', [0, 0])[0],
-                        "no_price": market.get('outcomePrices', [0, 0])[1],
+                        "yes_price": float(prices[0]) if len(prices) > 0 else 0,
+                        "no_price": float(prices[1]) if len(prices) > 1 else 0,
                         "volume_24h": market.get('volume24h'),
                         "liquidity": market.get('liquidity'),
                         "end_date": market.get('endDate')

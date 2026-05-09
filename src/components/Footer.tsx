@@ -33,14 +33,13 @@ const SECTIONS = [
 export default function Footer() {
   return (
     <footer
-      className="mt-12 mb-6 mx-4 sm:mx-6 lg:mx-8 px-8 sm:px-10 pt-14 pb-10"
+      className="mt-6 mb-6 px-8 sm:px-10 pt-14 pb-10"
       style={{
-        borderRadius: 28,
-        background: "rgba(6,10,18,0.88)",
-        backdropFilter: "blur(32px)",
-        WebkitBackdropFilter: "blur(32px)",
-        border: "1px solid rgba(255,255,255,0.10)",
-        boxShadow: "inset 0 2px 0 rgba(255,255,255,0.05), 0 12px 40px rgba(0,0,0,0.40)",
+        borderRadius: 20,
+        background: "#000000",
+        border: "1px solid rgba(255,255,255,0.1)",
+        boxShadow: "0 12px 40px rgba(0,0,0,0.5)",
+        color: "#ffd21a",
       }}
     >
       <div className="max-w-6xl mx-auto">
@@ -50,16 +49,15 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="md:col-span-4">
-            <Link href="/" className="inline-block mb-5">
-              <LogoFull height={28} />
+            <Link href="/" className="inline-block mb-5 hover:opacity-80 transition-opacity">
+              <LogoFull height={28} className="brightness-125" />
             </Link>
-            <p className="text-sm leading-relaxed font-medium mb-3" style={{ color: "rgba(255,255,255,0.65)" }}>
+            <p className="text-sm leading-relaxed font-black mb-3 opacity-90">
               Hyperlokaal weer voor keuzes vandaag en morgen.
             </p>
             <a
               href="mailto:info@weerzone.nl"
-              className="text-sm font-medium hover:text-white transition-colors"
-              style={{ color: "rgba(255,255,255,0.45)" }}
+              className="text-sm font-black transition-colors hover:text-white"
             >
               info@weerzone.nl
             </a>
@@ -69,10 +67,7 @@ export default function Footer() {
           <div className="md:col-span-8 grid grid-cols-2 gap-6">
             {SECTIONS.map((section) => (
               <div key={section.title}>
-                <h4
-                  className="text-[10px] font-black uppercase tracking-[0.22em] mb-4"
-                  style={{ color: "rgba(255,255,255,0.40)" }}
-                >
+                <h4 className="text-[10px] font-black uppercase tracking-[0.22em] mb-4 opacity-50 text-white">
                   {section.title}
                 </h4>
                 <ul className="space-y-2.5">
@@ -80,8 +75,7 @@ export default function Footer() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-[13px] font-medium hover:text-white transition-colors"
-                        style={{ color: "rgba(255,255,255,0.65)" }}
+                        className="text-[13px] font-black transition-colors hover:text-white"
                       >
                         {link.label}
                       </Link>
@@ -94,14 +88,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div
-          className="pt-8 flex flex-col items-center gap-4"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
-        >
-          <span
-            className="text-[13px] font-black uppercase tracking-[0.22em]"
-            style={{ color: "#ffd21a" }}
-          >
+        <div className="pt-8 flex flex-col items-center gap-4 border-t border-white/10">
+          <span className="text-[13px] font-black uppercase tracking-[0.22em] text-white/40">
             WEERZONE · Powered by Tiveau
           </span>
           <div className="flex flex-wrap justify-center gap-5">
@@ -111,8 +99,7 @@ export default function Footer() {
                 href={href}
                 target={href !== "#" ? "_blank" : undefined}
                 rel={href !== "#" ? "noopener noreferrer" : undefined}
-                className="text-[11px] uppercase font-black tracking-widest hover:text-white transition-colors"
-                style={{ color: "rgba(255,255,255,0.35)" }}
+                className="text-[11px] uppercase font-black tracking-widest transition-colors hover:text-white opacity-60 hover:opacity-100"
               >
                 {label}
               </a>

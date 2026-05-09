@@ -96,10 +96,12 @@ const productSchemaLd = {
 };
 
 export default async function PrijzenPage() {
-  const debilt = DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
+  const { getSavedLocationServer } = await import("@/lib/location-cookies");
+  const loc = await getSavedLocationServer().catch(() => null);
+  const activeLoc = loc || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
   const [supabase, initialWeather] = await Promise.all([
     createSupabaseServerClient(),
-    fetchWeatherData(debilt.lat, debilt.lon).catch(() => undefined),
+    fetchWeatherData(activeLoc.lat, activeLoc.lon).catch(() => undefined),
   ]);
   const { data: { user } } = await supabase.auth.getUser();
 

@@ -158,7 +158,7 @@ async function MijnWeerAsync({ activeLoc, loc }: { activeLoc: City, loc: City | 
               of een afspraak buiten plant. Verder vooruit wordt het giswerk — wij doen niet aan giswerk.
             </p>
             <p className="text-sm text-slate-600 leading-relaxed">
-              De weerdata komt rechtstreeks van het KNMI HARMONIE-model, aangevuld met ICON-D2 en Arome.
+              De weerdata komt rechtstreeks van de meest nauwkeurige Nederlandse weermodellen.
               Drie modellen samen geven een nauwkeuriger beeld dan één model alleen. Weerzone vergelijkt
               ze en toont je het meest betrouwbare resultaat — per uur, op jouw locatie.
             </p>

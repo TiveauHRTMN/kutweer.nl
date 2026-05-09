@@ -69,7 +69,7 @@ STIJL & TOON:
 
 STRUCTUUR:
 SCHRIJF een krachtig verhaal voor de komende 48 uur met deze headers:
-**Ochtend** (06–12), **Middag** (12–18), **Avond** (18–00), **Nacht** (00–06), **Morgen** (prognose voor de hele dag).
+**Ochtend** (6:00 - 12:00), **Middag** (12:00 - 18:00), **Avond** (18:00 - 0:00), **Nacht** (0:00 - 6:00), **Morgen** (prognose voor de hele dag).
 
 GRENZEN:
 - 200–300 woorden. 

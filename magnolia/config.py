@@ -21,4 +21,4 @@ DEPOSIT_THRESHOLD_USDC = 2.0 # Minder snel vastzetten in yield, houd liquide voo
 
 # Model Settings
 GEMINI_MODEL = "gemini-2.0-flash" 
-OPENROUTER_MODEL = "deepseek/deepseek-v4-flash" # Optimaal voor hoge frequentie en lage kosten in 2026
+OPENROUTER_MODEL = "nousresearch/hermes-4-70b" # Hermes 4 70B via OpenRouter

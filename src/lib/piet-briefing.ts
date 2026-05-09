@@ -36,7 +36,7 @@ export function currentSegment(): "Ochtend" | "Middag" | "Avond" | "Nacht" {
     new Date().toLocaleTimeString("nl-NL", { timeZone: "Europe/Amsterdam", hour: "2-digit", hour12: false })
   );
   if (hour >= 6 && hour < 12) return "Ochtend";
-  if (hour >= 12 && hour < 17) return "Middag";
-  if (hour >= 17 && hour < 22) return "Avond";
+  if (hour >= 12 && hour < 18) return "Middag";
+  if (hour >= 18 && hour < 24) return "Avond";
   return "Nacht";
 }

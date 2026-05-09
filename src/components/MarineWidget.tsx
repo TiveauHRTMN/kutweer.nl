@@ -1,7 +1,7 @@
 import type { MarineData } from "@/lib/types";
 
 function degreesToCompass(deg: number): string {
-  const dirs = ["N", "NNO", "NO", "ONO", "O", "OZO", "ZO", "ZZO", "Z", "ZZW", "ZW", "WZW", "W", "WNW", "NW", "NNW"];
+  const dirs = ["noord", "noordnoordoost", "noordoost", "oostnoordoost", "oost", "oostzuidoost", "zuidoost", "zuidzuidoost", "zuid", "zuidzuidwest", "zuidwest", "westzuidwest", "west", "westnoordwest", "noordwest", "noordnoordwest"];
   return dirs[Math.round(deg / 22.5) % 16];
 }
 
@@ -23,7 +23,6 @@ export default function MarineWidget({ data }: { data: MarineData }) {
   const waveH = current.waveHeight ?? 0;
   const sst = current.seaSurfaceTemperature;
   const dir = current.waveDirection !== null ? degreesToCompass(current.waveDirection) : null;
-  const period = current.wavePeriod;
 
   return (
     <div className="card p-5 sm:p-6">
@@ -36,8 +35,8 @@ export default function MarineWidget({ data }: { data: MarineData }) {
         <span className="text-2xl font-black text-slate-900">{waveH.toFixed(1)}m</span>
         <div>
           <p className="text-sm font-semibold text-slate-700">{waveLabel(waveH)}</p>
-          {dir && period && (
-            <p className="text-xs text-slate-400">uit het {dir} · {period.toFixed(0)}s periode</p>
+          {dir && (
+            <p className="text-xs text-slate-400">vanuit het {dir}</p>
           )}
         </div>
       </div>
@@ -67,3 +66,4 @@ export default function MarineWidget({ data }: { data: MarineData }) {
     </div>
   );
 }
+

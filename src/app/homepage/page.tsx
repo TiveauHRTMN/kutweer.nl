@@ -4,8 +4,7 @@ import HomePitch from "@/components/HomePitch";
 import TrustSection from "@/components/TrustSection";
 import { DUTCH_CITIES } from "@/lib/types";
 import { fetchWeatherData } from "@/lib/weather";
-
-export const revalidate = 600; // 10 minute cache
+import { getSavedLocationServer } from "@/lib/location-cookies";
 
 export const metadata: Metadata = {
   alternates: {
@@ -22,10 +21,9 @@ const jsonLd = {
 };
 
 export default async function Home() {
-  // No hardcoded default city — WeatherDashboard reads localStorage on client.
-  // We prefetch Amsterdam as a warm server-side initial for SEO/LCP.
-  const amsterdam = DUTCH_CITIES.find(c => c.name === "Amsterdam") || DUTCH_CITIES[0];
-  const initialWeather = await fetchWeatherData(amsterdam.lat, amsterdam.lon).catch(() => undefined);
+  const loc = await getSavedLocationServer().catch(() => null);
+  const activeLoc = loc || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
+  const initialWeather = await fetchWeatherData(activeLoc.lat, activeLoc.lon).catch(() => undefined);
 
   return (
     <>
@@ -35,7 +33,7 @@ export default async function Home() {
       />
       <main>
         <WeatherDashboard
-          initialCity={amsterdam}
+          initialCity={activeLoc}
           initialWeather={initialWeather}
           beforeFooter={
             <>
@@ -48,3 +46,4 @@ export default async function Home() {
     </>
   );
 }
+

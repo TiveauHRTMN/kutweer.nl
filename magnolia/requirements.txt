@@ -4,3 +4,5 @@ httpx
 anthropic
 base58
 solders
+eth-account
+py-clob-client

@@ -399,13 +399,13 @@ export default function PietExtended({ initialWWS, initialWeather, initialCity, 
   const futureOnly = (h: HourlyForecast) => new Date(h.time).getTime() >= Date.now() - 30 * 60 * 1000;
 
   const dayparts: DaypartSummary[] = [
-    summarizeDaypart("Ochtend", "06–12 u", weather.hourly.filter((h) => inHourRange(h, todayStr, 6, 12) && futureOnly(h)), weather, true),
-    summarizeDaypart("Middag", "12–18 u", weather.hourly.filter((h) => inHourRange(h, todayStr, 12, 18) && futureOnly(h)), weather, true),
-    summarizeDaypart("Avond", "18–00 u", weather.hourly.filter((h) => inHourRange(h, todayStr, 18, 24) && futureOnly(h)), weather, false),
-    summarizeDaypart("Nacht", "00–06 u", weather.hourly.filter((h) => inHourRange(h, tomorrowStr, 0, 6)), weather, false),
-    summarizeDaypart("Morgen ochtend", "06–12 u", weather.hourly.filter((h) => inHourRange(h, tomorrowStr, 6, 12)), weather, true),
-    summarizeDaypart("Morgen middag", "12–18 u", weather.hourly.filter((h) => inHourRange(h, tomorrowStr, 12, 18)), weather, true),
-    summarizeDaypart("Morgen avond", "18–00 u", weather.hourly.filter((h) => inHourRange(h, tomorrowStr, 18, 24)), weather, false),
+    summarizeDaypart("Ochtend", "6:00 - 12:00", weather.hourly.filter((h) => inHourRange(h, todayStr, 6, 12) && futureOnly(h)), weather, true),
+    summarizeDaypart("Middag", "12:00 - 18:00", weather.hourly.filter((h) => inHourRange(h, todayStr, 12, 18) && futureOnly(h)), weather, true),
+    summarizeDaypart("Avond", "18:00 - 0:00", weather.hourly.filter((h) => inHourRange(h, todayStr, 18, 24) && futureOnly(h)), weather, false),
+    summarizeDaypart("Nacht", "0:00 - 6:00", weather.hourly.filter((h) => inHourRange(h, tomorrowStr, 0, 6)), weather, false),
+    summarizeDaypart("Morgen ochtend", "6:00 - 12:00", weather.hourly.filter((h) => inHourRange(h, tomorrowStr, 6, 12)), weather, true),
+    summarizeDaypart("Morgen middag", "12:00 - 18:00", weather.hourly.filter((h) => inHourRange(h, tomorrowStr, 12, 18)), weather, true),
+    summarizeDaypart("Morgen avond", "18:00 - 0:00", weather.hourly.filter((h) => inHourRange(h, tomorrowStr, 18, 24)), weather, false),
   ].filter(d => !d.empty);
 
   const outfit = getOutfitAdvice(weather);

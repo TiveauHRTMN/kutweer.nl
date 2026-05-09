@@ -3,6 +3,7 @@ import Link from "next/link";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import { DUTCH_CITIES } from "@/lib/types";
 import { fetchWeatherData } from "@/lib/weather";
+import { getSavedLocationServer } from "@/lib/location-cookies";
 
 export const metadata: Metadata = {
   title: "Over WEERZONE",
@@ -59,8 +60,9 @@ const PERSONAS = [
 ];
 
 export default async function OverPage() {
-  const debilt = DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
-  const initialWeather = await fetchWeatherData(debilt.lat, debilt.lon).catch(() => undefined);
+  const loc = await getSavedLocationServer().catch(() => null);
+  const activeLoc = loc || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
+  const initialWeather = await fetchWeatherData(activeLoc.lat, activeLoc.lon).catch(() => undefined);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "AboutPage",
@@ -94,7 +96,7 @@ export default async function OverPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <WeatherDashboard
         hideWeatherInfo
-        initialCity={debilt}
+        initialCity={activeLoc}
         initialWeather={initialWeather}
         beforeFooter={
           <div className="space-y-6">
@@ -169,7 +171,7 @@ export default async function OverPage() {
               </p>
               <div className="space-y-2">
                 {[
-                  ["Waarom maar 48 uur vooruit?", "Omdat die periode het meest bruikbaar is voor concrete keuzes per uur. Verder vooruit geeft richting, maar voorspellingen worden snel onbetrouwbaar — wij houden ons aan wat het KNMI HARMONIE-model accuraat kan zeggen."],
+                  ["Waarom maar 48 uur vooruit?", "Omdat die periode het meest bruikbaar is voor concrete keuzes per uur. Verder vooruit geeft richting, maar voorspellingen worden snel onbetrouwbaar — wij houden ons aan wat de meest nauwkeurige Nederlandse weermodellen accuraat kunnen zeggen."],
                   ["Wat maakt WEERZONE anders dan Buienradar of Weerplaza?", "WEERZONE is reclamevrij en afgestemd op jouw situatie: postcode en de voorkeuren die je hebt doorgegeven. Geen eindeloze grafieken, maar één duidelijk antwoord op wat het weer vandaag en morgen voor jou betekent."],
                   ["Hoe werkt de locatiebepaling?", "WEERZONE vraagt je eenmalig om een postcode of plaatsnaam. Je kunt dit altijd aanpassen via de locatieknop bovenin de pagina."],
                   ["Is WEERZONE gratis?", "Tijdelijk gratis te proberen. Bekijk de abonnementspagina voor de tarieven na de bètaperiode."],

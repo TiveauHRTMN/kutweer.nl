@@ -2,10 +2,10 @@ import type { PietDailyBriefingData } from "@/lib/piet-briefing";
 import { currentSegment } from "@/lib/piet-briefing";
 
 const SEGMENT_HOURS: Record<string, string> = {
-  Ochtend: "06–12",
-  Middag: "12–17",
-  Avond: "17–22",
-  Nacht: "22–06",
+  Ochtend: "06:00 – 12:00",
+  Middag: "12:00 – 18:00",
+  Avond: "18:00 – 00:00",
+  Nacht: "00:00 – 06:00",
 };
 
 export default function PietDailyBriefing({ data }: { data: PietDailyBriefingData }) {
@@ -36,25 +36,26 @@ export default function PietDailyBriefing({ data }: { data: PietDailyBriefingDat
               key={slot.name}
               className={`rounded-xl p-3 text-center transition-all ${
                 isActive
-                  ? "bg-slate-900 text-white shadow-md"
-                  : "bg-slate-50 text-slate-700"
+                  ? "text-white shadow-md border border-[#3b7ff0]"
+                  : "bg-slate-50 text-slate-700 border border-transparent"
               }`}
+              style={isActive ? { background: "#3b7ff0" } : {}}
             >
-              <p className={`text-[10px] font-black uppercase tracking-wide mb-1 ${isActive ? "text-slate-400" : "text-slate-400"}`}>
+              <p className={`text-[10px] font-black uppercase tracking-wide mb-1 ${isActive ? "text-white/70" : "text-slate-400"}`}>
                 {slot.name}
-                <span className={`block font-normal normal-case tracking-normal text-[9px] ${isActive ? "text-slate-500" : "text-slate-300"}`}>
+                <span className={`block font-normal normal-case tracking-normal text-[9px] ${isActive ? "text-white/60" : "text-slate-300"}`}>
                   {SEGMENT_HOURS[slot.name]}
                 </span>
               </p>
               <span className="text-xl block mb-1">{slot.emoji}</span>
               <p className={`text-sm font-black ${isActive ? "text-white" : "text-slate-800"}`}>{slot.temp}</p>
-              <p className={`text-[10px] font-semibold ${isActive ? "text-slate-300" : "text-slate-400"}`}>{slot.rain}</p>
+              <p className={`text-[10px] font-semibold ${isActive ? "text-white/80" : "text-slate-400"}`}>{slot.rain}</p>
             </div>
           );
         })}
       </div>
 
-      <p className="text-sm text-slate-600 leading-relaxed border-l-2 border-slate-200 pl-4">
+      <p className="text-sm text-slate-600 leading-relaxed border-l-2 border-sky-500/30 pl-4">
         {data.commentary}
       </p>
     </div>

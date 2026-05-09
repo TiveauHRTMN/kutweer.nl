@@ -5,6 +5,7 @@ import ContactForm from "@/components/ContactForm";
 import { schemaContactPage, schemaBreadcrumb, schemaLd } from "@/lib/schema";
 import { DUTCH_CITIES } from "@/lib/types";
 import { fetchWeatherData } from "@/lib/weather";
+import { getSavedLocationServer } from "@/lib/location-cookies";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -14,8 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const debilt = DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
-  const initialWeather = await fetchWeatherData(debilt.lat, debilt.lon).catch(() => undefined);
+  const loc = await getSavedLocationServer().catch(() => null);
+  const activeLoc = loc || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
+  const initialWeather = await fetchWeatherData(activeLoc.lat, activeLoc.lon).catch(() => undefined);
 
   return (
     <main>
@@ -23,12 +25,13 @@ export default async function ContactPage() {
         schemaContactPage(),
         schemaBreadcrumb([
           { name: "WEERZONE", item: "https://weerzone.nl" },
+
           { name: "Contact", item: "https://weerzone.nl/contact" },
         ]),
       ])} />
       <WeatherDashboard
         hideWeatherInfo
-        initialCity={debilt}
+        initialCity={activeLoc}
         initialWeather={initialWeather}
         beforeFooter={
           <div className="space-y-6">
