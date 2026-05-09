@@ -14,7 +14,7 @@ import MarineWidget from "@/components/MarineWidget";
 import PietDailyBriefing from "@/components/PietDailyBriefing";
 import { fetchPietDailyBriefing } from "@/lib/piet-briefing";
 import KNMIForecastCard from "@/components/KNMIForecastCard";
-import { fetchKNMIShortForecast } from "@/lib/knmi-edr";
+import { fetchPietWeerbericht } from "@/lib/piet-forecast";
 
 export async function generateMetadata(): Promise<Metadata> {
   const loc = await getSavedLocationServer().catch(() => null);
@@ -102,7 +102,7 @@ export default async function MijnWeerPage() {
     fetchAirQuality(lat, lon).catch(() => null),
     fetchMarineData(lat, lon).catch(() => null),
     fetchPietDailyBriefing().catch(() => null),
-    fetchKNMIShortForecast().catch(() => null),
+    fetchPietWeerbericht().catch(() => null),
   ]);
   const provinceWarnings = provinceSlug ? warningsForProvince(allWarnings, provinceSlug) : [];
 
