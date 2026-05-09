@@ -1,7 +1,7 @@
 import type { MarineData } from "@/lib/types";
 
 function degreesToCompass(deg: number): string {
-  const dirs = ["noord", "noordnoordoost", "noordoost", "oostnoordoost", "oost", "oostzuidoost", "zuidoost", "zuidzuidoost", "zuid", "zuidzuidwest", "zuidwest", "westzuidwest", "west", "westnoordwest", "noordwest", "noordnoordwest"];
+  const dirs = ["noorden", "noordnoordoosten", "noordoosten", "oostnoordoosten", "oosten", "oostzuidoosten", "zuidoosten", "zuidzuidoosten", "zuiden", "zuidzuidwesten", "zuidwesten", "westzuidwesten", "westen", "westnoordwesten", "noordwesten", "noordnoordwesten"];
   return dirs[Math.round(deg / 22.5) % 16];
 }
 

@@ -265,7 +265,16 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
         </div>
       );
     }
-    return <LoadingScreen />;
+    return (
+      <div className="min-h-screen relative overflow-x-hidden">
+        <WeatherBackground weatherCode={initialWeather?.current.weatherCode || 2} isDay={initialWeather?.current.isDay ?? true} />
+        <div className="relative z-10 max-w-2xl mx-auto p-4 pb-20 sm:p-6 space-y-6">
+          {topContent}
+          {beforeFooter}
+          <Footer />
+        </div>
+      </div>
+    );
   }
 
   const summaryWords = weather.summaryVerdict?.split(/\s+/).filter(Boolean).length ?? 0;

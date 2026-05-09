@@ -247,10 +247,10 @@ async function MijnWeerAsync({ activeLoc, loc }: { activeLoc: City, loc: City | 
             <KnmiWarningBanner warnings={provinceWarnings} />
           )}
 
+          <RainMap lat={lat} lon={lon} />
+
           {airQuality && <PollenWidget data={airQuality} />}
           {marineData && <MarineWidget data={marineData} />}
-
-          <RainMap lat={lat} lon={lon} />
 
           <p className="text-center text-white/40 text-xs font-medium pb-4">
             Verder dan 48 uur kijken we niet vooruit - dan wordt het gokken.
