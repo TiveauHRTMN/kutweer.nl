@@ -6,11 +6,13 @@ import PremiumGate from "@/components/PremiumGate";
 import LoadingScreen from "@/components/LoadingScreen";
 import { getSavedLocationServer } from "@/lib/location-cookies";
 import { DUTCH_CITIES, type City } from "@/lib/types";
-import { fetchWeatherData } from "@/lib/weather";
+import { fetchWeatherData, fetchAirQuality, fetchMarineData } from "@/lib/weather";
 import { fetchKNMIWarnings, warningsForProvince, nearestProvinceSlug, PROVINCE_SLUG_TO_KNMI } from "@/lib/knmi-warnings";
 import KnmiWarningBanner from "@/components/KnmiWarningBanner";
 import LocateButton from "@/components/LocateButton";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import PollenWidget from "@/components/PollenWidget";
+import MarineWidget from "@/components/MarineWidget";
 
 export async function generateMetadata(): Promise<Metadata> {
   const loc = await getSavedLocationServer().catch(() => null);
@@ -96,7 +98,7 @@ export default async function MijnWeerPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <main>
-        <Suspense fallback={<LoadingScreen />}>
+        <Suspense fallback={null}>
           <MijnWeerAsync activeLoc={activeLoc} loc={loc} />
         </Suspense>
       </main>
@@ -107,10 +109,12 @@ export default async function MijnWeerPage() {
 async function MijnWeerAsync({ activeLoc, loc }: { activeLoc: City, loc: City | null }) {
   const lat = typeof activeLoc.lat === "number" && !isNaN(activeLoc.lat) ? activeLoc.lat : 52.1;
   const lon = typeof activeLoc.lon === "number" && !isNaN(activeLoc.lon) ? activeLoc.lon : 5.18;
-  const [initialWeather, allWarnings, provinceSlug] = await Promise.all([
+  const [initialWeather, allWarnings, provinceSlug, airQuality, marineData] = await Promise.all([
     fetchWeatherData(lat, lon).catch(() => undefined),
     fetchKNMIWarnings().catch(() => []),
     nearestProvinceSlug(lat, lon).catch(() => null),
+    fetchAirQuality(lat, lon).catch(() => null),
+    fetchMarineData(lat, lon).catch(() => null),
   ]);
   const provinceWarnings = provinceSlug ? warningsForProvince(allWarnings, provinceSlug) : [];
 
@@ -239,6 +243,9 @@ async function MijnWeerAsync({ activeLoc, loc }: { activeLoc: City, loc: City | 
           {provinceWarnings.length > 0 && (
             <KnmiWarningBanner warnings={provinceWarnings} />
           )}
+
+          {airQuality && <PollenWidget data={airQuality} />}
+          {marineData && <MarineWidget data={marineData} />}
 
           <PremiumGate>
             <PietExtended initialCity={loc || undefined} hideLocate />

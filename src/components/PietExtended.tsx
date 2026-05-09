@@ -12,6 +12,9 @@ import {
   Sunrise,
   Sunset,
   Cloud,
+  Zap,
+  Snowflake,
+  ThermometerSun,
 } from "lucide-react";
 import { loadWeather, loadWWS, patchCacheDeep } from "@/lib/weatherCache";
 import {

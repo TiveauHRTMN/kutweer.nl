@@ -130,7 +130,7 @@ export default function TemperatureHeatmap({ hourly, sunrise, sunset }: Props) {
                         <span>{h.temperature}° (voelt {h.apparentTemperature}°)</span>
                       </div>
                       <div className="text-slate-400 mt-0.5">
-                        {h.precipitation > 0 ? `${h.precipitation.toFixed(1)}mm` : "Droog"} · {h.windSpeed} km/h · {h.humidity}%
+                        {h.precipitation > 0 ? `${h.precipitation.toFixed(1)}mm` : "Droog"} · {h.windSpeed} km/h
                       </div>
                     </div>
                   </div>

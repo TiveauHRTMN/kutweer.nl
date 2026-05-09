@@ -10,8 +10,8 @@ export const runtime = "nodejs";
 // Buffer GraphQL IDs
 const BUFFER_ORG_ID = "69e51acfc3f39b8c8987146b";
 const BUFFER_CHANNELS = {
-  x: "69e51ee4031bfa423c1f65c6", // @weerzone
   tiktok: "69e51f4f031bfa423c1f673b", // weerzonenl
+  // youtube shorts will be added later
 };
 
 import { amazonUrl, temuUrl, AFFILIATE_CONFIG } from "@/lib/affiliates";
@@ -40,7 +40,7 @@ VERBODEN:
 - "Meteorologisch gezien..."
 - "Het systeem verwacht..."
 
-REGELLIJST: Maximaal 240 tekens! Kort en krachtig. Maximaal 2 emoji's. Geen "Johan Derksen"-stijl, gewoon een vriendelijke expert.
+CRITICAAL: MAXIMAAL 200 TEKENS TOTAAL, zodat het krachtig is voor de TikTok caption. Maximaal 2 emoji's.
 `.trim()
 };
 
@@ -55,7 +55,7 @@ interface RegionalWeather {
   weather: WeatherLite;
 }
 
-export async function generatePlatformCaption(regions: RegionalWeather[], platform: 'x' | 'tiktok') {
+export async function generatePlatformCaption(regions: RegionalWeather[], platform: 'tiktok' | 'youtube') {
   if (!regions || regions.length === 0) throw new Error("No weather data provided");
   const isTikTok = platform === 'tiktok';
   const persona = "piet";
@@ -83,7 +83,7 @@ export async function generatePlatformCaption(regions: RegionalWeather[], platfo
     const text = await hermesChat([
       { role: "system", content: personaPrompt },
       { role: "user", content: `Schrijf een landelijke social media post in jouw stijl.\n\n${dataContext}` }
-    ], { model: "kimi", temperature: 0.8, maxTokens: 400 });
+    ], { model: "persona", temperature: 0.8, maxTokens: 400 });
     
     const trimmed = text.trim();
     if (!trimmed) {
@@ -120,7 +120,7 @@ async function createBufferPost(channelId: string, text: string, imageUrls: stri
         images: imageUrls.map(url => ({ url }))
       },
       schedulingType: "automatic",
-      mode: "shareNow"
+      mode: "addToQueue"
     }
   };
 
@@ -168,105 +168,91 @@ export async function GET(req: Request) {
   const dryRun = searchParams.get("dry") === "1";
 
   try {
-    // Haal landelijk weer op per KNMI regio
-    const regionalData: RegionalWeather[] = await Promise.all(
-      KNMI_REGIONS.map(async (r) => {
+    // Haal landelijk weer op per KNMI regio (sequentieel om Open-Meteo 429 rate limit te voorkomen)
+    const regionalData: RegionalWeather[] = [];
+    for (const r of KNMI_REGIONS) {
+      try {
         const data = await fetchWeatherData(r.lat, r.lon);
-        return { region: r.name, weather: data as unknown as WeatherLite };
-      })
-    );
+        if (data) {
+          regionalData.push({ region: r.name, weather: data as unknown as WeatherLite });
+        }
+      } catch (e) {
+        console.error(`Fetch failed for region ${r.name}`, e);
+      }
+      // Korte pauze om API rate limieten te respecteren
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+    
+    if (regionalData.length === 0) {
+      throw new Error("No regional weather data could be fetched.");
+    }
 
-    // Stel de caption op (Piet Social 2.1: Brutaal & Echt Landelijk)
-    const [xData, tiktokData] = await Promise.all([
-      generatePlatformCaption(regionalData, 'x'),
-      generatePlatformCaption(regionalData, 'tiktok'),
-    ]);
+    // Warmste / koudste KNMI regio bepalen
+    const sorted = [...regionalData].sort(
+      (a, b) => (b.weather.daily?.[0]?.tempMax ?? 0) - (a.weather.daily?.[0]?.tempMax ?? 0)
+    );
+    const warmest = sorted[0];
+    const coldest = sorted[sorted.length - 1];
+    const warmestTemp = Math.round(warmest?.weather.daily?.[0]?.tempMax ?? 15);
+    const coldestTemp = Math.round(coldest?.weather.daily?.[0]?.tempMax ?? 10);
+
+    // Caption + korte tagline voor slide 1
+    const tiktokData = await generatePlatformCaption(regionalData, 'tiktok');
+
+    // Eerste zin van caption als tagline (max 40 tekens)
+    const firstSentence = tiktokData.caption.split(/[.!\n]/)[0]?.trim() ?? "";
+    const tagline = firstSentence.length <= 44 ? firstSentence : firstSentence.slice(0, 42) + "…";
 
     const base = process.env.NEXT_PUBLIC_BASE_URL || "https://weerzone.nl";
     const bust = Date.now();
-    // Gebruik Midden/De Bilt voor de social slide images als fallback landelijk
-    const center = KNMI_REGIONS.find(r => r.name === "Midden")!;
-    const citySlug = "nederland";
-    const xPersona = xData.persona;
-    const ttPersona = tiktokData.persona;
 
-    const xSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${center.lat}&lon=${center.lon}&slide=1&format=x&persona=${xPersona}&t=${bust}`;
-    const xSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${center.lat}&lon=${center.lon}&slide=2&format=x&persona=${xPersona}&t=${bust}`;
-    const ttSlide1 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${center.lat}&lon=${center.lon}&slide=1&format=tiktok&persona=${ttPersona}&t=${bust}`;
-    const ttSlide2 = `${base}/api/social/piet-v2?city=${citySlug}&lat=${center.lat}&lon=${center.lon}&slide=2&format=tiktok&persona=${ttPersona}&t=${bust}`;
-
-    const xImages = [xSlide1, xSlide2];
-    const ttImages = [ttSlide1, ttSlide2];
+    // Gebruik de centrale Weerzone Dagelijks overzicht slide
+    const ttSlide = `${base}/api/social/dagelijks?t=${bust}`;
+    const ttImages = [ttSlide];
 
     if (dryRun) {
       return NextResponse.json({
         dry_run: true,
-        x: xData,
         tiktok: tiktokData,
-        images: {
-          x: xImages,
-          tt: ttImages
-        },
+        tagline,
+        warmest: { region: warmest?.region, temp: warmestTemp },
+        coldest: { region: coldest?.region, temp: coldestTemp },
+        images: { tt: ttImages },
       });
     }
 
-    // Post parallel naar X en TikTok
-    const [xResult, tiktokResult] = await Promise.allSettled([
-      createBufferPost(BUFFER_CHANNELS.x, xData.caption, xImages),
-      createBufferPost(BUFFER_CHANNELS.tiktok, tiktokData.caption, ttImages),
-    ]);
+    // Post naar TikTok via Buffer
+    const tiktokResult = await createBufferPost(BUFFER_CHANNELS.tiktok, tiktokData.caption, ttImages);
 
-    // 3. Stuur een kopie en samenvatting naar de founder (info@weerzone.nl)
+    // Stuur samenvatting naar founder
     const resendKey = process.env.RESEND_API_KEY;
     if (resendKey) {
       const resend = new Resend(resendKey);
       await resend.emails.send({
         from: "Weerzone System <system@weerzone.nl>",
         to: "info@weerzone.nl",
-        subject: `🚀 Social Post Status: Landelijk Weer`,
+        subject: `Social post verzonden · ${tagline}`,
         html: `
-          <div style="font-family:sans-serif; padding:20px;">
-            <h1 style="color:#0ea5e9;">WeerZone Social Automator</h1>
-            <p>De landelijke social media posts (Piet) zijn voorbereid en doorgestuurd naar Buffer.</p>
-            
-            <hr />
-            
-            <h3>X (Twitter) Content [${xPersona.toUpperCase()}]:</h3>
-            <p style="background:#f1f5f9; padding:15px; border-radius:8px;">${xData.caption.replace(/\n/g, '<br>')}</p>
-            <div style="display:flex; gap:10px;">
-              <img src="${xSlide1}" width="300" style="border:1px solid #ddd" />
-              <img src="${xSlide2}" width="300" style="border:1px solid #ddd" />
+          <div style="font-family:sans-serif;padding:20px;max-width:600px;">
+            <h2 style="color:#0ea5e9;">TikTok post in wachtrij</h2>
+            <p style="background:#f1f5f9;padding:15px;border-radius:8px;">${tiktokData.caption.replace(/\n/g, "<br>")}</p>
+            <p><strong>Tagline slide 1:</strong> ${tagline}</p>
+            <p><strong>Warmst:</strong> ${warmest?.region} ${warmestTemp}° · <strong>Koelst:</strong> ${coldest?.region} ${coldestTemp}°</p>
+            <div style="display:flex;gap:8px;margin-top:16px;">
+              <img src="${ttSlide}" width="300" style="border-radius:8px;border:1px solid #ddd" />
             </div>
-
-            <h3>TikTok Content [${ttPersona.toUpperCase()}]:</h3>
-            <p style="background:#f1f5f9; padding:15px; border-radius:8px;">${tiktokData.caption.replace(/\n/g, '<br>')}</p>
-            <div style="display:flex; gap:10px;">
-              <img src="${ttSlide1}" width="200" style="border:1px solid #ddd" />
-              <img src="${ttSlide2}" width="200" style="border:1px solid #ddd" />
-            </div>
-
-            <hr />
-            <p style="font-size:12px; color:#666;">Status X: ${xResult.status}<br>Status TikTok: ${tiktokResult.status}</p>
+            <p style="font-size:12px;color:#999;margin-top:16px;">Buffer post ID: ${tiktokResult?.createPost?.post?.id ?? "–"}</p>
           </div>
-        `
+        `,
       });
     }
 
     return NextResponse.json({
       status: "done",
-      x: xData,
       tiktok: tiktokData,
-      images: [xSlide1, xSlide2, ttSlide1, ttSlide2],
-      results: {
-        x:
-          xResult.status === "fulfilled"
-            ? xResult.value
-            : { error: (xResult.reason as Error).message },
-        tiktok:
-          tiktokResult.status === "fulfilled"
-            ? tiktokResult.value
-            : { error: (tiktokResult.reason as Error).message },
-      },
+      tagline,
+      images: ttImages,
+      results: { tiktok: tiktokResult },
     });
   } catch (e) {
     const msg = (e as Error).message;
