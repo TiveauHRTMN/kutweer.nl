@@ -299,12 +299,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
                     >
                       Actueel weer
                     </span>
-                    {wws && (
-                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-[10px] bg-emerald-500/10 border border-emerald-500/20">
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Synthese Live</span>
-                        </div>
-                    )}
                   </div>
                   <h1 className="text-3xl font-black uppercase tracking-[0.2em] text-text-secondary mb-3">{city.name}</h1>
                   <div className="flex items-start">
@@ -333,7 +327,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">
-                  {wws ? "Piet — Live Analyse" : "Wat betekent dit vandaag?"}
+                  {wws ? "Piet z'n kijk op vandaag" : "De essentie"}
                 </span>
               </div>
               <p className="text-base font-medium text-text-primary leading-relaxed">{narrative}</p>
@@ -347,8 +341,8 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
                 <span className="text-3xl">💬</span>
                 <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">Piet · Mijn Weer</span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">Jouw persoonlijke weerverhaal</h3>
-              <p className="text-sm text-text-secondary leading-relaxed mb-4">Kledingadvies, terras- en fietsscore, dagdelen, pollen, UV-index en vandaag vs. morgen — alles voor jouw postcode.</p>
+              <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">Jouw persoonlijke weerbericht</h3>
+              <p className="text-sm text-text-secondary leading-relaxed mb-4">Kledingadvies, terras- en fietsscore, dagdelen, pollen, UV-index en vandaag vs. morgen — precies wat je moet weten.</p>
               <span className="inline-flex items-center text-sm font-black text-blue-600 group-hover:gap-3 gap-2 transition-all">Bekijk Mijn Weer <span className="text-lg">→</span></span>
             </div>
           </Link>
@@ -360,8 +354,8 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
             <span className="text-3xl">⚡</span>
             <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">Reed · Waarschuwingen</span>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">Extreem weer? Wij zien het eerst.</h3>
-          <p className="text-sm text-text-secondary leading-relaxed mb-4">Reflectiviteit, CAPE, windstoten en KNMI-waarschuwingen — real-time op jouw locatie. Meerdere weermodellen tegelijk.</p>
+          <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">Geen verrassingen bij extreem weer</h3>
+          <p className="text-sm text-text-secondary leading-relaxed mb-4">We houden de horizon 24/7 voor je in de gaten. Van zware windstoten tot naderend onweer — je ziet het direct voor jouw locatie.</p>
           <span className="inline-flex items-center text-sm font-black text-rose-500 group-hover:gap-3 gap-2 transition-all">Bekijk Waarschuwingen <span className="text-lg">→</span></span>
           </div>
           </Link>

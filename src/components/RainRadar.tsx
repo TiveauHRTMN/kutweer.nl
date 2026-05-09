@@ -122,6 +122,7 @@ export default function RainRadar({ data }: RainRadarProps) {
 
       {/* Bar chart */}
       <div className="relative">
+        <span className="sr-only">Neerslaggrafiek voor de komende 2 uur</span>
         {/* Dashed anchor lines */}
         <div className="absolute inset-0 flex justify-between px-0.5 pointer-events-none">
           {[0, 1, 2].map((i) => (

@@ -148,8 +148,7 @@ export async function fetchWeatherData(lat: number, lon: number, isBot: boolean 
       fetchPromises.push(
         fetchModel(OPEN_METEO_BASE, lat, lon, { models: "knmi_seamless" }).catch(() => null),
         fetchModel(OPEN_METEO_BASE, lat, lon, { models: "dwd_icon_d2" }).catch(() => null),
-        fetchModel(OPEN_METEO_BASE, lat, lon, { models: "meteofrance_arome_france_hd" }).catch(() => null),
-        fetchGoogleWeather(lat, lon).catch(() => null)
+        fetchModel(OPEN_METEO_BASE, lat, lon, { models: "meteofrance_arome_france_hd" }).catch(() => null)
       );
     }
 
@@ -165,41 +164,7 @@ export async function fetchWeatherData(lat: number, lon: number, isBot: boolean 
     const harmonieData = (!isBot && results[1]) || null;
     const iconData = (!isBot && results[2]) || null;
     const aromeData = (!isBot && results[3]) || null;
-    const googleDataRaw = (!isBot && results[4]) || null;
-
-    // Formatteer Google Data om net zo makkelijk aan te roepen als Open-Meteo arrays
-    let googleData: any = null;
-    if (googleDataRaw?.forecastHours && Array.isArray(googleDataRaw.forecastHours) && coreData?.hourly?.time) {
-      googleData = {
-        temperature: [],
-        precipitation: [],
-        weatherCode: [],
-        windSpeed: []
-      };
-      // We assumes the forecastHours align roughly with the next 48 hours, but we map by matching the start hour
-      const times = coreData.hourly.time;
-      for (const t of times) {
-        const dt = new Date(t).getTime();
-        const gHour = googleDataRaw.forecastHours.find((g: any) => {
-          if (!g?.interval?.startTime || !g?.interval?.endTime) return false;
-          const gTime = new Date(g.interval.startTime).getTime();
-          // Ligt de tijd binnen dit interval?
-          return dt >= gTime && dt < new Date(g.interval.endTime).getTime();
-        });
-        
-        if (gHour) {
-          googleData.temperature.push(gHour.temperature?.degrees ?? 0);
-          googleData.precipitation.push(gHour.precipitation?.qpf?.quantity ?? 0);
-          googleData.weatherCode.push(mapGoogleWeatherConditionToWMO(gHour.weatherCondition?.type ?? ""));
-          googleData.windSpeed.push(gHour.wind?.speed?.value ?? 0);
-        } else {
-          googleData.temperature.push(0);
-          googleData.precipitation.push(0);
-          googleData.weatherCode.push(0);
-          googleData.windSpeed.push(0);
-        }
-      }
-    }
+    const googleData: any = null;
 
     const data = coreData;
     if (!data || !data.hourly || !data.daily || !data.current) {
@@ -359,7 +324,7 @@ export async function fetchWeatherData(lat: number, lon: number, isBot: boolean 
 }
 
 /**
- * Piet's Neural Engine: Proxy voor MetNet-3, SEED en NeuralGCM.
+ * Piet's Neural Engine: Proxy voor MetNet-3 en NeuralGCM.
  * Gebruikt Gemini om de ruwe data te interpreteren naar hyper-lokale inzichten.
  */
 export async function getNeuralInsights(lat: number, lon: number, weather: WeatherData): Promise<WeatherData["neuralData"]> {

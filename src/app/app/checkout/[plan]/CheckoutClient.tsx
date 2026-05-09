@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { formatPrice, type PersonaConfig } from "@/lib/personas";
-import { WzFooter } from "@/components/wz";
 import { reverseGeocode } from "@/lib/types";
 import { confirmCheckout } from "./actions";
 
@@ -563,8 +562,6 @@ export default function CheckoutClient({
           </div>
         </div>
       </div>
-
-      <WzFooter />
 
       <style>{`
         .checkout-desktop-cta { display: inline-flex; }

@@ -19,6 +19,7 @@ const PROVINCES = [
   "drenthe", "flevoland", "friesland", "gelderland", "groningen",
   "limburg", "noord-brabant", "noord-holland", "overijssel",
   "utrecht", "zeeland", "zuid-holland",
+  "antwerpen", "limburg-be", "oost-vlaanderen", "vlaams-brabant", "west-vlaanderen"
 ];
 
 async function run() {
@@ -27,7 +28,7 @@ async function run() {
   const batchSize = 10;
 
   const total = ALL_PLACES.length;
-  console.log(`🚀 Hermes 4 70B: ${total} locaties in heel Nederland (${PROVINCES.length} provincies)...`);
+  console.log(`🚀 Hermes 4 70B: ${total} locaties in Nederland en Vlaanderen (${PROVINCES.length} provincies)...`);
 
   for (const province of PROVINCES) {
     const villages = ALL_PLACES.filter(p => p.province === province);
@@ -41,11 +42,11 @@ async function run() {
       const text = await hermesChat([
         {
           role: "system",
-          content: `Je bent de ultieme psychologische copywriter en marketing genius (denk Steve Jobs / Elon Musk). Je schrijft magnetische SEO-titels en meta-descriptions. Geef ALLEEN een JSON array terug, geen uitleg.`,
+          content: `Je bent de ultieme psychologische copywriter en marketing genius (denk Steve Jobs / Elon Musk). Je schrijft magnetische SEO-titels en meta-descriptions voor Nederland en Vlaanderen. Geef ALLEEN een JSON array terug, geen uitleg.`,
         },
         {
           role: "user",
-          content: `Genereer meedogenloze, click-bait (maar feitelijk lijkende) SEO-titels en meta-descriptions voor de zoekterm "${query}" voor deze dorpen in ${province}: ${names}
+          content: `Genereer meedogenloze, click-bait (maar feitelijk lijkende) SEO-titels en meta-descriptions voor de zoekterm "${query}" voor deze plaatsen in de provincie ${province}: ${names}
 
 Geef ALLEEN terug:
 [{ "name": "naam", "title": "...", "description": "..." }]

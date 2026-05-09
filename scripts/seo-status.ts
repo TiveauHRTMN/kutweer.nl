@@ -19,9 +19,20 @@ async function main() {
   }
   console.log("Totaal rows:", count);
 
-  const { data } = await sb.from("seo_injections").select("province");
+  // Ophalen van alle unieke provincies
+  const { data, error: dataError } = await sb.from("seo_injections").select("province");
+  if (dataError) {
+    console.error("Data Error:", dataError.message);
+    process.exit(1);
+  }
+
   const m: Record<string, number> = {};
-  for (const r of data ?? []) m[r.province] = (m[r.province] ?? 0) + 1;
+  for (const r of data ?? []) {
+    const p = r.province || "onbekend";
+    m[p] = (m[p] ?? 0) + 1;
+  }
+  
+  console.log("Provincie breakdown:");
   for (const [p, n] of Object.entries(m).sort((a, b) => a[0].localeCompare(b[0]))) {
     console.log(`  ${p}: ${n}`);
   }

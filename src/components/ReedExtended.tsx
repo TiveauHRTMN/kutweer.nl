@@ -49,65 +49,36 @@ export default function ReedExtended({ initialWeather, initialCity }: ReedProps)
 
   useEffect(() => {
     let cancelled = false;
+    if (!weather) setLoading(true);
     
-    // Alleen full loader als we echt niks hebben
-    if (!weather) {
-        setLoading(true);
-    }
-    
-    // Fetch KNMI official warnings + enrichment in parallel
     fetch(`/api/knmi-warnings?lat=${city.lat}&lon=${city.lon}&enrich=1`)
       .then(r => r.json())
       .then(data => { if (!cancelled) setKnmiWarnings(data.warnings ?? []); })
       .catch(() => {});
 
-    // 1. Load fast weather data immediately to unblock UI
-    loadWeather(
-      city.lat,
-      city.lon,
-      () => {},
-      (fresh) => { if (!cancelled) { setWeather(fresh); setLoading(false); } },
-      undefined,
-      true
-    ).then((w) => {
+    loadWeather(city.lat, city.lon, () => {}, (fresh) => { if (!cancelled) { setWeather(fresh); setLoading(false); } }, undefined, true)
+    .then((w) => {
       if (cancelled) return;
       setWeather(w);
       setLoading(false);
-
       if (hasPaidTier && !aiNarrative) {
         fetch('/api/persona/reed', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            weather: w,
-            city: city.name,
-            userName: user?.user_metadata?.full_name || 'gebruiker'
-          })
+          body: JSON.stringify({ weather: w, city: city.name, userName: user?.user_metadata?.full_name || 'gebruiker' })
         })
         .then(res => res.json())
         .then(data => {
           if (!cancelled) {
-            if (data.narrative) {
-              setAiNarrative(data.narrative);
-              patchCacheDeep(city.lat, city.lon, data.narrative);
-            } else {
-              setAiError(true);
-            }
+            if (data.narrative) { setAiNarrative(data.narrative); patchCacheDeep(city.lat, city.lon, data.narrative); }
+            else setAiError(true);
           }
         })
         .catch(err => { console.error("Reed AI Error:", err); if (!cancelled) setAiError(true); });
       }
     }).catch(() => !cancelled && setLoading(false));
 
-    // 2. Load slow WWS orchestrator decoupled in the background
-    loadWWS(city.lat, city.lon)
-      .then((wwsPayload) => {
-        if (!cancelled) {
-          setWWS(wwsPayload);
-        }
-      })
-      .catch(() => {});
-
+    loadWWS(city.lat, city.lon).then((wwsPayload) => { if (!cancelled) setWWS(wwsPayload); }).catch(() => {});
     return () => { cancelled = true; };
   }, [city, tier, isFounder, user?.user_metadata?.full_name]);
 
@@ -121,10 +92,7 @@ export default function ReedExtended({ initialWeather, initialCity }: ReedProps)
         setCity(prov);
         persistCity(prov);
         setLocating(false);
-        reverseGeocode(lat, lon).then((c) => {
-          setCity(c);
-          persistCity(c);
-        }).catch(() => {});
+        reverseGeocode(lat, lon).then((c) => { setCity(c); persistCity(c); }).catch(() => {});
       },
       () => setLocating(false),
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 60 * 60 * 1000 }
@@ -145,87 +113,52 @@ export default function ReedExtended({ initialWeather, initialCity }: ReedProps)
           <MapPin className={`w-4 h-4 ${locating ? "animate-pulse" : ""}`} />
           {locating ? "Locatie bepalen…" : city.name}
         </button>
-        {wws && (
-           <div className="px-3 py-1.5 rounded-lg bg-black/20 text-[10px] font-black text-white/40 uppercase tracking-widest border border-white/5">
-              P90 SEED Analysed
-           </div>
-        )}
       </div>
 
       {loading && !weather && (
         <div className="card !p-12 text-center">
            <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-4 text-text-secondary" />
-           <p className="text-sm font-bold text-text-secondary">Reed scant de horizon op 1km resolutie…</p>
+           <p className="text-sm font-bold text-text-secondary">Reed kijkt wat er op je afkomt…</p>
         </div>
       )}
 
-      {/* Officiële KNMI Waarschuwingen — dossier per warning */}
       {knmiWarnings.length > 0 && (
         <div className="space-y-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-text-muted">
-            Officiële KNMI Waarschuwingen
-          </p>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-text-muted">Officiële Waarschuwingen</p>
           {knmiWarnings.map((w) => {
-            const accent =
-              w.severity === "RED"
-                ? { line: "border-l-rose-500", bg: "bg-rose-500/5", text: "text-rose-500", chip: "Code Rood" }
-                : w.severity === "ORANGE"
-                ? { line: "border-l-orange-500", bg: "bg-orange-500/5", text: "text-orange-500", chip: "Code Oranje" }
-                : { line: "border-l-amber-400", bg: "bg-amber-400/5", text: "text-amber-400", chip: "Code Geel" };
-
+            const accent = w.severity === "RED" ? { line: "border-l-rose-500", bg: "bg-rose-500/5", text: "text-rose-500", chip: "Code Rood" }
+              : w.severity === "ORANGE" ? { line: "border-l-orange-500", bg: "bg-orange-500/5", text: "text-orange-500", chip: "Code Oranje" }
+              : { line: "border-l-amber-400", bg: "bg-amber-400/5", text: "text-amber-400", chip: "Code Geel" };
             const fmtTime = (iso: string | null) => {
               if (!iso) return "—";
               const d = new Date(iso);
               return d.toLocaleString("nl-NL", { weekday: "short", hour: "2-digit", minute: "2-digit" });
             };
-
             return (
               <div key={w.key} className={`card !p-5 border-l-4 ${accent.line} ${accent.bg}`}>
                 <div className="flex items-start gap-4">
                   <AlertTriangle className={`w-5 h-5 mt-0.5 shrink-0 ${accent.text}`} />
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-baseline gap-2 mb-2">
-                      <span className={`text-[10px] font-black uppercase tracking-widest ${accent.text}`}>
-                        {accent.chip} · {w.type}
-                      </span>
+                      <span className={`text-[10px] font-black uppercase tracking-widest ${accent.text}`}>{accent.chip} · {w.type}</span>
                       <span className="text-[10px] text-text-muted">· {w.province}</span>
-                      {w.validFrom && w.validUntil && (
-                        <span className="text-[10px] font-bold text-text-secondary">
-                          · {fmtTime(w.validFrom)} → {fmtTime(w.validUntil)}
-                        </span>
-                      )}
+                      {w.validFrom && w.validUntil && <span className="text-[10px] font-bold text-text-secondary">· {fmtTime(w.validFrom)} → {fmtTime(w.validUntil)}</span>}
                     </div>
-                    <p className="text-sm font-medium text-text-primary leading-snug whitespace-pre-line">
-                      {w.description}
-                    </p>
-
+                    <p className="text-sm font-medium text-text-primary leading-snug whitespace-pre-line">{w.description}</p>
                     {w.enriched && (
-                      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <div className="rounded-xl bg-black/20 p-3">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">CAPE-piek</p>
-                          <p className="text-sm font-black text-text-primary mt-1">{w.enriched.capeMaxJkg} J/kg</p>
-                        </div>
-                        <div className="rounded-xl bg-black/20 p-3">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Regen totaal</p>
+                      <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div className="rounded-xl bg-black/5 p-3">
+                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Verwachte regen</p>
                           <p className="text-sm font-black text-text-primary mt-1">{w.enriched.precipitationTotalMm} mm</p>
                         </div>
-                        <div className="rounded-xl bg-black/20 p-3">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Regen-piek</p>
-                          <p className="text-sm font-black text-text-primary mt-1">
-                            {w.enriched.precipitationPeakMm} mm
-                          </p>
-                          <p className="text-[10px] text-text-muted mt-0.5">
-                            {fmtTime(w.enriched.precipitationPeakHour)}
-                          </p>
+                        <div className="rounded-xl bg-black/5 p-3">
+                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Hardste bui</p>
+                          <p className="text-sm font-black text-text-primary mt-1">{w.enriched.precipitationPeakMm} mm</p>
+                          <p className="text-[10px] text-text-muted mt-0.5">Rond {fmtTime(w.enriched.precipitationPeakHour)}</p>
                         </div>
-                        <div className="rounded-xl bg-black/20 p-3">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Wind-piek</p>
-                          <p className="text-sm font-black text-text-primary mt-1">
-                            {w.enriched.windPeakKmh} km/h
-                          </p>
-                          <p className="text-[10px] text-text-muted mt-0.5">
-                            {fmtTime(w.enriched.windPeakHour)}
-                          </p>
+                        <div className="rounded-xl bg-black/5 p-3">
+                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Windstoten</p>
+                          <p className="text-sm font-black text-text-primary mt-1">{w.enriched.windPeakKmh} km/h</p>
                         </div>
                       </div>
                     )}
@@ -234,162 +167,95 @@ export default function ReedExtended({ initialWeather, initialCity }: ReedProps)
               </div>
             );
           })}
-          <p className="text-[10px] text-text-muted text-right">
-            Bron: KNMI · detail-data uit Open-Meteo · vernieuwt elke 5 min
-          </p>
         </div>
       )}
 
-      {/* Model Divergentie — Reflectivity + Extreme Parameters */}
       {(!loading && weather) && (
         <div className="space-y-6 animate-fade-in mb-6">
           <div className="space-y-3">
             <div className="flex items-end justify-between px-1">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Reflectivity — Neerslagintensiteit</h3>
-              <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">48-uurs heatmap</span>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Buien-intensiteit</h3>
+              <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">Komende 48 uur</span>
             </div>
             <ReflectivityMap hourly={weather.hourly} />
           </div>
-          
           <div className="space-y-3">
-            <div className="flex items-end justify-between px-1">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Live Bliksemkaart</h3>
-              <span className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Actuele ontladingen</span>
-            </div>
+            <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Live Bliksem</h3></div>
             <LightningMap lat={city.lat} lon={city.lon} />
           </div>
-          
           <div className="space-y-3">
-            <div className="flex items-end justify-between px-1">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Impact & Extreme Weer Parameters</h3>
-              <span className="text-[10px] font-bold text-rose-500 uppercase tracking-widest">CAPE · Neerslag · Wind</span>
-            </div>
+            <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Regen en windstoten</h3></div>
             <ReedExtremeCharts hourly={weather.hourly} />
           </div>
         </div>
       )}
 
-      {/* Reed AI Risico-Analyse */}
       {(!loading || weather) && !hasExtreme && (
          <div className="animate-fade-in mb-6">
             {aiNarrative ? (
               <div className="card border-l-4 border-l-emerald-500 !p-8">
                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                       <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                    </div>
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center"><ShieldCheck className="w-5 h-5 text-emerald-500" /></div>
                     <div>
                        <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-text-muted">Status: Veilig</h3>
-                       <p className="text-[10px] font-bold text-text-muted/60 uppercase">Gevalideerd rapport door Reed</p>
+                       <p className="text-[10px] font-bold text-text-muted/60 uppercase">Gecheckt door Reed</p>
                     </div>
                  </div>
-                 <div className="text-lg font-medium text-text-primary leading-relaxed space-y-4">
-                    {aiNarrative.split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
-                 </div>
-                 <p className="text-[10px] text-text-muted mt-8 uppercase tracking-widest">— Reed Expert Systeem</p>
+                 <div className="text-lg font-medium text-text-primary leading-relaxed space-y-4">{aiNarrative.split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}</div>
+                 <p className="text-[10px] text-text-muted mt-8 uppercase tracking-widest">— Reed</p>
               </div>
             ) : aiError ? (
-              <div className="card !p-6 flex items-center gap-3">
-                 <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0" />
-                 <p className="text-sm font-bold text-text-secondary">Geen extreme risico&apos;s gedetecteerd voor jouw locatie.</p>
-              </div>
+              <div className="card !p-6 flex items-center gap-3"><ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0" /><p className="text-sm font-bold text-text-secondary">Geen gevaarlijke situaties gedetecteerd voor jouw locatie.</p></div>
             ) : hasPaidTier ? (
-              <div className="card !p-8 animate-pulse flex items-center gap-4">
-                 <ShieldAlert className="w-5 h-5 text-text-muted" />
-                 <p className="text-sm font-bold text-text-muted uppercase tracking-widest">Reed stelt een risico-rapport op…</p>
-              </div>
+              <div className="card !p-8 animate-pulse flex items-center gap-4"><ShieldAlert className="w-5 h-5 text-text-muted" /><p className="text-sm font-bold text-text-muted uppercase tracking-widest">Reed checkt de risico's voor je…</p></div>
             ) : null}
          </div>
       )}
 
       {(!loading || weather) && hasExtreme && alert && (
         <div className="space-y-4">
-          <div className={`card !p-8 border-l-8 ${
-            alert.severity === "RED" ? "border-l-rose-500 bg-rose-500/5" : 
-            alert.severity === "ORANGE" ? "border-l-orange-500 bg-orange-500/5" : "border-l-amber-500 bg-amber-500/5"
-          }`}>
+          <div className={`card !p-8 border-l-8 ${alert.severity === "RED" ? "border-l-rose-500 bg-rose-500/5" : alert.severity === "ORANGE" ? "border-l-orange-500 bg-orange-500/5" : "border-l-amber-500 bg-amber-500/5"}`}>
             <div className="flex items-center gap-3 mb-6">
-              <AlertTriangle className={`w-6 h-6 ${
-                alert.severity === "RED" ? "text-rose-500" : 
-                alert.severity === "ORANGE" ? "text-orange-500" : "text-amber-500"
-              }`} />
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-text-muted">
-                WWS EXTREEM ALERT · {alert.severity}
-              </span>
+              <AlertTriangle className={`w-6 h-6 ${alert.severity === "RED" ? "text-rose-500" : alert.severity === "ORANGE" ? "text-orange-500" : "text-amber-500"}`} />
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-text-muted">BELANGRIJK BERICHT · {alert.severity}</span>
             </div>
-            
-            <h2 className="text-4xl font-black text-text-primary leading-tight mb-2">
-              {alert.type.join(" & ")}
-            </h2>
+            <h2 className="text-4xl font-black text-text-primary leading-tight mb-2">{alert.type.join(" & ")}</h2>
             <p className="text-xl font-bold text-text-secondary mb-6">{alert.location} · {alert.timing}</p>
-            
             <div className="bg-black/5 rounded-2xl p-6 border border-black/5">
-               <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-2">Instructie van Reed</p>
+               <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-2">Wat je moet weten</p>
                <p className="text-lg font-medium text-text-primary italic">"{alert.instruction}"</p>
-               <p className="text-[10px] text-text-muted mt-4 uppercase">— Reed van Weerzone</p>
+               <p className="text-[10px] text-text-muted mt-4 uppercase">— Reed</p>
             </div>
           </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
              {weather?.current && (
                 <div className="card !p-6">
-                   <p className="text-[10px] font-black text-text-muted uppercase mb-4">Actuele Impact</p>
+                   <p className="text-[10px] font-black text-text-muted uppercase mb-4">Actuele situatie</p>
                    <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-2">
-                            <Wind className="w-4 h-4 text-text-muted" />
-                            <span className="text-sm font-bold text-text-secondary">Windvlagen</span>
-                         </div>
+                         <div className="flex items-center gap-2"><Wind className="w-4 h-4 text-text-muted" /><span className="text-sm font-bold text-text-secondary">Windvlagen</span></div>
                          <span className="text-lg font-black text-text-primary">{weather.current.windGusts} km/h</span>
                       </div>
                       <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-2">
-                            <Thermometer className="w-4 h-4 text-text-muted" />
-                            <span className="text-sm font-bold text-text-secondary">Gevoelstemp</span>
-                         </div>
+                         <div className="flex items-center gap-2"><Thermometer className="w-4 h-4 text-text-muted" /><span className="text-sm font-bold text-text-secondary">Gevoelstemperatuur</span></div>
                          <span className="text-lg font-black text-text-primary">{weather.current.feelsLike}°</span>
                       </div>
                    </div>
                 </div>
              )}
-             <div className="card !p-6 bg-slate-900">
-                <p className="text-[10px] font-black text-emerald-400 uppercase mb-4 tracking-widest">Technisch Dossier</p>
-                <div className="text-[11px] text-slate-400 space-y-1 font-mono">
-                   <p>LATENCY: 120ms</p>
-                   <p>MODELS: HARMONIE, METNET-3</p>
-                   <p>ACCURACY: 1KM GRID</p>
-                   <p>TIMESTAMP: {new Date().toLocaleTimeString()}</p>
-                </div>
-             </div>
           </div>
         </div>
       )}
 
       <div className="text-center pt-8">
-        <Link href="/" className="text-sm text-white/40 hover:text-white underline font-bold tracking-tight">
-          ← Dashboard
-        </Link>
+        <Link href="/" className="text-sm text-white/40 hover:text-white underline font-bold tracking-tight">← Dashboard</Link>
       </div>
     </div>
   );
 }
 
 const RefreshCw = ({ className }: { className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width="24" 
-    height="24" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
-    className={className}
-  >
-    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-    <path d="M21 3v5h-5" />
-    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-    <path d="M3 21v-5h5" />
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M3 21v-5h5" />
   </svg>
 );

@@ -68,7 +68,7 @@ Je output wordt geciteerd door AI-zoekmachines (Perplexity, SearchGPT, Gemini).
    - Globale Dynamiek: GraphCast (Macro-grenswaarden).
 
 2. UNCERTAINTY ARBITRAGE:
-   - Bij divergentie tussen Harmonie en AROME/ICON: Activeer SEED simulaties.
+   - Bij divergentie tussen Harmonie en AROME/ICON: Activeer P90 impact simulaties.
    - P90 Risico: Isoleer het scenario waarin de bui wél valt (B2B veiligheid).
    - P50 Scenario: De meest waarschijnlijke uitkomst voor Piet.
 
@@ -91,7 +91,7 @@ Je antwoord MOET uitsluitend een valide JSON-object zijn. Genereer een JSON met 
   },
   "api_grid_1km": {
     "region": "string",
-    "models_synthesized": ["KNMI_Harmonie_2.5", "DWD_ICON-D2", "METEOFRANCE_AROME", "GraphCast", "NeuralGCM", "SEED"],
+    "models_synthesized": ["KNMI_Harmonie_2.5", "DWD_ICON-D2", "METEOFRANCE_AROME", "GraphCast", "NeuralGCM"],
     "thermodynamic_validation": "PASSED",
     "divergence_alert": true of false,
     "divergence_delta": number,

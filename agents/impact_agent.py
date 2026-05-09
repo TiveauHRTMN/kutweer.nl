@@ -5,8 +5,8 @@ import os
 # Google Agent Development Kit (ADK) Setup voor Weerzone Impact Engine
 # Zorg dat `pip install google-agents-cli-adk` geïnstalleerd is als je dit draait.
 
-def run_p90_seed_analysis(lat: float, lon: float) -> str:
-    """Tool: Runs the P90 SEED impact simulation for a given coordinate."""
+def run_p90_impact_analysis(lat: float, lon: float) -> str:
+    """Tool: Runs the P90 impact simulation for a given coordinate."""
     # Hier zou je koppelen met je src/lib/google/earthengine.ts of Python equivalente Earth Engine SDK
     return f"Geen significante afwijkingen (Extreme Index: Groen) voor locatie {lat}, {lon}."
 
@@ -25,7 +25,7 @@ class WeerzoneImpactAgent(Agent):
             name="Sentinel Impact Engine",
             description="Je autonome agent die klimaatmodellen bewaakt en actie onderneemt.",
             tools=[
-                Tool(name="Run_P90_SEED", func=run_p90_seed_analysis),
+                Tool(name="Run_P90_Impact", func=run_p90_impact_analysis),
                 Tool(name="Trigger_Reed", func=alert_reed),
             ],
             # Draait met Gemini 1.5 Pro als het brein erachter
