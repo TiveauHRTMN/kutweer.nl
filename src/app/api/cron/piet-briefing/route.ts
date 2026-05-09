@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Resend } from "resend";
 import { fetchWeatherData } from "@/lib/weather";
 import { DUTCH_CITIES } from "@/lib/types";
 import { getRecommendedDeals } from "@/lib/affiliate-orchestrator";
 import { PERSONAS } from "@/lib/personas";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { hermesChat } from "@/lib/hermes";
 
 // Config
 const resend = new Resend(process.env.RESEND_API_KEY);
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; 
@@ -68,25 +68,24 @@ export async function GET(request: Request) {
     const topDeal = deals[0];
 
     // 4. AI Copy (Piet Style)
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-    const prompt = `
-      Je bent Piet van WEERZONE. Een nuchtere, betrouwbare weerman. 
-      STIJL: Behulpzaam, nuchter en respectvol. Focus op de feiten en wat het weer betekent voor de dag van de lezer.
-      CONTEXT: Landelijk weerbericht voor Nederland.
-      DATA: 
-      - Ochtend: ${slots[0].temp}, ${slots[0].rain}
-      - Middag: ${slots[1].temp}, ${slots[1].rain}
-      - Avond: ${slots[2].temp}, ${slots[2].rain}
-      - Nacht: ${slots[3].temp}, ${slots[3].rain}
-      - Zon: ${main.daily[0].sunHours}u, UV: ${main.uvIndex.toFixed(1)}
-      - Regio's: ${validWeather.map(r => `${r.name}: ${r.weather!.current.temperature}°`).join(', ')}
+    const commentary = await hermesChat([
+      {
+        role: "system",
+        content: "Je bent Piet van WEERZONE. Een nuchtere, betrouwbare weerman. Schrijf in gewone Nederlandse taal, geen jargon, geen opsommingstekens.",
+      },
+      {
+        role: "user",
+        content: `Schrijf een beknopt landelijk weerbericht van max 100 woorden voor Nederland. Eindig met een vriendelijke Hollandse groet.
 
-      TAAK: Schrijf een beknopte weersamenvatting van max 100 woorden. Geen beledigingen of agressieve taal. Focus op nauwkeurigheid. 
-      Eindig met een vriendelijke Hollandse groet. Gebruik GEEN opsommingstekens.
-    `;
-
-    const aiRes = await model.generateContent(prompt);
-    const commentary = aiRes.response.text().trim();
+Data:
+- Ochtend: ${slots[0].temp}, ${slots[0].rain}
+- Middag: ${slots[1].temp}, ${slots[1].rain}
+- Avond: ${slots[2].temp}, ${slots[2].rain}
+- Nacht: ${slots[3].temp}, ${slots[3].rain}
+- Zon: ${main.daily[0].sunHours}u, UV: ${main.uvIndex.toFixed(1)}
+- Regio's: ${validWeather.map(r => `${r.name}: ${r.weather!.current.temperature}°`).join(", ")}`,
+      },
+    ], { model: "persona", maxTokens: 200 });
 
     // 5. Send EXTREME High-End Email
     const reportDate = new Date().toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' }).toUpperCase();
@@ -175,7 +174,22 @@ export async function GET(request: Request) {
       `
     });
 
-    // 6. Paperclip Heartbeat
+    // 6. Store in Supabase for /mijnweer
+    const today = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Amsterdam" });
+    const supabase = createSupabaseAdminClient();
+    await supabase.from("piet_daily_briefing").upsert({
+      date: today,
+      generated_at: new Date().toISOString(),
+      commentary,
+      slots,
+      region_data: validWeather.map(r => ({
+        name: r.name,
+        city: r.city,
+        temp: Math.round(r.weather!.current.temperature),
+      })),
+    }, { onConflict: "date" });
+
+    // 7. Paperclip Heartbeat
     const { logPaperclipHeartbeat } = await import("@/lib/agent-logger");
     await logPaperclipHeartbeat("Piet Briefing", "healthy");
 
