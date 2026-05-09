@@ -26,7 +26,7 @@ export default async function ReedPage() {
 
   return (
     <main>
-      <Suspense fallback={null}>
+      <Suspense fallback={<LoadingScreen />}>
         <WaarschuwingenAsync activeLoc={activeLoc} loc={loc} />
       </Suspense>
     </main>
