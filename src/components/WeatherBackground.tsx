@@ -89,9 +89,10 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
     <>
       <motion.div
         className="fixed inset-0 z-0"
-        initial={false}
+        initial={{ background: `linear-gradient(170deg, ${theme.bg1} 0%, ${theme.bg2} 100%)` }}
         animate={{ background: `linear-gradient(170deg, ${theme.bg1} 0%, ${theme.bg2} 100%)` }}
         transition={{ duration: 1.2, ease: "easeInOut" }}
+        style={{ background: `linear-gradient(170deg, ${theme.bg1} 0%, ${theme.bg2} 100%)` }}
       />
 
       <div className="fixed inset-0 z-[1] overflow-hidden pointer-events-none">
@@ -99,11 +100,12 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
           {showSun && (
             <motion.div 
               key="sun"
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 1, scale: 1 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 2, ease: "easeOut" }}
               className="sun-glow"
+              style={{ opacity: 1, transform: 'scale(1)' }}
             >
               <div className="sun-core" />
             </motion.div>
@@ -114,12 +116,12 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
           {showMoon && (
             <motion.div 
               key="moon"
-              initial={{ opacity: 0, y: -20 }}
+              initial={{ opacity: 1, y: 0 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 2.5, ease: "easeOut" }}
               className="moon-glow"
-              style={{ top: "10%" }} 
+              style={{ top: "10%", opacity: 1, transform: 'translateY(0)' }} 
             >
               <div className="moon-core" />
             </motion.div>
@@ -127,13 +129,14 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
         </AnimatePresence>
 
         <AnimatePresence>
-          {showStars && mounted && (
+          {showStars && (
             <motion.div
               key="stars"
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 2 }}
+              style={{ opacity: 1 }}
             >
               {stars.map((s) => (
                 <motion.div
@@ -159,13 +162,14 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
         </AnimatePresence>
 
         <AnimatePresence>
-          {showClouds && mounted && (
+          {showClouds && (
             <motion.div 
               key="clouds"
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 2 }}
+              style={{ opacity: 1 }}
             >
               {Array.from({ length: cloudCount }, (_, i) => (
                 <div
@@ -181,13 +185,14 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
         </AnimatePresence>
 
         <AnimatePresence>
-          {showRain && mounted && (
+          {showRain && (
             <motion.div
               key="rain"
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1 }}
+              style={{ opacity: 1 }}
             >
               {rainDrops.map((d) => (
                 <div
@@ -207,13 +212,14 @@ export default function WeatherBackground({ weatherCode, isDay }: Props) {
         </AnimatePresence>
 
         <AnimatePresence>
-          {showSnow && mounted && (
+          {showSnow && (
             <motion.div
               key="snow"
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 2 }}
+              style={{ opacity: 1 }}
             >
               {snowFlakes.map((s) => (
                 <div

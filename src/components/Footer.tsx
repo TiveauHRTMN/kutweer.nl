@@ -36,10 +36,10 @@ export default function Footer() {
       className="mt-6 mb-6 px-8 sm:px-10 pt-14 pb-10"
       style={{
         borderRadius: 20,
-        background: "#000000",
-        border: "1px solid rgba(255,255,255,0.1)",
-        boxShadow: "0 12px 40px rgba(0,0,0,0.5)",
-        color: "#ffd21a",
+        background: "#3b7ff0",
+        border: "1px solid rgba(255,255,255,0.2)",
+        boxShadow: "0 12px 40px rgba(59,127,240,0.2)",
+        color: "#ffffff",
       }}
     >
       <div className="max-w-6xl mx-auto">
@@ -50,14 +50,14 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-4">
             <Link href="/" className="inline-block mb-5 hover:opacity-80 transition-opacity">
-              <LogoFull height={28} className="brightness-125" />
+              <LogoFull height={28} />
             </Link>
             <p className="text-sm leading-relaxed font-black mb-3 opacity-90">
               Hyperlokaal weer voor keuzes vandaag en morgen.
             </p>
             <a
               href="mailto:info@weerzone.nl"
-              className="text-sm font-black transition-colors hover:text-white"
+              className="text-sm font-black transition-colors hover:opacity-70"
             >
               info@weerzone.nl
             </a>
@@ -67,7 +67,7 @@ export default function Footer() {
           <div className="md:col-span-8 grid grid-cols-2 gap-6">
             {SECTIONS.map((section) => (
               <div key={section.title}>
-                <h4 className="text-[10px] font-black uppercase tracking-[0.22em] mb-4 opacity-50 text-white">
+                <h4 className="text-[10px] font-black uppercase tracking-[0.22em] mb-4 opacity-50">
                   {section.title}
                 </h4>
                 <ul className="space-y-2.5">
@@ -75,7 +75,7 @@ export default function Footer() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-[13px] font-black transition-colors hover:text-white"
+                        className="text-[13px] font-black transition-colors hover:opacity-70"
                       >
                         {link.label}
                       </Link>
@@ -89,7 +89,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className="pt-8 flex flex-col items-center gap-4 border-t border-white/10">
-          <span className="text-[13px] font-black uppercase tracking-[0.22em] text-white/40">
+          <span className="text-[13px] font-black uppercase tracking-[0.22em] opacity-40">
             WEERZONE · Powered by Tiveau
           </span>
           <div className="flex flex-wrap justify-center gap-5">
@@ -99,7 +99,7 @@ export default function Footer() {
                 href={href}
                 target={href !== "#" ? "_blank" : undefined}
                 rel={href !== "#" ? "noopener noreferrer" : undefined}
-                className="text-[11px] uppercase font-black tracking-widest transition-colors hover:text-white opacity-60 hover:opacity-100"
+                className="text-[11px] uppercase font-black tracking-widest transition-colors hover:opacity-70 opacity-60"
               >
                 {label}
               </a>
