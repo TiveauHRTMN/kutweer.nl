@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import WeatherDashboard from "@/components/WeatherDashboard";
-import LoadingScreen from "@/components/LoadingScreen";
 import RainMap from "@/components/RainMap";
 import { getSavedLocationServer } from "@/lib/location-cookies";
 import { DUTCH_CITIES, type City } from "@/lib/types";
@@ -99,7 +98,7 @@ export default async function MijnWeerPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <main>
-        <Suspense fallback={<LoadingScreen />}>
+        <Suspense fallback={null}>
           <MijnWeerAsync activeLoc={activeLoc} loc={loc} />
         </Suspense>
       </main>

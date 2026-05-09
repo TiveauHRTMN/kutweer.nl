@@ -33,7 +33,7 @@ export default function SupportBanner() {
                 href="/steun"
                 className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-black text-[10px] transition-colors shadow-lg shadow-amber-500/20 uppercase"
               >
-                Trakteer
+                Steun
               </Link>
               <button 
                 onClick={() => setIsVisible(false)}
