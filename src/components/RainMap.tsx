@@ -1,5 +1,6 @@
 "use client";
 
+import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 
 interface RainViewerFrame {
@@ -15,21 +16,23 @@ interface Props {
 
 export default function RainMap({ lat, lon }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<L.Map | null>(null);
-  const radarLayer = useRef<L.TileLayer | null>(null);
+  const mapInstance = useRef<any>(null);
+  const radarLayer = useRef<any>(null);
   const [frames, setFrames] = useState<RainViewerFrame[]>([]);
   const [host, setHost] = useState("");
   const [currentIdx, setCurrentIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [mapReady, setMapReady] = useState(false);
 
-  // Fetch RainViewer timestamps
+  // Fetch RainViewer timestamps once
   useEffect(() => {
     fetch("https://api.rainviewer.com/public/weather-maps.json")
       .then(r => r.json())
       .then(data => {
-        const past: RainViewerFrame[] = (data.radar.past as { time: number; path: string }[]).map(f => ({ ...f, isForecast: false }));
-        const nowcast: RainViewerFrame[] = (data.radar.nowcast as { time: number; path: string }[]).map(f => ({ ...f, isForecast: true }));
+        const past: RainViewerFrame[] = (data.radar.past as { time: number; path: string }[])
+          .map(f => ({ ...f, isForecast: false }));
+        const nowcast: RainViewerFrame[] = (data.radar.nowcast as { time: number; path: string }[])
+          .map(f => ({ ...f, isForecast: true }));
         setHost(data.host);
         setFrames([...past, ...nowcast]);
         setCurrentIdx(past.length - 1);
@@ -37,27 +40,30 @@ export default function RainMap({ lat, lon }: Props) {
       .catch(() => {});
   }, []);
 
-  // Initialize Leaflet map
+  // Initialize Leaflet map — guard against strict-mode double-init
   useEffect(() => {
-    if (!mapRef.current || mapInstance.current) return;
-    let mounted = true;
+    const el = mapRef.current;
+    if (!el) return;
+    // Leaflet stamps its container; skip if already done
+    if ((el as any)._leaflet_id) return;
 
+    let map: any;
     import("leaflet").then(({ default: L }) => {
-      if (!mounted || !mapRef.current || mapInstance.current) return;
+      const container = mapRef.current;
+      if (!container || (container as any)._leaflet_id) return;
 
-      const map = L.map(mapRef.current, {
+      map = L.map(container, {
         center: [lat, lon],
         zoom: 8,
         zoomControl: true,
         attributionControl: false,
       });
 
-      // Minimal base tiles
       L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
         maxZoom: 19,
       }).addTo(map);
 
-      // Labels pane — always on top of radar
+      // Labels always above radar tiles
       map.createPane("labels");
       (map.getPane("labels") as HTMLElement).style.zIndex = "650";
       (map.getPane("labels") as HTMLElement).style.pointerEvents = "none";
@@ -66,7 +72,7 @@ export default function RainMap({ lat, lon }: Props) {
         pane: "labels",
       }).addTo(map);
 
-      // User location dot
+      // Location dot
       L.circleMarker([lat, lon], {
         radius: 6,
         fillColor: "#3b82f6",
@@ -80,15 +86,16 @@ export default function RainMap({ lat, lon }: Props) {
     });
 
     return () => {
-      mounted = false;
-      if (mapInstance.current) {
-        mapInstance.current.remove();
+      if (map) {
+        map.remove();
         mapInstance.current = null;
+        radarLayer.current = null;
       }
     };
-  }, [lat, lon]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Swap radar tile layer when frame changes
+  // Swap radar tile layer when frame or host changes
   useEffect(() => {
     if (!mapReady || !mapInstance.current || !host || frames.length === 0) return;
 
@@ -99,16 +106,17 @@ export default function RainMap({ lat, lon }: Props) {
         radarLayer.current = null;
       }
       const frame = frames[currentIdx];
-      const layer = L.tileLayer(`${host}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`, {
-        opacity: 0.75,
-        attribution: "RainViewer",
-      });
+      if (!frame) return;
+      const layer = L.tileLayer(
+        `${host}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`,
+        { opacity: 0.75 }
+      );
       layer.addTo(mapInstance.current);
       radarLayer.current = layer;
     });
   }, [currentIdx, frames, host, mapReady]);
 
-  // Auto-play animation
+  // Auto-play
   useEffect(() => {
     if (!isPlaying || frames.length === 0) return;
     const id = setInterval(() => setCurrentIdx(i => (i + 1) % frames.length), 600);
@@ -119,7 +127,6 @@ export default function RainMap({ lat, lon }: Props) {
   const pastCount = frames.filter(f => !f.isForecast).length;
   const nowcastCount = frames.filter(f => f.isForecast).length;
   const splitPct = frames.length > 0 ? (pastCount / frames.length) * 100 : 0;
-
   const timeStr = frame
     ? new Date(frame.time * 1000).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })
     : "--:--";
@@ -145,7 +152,7 @@ export default function RainMap({ lat, lon }: Props) {
         </div>
       </div>
 
-      <div ref={mapRef} style={{ height: 380 }} className="w-full bg-slate-100" />
+      <div ref={mapRef} style={{ height: "380px" }} className="w-full bg-slate-100" />
 
       {frames.length > 0 && (
         <div className="px-4 py-3 flex items-center gap-3 border-t border-slate-100">
@@ -155,10 +162,10 @@ export default function RainMap({ lat, lon }: Props) {
           >
             {isPlaying ? "Pauzeer" : "▶ Speel"}
           </button>
-          <div className="flex-1 relative">
+          <div className="flex-1 relative flex items-center">
             <div
-              className="absolute inset-y-0 flex items-center pointer-events-none"
-              style={{ left: `calc(${splitPct}% - 1px)` }}
+              className="absolute flex items-center pointer-events-none"
+              style={{ left: `calc(${splitPct}% - 1px)`, top: 0, bottom: 0 }}
             >
               <div className="w-0.5 h-4 bg-orange-400 rounded-full" />
             </div>
@@ -177,7 +184,7 @@ export default function RainMap({ lat, lon }: Props) {
         </div>
       )}
 
-      <div className="px-4 pb-3 flex items-center gap-3 text-[9px] text-slate-400">
+      <div className="px-4 pb-3 flex items-center gap-3 text-[9px] text-slate-400 flex-wrap">
         <span className="flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
           Radar ({pastCount}×)
