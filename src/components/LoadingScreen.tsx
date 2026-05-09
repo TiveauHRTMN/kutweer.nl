@@ -15,6 +15,7 @@ export default function LoadingScreen() {
       <LogoFull
         height={180}
         className="animate-pulse drop-shadow-[0_4px_40px_rgba(255,255,255,0.3)]"
+        priority
       />
 
       <p className="mt-10 text-white/45 text-xs font-semibold tracking-[0.2em] uppercase animate-[fadeInUp_0.8s_ease_0.4s_forwards] opacity-0">

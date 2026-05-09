@@ -6,6 +6,7 @@ import path from "path";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const runtime = "nodejs";
+export const alt = "WEERZONE — hyperlokale weersvoorspelling 48 uur vooruit";
 
 export default async function OgImage({ params }: { params: Promise<{ province: string; place: string }> }) {
   const { province, place: slug } = await params;

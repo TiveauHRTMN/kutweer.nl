@@ -18,7 +18,7 @@ export function LogoIcon({ size = 40, className = "" }: { size?: number; classNa
  *  De PNG heeft ~8% transparante padding aan alle kanten.
  *  We compenseren via negatieve margin zodat de tekst visueel uitlijnt.
  */
-export function LogoFull({ height = 32, className = "" }: { height?: number; className?: string }) {
+export function LogoFull({ height = 32, className = "", priority = false }: { height?: number; className?: string; priority?: boolean }) {
   const width = Math.round(height * (2430 / 645));
   const padY = Math.round(height * 0.12); // verticale compensatie voor PNG transparante padding
   return (
@@ -29,7 +29,7 @@ export function LogoFull({ height = 32, className = "" }: { height?: number; cla
         width={width}
         height={height}
         className={className}
-        fetchPriority="high"
+        {...(priority ? { priority: true } : { loading: "lazy", decoding: "async" })}
       />
     </div>
   );
