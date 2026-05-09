@@ -134,6 +134,7 @@ export default async function MijnWeerPage() {
           initialWeatherCode={initialWeather?.current.weatherCode}
           initialIsDay={initialWeather?.current.isDay}
           hideWeatherInfo={true}
+          showRainRadar={true}
           beforeFooter={
             <div className="space-y-4 mt-8">
               <KNMIClimateCard lat={lat} lon={lon} />

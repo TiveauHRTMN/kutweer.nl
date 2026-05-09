@@ -44,6 +44,7 @@ interface DashboardProps {
   titleOverride?: string;
   hideWeatherInfo?: boolean;
   slimMode?: boolean;
+  showRainRadar?: boolean;
 }
 
 function getSavedCity(): City | null {
@@ -108,7 +109,7 @@ const DetailItem = ({ label, value, subValue, icon, unit, fillPct }: {
   );
 };
 
-export default function WeatherDashboard({ initialCity, initialWeather, initialWeatherCode, initialIsDay, topContent, beforeFooter, titleOverride, hideWeatherInfo, slimMode }: DashboardProps) {
+export default function WeatherDashboard({ initialCity, initialWeather, initialWeatherCode, initialIsDay, topContent, beforeFooter, titleOverride, hideWeatherInfo, slimMode, showRainRadar }: DashboardProps) {
   const [city, setCity] = useState<City>(initialCity || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0]);
   const [weather, setWeather] = useState<WeatherData | null>(initialWeather || null);
   const [wws, setWWS] = useState<WWSPayload | null>(null);
@@ -323,13 +324,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
             </div>
           </div>
 
-          {/* Neerslag radar — live minutely data */}
-          {weather.minutely && weather.minutely.length > 0 && (
-            <div className="card p-5 sm:p-6">
-              <RainRadar data={weather.minutely} />
-            </div>
-          )}
-
           {/* Narrative teaser */}
           {narrative && (
             <div className="card px-6 py-5">
@@ -379,6 +373,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
           </>
           )}
         </div>
+        {showRainRadar && weather.minutely && weather.minutely.length > 0 && (
+          <div className="card p-5 sm:p-6">
+            <RainRadar data={weather.minutely} />
+          </div>
+        )}
         {beforeFooter}
         <AmazonStickyBar weather={weather} />
       </div>
