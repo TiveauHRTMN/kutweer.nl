@@ -1,17 +1,17 @@
-import { ALL_PLACES, PROVINCE_LABELS, placeSlug, type Province } from "@/lib/places-data";
+import { ALL_PLACES, placeSlug } from "@/lib/places-data";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { schemaWebPage, schemaBreadcrumb, schemaLd } from "@/lib/schema";
 
 export const metadata: Metadata = {
-  title: "Onweer vandaag in Nederland — live CAPE-waarden per uur | WEERZONE",
+  title: "Onweer vandaag in Nederland — live kans op bliksem per uur | WEERZONE",
   description:
-    "Onweer vandaag in Nederland? Bekijk live de CAPE-waarden (onweersenergie) per uur per stad. De enige site die je echt vertelt óf en wanneer het onweert.",
+    "Onweer vandaag in Nederland? Bekijk live de kans op bliksem per uur per stad. De enige site die je echt vertelt óf en wanneer het gaat onweren.",
   keywords: [
     "onweer vandaag",
     "onweer nederland",
     "onweer morgen",
-    "cape waarde onweer",
+    "onweers-energie",
     "onweersradar",
     "bliksem vandaag",
   ],
@@ -29,7 +29,7 @@ export default function OnweerPage() {
   return (
     <>
       <script {...schemaLd([
-        schemaWebPage({ name: "Onweer vandaag in Nederland", url: "https://weerzone.nl/weer/onweer", description: "Onweer vandaag in Nederland? Bekijk live de CAPE-waarden (onweersenergie) per uur per stad." }),
+        schemaWebPage({ name: "Onweer vandaag in Nederland", url: "https://weerzone.nl/weer/onweer", description: "Onweer vandaag in Nederland? Bekijk live de kans op bliksem per uur per stad." }),
         schemaBreadcrumb([{ name: "WEERZONE", item: "https://weerzone.nl" }, { name: "Weer", item: "https://weerzone.nl/weer" }, { name: "Onweer" }]),
       ])} />
       <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white px-4 py-12">
@@ -46,31 +46,31 @@ export default function OnweerPage() {
               Onweer vandaag in Nederland.
             </h1>
             <p className="text-white/70 text-lg leading-relaxed">
-              Geen gokwerk. WeerZone toont de live <strong className="text-white">CAPE-waarde per uur</strong> voor elke stad. Boven 1500 J/kg wordt het serieus.
+              Geen gokwerk. WeerZone toont de live <strong className="text-white">onweers-energie per uur</strong> voor elke stad. 
             </p>
           </header>
 
           <section className="mb-10 space-y-6 text-white/75 leading-relaxed bg-white/5 p-8 rounded-3xl border border-white/10">
-             <h2 className="text-2xl font-black text-white uppercase tracking-tight">Onweerskansen beoordelen</h2>
+             <h2 className="text-2xl font-black text-white uppercase tracking-tight">Onweerskansen bekijken</h2>
              <p>
-                CAPE meet de onstabiliteit. Maar je hebt ook neerslag nodig. Als onze site voor jouw stad een hoge CAPE aangeeft én neerslag laat zien, dan is de kans op bliksem en donder zeer groot.
+                We meten de onstabiliteit in de lucht. Als de energie hoog is én er valt regen, dan is de kans op bliksem en donder zeer groot. Zo weet je precies of je binnen moet blijven of nog even de hond kunt uitlaten.
              </p>
              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 my-4">
                 <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center">
-                    <div className="text-[10px] uppercase font-black text-green-400 mb-1">Veilig</div>
-                    <div className="text-lg font-black">&lt;500</div>
+                    <div className="text-[10px] uppercase font-black text-green-400 mb-1">Rustig</div>
+                    <div className="text-lg font-black">Laag</div>
                 </div>
                 <div className="p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 text-center">
-                    <div className="text-[10px] uppercase font-black text-orange-400 mb-1">Kans</div>
-                    <div className="text-lg font-black">1500+</div>
+                    <div className="text-[10px] uppercase font-black text-orange-400 mb-1">Onrustig</div>
+                    <div className="text-lg font-black">Matig</div>
                 </div>
                 <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-center">
-                    <div className="text-[10px] uppercase font-black text-red-400 mb-1">Gevaar</div>
-                    <div className="text-lg font-black">2500+</div>
+                    <div className="text-[10px] uppercase font-black text-red-400 mb-1">Onweer</div>
+                    <div className="text-lg font-black">Hoog</div>
                 </div>
                 <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-center">
-                    <div className="text-[10px] uppercase font-black text-purple-400 mb-1">Extreem</div>
-                    <div className="text-lg font-black">4000+</div>
+                    <div className="text-[10px] uppercase font-black text-purple-400 mb-1">Zwaar onweer</div>
+                    <div className="text-lg font-black">Extreem</div>
                 </div>
              </div>
           </section>

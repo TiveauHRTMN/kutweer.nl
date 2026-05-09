@@ -96,16 +96,16 @@ export default function ReflectivityMap({ hourly }: Props) {
       <div className="px-5 pt-5 pb-3 flex items-center justify-between">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">
-            Radarreflectiviteit (geschat)
+            Buitenradar
           </p>
           <h3 className="text-sm font-black text-slate-800 leading-none">
-            Neerslagintensiteit — 48 uur
+            Regenval — 48 uur
           </h3>
         </div>
         <div className="flex items-center gap-1.5">
           <div className={`w-2 h-2 rounded-full ${hasActivity ? "bg-blue-500 animate-pulse" : "bg-emerald-500"}`} />
           <span className="text-[10px] font-bold text-slate-400 uppercase">
-            {hasActivity ? `Max ${maxDbz.toFixed(0)} dBZ` : "Geen echo's"}
+            {hasActivity ? "Regen op komst" : "Helemaal droog"}
           </span>
         </div>
       </div>
@@ -140,10 +140,10 @@ export default function ReflectivityMap({ hourly }: Props) {
                       </span>
                     )}
                     {/* Tooltip */}
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-slate-900 text-white text-[10px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-30 shadow-xl whitespace-nowrap">
-                      <div>{formatHour(h.time)} — {h.precip.toFixed(1)} mm/h</div>
-                      <div className="text-slate-400">{h.dbz.toFixed(0)} dBZ · {dbzLabel(h.dbz)}</div>
-                      {h.cape > 200 && <div className="text-amber-300">CAPE: {h.cape.toFixed(0)} J/kg</div>}
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-slate-900 text-white text-[10px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-30 shadow-xl whitespace-nowrap text-center">
+                      <div>{formatHour(h.time)} — {h.precip.toFixed(1)} mm</div>
+                      <div className="text-slate-400">{dbzLabel(h.dbz)}</div>
+                      {h.cape > 500 && <div className="text-amber-300">Bliksem-kans</div>}
                     </div>
                   </div>
                 );
@@ -153,16 +153,16 @@ export default function ReflectivityMap({ hourly }: Props) {
         ))}
       </div>
 
-      {/* dBZ Scale */}
+      {/* Legend */}
       <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">dBZ schaal</span>
+        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">Intensiteit</span>
         <div className="flex items-center gap-1">
           {SCALE.map(s => (
             <div key={s.label} className="flex items-center gap-1">
               <div className="w-4 h-3 rounded-[2px]" style={{ background: dbzColor(s.dbz) }} />
-              <span className="text-[8px] font-bold text-slate-400">{s.label}</span>
             </div>
           ))}
+          <span className="text-[8px] font-bold text-slate-400 ml-1">Licht → Zwaar</span>
         </div>
       </div>
     </div>

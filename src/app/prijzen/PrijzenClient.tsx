@@ -30,7 +30,7 @@ const FAQS: Array<[string, string]> = [
   ["Waarom is het nu gratis?", "We zijn nog in opbouw. Je kunt je nu gratis aanmelden zonder creditcard."],
   ["Wat is het verschil tussen Piet, Reed en Steve?", "Piet schrijft een dagelijkse weermail voor thuis. Reed stuurt daarnaast alleen bericht als het weer over jouw drempel gaat. Steve doet hetzelfde voor bedrijven, inclusief advies per vestiging."],
   ["Kan ik wisselen van abonnement?", "Ja. Je kunt maandelijks upgraden of downgraden via je account. Als je nu bij de eerste aanmeldingen zit, behoud je de lage aanmeldprijs van je nieuwe abonnement."],
-  ["Waarom maar 48 uur vooruit?", "Omdat een voorspelling verder dan 48 uur onbetrouwbaar wordt. Wij houden ons aan wat met de meest nauwkeurige Nederlandse weermodellen accuraat te zeggen is — 48 uur zeer lokaal per buurt."],
+  ["Waarom maar 48 uur vooruit?", "Omdat een voorspelling verder dan 48 uur gewoon gokken is. Wij houden het bij wat we echt zeker weten: de komende twee dagen, lokaal bij jou in de straat."],
   ["Hoe gaat de betaling straks?", "Via Mollie: iDEAL, creditcard of Bancontact. Per maand of per jaar (jaar: twee maanden korting). Opzeggen kan op elk moment vanuit je account."],
   ["Wat is het verschil met Buienradar of Weerplaza?", "Weerzone is reclamevrij en is afgestemd op jouw situatie: je postcode en de voorkeuren die je bij aanmelden hebt doorgegeven."],
 ];
@@ -87,7 +87,7 @@ export default function PrijzenClient({ userTier, isFounder, initialWeatherCode,
               Je hebt volledige toegang.
             </h1>
             <p className="text-sm text-text-muted leading-relaxed mb-8">
-              Als founder heb je Steve-niveau toegang tot alle functies van Weerzone, nu en na de lancering — zonder abonnement, zonder creditcard.
+              Als founder heb je volledige toegang tot alles wat Weerzone te bieden heeft. Geen gedoe met abonnementen, gewoon voor altijd de beste data.
             </p>
             <Link href="/app" className="btn btn-primary btn-block btn-lg">Naar dashboard →</Link>
           </div>

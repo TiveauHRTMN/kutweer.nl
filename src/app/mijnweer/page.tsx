@@ -148,11 +148,8 @@ export default async function MijnWeerPage() {
                   of een afspraak buiten plant. Verder vooruit wordt het giswerk — wij doen niet aan giswerk.
                 </p>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  De weerdata komt rechtstreeks van de meest nauwkeurige Nederlandse weermodellen.
-                  Drie modellen samen geven een nauwkeuriger beeld dan één model alleen. Weerzone vergelijkt
-                  ze en toont je het meest betrouwbare resultaat — per uur, op jouw locatie.
-                </p>
-              </div>
+                  Onze data komt rechtstreeks van de meest betrouwbare bronnen in Nederland. We vergelijken de beste weermodellen en tonen je het eerlijke resultaat — per uur, op jouw locatie.
+                </p>              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="card p-5">

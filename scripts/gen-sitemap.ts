@@ -23,7 +23,7 @@ async function run() {
   console.log("🚀 Generating static sitemap...");
   const places = JSON.parse(fs.readFileSync(placesPath, 'utf8'));
   const placesLastMod = new Date(fs.statSync(placesPath).mtime).toISOString();
-  const staticLastMod = "2025-05-01T00:00:00.000Z"; // update when static pages change
+  const staticLastMod = "2026-05-10T00:00:00.000Z";
 
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
   xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
@@ -50,8 +50,12 @@ async function run() {
   xml += `  <url><loc>${BASE_URL}/weer/onweer</loc><lastmod>${staticLastMod}</lastmod><priority>0.6</priority></url>\n`;
   xml += `  <url><loc>${BASE_URL}/weer/regen</loc><lastmod>${staticLastMod}</lastmod><priority>0.6</priority></url>\n`;
 
-  // Provinces
-  const provinces = ["groningen", "friesland", "drenthe", "overijssel", "flevoland", "gelderland", "utrecht", "noord-holland", "zuid-holland", "zeeland", "noord-brabant", "limburg"];
+  // Provinces (NL + Vlaanderen)
+  const provinces = [
+    "groningen", "friesland", "drenthe", "overijssel", "flevoland", "gelderland",
+    "utrecht", "noord-holland", "zuid-holland", "zeeland", "noord-brabant", "limburg",
+    "antwerpen", "limburg-be", "oost-vlaanderen", "vlaams-brabant", "west-vlaanderen",
+  ];
   provinces.forEach(p => {
     xml += `  <url><loc>${BASE_URL}/weer/${p}</loc><lastmod>${placesLastMod}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n`;
   });

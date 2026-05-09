@@ -18,21 +18,6 @@ export const metadata: Metadata = {
     "weerdienst nederland",
   ],
   alternates: { canonical: "https://weerzone.nl/over" },
-  openGraph: {
-    title: "Over WEERZONE",
-    description:
-      "Hyperlokale 48-uurs weersverwachting voor Nederland, gericht op keuzes voor vandaag en morgen.",
-    type: "website",
-    locale: "nl_NL",
-    url: "https://weerzone.nl/over",
-    siteName: "WEERZONE",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Over WEERZONE",
-    description:
-      "Hyperlokale 48-uurs weersverwachting voor Nederland, gericht op keuzes voor vandaag en morgen.",
-  },
 };
 
 const PERSONAS = [
@@ -63,33 +48,57 @@ export default async function OverPage() {
   const loc = await getSavedLocationServer().catch(() => null);
   const activeLoc = loc || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
   const initialWeather = await fetchWeatherData(activeLoc.lat, activeLoc.lon).catch(() => undefined);
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "AboutPage",
-    name: "Over WEERZONE",
-    description:
-      "WEERZONE richt zich op hyperlokale weersverwachtingen voor de komende 48 uur.",
-    url: "https://weerzone.nl/over",
-    inLanguage: "nl-NL",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Waarom kijkt WEERZONE maar 48 uur vooruit?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Omdat die periode het meest bruikbaar is voor concrete keuzes en planning per uur.",
-        },
+  const faqItems = [
+    {
+      q: "Waarom kijkt WEERZONE maar 48 uur vooruit?",
+      a: "Weersverwachtingen worden exponentieel onnauwkeuriger naarmate de tijd vordert. De atmosfeer is een chaotisch systeem: kleine afwijkingen in de begintoestand leiden na 48 à 72 uur tot grote onzekerheden. WEERZONE focust bewust op de komende 48 uur omdat dit de periode is waarin modellen als HARMONIE, ICON-D2 en AROME nog uur-voor-uur betrouwbare uitkomsten geven. Verder vooruit geeft hoogstens een grove tendens — nuttig voor planning, maar niet voor concrete keuzes als 'ga ik fietsen' of 'plan ik buiten werk in'. Wij kiezen voor bruikbaarheid boven indruk.",
+    },
+    {
+      q: "Wat maakt WEERZONE anders dan Buienradar of Weerplaza?",
+      a: "WEERZONE combineert drie weermodellen tegelijk — HARMONIE (KNMI), ICON-D2 (DWD) en AROME — en vertaalt die ruwe modeldata naar één helder antwoord per locatie. Buienradar en Weerplaza tonen de data, WEERZONE interpreteert hem. Bovendien is WEERZONE reclamevrij en werkt het op 1×1 kilometer resolutie, waardoor een gehucht andere data kan krijgen dan de dichtstbijzijnde stad. De nadruk ligt op de vraag die iedereen eigenlijk stelt: wat betekent dit voor mij vandaag en morgen?",
+    },
+    {
+      q: "Hoe werkt de locatiebepaling?",
+      a: "WEERZONE vraagt je eenmalig om een plaatsnaam of postcode. Die locatie wordt opgeslagen in een cookie zodat je bij elk volgend bezoek direct de juiste weersverwachting ziet zonder opnieuw te zoeken. Je kunt de locatie altijd aanpassen via de locatieknop bovenin de pagina. De database bevat meer dan 14.000 plaatsen in Nederland en Vlaanderen — van grote steden tot kleine gehuchten en buurtschappen — zodat zelfs de meest afgelegen locatie eigen, hyperlokale data krijgt.",
+    },
+    {
+      q: "Is WEERZONE gratis?",
+      a: "WEERZONE is tijdelijk gratis te proberen tijdens de bètaperiode. Na de bèta worden de basisfuncties (weersverwachting per locatie) gratis gehouden. Uitgebreide functies zoals persoonlijke weerberichten van Piet, extreme-weerwaarschuwingen van Reed en zakelijke integraties via Steve vallen onder een betaald abonnement. De exacte tarieven en wat je per plan krijgt staan op de prijzenpagina. Er zijn geen verborgen kosten — je ziet altijd vooraf wat je betaalt.",
+    },
+    {
+      q: "Kan ik meerdere locaties opslaan?",
+      a: "Op dit moment volgt WEERZONE één actieve locatie tegelijk. Je kunt die locatie op elk moment wisselen via de locatieknop. De mogelijkheid om meerdere locaties op te slaan en snel te schakelen — handig als je op twee adressen woont of regelmatig ergens anders werkt — staat gepland voor een latere versie. Gebruikers van het betaalde plan krijgen dit als eerste. Als je je wilt aanmelden voor updates over nieuwe functies, kun je je registreren via de aanmeldpagina.",
+    },
+    {
+      q: "Hoe kan ik contact opnemen?",
+      a: "Je kunt WEERZONE bereiken via info@weerzone.nl of via het contactformulier op de contactpagina. Op werkdagen antwoorden we doorgaans binnen 24 uur. Voor technische vragen over de app, ontbrekende locaties of dataproblemen is e-mail de snelste weg. Voor zakelijke vragen — partnerships, API-integraties of B2B-abonnementen — kun je direct mailen met als onderwerp 'Zakelijk' zodat je bericht bij de juiste persoon terechtkomt.",
+    },
+  ];
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      name: "Over WEERZONE",
+      description:
+        "WEERZONE richt zich op hyperlokale weersverwachtingen voor de komende 48 uur.",
+      url: "https://weerzone.nl/over",
+      inLanguage: "nl-NL",
+      speakable: {
+        "@type": "SpeakableSpecification",
+        cssSelector: ["h1", ".wz-about-intro", ".wz-about-philosophy"],
       },
-      {
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: faqItems.map(({ q, a }) => ({
         "@type": "Question",
-        name: "Wat maakt WEERZONE anders?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "De combinatie van hyperlokale data, modelvergelijking en een vertaallaag naar praktische gevolgen voor thuis en werk.",
-        },
-      },
-    ],
-  };
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    },
+  ];
 
   return (
     <main>
@@ -131,13 +140,13 @@ export default async function OverPage() {
 
             <div className="card p-6">
               <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">
-                Hoe het werkt
+                Onze filosofie
               </p>
               <p className="text-slate-900 font-black text-lg mb-2">
-                Meerdere modellen, één vertaalslag.
+                Eerlijke data, zonder poespas.
               </p>
               <p className="text-sm text-slate-600 leading-relaxed">
-                WEERZONE gebruikt hyperlokale weerdata en modelvergelijking om temperatuur, regen, wind en risico&apos;s zo
+                WEERZONE gebruikt de meest nauwkeurige bronnen om temperatuur, regen, wind en risico&apos;s zo
                 relevant mogelijk per locatie te tonen. Daarna vertalen we dat naar momenten en gevolgen: kun je droog
                 fietsen, buiten werken, of moet je rekening houden met een omslag in het weer.
               </p>
@@ -171,7 +180,7 @@ export default async function OverPage() {
               </p>
               <div className="space-y-2">
                 {[
-                  ["Waarom maar 48 uur vooruit?", "Omdat die periode het meest bruikbaar is voor concrete keuzes per uur. Verder vooruit geeft richting, maar voorspellingen worden snel onbetrouwbaar — wij houden ons aan wat de meest nauwkeurige Nederlandse weermodellen accuraat kunnen zeggen."],
+                  ["Waarom maar 48 uur vooruit?", "Omdat die periode het meest bruikbaar is voor concrete keuzes per uur. Verder vooruit geeft richting, maar voorspellingen worden snel onbetrouwbaar — wij houden ons aan wat de data accuraat kan zeggen."],
                   ["Wat maakt WEERZONE anders dan Buienradar of Weerplaza?", "WEERZONE is reclamevrij en afgestemd op jouw situatie: postcode en de voorkeuren die je hebt doorgegeven. Geen eindeloze grafieken, maar één duidelijk antwoord op wat het weer vandaag en morgen voor jou betekent."],
                   ["Hoe werkt de locatiebepaling?", "WEERZONE vraagt je eenmalig om een postcode of plaatsnaam. Je kunt dit altijd aanpassen via de locatieknop bovenin de pagina."],
                   ["Is WEERZONE gratis?", "Tijdelijk gratis te proberen. Bekijk de abonnementspagina voor de tarieven na de bètaperiode."],

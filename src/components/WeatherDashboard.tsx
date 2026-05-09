@@ -32,6 +32,9 @@ const RainRadar = dynamic(() => import("./RainRadar"), {
   ssr: false,
   loading: () => <div className="card p-4 text-center text-xs text-text-secondary">Radar laadt…</div>,
 });
+const KNMIStationBadge = dynamic(() => import("./KNMIStationBadge"), { ssr: false });
+const KNMIClimateCard = dynamic(() => import("./KNMIClimateCard"), { ssr: false });
+const KNMIRadarCard = dynamic(() => import("./KNMIRadarCard"), { ssr: false });
 
 interface DashboardProps {
   initialCity?: City;
@@ -292,13 +295,14 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
             <div className="p-8 sm:p-12 relative z-[2] pt-12 sm:pt-20">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-8 mb-12">
                 <div className="flex flex-col items-start">
-                  <div className="flex items-center gap-2 mb-6">
-                    <span 
+                  <div className="flex flex-wrap items-center gap-2 mb-6">
+                    <span
                       className="text-[12px] font-black uppercase tracking-[0.3em] text-white px-3 py-1.5 rounded-[10px] shadow-sm"
                       style={{ background: "#3b7ff0" }}
                     >
                       Actueel weer
                     </span>
+                    <KNMIStationBadge lat={city.lat} lon={city.lon} />
                   </div>
                   <h1 className="text-3xl font-black uppercase tracking-[0.2em] text-text-secondary mb-3">{city.name}</h1>
                   <div className="flex items-start">
@@ -320,6 +324,19 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
                </div>
             </div>
           </div>
+
+          {/* Neerslag radar — live minutely data */}
+          {weather.minutely && weather.minutely.length > 0 && (
+            <div className="card p-5 sm:p-6">
+              <RainRadar data={weather.minutely} />
+            </div>
+          )}
+
+          {/* KNMI live radar metadata */}
+          <KNMIRadarCard />
+
+          {/* KNMI klimaatvergelijking */}
+          <KNMIClimateCard lat={city.lat} lon={city.lon} />
 
           {/* Narrative teaser */}
           {narrative && (

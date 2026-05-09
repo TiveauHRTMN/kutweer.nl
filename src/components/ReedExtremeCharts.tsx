@@ -189,40 +189,40 @@ export default function ReedExtremeCharts({ hourly }: Props) {
     <div className="space-y-4">
       {/* CAPE */}
       <ChartPanel
-        title="CAPE — Onweerenergie"
-        maxLabel={`${capeMax.toFixed(0)}`}
+        title="Onweers-kans"
+        maxLabel={capeMax > 1500 ? "Hoog" : capeMax > 500 ? "Matig" : "Laag"}
         data={capeData}
         hours={hours}
         yMax={2000}
-        unit="J/kg"
+        unit=""
         threshold={1000}
-        thresholdLabel="Onweersdrempel"
+        thresholdLabel="Pas op"
         colorFn={(v) => v > 1500 ? "#dc2626" : v > 500 ? "#ea580c" : "#f59e0b"}
       />
 
       {/* Neerslag */}
       <ChartPanel
-        title="Neerslag per uur"
+        title="Regen"
         maxLabel={`${precipMax.toFixed(1)}`}
         data={precipData}
         hours={hours}
         yMax={10}
         unit="mm"
         threshold={5}
-        thresholdLabel="Felle buien"
+        thresholdLabel="Zware regen"
         colorFn={(v) => v > 5 ? "#dc2626" : v > 1 ? "#2563eb" : "#60a5fa"}
       />
 
       {/* Wind */}
       <ChartPanel
-        title="Windsnelheid"
+        title="Wind"
         maxLabel={`${windMax.toFixed(0)}`}
         data={windData}
         hours={hours}
         yMax={80}
         unit="km/h"
         threshold={50}
-        thresholdLabel="Stormkracht"
+        thresholdLabel="Harde wind"
         type="line"
         colorFn={(v) => v > 75 ? "#dc2626" : v > 50 ? "#ea580c" : "#3b82f6"}
       />
