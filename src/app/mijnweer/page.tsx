@@ -95,16 +95,19 @@ export default async function MijnWeerPage() {
   const lat = activeLoc.lat;
   const lon = activeLoc.lon;
 
-  const [initialWeather, allWarnings, provinceSlug, airQuality, marineData, pietBriefing, knmiForecast] = await Promise.all([
+  const [initialWeather, allWarnings, provinceSlug, airQuality, marineData, pietBriefing] = await Promise.all([
     fetchWeatherData(lat, lon).catch(() => undefined),
     fetchKNMIWarnings().catch(() => []),
     nearestProvinceSlug(lat, lon).catch(() => null),
     fetchAirQuality(lat, lon).catch(() => null),
     fetchMarineData(lat, lon).catch(() => null),
     fetchPietDailyBriefing().catch(() => null),
-    fetchPietWeerbericht().catch(() => null),
   ]);
   const provinceWarnings = provinceSlug ? warningsForProvince(allWarnings, provinceSlug) : [];
+
+  const knmiForecast = initialWeather
+    ? await fetchPietWeerbericht(lat, lon, activeLoc.name, initialWeather).catch(() => null)
+    : null;
 
   let greetingName = "jou";
   try {
