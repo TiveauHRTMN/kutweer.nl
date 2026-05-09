@@ -25,6 +25,7 @@ import PietInlineTip from "./PietInlineTip";
 import EmailSubscribe from "./EmailSubscribe";
 import SupportBanner from "./SupportBanner";
 import Footer from "./Footer";
+import WeatherAdvice from "./WeatherAdvice";
 import dynamic from "next/dynamic";
 
 const WeatherBackground = dynamic(() => import("./WeatherBackground"));
@@ -371,6 +372,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, topConte
           </Link>
 
           <EmailSubscribe city={city} />
+          <WeatherAdvice 
+            temperature={weather.current.temperature} 
+            precipitation={weather.current.precipitation} 
+            isFreezing={weather.current.temperature < 2} 
+          />
           <AffiliateCard weather={weather} placeName={city.name} />
               </>)}
           </>
