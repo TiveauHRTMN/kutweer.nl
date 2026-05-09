@@ -12,6 +12,7 @@ import {
   warningsForProvince,
   nearestProvinceSlug,
 } from "@/lib/knmi-warnings";
+import { fetchKNMIShortForecast } from "@/lib/knmi-edr";
 import { fetchEstofexBeneluxSummary } from "@/lib/estofex";
 import {
   buildPersonaEmailHtml,
@@ -94,10 +95,11 @@ export async function GET(request: NextRequest) {
   let failed = 0;
   const errors: string[] = [];
 
-  // KNMI warnings + Estofex: één keer ophalen voor alle gebruikers.
-  const [allKNMIWarnings, estofex] = await Promise.all([
+  // KNMI warnings + Estofex + officiële verwachting: één keer ophalen voor alle gebruikers.
+  const [allKNMIWarnings, estofex, knmiForecast] = await Promise.all([
     fetchKNMIWarnings().catch(() => []),
     fetchEstofexBeneluxSummary(2).catch(() => null),
+    fetchKNMIShortForecast().catch(() => null),
   ]);
 
   for (const sub of rows) {
@@ -196,6 +198,7 @@ export async function GET(request: NextRequest) {
         prefs: prefsRow?.prefs ?? {},
         knmiWarnings,
         estofex,
+        knmiForecast,
       });
 
       const unsubscribeUrl = `https://weerzone.nl/api/unsubscribe?email=${encodeURIComponent(profile.email)}`;

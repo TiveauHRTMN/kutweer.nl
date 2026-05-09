@@ -52,6 +52,8 @@ export interface BriefContext {
   knmiWarnings?: KNMIWarning[];
   /** Estofex Benelux-context (alleen bij level >= 2 of expliciete Benelux-mention). */
   estofex?: EstofexBeneluxSummary | null;
+  /** Officiële KNMI korte-termijnverwachting (tekst-bulletin, optioneel). */
+  knmiForecast?: string | null;
 }
 
 // ---------- WEERZONE Core Style ----------
@@ -177,6 +179,11 @@ function knmiToPrompt(warnings: KNMIWarning[] | undefined): string {
   return `\n\nOFFICIËLE KNMI-WAARSCHUWING(EN) VOOR DEZE REGIO — verwerk dit FEITELIJK in de tekst, geen drama, geen overdrijving:\n${lines.join("\n")}`;
 }
 
+function knmiForecastToPrompt(forecast: string | null | undefined): string {
+  if (!forecast) return "";
+  return `\n\nKNMI OFFICIËLE VERWACHTING — gebruik dit als grondstof en feitelijke basis, maar schrijf in jouw eigen persona-stijl (geen KNMI-taal overnemen, geen bronvermelding):\n"${forecast}"`;
+}
+
 function estofexToPrompt(est: EstofexBeneluxSummary | null | undefined): string {
   if (!est) return "";
   const lvl = `Level ${est.maxLevel}`;
@@ -218,6 +225,7 @@ export async function generatePersonaBrief(
 
   const weatherStr =
     weatherToPrompt(ctx.weather, ctx.neural) +
+    knmiForecastToPrompt(ctx.knmiForecast) +
     knmiToPrompt(ctx.knmiWarnings) +
     estofexToPrompt(ctx.estofex);
   const date = new Date().toLocaleDateString("nl-NL", {

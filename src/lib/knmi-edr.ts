@@ -268,6 +268,51 @@ async function _fetchDailyRange(
   }
 }
 
+// ─── Open Data API: short-term weather forecast (text bulletin) ───────────────
+
+const FORECAST_DATASET = "short_term_weather_forecast";
+const FORECAST_VERSION = "1.0";
+
+/**
+ * Fetches the latest KNMI short-term weather forecast text bulletin.
+ * Published several times a day; covers today + tomorrow for the Netherlands.
+ * Returns the raw Dutch text, or null on failure.
+ */
+export async function fetchKNMIShortForecast(): Promise<string | null> {
+  const headers = odaHeaders();
+
+  try {
+    const listRes = await fetch(
+      `${ODA_BASE}/datasets/${FORECAST_DATASET}/versions/${FORECAST_VERSION}/files?orderBy=lastModified&sorting=desc&maxKeys=1`,
+      { headers, next: { revalidate: 1800 } }
+    );
+    if (!listRes.ok) return null;
+    const listData = await listRes.json();
+    const file = listData?.files?.[0];
+    if (!file?.filename) return null;
+
+    // Only txt files are useful for LLM consumption
+    if (!String(file.filename).endsWith(".txt")) return null;
+
+    const urlRes = await fetch(
+      `${ODA_BASE}/datasets/${FORECAST_DATASET}/versions/${FORECAST_VERSION}/files/${encodeURIComponent(file.filename)}/url`,
+      { headers, next: { revalidate: 1800 } }
+    );
+    if (!urlRes.ok) return null;
+    const downloadUrl: string | undefined = (await urlRes.json())?.temporaryDownloadUrl;
+    if (!downloadUrl) return null;
+
+    const textRes = await fetch(downloadUrl);
+    if (!textRes.ok) return null;
+
+    const text = await textRes.text();
+    // Trim and cap at 800 chars — the bulletin is short, but just in case
+    return text.trim().slice(0, 800) || null;
+  } catch {
+    return null;
+  }
+}
+
 // ─── Open Data API: radar ─────────────────────────────────────────────────────
 
 /**
