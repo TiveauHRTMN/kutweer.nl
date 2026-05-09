@@ -62,9 +62,9 @@ function PageShell({ children, initialWeatherCode = 2, initialIsDay = true }: { 
   }, []);
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden">
+    <div className="relative overflow-x-hidden">
       <WeatherBackground weatherCode={weatherCode} isDay={isDay} />
-      <div className="relative z-10 pt-24">
+      <div className="relative z-10 pt-24 pb-12">
         {children}
       </div>
     </div>

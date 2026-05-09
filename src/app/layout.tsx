@@ -192,7 +192,9 @@ export default async function RootLayout({
           )}
 
           <GlobalNav />
-          {children}
+          <div className="min-h-[60vh]">
+            {children}
+          </div>
           <Footer />
           <CookieBanner />
           <InstallPrompt />
