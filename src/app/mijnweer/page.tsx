@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import WeatherDashboard from "@/components/WeatherDashboard";
-import PietExtended from "@/components/PietExtended";
-import PremiumGate from "@/components/PremiumGate";
 import LoadingScreen from "@/components/LoadingScreen";
+import RainMap from "@/components/RainMap";
 import { getSavedLocationServer } from "@/lib/location-cookies";
 import { DUTCH_CITIES, type City } from "@/lib/types";
 import { fetchWeatherData, fetchAirQuality, fetchMarineData } from "@/lib/weather";
@@ -252,9 +251,7 @@ async function MijnWeerAsync({ activeLoc, loc }: { activeLoc: City, loc: City | 
           {airQuality && <PollenWidget data={airQuality} />}
           {marineData && <MarineWidget data={marineData} />}
 
-          <PremiumGate>
-            <PietExtended initialCity={loc || undefined} hideLocate />
-          </PremiumGate>
+          <RainMap lat={lat} lon={lon} />
 
           <p className="text-center text-white/40 text-xs font-medium pb-4">
             Verder dan 48 uur kijken we niet vooruit - dan wordt het gokken.
