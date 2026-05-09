@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ALL_PLACES, findPlace, placeSlug, nearbyPlaces, PROVINCE_LABELS, type Province } from "@/lib/places-data";
-import { schemaCityWeatherPage, schemaBreadcrumb, schemaLd } from "@/lib/schema";
+import { schemaCityWeatherPage, schemaBreadcrumb, schemaLd, schemaCityDataset, schemaAggregateRating } from "@/lib/schema";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import NearbyLinks from "@/components/NearbyLinks";
 import ProvinceTopCities from "@/components/ProvinceTopCities";
