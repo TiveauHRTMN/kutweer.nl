@@ -5,7 +5,6 @@ import Link from "next/link";
 import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users, Terminal, Droplets, Zap } from "lucide-react";
 import PremiumGate from "./PremiumGate";
 import { useSession } from "@/lib/session-context";
-import LoadingScreen from "./LoadingScreen";
 import { loadWeather, loadWWS } from "@/lib/weatherCache";
 import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData, type WWSPayload } from "@/lib/types";
 import {

@@ -50,35 +50,28 @@ export default function PollenWidget({ data }: { data: AirQualityData }) {
 
   return (
     <div className="card p-5 sm:p-6">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-6">
         <span className="text-lg">🌿</span>
-        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Pollenindex vandaag</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Pollen-index</p>
       </div>
 
-      <div className="flex items-center gap-3 mb-4">
-        <span className={`px-3 py-1 rounded-full text-sm font-bold ${LEVEL_COLORS[dominant.info.level]}`}>
-          {dominant.info.label}
-        </span>
-        <span className="text-sm text-slate-500">
-          {dominant.label} is nu dominant
-        </span>
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-2">
         {active.map((s) => (
-          <div key={s.key} className="flex items-center gap-2">
-            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${LEVEL_DOT[s.info.level]}`} />
+          <div key={s.key} className="flex items-center gap-3">
+            <span className={`w-3 h-3 rounded-full shrink-0 ${LEVEL_DOT[s.info.level]}`} />
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-slate-700 truncate">{s.label}</p>
-              <p className="text-xs text-slate-400">{s.info.label}</p>
+              <p className="text-xs font-black text-slate-800 truncate uppercase tracking-wider">{s.label}</p>
+              <p className="text-xs font-bold text-slate-400">{s.info.label}</p>
             </div>
           </div>
         ))}
       </div>
 
-      <p className="text-[11px] text-slate-400 mt-4">
-        Piekwaarden overdag (07:00–20:00) · Bron: CAMS Europa
-      </p>
+      <div className="pt-4 mt-4 border-t border-slate-50">
+        <p className="text-[9px] font-black uppercase tracking-widest text-slate-300">
+          Data: CAMS Europa
+        </p>
+      </div>
     </div>
   );
 }
