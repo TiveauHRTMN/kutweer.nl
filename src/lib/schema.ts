@@ -45,6 +45,7 @@ export function schemaWebPage(opts: {
   description?: string;
   dateModified?: string;
   about?: object;
+  speakableSelectors?: string[];
 }) {
   return {
     "@context": "https://schema.org",
@@ -56,6 +57,10 @@ export function schemaWebPage(opts: {
     ...(opts.about ? { about: opts.about } : {}),
     inLanguage: "nl-NL",
     publisher: ORG,
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: opts.speakableSelectors ?? ["h1", "h2", "[data-speakable]"],
+    },
   };
 }
 
@@ -150,6 +155,10 @@ export function schemaCityWeatherPage(opts: {
       },
     },
     publisher: ORG,
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: ["h1", "[data-speakable]", ".wz-essentials", ".wz-geo-summary"],
+    },
   };
 }
 
