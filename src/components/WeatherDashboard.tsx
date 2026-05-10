@@ -133,13 +133,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
-  // Sync city from localStorage after mount.
-  useEffect(() => {
-    const saved = getSavedCity();
-    if (saved && (saved.name !== city.name || saved.lat !== city.lat || saved.lon !== city.lon)) {
-      setCity(saved);
-    }
-  }, []);
 
   const loadData = useCallback(async (targetCity: City) => {
     let cancelled = false;

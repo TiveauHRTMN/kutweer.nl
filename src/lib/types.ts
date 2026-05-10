@@ -246,7 +246,7 @@ export const KNMI_STATIONS = DUTCH_CITIES.filter((c, i) =>
 export async function reverseGeocode(lat: number, lon: number): Promise<City> {
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=nl&zoom=14`,
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=nl&zoom=10`,
       { headers: { "User-Agent": "WEERZONE/1.0 (weerzone.nl)" } }
     );
     if (res.ok) {
