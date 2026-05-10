@@ -32,7 +32,7 @@ export default function KNMIStationBadge({ lat, lon }: Props) {
       title={`Gemeten door KNMI op ${obs.stationName} om ${time}`}
     >
       <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shrink-0" />
-      KNMI {obs.stationName} · {obs.temperature !== null ? `${obs.temperature.toFixed(1)}°` : "—"} · {time}
+      KNMI · {obs.temperature !== null ? `${obs.temperature.toFixed(1)}°` : "—"} · {time}
     </div>
   );
 }
