@@ -55,11 +55,14 @@ export default function RainMap({ lat, lon }: Props) {
       map = L.map(container, {
         center: [lat, lon],
         zoom: 8,
+        minZoom: 4,
+        maxZoom: 12,
         zoomControl: true,
         attributionControl: false,
       });
 
       L.tileLayer("https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", {
+        minZoom: 4,
         maxZoom: 19,
       }).addTo(map);
 
@@ -109,7 +112,7 @@ export default function RainMap({ lat, lon }: Props) {
       if (!frame) return;
       const layer = L.tileLayer(
         `${host}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`,
-        { opacity: 0.75 }
+        { opacity: 0.75, minZoom: 4, maxZoom: 12 }
       );
       layer.addTo(mapInstance.current);
       radarLayer.current = layer;
