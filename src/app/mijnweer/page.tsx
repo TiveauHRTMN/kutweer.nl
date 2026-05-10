@@ -1,12 +1,10 @@
 ﻿import type { Metadata } from "next";
-import { Suspense } from "react";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import RainMap from "@/components/RainMap";
 import KNMIClimateCard from "@/components/KNMIClimateCard";
 import KNMIForecastCard from "@/components/KNMIForecastCard";
 import { getSavedLocationServer } from "@/lib/location-cookies";
 import { DUTCH_CITIES } from "@/lib/types";
-import type { WeatherData } from "@/lib/types";
 import { fetchWeatherData, fetchAirQuality, fetchMarineData } from "@/lib/weather";
 import { fetchKNMIWarnings, warningsForProvince, nearestProvinceSlug, PROVINCE_SLUG_TO_KNMI } from "@/lib/knmi-warnings";
 import KnmiWarningBanner from "@/components/KnmiWarningBanner";
@@ -15,15 +13,6 @@ import PollenWidget from "@/components/PollenWidget";
 import MarineWidget from "@/components/MarineWidget";
 import PietDailyBriefing from "@/components/PietDailyBriefing";
 import { fetchPietDailyBriefing } from "@/lib/piet-briefing";
-import { fetchPietWeerbericht } from "@/lib/piet-forecast";
-
-async function PietWeerbericht({ lat, lon, city, weather }: {
-  lat: number; lon: number; city: string; weather: WeatherData;
-}) {
-  const forecast = await fetchPietWeerbericht(lat, lon, city, weather).catch(() => null);
-  if (!forecast) return null;
-  return <KNMIForecastCard forecast={forecast} />;
-}
 
 export async function generateMetadata(): Promise<Metadata> {
   const loc = await getSavedLocationServer().catch(() => null);
@@ -254,11 +243,7 @@ export default async function MijnWeerPage() {
                 <KnmiWarningBanner warnings={provinceWarnings} />
               )}
 
-              {initialWeather && (
-                <Suspense>
-                  <PietWeerbericht lat={lat} lon={lon} city={activeLoc.name} weather={initialWeather} />
-                </Suspense>
-              )}
+              <KNMIForecastCard lat={lat} lon={lon} city={activeLoc.name} />
 
               <RainMap lat={lat} lon={lon} />
 

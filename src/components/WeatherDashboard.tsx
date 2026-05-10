@@ -32,8 +32,6 @@ const RainRadar = dynamic(() => import("./RainRadar"), {
   ssr: false,
   loading: () => <div className="card p-4 text-center text-xs text-text-secondary">Radar laadt…</div>,
 });
-const KNMIStationBadge = dynamic(() => import("./KNMIStationBadge"), { ssr: false });
-
 interface DashboardProps {
   initialCity?: City;
   initialWeather?: WeatherData;
@@ -47,19 +45,6 @@ interface DashboardProps {
   showRainRadar?: boolean;
 }
 
-function getSavedCity(): City | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const saved = localStorage.getItem("wz_city");
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed.name && typeof parsed.lat === "number" && typeof parsed.lon === "number") {
-        return { name: parsed.name, lat: parsed.lat, lon: parsed.lon };
-      }
-    }
-  } catch {}
-  return null;
-}
 
 import { persistCity } from "@/lib/persist-city";
 
@@ -294,7 +279,6 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
                     >
                       Actueel weer
                     </span>
-                    <KNMIStationBadge lat={city.lat} lon={city.lon} />
                   </div>
                   <h1 className="text-3xl font-black uppercase tracking-[0.2em] text-text-secondary mb-3">{city.name}</h1>
                   <div className="flex items-start">
