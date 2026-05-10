@@ -68,7 +68,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Gesorteerd: grote steden eerst (beste crawlbudget-benutting)
+  // unknown-be uitgesloten: geen geldige provincieslugs, voorkomen index bloat
   const placeRoutes: MetadataRoute.Sitemap = [...places]
+    .filter(place => place.province !== "unknown-be")
     .sort((a, b) => (b.population ?? 0) - (a.population ?? 0))
     .map(place => ({
       url: `${BASE_URL}/weer/${place.province}/${placeSlug(place.name)}`,

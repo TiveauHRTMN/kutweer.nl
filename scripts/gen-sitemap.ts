@@ -60,10 +60,10 @@ async function run() {
     xml += `  <url><loc>${BASE_URL}/weer/${p}</loc><lastmod>${placesLastMod}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n`;
   });
 
-  // Priority Places (Manual focus)
+  // Priority Places (Manual focus); unknown-be uitgesloten (geen geldige provincieslugs)
   const priorityCityNames = ["Amsterdam", "Rotterdam", "Den Haag", "Utrecht", "Groningen", "Haarlem"];
-  const priorityPlaces = places.filter((p: any) => priorityCityNames.includes(p.name));
-  const otherPlaces = places.filter((p: any) => !priorityCityNames.includes(p.name));
+  const priorityPlaces = places.filter((p: any) => priorityCityNames.includes(p.name) && p.province !== "unknown-be");
+  const otherPlaces = places.filter((p: any) => !priorityCityNames.includes(p.name) && p.province !== "unknown-be");
 
   [...priorityPlaces, ...otherPlaces].forEach((place: any) => {
     const slug = placeSlug(place.name);

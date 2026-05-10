@@ -48,7 +48,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = hermesSEO?.meta_description || `Weer in ${place.name} (${provLabel}). De nauwkeurigste 48-uurs weersvoorspelling van Nederland, op 1 bij 1 kilometer. Temperatuur, regen, wind en UV — per uur bijgewerkt.`;
 
   // Noindex dunne pagina's: geen Hermes-coverage én kleine/onbekende kern
-  const isThinPage = !hermesSEO && (!place.population || place.population < 500);
+  // unknown-be: geen geldige provincieslugs, altijd noindex tot correcte mapping beschikbaar is
+  const isThinPage = province === "unknown-be" || (!hermesSEO && (!place.population || place.population < 500));
 
   return {
     title,
