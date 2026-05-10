@@ -14,22 +14,31 @@ export default function RainMap({ lat, lon }: Props) {
   const [refreshKey, setRefreshKey] = useState(0);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [loaded, setLoaded] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [error, setError] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
+  // Mark loaded if image is already in cache when the component mounts
+  useEffect(() => {
+    if (imgRef.current?.complete) setLoaded(true);
+  }, [refreshKey]);
+
+  // Auto-refresh every 5 minutes
   useEffect(() => {
     setUpdatedAt(new Date());
-    timerRef.current = setInterval(() => {
+    const id = setInterval(() => {
       setRefreshKey(k => k + 1);
       setUpdatedAt(new Date());
       setLoaded(false);
+      setError(false);
     }, 5 * 60 * 1000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    return () => clearInterval(id);
   }, []);
 
   const leftPct = ((lon - BOUNDS.minLon) / (BOUNDS.maxLon - BOUNDS.minLon) * 100).toFixed(2);
   const topPct = ((BOUNDS.maxLat - lat) / (BOUNDS.maxLat - BOUNDS.minLat) * 100).toFixed(2);
 
-  const radarUrl = `https://api.buienradar.nl/image/1.0/RadarMapNL?w=700&h=765&r=${refreshKey}`;
+  // Proxy via our own API route to avoid hotlink-blocking
+  const radarUrl = `/api/radar-image?r=${refreshKey}`;
 
   const timeStr = updatedAt
     ? updatedAt.toLocaleTimeString("nl-NL", {
@@ -55,31 +64,37 @@ export default function RainMap({ lat, lon }: Props) {
         </span>
       </div>
 
-      {/* Radar image with location dot */}
-      <div
-        className="relative w-full overflow-hidden bg-slate-900"
-        style={{ aspectRatio: "700 / 765" }}
-      >
-        {/* Loading shimmer */}
-        {!loaded && (
+      {/* Radar */}
+      <div className="relative w-full overflow-hidden bg-slate-900" style={{ aspectRatio: "700/765" }}>
+        {/* Shimmer while loading */}
+        {!loaded && !error && (
           <div className="absolute inset-0 bg-slate-800 animate-pulse" />
         )}
 
-        <img
-          key={refreshKey}
-          src={radarUrl}
-          alt="Regenradar Nederland"
-          className={`w-full h-full object-cover transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
-          onLoad={() => setLoaded(true)}
-        />
+        {error ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+            <span className="text-2xl">🌧️</span>
+            <p className="text-[11px] text-slate-400 font-medium">Radar tijdelijk niet beschikbaar</p>
+          </div>
+        ) : (
+          <img
+            ref={imgRef}
+            key={refreshKey}
+            src={radarUrl}
+            alt="Regenradar Nederland"
+            className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
+            onLoad={() => setLoaded(true)}
+            onError={() => { setLoaded(true); setError(true); }}
+          />
+        )}
 
         {/* Location marker */}
-        {loaded && (
+        {loaded && !error && (
           <div
             className="absolute pointer-events-none"
             style={{ left: `${leftPct}%`, top: `${topPct}%`, transform: "translate(-50%, -50%)" }}
           >
-            <span className="absolute inset-0 rounded-full bg-[#3b7ff0] opacity-40 animate-ping" />
+            <span className="absolute inset-0 rounded-full bg-[#3b7ff0] opacity-40 animate-ping" style={{ width: 16, height: 16, top: -1, left: -1 }} />
             <span className="relative block w-3.5 h-3.5 rounded-full bg-[#3b7ff0] border-2 border-white shadow-md" />
           </div>
         )}
@@ -95,6 +110,7 @@ export default function RainMap({ lat, lon }: Props) {
             setRefreshKey(k => k + 1);
             setUpdatedAt(new Date());
             setLoaded(false);
+            setError(false);
           }}
           className="text-[9px] font-black uppercase tracking-widest text-[#3b7ff0] hover:text-blue-700 transition-colors"
         >
