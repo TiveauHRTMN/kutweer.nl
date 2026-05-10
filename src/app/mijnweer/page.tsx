@@ -1,4 +1,5 @@
 ﻿import type { Metadata } from "next";
+import { Suspense } from "react";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import RainMap from "@/components/RainMap";
 import KNMIClimateCard from "@/components/KNMIClimateCard";
@@ -11,8 +12,8 @@ import KnmiWarningBanner from "@/components/KnmiWarningBanner";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import PollenWidget from "@/components/PollenWidget";
 import MarineWidget from "@/components/MarineWidget";
-import PietDailyBriefing from "@/components/PietDailyBriefing";
-import { fetchPietDailyBriefing } from "@/lib/piet-briefing";
+import PietDailyBriefingLoader from "@/components/PietDailyBriefingLoader";
+import PietDailyBriefingSkeleton from "@/components/PietDailyBriefingSkeleton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const loc = await getSavedLocationServer().catch(() => null);
@@ -101,13 +102,12 @@ export default async function MijnWeerPage() {
   const lat = activeLoc.lat;
   const lon = activeLoc.lon;
 
-  const [initialWeather, allWarnings, provinceSlug, airQuality, marineData, pietBriefing] = await Promise.all([
+  const [initialWeather, allWarnings, provinceSlug, airQuality, marineData] = await Promise.all([
     fetchWeatherData(lat, lon).catch(() => undefined),
     fetchKNMIWarnings().catch(() => []),
     nearestProvinceSlug(lat, lon).catch(() => null),
     fetchAirQuality(lat, lon).catch(() => null),
     fetchMarineData(lat, lon).catch(() => null),
-    fetchPietDailyBriefing().catch(() => null),
   ]);
   const provinceWarnings = provinceSlug ? warningsForProvince(allWarnings, provinceSlug) : [];
 
@@ -237,7 +237,9 @@ export default async function MijnWeerPage() {
                 </div>
               </div>
 
-              {pietBriefing && <PietDailyBriefing data={pietBriefing} />}
+              <Suspense fallback={<PietDailyBriefingSkeleton />}>
+                <PietDailyBriefingLoader />
+              </Suspense>
 
               {provinceWarnings.length > 0 && (
                 <KnmiWarningBanner warnings={provinceWarnings} />
