@@ -12,8 +12,6 @@ import PollenWidget from "@/components/PollenWidget";
 import MarineWidget from "@/components/MarineWidget";
 import PietDailyBriefing from "@/components/PietDailyBriefing";
 import { fetchPietDailyBriefing } from "@/lib/piet-briefing";
-import KNMIForecastCard from "@/components/KNMIForecastCard";
-import { fetchPietWeerbericht } from "@/lib/piet-forecast";
 
 export async function generateMetadata(): Promise<Metadata> {
   const loc = await getSavedLocationServer().catch(() => null);
@@ -111,10 +109,6 @@ export default async function MijnWeerPage() {
     fetchPietDailyBriefing().catch(() => null),
   ]);
   const provinceWarnings = provinceSlug ? warningsForProvince(allWarnings, provinceSlug) : [];
-
-  const knmiForecast = initialWeather
-    ? await fetchPietWeerbericht(lat, lon, activeLoc.name, initialWeather).catch(() => null)
-    : null;
 
   let greetingName = "jou";
   try {
@@ -228,9 +222,9 @@ export default async function MijnWeerPage() {
                 </p>
                 <h1 className="text-3xl sm:text-4xl font-black text-slate-900 leading-[1.15] mb-4">
                   {greetingName !== "jou" ? (
-                    <>{timeGreeting()}, {greetingName}.<br /><span className="text-emerald-500">Dit is jouw dag.</span></>
+                    <>{timeGreeting()}, {greetingName}.<br /><span className="text-[#3b7ff0]">Dit is jouw dag.</span></>
                   ) : (
-                    <>{timeGreeting()}.<br /><span className="text-emerald-500">Dit is jouw dag.</span></>
+                    <>{timeGreeting()}.<br /><span className="text-[#3b7ff0]">Dit is jouw dag.</span></>
                   )}
                 </h1>
                 <div className="flex items-center gap-2">
@@ -247,8 +241,6 @@ export default async function MijnWeerPage() {
               {provinceWarnings.length > 0 && (
                 <KnmiWarningBanner warnings={provinceWarnings} />
               )}
-
-              {knmiForecast && <KNMIForecastCard forecast={knmiForecast} />}
 
               <RainMap lat={lat} lon={lon} />
 
