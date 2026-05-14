@@ -33,7 +33,7 @@ export default function UberUnsPage() {
           {[
             ["Hyperlokal", "1 km Auflösung. Nicht für deine Stadt — für deine Straße."],
             ["48 Stunden voraus", "Der Zeitraum, der für echte Entscheidungen nützlich ist."],
-            ["KI-Analyse mit Mariana", "Unser eigenes Modell kombiniert meteorologische Daten mit lokalem Wissen für präzisere Prognosen."],
+            ["KI-gestützte Analyse", "Unser eigenes Modell kombiniert meteorologische Daten mit lokalem Wissen für präzisere Prognosen."],
             ["Kein Rauschen", "Nur das, was für dich relevant ist. Keine endlosen Daten, keine Prozentzahlen ohne Kontext."],
           ].map(([title, desc]) => (
             <div key={title as string} className="p-5 rounded-2xl bg-white/5 border border-white/5">

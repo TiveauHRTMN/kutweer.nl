@@ -153,10 +153,10 @@ export default async function OrtWeatherPage({ params }: PageProps) {
                 </Link>
               </div>
 
-              {/* Lokales Profil — unieke Mariana SEO-text per locatie */}
+              {/* Lokales Profil — unieke SEO-tekst per locatie (intern via Mariana/Hermes gegenereerd) */}
               <div className="bg-white/5 backdrop-blur-md rounded-[40px] p-8 border border-white/10 shadow-2xl">
-                <h2 className="text-sm font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <span className="text-accent-cyan">Mariana</span> · Wetter in {place.name}
+                <h2 className="text-sm font-black text-white uppercase tracking-widest mb-4">
+                  Wetter in {place.name} — Lokales Profil
                 </h2>
                 <p className="text-white/65 text-xs leading-relaxed italic" data-speakable>
                   {marianaSeoText ||
