@@ -34,7 +34,24 @@ export type Province =
   | "limburg-be"
   | "oost-vlaanderen"
   | "vlaams-brabant"
-  | "west-vlaanderen";
+  | "west-vlaanderen"
+  // Duitsland — Bundesländer
+  | "beieren"
+  | "berlijn"
+  | "brandenburg"
+  | "bremen"
+  | "hamburg"
+  | "hessen"
+  | "mecklenburg-voorpommeren"
+  | "nedersaksen"
+  | "noordrijn-westfalen"
+  | "rijnland-palts"
+  | "saarland"
+  | "saksen"
+  | "saksen-anhalt"
+  | "sleeswijk-holstein"
+  | "thuringen"
+  | "baden-wurttemberg";
 
 export const PROVINCE_LABELS: Record<Province, string> = {
   groningen: "Groningen",
@@ -54,6 +71,23 @@ export const PROVINCE_LABELS: Record<Province, string> = {
   "oost-vlaanderen": "Oost-Vlaanderen",
   "vlaams-brabant": "Vlaams-Brabant",
   "west-vlaanderen": "West-Vlaanderen",
+  // Duitsland
+  beieren: "Beieren",
+  berlijn: "Berlijn",
+  brandenburg: "Brandenburg",
+  bremen: "Bremen",
+  hamburg: "Hamburg",
+  hessen: "Hessen",
+  "mecklenburg-voorpommeren": "Mecklenburg-Voorpommeren",
+  nedersaksen: "Nedersaksen",
+  "noordrijn-westfalen": "Noordrijn-Westfalen",
+  "rijnland-palts": "Rijnland-Palts",
+  saarland: "Saarland",
+  saksen: "Saksen",
+  "saksen-anhalt": "Saksen-Anhalt",
+  "sleeswijk-holstein": "Sleeswijk-Holstein",
+  thuringen: "Thüringen",
+  "baden-wurttemberg": "Baden-Württemberg",
 };
 
 // ============================================================
@@ -100,6 +134,7 @@ export function placeSlug(name: string): string {
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Verwijder e.g. û naar u
     .replace(/&/g, "en")                              // & naar en
     .replace(/[^a-z0-9\-]+/g, "-")                    // Alleen letters, cijfers & streepjes
+    .replace(/-+/g, "-")                              // Voorkom dubbele streepjes in URLs
     .replace(/^-+|-+$/g, "");                         // Trim streepjes aan uiteinden
 }
 

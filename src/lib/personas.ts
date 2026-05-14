@@ -1,25 +1,53 @@
-// Centrale config voor Piet · Reed · Steve tiers.
+// Centrale config voor Piet · Karl · Reed · Steve tiers.
 // Eén bron van waarheid voor prijs, kleur, kopij, founder-lock.
-// Gebruikt door: /prijzen, PersonaModal, FounderBanner, NavBar-badge, signup-flow.
+// Gebruikt door: /prijzen, /de/preise, PersonaModal, FounderBanner, signup-flow.
+//
+// Locale-mapping:
+//   NL entry-tier → "piet"
+//   DE entry-tier → "karl"
+//   Reed + Steve zijn locale-onafhankelijk
 
-export type PersonaTier = "piet" | "reed" | "steve";
+export type PersonaTier = "piet" | "karl" | "reed" | "steve";
 
 export interface PersonaConfig {
   tier: PersonaTier;
-  name: string;              // "Piet"
-  label: string;             // "Basis" | "Waarschuwing" | "Zakelijk"
-  color: string;             // hex
-  colorVar: string;          // CSS var name
-  tagline: string;           // korte propositie
-  description: string;       // langere omschrijving
-  priceCents?: number;       // normale prijs vanaf 1 juni (cent)
-  founderPriceCents?: number; // founder-lock prijs voor altijd (cent)
-  features: string[];        // bullets op kaartje
-  audience: string;          // voor wie
-  includes?: PersonaTier[];  // tier-hiërarchie: Reed bevat Piet
+  name: string;
+  label: string;
+  color: string;
+  colorVar: string;
+  tagline: string;
+  description: string;
+  priceCents?: number;
+  founderPriceCents?: number;
+  features: string[];
+  audience: string;
+  includes?: PersonaTier[];
 }
 
 export const PERSONAS: Record<PersonaTier, PersonaConfig> = {
+  // ─── Karl — DE entry-tier ───────────────────────────────────────────────────
+  karl: {
+    tier: "karl",
+    name: "Karl",
+    label: "Basis",
+    color: "#22c55e",
+    colorVar: "--persona-karl",
+    tagline: "Dein lokaler Wetterassistent für Deutschland.",
+    description:
+      "Karl schickt dir jeden Morgen vor 7 Uhr eine kurze Mail: Was das Wetter heute und morgen an deiner genauen Adresse macht.",
+    priceCents: 399,
+    founderPriceCents: 199,
+    features: [
+      "Jeden Morgen vor 7 Uhr in deinem Posteingang",
+      "Für deine genaue Adresse (hyperlokal, 1 km Auflösung)",
+      "Du bestimmst, was Karl berücksichtigt: Fahrrad, Garten, Kinder, Hund",
+      "Dashboard mit stündlichem Verlauf",
+      "Keine Werbung, kein Tracking, keine Cookie-Banner",
+    ],
+    audience: "Für alle, die morgens in einer Minute wissen wollen, was der Tag meteorologisch bringt.",
+  },
+
+  // ─── Piet — NL entry-tier ───────────────────────────────────────────────────
   piet: {
     tier: "piet",
     name: "Piet",
@@ -30,6 +58,7 @@ export const PERSONAS: Record<PersonaTier, PersonaConfig> = {
     description:
       "Piet stuurt je elke ochtend voor 7:00 een korte mail: wat het weer vandaag en morgen doet op jouw adres.",
     priceCents: 399,
+    founderPriceCents: 199,
     features: [
       "Elke ochtend vóór 7:00 in je mail",
       "Op jouw postcode (KNMI HARMONIE, 2,5 km)",
@@ -40,6 +69,7 @@ export const PERSONAS: Record<PersonaTier, PersonaConfig> = {
     audience: "Voor wie 's ochtends in één minuut wil weten hoe de dag eruitziet.",
   },
 
+  // ─── Reed — locale-onafhankelijk (NL + DE) ─────────────────────────────────
   reed: {
     tier: "reed",
     name: "Reed",
@@ -61,6 +91,7 @@ export const PERSONAS: Record<PersonaTier, PersonaConfig> = {
     includes: ["piet"],
   },
 
+  // ─── Steve — locale-onafhankelijk (NL + DE) ────────────────────────────────
   steve: {
     tier: "steve",
     name: "Steve",
@@ -83,7 +114,10 @@ export const PERSONAS: Record<PersonaTier, PersonaConfig> = {
   },
 };
 
+// NL persona-volgorde (voor /prijzen)
 export const PERSONA_ORDER: PersonaTier[] = ["piet", "reed", "steve"];
+// DE persona-volgorde (voor /de/preise)
+export const PERSONA_ORDER_DE: PersonaTier[] = ["karl", "reed", "steve"];
 
 export function formatPrice(cents: number): string {
   const euros = cents / 100;

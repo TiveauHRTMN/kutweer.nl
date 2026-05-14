@@ -281,6 +281,52 @@ KERNREGELS:
   return getMainCommentary(weather);
 }
 
+/**
+ * Karl's Wetter-Urteil für Deutschland. Verwendet Mariana (hermesChat / Hermes 4 70b).
+ */
+export async function getKarlWeatherVerdict(
+  weather: WeatherData,
+  cityName: string,
+  bundesland: string,
+): Promise<string> {
+  let attempts = 0;
+  while (attempts < 3) {
+    try {
+      const tomorrow = weather.daily[1];
+      const maxToday = weather.daily[0]?.tempMax ?? weather.current.temperature;
+      const rainToday = weather.daily[0]?.precipitationSum ?? 0;
+      const sonnig = weather.current.weatherCode === 0 || weather.current.weatherCode === 1;
+      const stimmung =
+        sonnig && maxToday >= 15 ? "sonnig-warm" :
+        rainToday > 5 ? "nass" :
+        maxToday < 5 ? "kalt" : "wechselhaft";
+
+      const prompt = `WETTERDATEN für ${cityName} (${bundesland}):
+- Jetzt: ${getWeatherDescription(weather.current.weatherCode)}, ${weather.current.temperature}°C, gefühlt ${weather.current.feelsLike}°C.
+- Wind: ${weather.current.windSpeed} km/h.
+- Nächste 6 Stunden: ${weather.hourly.slice(0, 6).map(h => `${new Date(h.time).getHours()}:00 ${h.temperature}°`).join(", ")}.
+- Morgen: max ${tomorrow?.tempMax ?? "?"}°C, ${getWeatherDescription(tomorrow?.weatherCode ?? 0)}.
+STIMMUNG: ${stimmung}`;
+
+      const text = (await hermesChat([
+        {
+          role: "system",
+          content: `Du bist Karl von WEERZONE — direkter Wetterassistent für Deutschland. Schreib auf Deutsch. Kurz, ehrlich, konkret. 3–4 Sätze. Kein Fachjargon, keine Modellnamen, keine Prozentzahlen. Sag den Menschen was sie tun sollen: Jacke an, rausgehen, lieber drin bleiben. Schließe mit einer kurzen deutschen Verabschiedung.`,
+        },
+        { role: "user", content: prompt },
+      ], { model: "fast", temperature: 0.6, maxTokens: 350 })).trim().replace(/^"|"$/g, "");
+
+      const wordCount = text.split(/\s+/).filter(Boolean).length;
+      if (text && wordCount >= 15 && wordCount < 130) return text;
+      attempts++;
+    } catch (e) {
+      attempts++;
+      console.error(`Karl Wetter-Urteil attempt ${attempts}:`, e);
+    }
+  }
+  return `Aktuell ${weather.current.temperature}°C in ${cityName}. ${weather.daily[1] ? `Morgen bis ${weather.daily[1].tempMax}°C.` : ""} Bleib auf dem Laufenden mit Karl.`;
+}
+
 export async function findBusinessLeads(query: string) {
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
@@ -501,25 +547,25 @@ export async function getImpactAnalysisAction(lat: number, lon: number) {
  * BEVAT CACHING: Checkt eerst Supabase om API kosten/latency te minimaliseren.
  */
 export async function getLocationSEOContent(placeName: string, province: string, character?: string): Promise<string> {
-  const supabase = createSupabaseAdminClient();
-  
-  // 1. Check cache (gebruik de ai_strategy kolom mits het geen interne tracking string is)
   try {
-    const { data: existing } = await supabase
-      .from("seo_injections")
-      .select("ai_strategy")
-      .eq("place_name", placeName)
-      .eq("province", province)
-      .maybeSingle();
+    const supabase = createSupabaseAdminClient();
+    
+    // 1. Check cache (gebruik de ai_strategy kolom mits het geen interne tracking string is)
+    try {
+      const { data: existing } = await supabase
+        .from("seo_injections")
+        .select("ai_strategy")
+        .eq("place_name", placeName)
+        .eq("province", province)
+        .maybeSingle();
 
-    if (existing?.ai_strategy && !existing.ai_strategy.includes("Batch SEO")) {
-      return existing.ai_strategy;
+      if (existing?.ai_strategy && !existing.ai_strategy.includes("Batch SEO")) {
+        return existing.ai_strategy;
+      }
+    } catch (err) {
+      console.error("SEO cache check failed:", err);
     }
-  } catch (err) {
-    console.error("SEO cache check failed:", err);
-  }
 
-  try {
     const prompt = `Je bent de SEO-copywriter van WEERZONE. Schrijf een KORTE, unieke tekst (max 2-3 zinnen) over de weerskenmerken van ${placeName} (${province}).
       ${character ? `Houd rekening met het karakter: ${character}.` : ""}
       - Gebruik geen clichés als "Welkom in".

@@ -7,34 +7,24 @@ import { Menu, X } from "lucide-react";
 import WzLogo from "./WzLogo";
 import NLPulse from "../NLPulse";
 import { useSession } from "@/lib/session-context";
+import { LOCALES, detectLocale, type NavLink } from "@/config/locales";
 
-const LINKS: Array<{ key: string; label: string; href: string }> = [
-  { key: "piet",    label: "Mijn Weer",      href: "/mijnweer" },
-  { key: "reed",    label: "Waarschuwingen", href: "/waarschuwingen" },
-  { key: "steve",   label: "Zakelijk",       href: "/zakelijk" },
-  { key: "prijzen", label: "Prijzen",        href: "/prijzen" },
-  { key: "over",    label: "Over",           href: "/over" },
-  { key: "contact", label: "Contact",        href: "/contact" },
-];
-
-function isActive(pathname: string, key: string): boolean {
-  if (key === "piet")    return pathname.startsWith("/mijnweer") || pathname.startsWith("/jouwweer");
-  if (key === "reed")    return pathname.startsWith("/waarschuwingen");
-  if (key === "steve")   return pathname.startsWith("/zakelijk");
-  if (key === "prijzen") return pathname.startsWith("/prijzen");
-  if (key === "over")    return pathname === "/over";
-  if (key === "contact") return pathname === "/contact";
-  return false;
+function isActive(pathname: string, link: NavLink): boolean {
+  return pathname === link.href || pathname.startsWith(link.href + "/");
 }
 
 const AUTH_PATHS = ["/app/login", "/app/signup", "/app/reset", "/app/verify", "/auth"];
 
 export default function WzNavbar() {
   const pathname = usePathname() ?? "/";
-  const { user, isFounder } = useSession();
+  const { user } = useSession();
   const [open, setOpen] = useState(false);
 
   if (AUTH_PATHS.some((p) => pathname.startsWith(p))) return null;
+
+  const locale = detectLocale(pathname);
+  const { nav } = LOCALES[locale];
+  const isDE = locale === "de";
 
   return (
     <header
@@ -46,14 +36,14 @@ export default function WzNavbar() {
         borderColor: "var(--wz-border)",
       }}
     >
-      <NLPulse />
+      {!isDE && <NLPulse />}
 
       {/* Desktop: 3-column grid — nav | logo | auth */}
       <div className="hidden md:grid max-w-[1200px] mx-auto px-6 py-3" style={{ gridTemplateColumns: "1fr auto 1fr" }}>
         {/* Left: nav links */}
         <nav className="flex items-center gap-1">
-          {LINKS.map((l) => {
-            const active = isActive(pathname, l.key);
+          {nav.map((l) => {
+            const active = isActive(pathname, l);
             return (
               <Link
                 key={l.key}
@@ -75,39 +65,48 @@ export default function WzNavbar() {
           <WzLogo />
         </div>
 
-        {/* Right: auth */}
+        {/* Right: auth + locale switcher */}
         <div className="flex items-center justify-end gap-2">
+          <Link
+            href={isDE ? "/" : "/de"}
+            className="px-2 py-1 rounded text-xs font-bold border transition-colors hover:border-current"
+            style={{ borderColor: "var(--wz-border)", color: "var(--wz-text-soft)" }}
+            title={isDE ? "Naar Nederland" : "Für Deutschland"}
+          >
+            {isDE ? "🇳🇱 NL" : "🇩🇪 DE"}
+          </Link>
+
           {user ? (
             <>
               <Link href="/app" className="btn btn-ghost btn-sm font-bold">
-                Mijn Weerzone
+                {isDE ? "Mein Konto" : "Mijn Weerzone"}
               </Link>
               <button
                 onClick={async () => {
                   const { createSupabaseBrowserClient } = await import("@/lib/supabase/client");
                   const supabase = createSupabaseBrowserClient();
                   await supabase.auth.signOut();
-                  window.location.href = "/";
+                  window.location.href = isDE ? "/de" : "/";
                 }}
                 className="btn btn-primary btn-sm"
               >
-                Log uit
+                {isDE ? "Abmelden" : "Log uit"}
               </button>
             </>
           ) : (
             <>
               <Link href="/app/login" className="btn btn-ghost btn-sm">
-                Inloggen
+                {isDE ? "Anmelden" : "Inloggen"}
               </Link>
-              <Link href="/app/signup" className="btn btn-primary btn-sm">
-                Aanmelden
+              <Link href={isDE ? "/de/preise" : "/app/signup"} className="btn btn-primary btn-sm">
+                {isDE ? "Jetzt starten" : "Aanmelden"}
               </Link>
             </>
           )}
         </div>
       </div>
 
-      {/* Mobile: 3-column grid so logo center is truly clickable */}
+      {/* Mobile */}
       <div className="md:hidden grid items-center px-4 py-3" style={{ gridTemplateColumns: "1fr auto 1fr" }}>
         <div />
         <WzLogo />
@@ -131,8 +130,8 @@ export default function WzNavbar() {
           style={{ borderColor: "var(--wz-border)" }}
         >
           <nav className="grid gap-0.5">
-            {LINKS.map((l) => {
-              const active = isActive(pathname, l.key);
+            {nav.map((l) => {
+              const active = isActive(pathname, l);
               return (
                 <Link
                   key={l.key}
@@ -150,30 +149,37 @@ export default function WzNavbar() {
             })}
           </nav>
           <div className="grid gap-2 mt-3 pt-3 border-t" style={{ borderColor: "var(--wz-border)" }}>
+            <Link
+              href={isDE ? "/" : "/de"}
+              onClick={() => setOpen(false)}
+              className="btn btn-ghost btn-block text-sm"
+            >
+              {isDE ? "🇳🇱 Naar Nederland" : "🇩🇪 Für Deutschland"}
+            </Link>
             {user ? (
               <>
                 <Link href="/app" onClick={() => setOpen(false)} className="btn btn-ghost btn-block">
-                  Mijn Weerzone
+                  {isDE ? "Mein Konto" : "Mijn Weerzone"}
                 </Link>
                 <button
                   onClick={async () => {
                     const { createSupabaseBrowserClient } = await import("@/lib/supabase/client");
                     const supabase = createSupabaseBrowserClient();
                     await supabase.auth.signOut();
-                    window.location.href = "/";
+                    window.location.href = isDE ? "/de" : "/";
                   }}
                   className="btn btn-primary btn-block"
                 >
-                  Log uit
+                  {isDE ? "Abmelden" : "Log uit"}
                 </button>
               </>
             ) : (
               <>
                 <Link href="/app/login" onClick={() => setOpen(false)} className="btn btn-ghost btn-block">
-                  Inloggen
+                  {isDE ? "Anmelden" : "Inloggen"}
                 </Link>
-                <Link href="/app/signup" onClick={() => setOpen(false)} className="btn btn-primary btn-block">
-                  Aanmelden
+                <Link href={isDE ? "/de/preise" : "/app/signup"} onClick={() => setOpen(false)} className="btn btn-primary btn-block">
+                  {isDE ? "Jetzt starten" : "Aanmelden"}
                 </Link>
               </>
             )}

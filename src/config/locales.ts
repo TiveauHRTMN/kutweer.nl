@@ -138,7 +138,7 @@ export const DE_BUNDESLAND_TO_PROVINCE: Record<string, Province> = {
   "hamburg":                 "hamburg",
   "bremen":                  "bremen",
   "saarland":                "saarland",
-  "brandon":                 "brandenburg",
+  "brandenburg":             "brandenburg",
 };
 
 export const PROVINCE_TO_DE_BUNDESLAND: Partial<Record<Province, string>> = {
@@ -157,7 +157,7 @@ export const PROVINCE_TO_DE_BUNDESLAND: Partial<Record<Province, string>> = {
   hamburg:                   "hamburg",
   bremen:                    "bremen",
   saarland:                  "saarland",
-  brandenburg:               "brandon",
+  brandenburg:               "brandenburg",
 };
 
 // Weergave-namen voor /de/wetter/[bundesland] pagina's
@@ -177,7 +177,7 @@ export const DE_BUNDESLAND_LABELS: Record<string, string> = {
   hamburg:                  "Hamburg",
   bremen:                   "Bremen",
   saarland:                 "Saarland",
-  brandon:                  "Brandenburg",
+  brandenburg:              "Brandenburg",
 };
 
 // Alle geldige Duitse Bundesland URL-slugs

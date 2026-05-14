@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 - `npm run dev` — Next.js dev server (default http://localhost:3000)
-- `npm run build` — generates the sitemap (`scripts/gen-sitemap.ts` via tsx) then runs `next build`. The sitemap step is part of the build; it is not optional.
+- `npm run build` — runs `next build`. The sitemap is served dynamically from `src/app/sitemap.ts` (Next.js `generateSitemaps()` → `/sitemap.xml` index + 4 child sitemaps). `scripts/gen-sitemap.ts` is a manual fallback (`npx tsx scripts/gen-sitemap.ts`) — NOT wired into the build, and running it writes to `public/` which overrides the dynamic route.
 - `npm start` — production server (after `build`)
 - One-off scripts in `scripts/` and root (`check-metrics.ts`, `proxy.ts`, etc.) are run with `npx tsx <file>`. There is no test runner, lint script, or formatter configured — don't invent one.
 
