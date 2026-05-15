@@ -262,7 +262,17 @@ export async function fetchWeatherData(
         weatherCode: googleData.weatherCode[i] ?? 0,
         windSpeed: Math.round(googleData.windSpeed[i] ?? 0)
       } : undefined;
-      const leadModelEntry = locale === "de" ? icon : (locale === "fr" ? arome : harmonie);
+
+      // Mariana 'Geographic Routing' Layer: 
+      // We choose the lead model based on the exact coordinates within France.
+      // - Northern/Eastern France (lat > 48.5 or lon > 4.5) -> ICON (closer to Germany/Europe)
+      // - Southern/Western France -> AROME (Atlantic/Mediterranean focus)
+      const isNorthernEasternFR = locale === "fr" && (lat > 48.5 || lon > 4.5);
+      const leadModelEntry = locale === "de" 
+        ? icon 
+        : locale === "fr" 
+          ? (isNorthernEasternFR ? icon : arome) 
+          : harmonie;
 
       // Base values volgen altijd het land-specifieke leidende model.
       const temperature = Math.round(data.hourly.temperature_2m[i] ?? 0);
