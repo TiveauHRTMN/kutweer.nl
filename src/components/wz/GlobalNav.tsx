@@ -289,6 +289,22 @@ export default function GlobalNav() {
                     </Link>
                   );
                 })}
+                {/* Brand support links moved here */}
+                <div className="h-px bg-black/5 my-2 mx-4" />
+                <Link 
+                  href={isFR ? "/fr/a-propos" : isDE ? "/de/uber-uns" : "/over"} 
+                  onClick={() => setOpen(false)}
+                  className="px-4 py-2 text-xs font-black uppercase tracking-widest text-black/40 hover:text-[#0f1a2c] transition-colors"
+                >
+                  {isFR ? "À Propos" : isDE ? "Über uns" : "Over ons"}
+                </Link>
+                <Link 
+                  href={isFR ? "/fr/contact" : isDE ? "/de/kontakt" : "/contact"} 
+                  onClick={() => setOpen(false)}
+                  className="px-4 py-2 text-xs font-black uppercase tracking-widest text-black/40 hover:text-[#0f1a2c] transition-colors"
+                >
+                  Contact
+                </Link>
               </nav>
             </div>
 
@@ -330,15 +346,11 @@ export default function GlobalNav() {
             <div className="hidden lg:block border-l border-black/10 pl-8">
                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/35 mb-4">Weerzone</p>
                <div className="space-y-4">
-                  <div className="p-4 rounded-2xl bg-black/5 border border-black/5">
-                     <p className="text-xs font-bold text-slate-900 leading-relaxed">
+                  <div className="p-5 rounded-3xl bg-black/5 border border-black/5">
+                     <p className="text-base font-black text-slate-900 leading-tight">
                         {isFR ? "Météo hyperlocale. Aujourd'hui et demain." : "Hyperlokaal weer. Vandaag en morgen."}
                      </p>
                   </div>
-                  <nav className="grid gap-2">
-                     <Link href={isFR ? "/fr/a-propos" : "/over"} className="text-[10px] font-black uppercase text-black/40 hover:text-[#0f1a2c] transition-colors">{isFR ? "À Propos" : "Over ons"}</Link>
-                     <Link href={isFR ? "/fr/contact" : "/contact"} className="text-[10px] font-black uppercase text-black/40 hover:text-[#0f1a2c] transition-colors">Contact</Link>
-                  </nav>
                </div>
             </div>
 
