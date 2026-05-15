@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, BellRing, BriefcaseBusiness, Check, CloudSun, ShieldCheck } from "lucide-react";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import { PERSONAS, formatPrice, type PersonaTier } from "@/lib/personas";
+import type { City, WeatherData } from "@/lib/types";
 
 const VISIBLE_TIERS: PersonaTier[] = ["piet", "reed", "steve"];
 const HIGHLIGHT: PersonaTier = "reed";
@@ -13,8 +14,8 @@ const UNAVAILABLE: PersonaTier[] = ["steve"];
 interface Props {
   userTier: PersonaTier | null;
   isFounder: boolean;
-  initialWeatherCode?: number;
-  initialIsDay?: boolean;
+  initialCity?: City;
+  initialWeather?: WeatherData;
 }
 
 const FAQS: Array<[string, string]> = [
@@ -51,16 +52,16 @@ const TIER_META: Record<PersonaTier, { icon: React.ReactNode; accent: string; so
   },
 };
 
-function PageShell({ children, initialWeatherCode, initialIsDay }: {
+function PageShell({ children, initialCity, initialWeather }: {
   children: React.ReactNode;
-  initialWeatherCode?: number;
-  initialIsDay?: boolean;
+  initialCity?: City;
+  initialWeather?: WeatherData;
 }) {
   return (
     <WeatherDashboard
       hideWeatherInfo
-      initialWeatherCode={initialWeatherCode ?? 2}
-      initialIsDay={initialIsDay ?? true}
+      initialCity={initialCity}
+      initialWeather={initialWeather}
       beforeFooter={children}
     />
   );
@@ -71,18 +72,18 @@ function StatusPage({
   title,
   body,
   href,
-  initialWeatherCode,
-  initialIsDay,
+  initialCity,
+  initialWeather,
 }: {
   label: string;
   title: string;
   body: string;
   href: string;
-  initialWeatherCode?: number;
-  initialIsDay?: boolean;
+  initialCity?: City;
+  initialWeather?: WeatherData;
 }) {
   return (
-    <PageShell initialWeatherCode={initialWeatherCode} initialIsDay={initialIsDay}>
+    <PageShell initialCity={initialCity} initialWeather={initialWeather}>
       <section className="card p-7 text-center">
         <p className="mb-3 text-[10px] font-black uppercase tracking-[0.24em] text-blue-600">{label}</p>
         <h1 className="mb-3 text-2xl font-black tracking-tight text-text-primary">{title}</h1>
@@ -98,8 +99,8 @@ function StatusPage({
 export default function PrijzenClient({
   userTier,
   isFounder,
-  initialWeatherCode,
-  initialIsDay,
+  initialCity,
+  initialWeather,
 }: Props) {
   if (isFounder) {
     return (
@@ -108,8 +109,8 @@ export default function PrijzenClient({
         title="Je hebt volledige toegang."
         body="Als founder heb je volledige toegang tot alles wat WEERZONE te bieden heeft."
         href="/app"
-        initialWeatherCode={initialWeatherCode}
-        initialIsDay={initialIsDay}
+        initialCity={initialCity}
+        initialWeather={initialWeather}
       />
     );
   }
@@ -122,14 +123,14 @@ export default function PrijzenClient({
         title={`Je bent ${p.name}-abonnee.`}
         body={`${p.tagline} Alles staat klaar.`}
         href="/app"
-        initialWeatherCode={initialWeatherCode}
-        initialIsDay={initialIsDay}
+        initialCity={initialCity}
+        initialWeather={initialWeather}
       />
     );
   }
 
   return (
-    <PageShell initialWeatherCode={initialWeatherCode} initialIsDay={initialIsDay}>
+    <PageShell initialCity={initialCity} initialWeather={initialWeather}>
       <section className="space-y-5">
         <div className="card p-7 sm:p-9 text-center">
           <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">
@@ -151,18 +152,16 @@ export default function PrijzenClient({
           </div>
         </div>
 
-        <div className="relative left-1/2 w-[min(1120px,calc(100vw-32px))] -translate-x-1/2">
-          <div className="mb-4 flex flex-col justify-between gap-2 px-1 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/70">Abonnementen</p>
-              <h2 className="text-2xl font-black tracking-tight text-white">Piet, Reed en Steve naast elkaar.</h2>
-            </div>
-            <p className="max-w-md text-xs font-bold leading-5 text-white/65">
+        <div>
+          <div className="mb-4 flex flex-col gap-2 px-1">
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-white/70">Abonnementen</p>
+            <h2 className="text-2xl font-black tracking-tight text-white">Piet, Reed en Steve naast elkaar.</h2>
+            <p className="text-xs font-bold leading-5 text-white/65">
               Tijdens de beta start je gratis. Na de beta zie je vooraf de maandprijs.
             </p>
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid gap-4">
             {VISIBLE_TIERS.map((tier) => (
               <TierCard key={tier} tier={tier} />
             ))}

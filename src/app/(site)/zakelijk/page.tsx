@@ -4,6 +4,9 @@ import { Building2, Clock, TrendingUp, Shield, Zap, BarChart3, Mail } from "luci
 import B2BSignupForm from "@/components/B2BSignupForm";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import { schemaService, schemaBreadcrumb, schemaLd } from "@/lib/schema";
+import { DUTCH_CITIES } from "@/lib/types";
+import { fetchWeatherData } from "@/lib/weather";
+import { getSavedLocationServer } from "@/lib/location-cookies";
 
 export const metadata: Metadata = {
   title: "Zakelijk weerbericht voor buitenwerk",
@@ -77,7 +80,11 @@ const FEATURES = [
   { icon: Building2, title: "Meerdere locaties", desc: "Meerdere vestigingen of bouwplaatsen? Elk adres zijn eigen data. Overzicht houd je zelf." },
 ];
 
-export default function ZakelijkPage() {
+export default async function ZakelijkPage() {
+  const loc = await getSavedLocationServer().catch(() => null);
+  const activeLoc = loc || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
+  const initialWeather = await fetchWeatherData(activeLoc.lat, activeLoc.lon).catch(() => undefined);
+
   return (
     <main>
       <script {...schemaLd([
@@ -98,6 +105,8 @@ export default function ZakelijkPage() {
       ])} />
       <WeatherDashboard
         hideWeatherInfo={true}
+        initialCity={activeLoc}
+        initialWeather={initialWeather}
         beforeFooter={
           <div className="space-y-10 pb-6">
 
@@ -156,14 +165,7 @@ export default function ZakelijkPage() {
             </div>
 
             {/* Hoe het werkt */}
-            <div
-              className="rounded-[20px] p-6"
-              style={{
-                background: "rgba(249,115,22,0.09)",
-                border: "1px solid rgba(249,115,22,0.22)",
-                backdropFilter: "blur(12px)",
-              }}
-            >
+            <div className="card p-6">
               <p className="text-[10px] font-black text-accent-orange uppercase tracking-wider mb-2">
                 Hoe het werkt
               </p>
@@ -262,19 +264,11 @@ export default function ZakelijkPage() {
                 Niet zakelijk? WEERZONE heeft er nog twee die wél al live zijn:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <Link
-                  href="/mijnweer"
-                  className="rounded-2xl p-4 transition-all hover:scale-[1.01]"
-                  style={{ background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.07)" }}
-                >
+                <Link href="/mijnweer" className="card p-4 block transition-transform hover:scale-[1.01]">
                   <p className="text-text-primary font-black text-sm mb-1">Piet · 48 uur</p>
                   <p className="text-text-muted text-xs">Dagelijks weerbericht voor thuis. Nuchter, kort, zonder drama.</p>
                 </Link>
-                <Link
-                  href="/waarschuwingen"
-                  className="rounded-2xl p-4 transition-all hover:scale-[1.01]"
-                  style={{ background: "rgba(0,0,0,0.04)", border: "1px solid rgba(0,0,0,0.07)" }}
-                >
+                <Link href="/waarschuwingen" className="card p-4 block transition-transform hover:scale-[1.01]">
                   <p className="text-text-primary font-black text-sm mb-1">Reed · Waarschuwing</p>
                   <p className="text-text-muted text-xs">Alleen een mail als het weer écht gevaarlijk wordt. Code geel, oranje, rood.</p>
                 </Link>

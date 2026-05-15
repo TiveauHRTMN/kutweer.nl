@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { PERSONAS, TRIAL_END } from "@/lib/personas";
 import PrijzenClient from "./PrijzenClient";
+import { DUTCH_CITIES } from "@/lib/types";
+import { fetchWeatherData } from "@/lib/weather";
+import { getSavedLocationServer } from "@/lib/location-cookies";
 
 export const metadata: Metadata = {
   title: "Abonnementen - Piet, Reed en Steve",
@@ -108,14 +111,23 @@ const productSchemaLd = {
   ],
 };
 
-export default function PrijzenPage() {
+export default async function PrijzenPage() {
+  const loc = await getSavedLocationServer().catch(() => null);
+  const activeLoc = loc || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0];
+  const initialWeather = await fetchWeatherData(activeLoc.lat, activeLoc.lon).catch(() => undefined);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchemaLd) }}
       />
-      <PrijzenClient userTier={null} isFounder={false} />
+      <PrijzenClient
+        userTier={null}
+        isFounder={false}
+        initialCity={activeLoc}
+        initialWeather={initialWeather}
+      />
     </>
   );
 }
