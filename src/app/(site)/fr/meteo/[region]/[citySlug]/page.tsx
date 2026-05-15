@@ -73,9 +73,21 @@ export default async function RegionCityPage({
 
   const weather = await fetchWeatherData(city.lat, city.lon, false, false, undefined, "fr");
 
+  // Mariana 'Character Intelligence' Layer
+  // We determine the unique properties of the location to drive AI content
+  const char = (() => {
+    if (city.character) return city.character;
+    if (city.population && city.population > 80000) return "urban";
+    if (city.lat < 43.8 && (city.lon > 3 && city.lon < 8)) return "mediterranean coastal";
+    if (city.lat > 46.5 && city.lon < -1) return "atlantic coastal";
+    if (city.lat < 46 && city.lon > 5.5) return "mountain";
+    if (city.lat > 49 && city.lon > 2) return "northern continental";
+    return "inland";
+  })();
+
   const [lucUrteil, seoText] = await Promise.all([
     weather ? getLucWeatherVerdict(weather, city.name, label) : null,
-    getLocationSEOContent(city.name, label, undefined, "fr"),
+    getLocationSEOContent(city.name, label, char, "fr"),
   ]);
 
   const jsonLd = {

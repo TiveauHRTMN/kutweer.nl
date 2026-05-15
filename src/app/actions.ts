@@ -400,6 +400,7 @@ export async function getLucWeatherVerdict(
   weather: WeatherData,
   cityName: string,
   region: string,
+  character?: string,
 ): Promise<string> {
   let attempts = 0;
   while (attempts < 3) {
@@ -418,12 +419,13 @@ export async function getLucWeatherVerdict(
 - Vent: ${weather.current.windSpeed} km/h.
 - 6 prochaines heures: ${weather.hourly.slice(0, 6).map(h => `${new Date(h.time).getHours()}:00 ${h.temperature}°`).join(", ")}.
 - Demain: max ${tomorrow?.tempMax ?? "?"}°C, ${getWeatherDescription(tomorrow?.weatherCode ?? 0, "fr")}.
-AMBIANCE: ${mood}`;
+AMBIANCE: ${mood}
+${character ? `CARACTÈRE GÉOGRAPHIQUE: ${character}` : ""}`;
 
       const text = (await hermesChat([
         {
           role: "system",
-          content: `Tu es Luc de WEERZONE — assistant météo direct pour la France. Écris en français. Court, honnête, concret. 3–4 phrases. Pas de jargon technique, pas de noms de modèles, pas de pourcentages. Dis aux gens ce qu'ils doivent faire : mettre une veste, sortir, rester à l'intérieur. Termine par une courte salutation française.`,
+          content: `Tu es Luc de WEERZONE — assistant météo direct pour la France. Écris en français. Kurz, honnête, concret. 3–4 phrases. Pas de jargon technique, pas de noms de modèles, pas de pourcentages. Dis aux gens ce qu'ils doivent faire sur la base de la météo et du caractère local (ex: vent sur la côte, chaleur en ville). Termine par une courte salutation française.`,
         },
         { role: "user", content: prompt },
       ], { model: "fast", temperature: 0.6, maxTokens: 350 })).trim().replace(/^"|"$/g, "");
