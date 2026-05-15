@@ -151,7 +151,7 @@ export async function fetchWeatherData(
       daily: DAILY_PARAMS,
       minutely_15: "precipitation",
       forecast_minutely_15: "96",
-      timezone: "Europe/Amsterdam",
+      timezone: locale === "de" ? "Europe/Berlin" : "Europe/Amsterdam",
       forecast_days: "2",
       forecast_hours: "48",
     })}`;
@@ -439,7 +439,7 @@ export async function getNeuralInsights(lat: number, lon: number, weather: Weath
 const AIR_QUALITY_BASE = "https://air-quality-api.open-meteo.com/v1/air-quality";
 const MARINE_BASE = "https://marine-api.open-meteo.com/v1/marine";
 
-export async function fetchAirQuality(lat: number, lon: number): Promise<AirQualityData | null> {
+export async function fetchAirQuality(lat: number, lon: number, locale: Locale = "nl"): Promise<AirQualityData | null> {
   if (process.env.NEXT_PHASE === "phase-production-build") return null;
   try {
     const params = new URLSearchParams({
@@ -447,7 +447,7 @@ export async function fetchAirQuality(lat: number, lon: number): Promise<AirQual
       longitude: lon.toString(),
       hourly: "grass_pollen,birch_pollen,alder_pollen,mugwort_pollen",
       domains: "cams_europe",
-      timezone: "Europe/Amsterdam",
+      timezone: locale === "de" ? "Europe/Berlin" : "Europe/Amsterdam",
       forecast_days: "5",
     });
     const res = await fetch(`${AIR_QUALITY_BASE}?${params}`, { next: { revalidate: 3600 } });
@@ -504,25 +504,35 @@ const NL_COASTAL_POINTS: [number, number][] = [
   [53.52, 6.20],  // Eemshaven
 ];
 
-function nearestCoastalPoint(lat: number, lon: number): [number, number] {
-  let best = NL_COASTAL_POINTS[0];
+const DE_COASTAL_POINTS: [number, number][] = [
+  [53.86, 8.70],  // Cuxhaven (Nordsee)
+  [54.90, 8.32],  // Sylt (Nordsee)
+  [54.18, 7.88],  // Helgoland (Nordsee)
+  [54.32, 10.12], // Kiel (Ostsee)
+  [54.09, 12.09], // Rostock (Ostsee)
+  [54.43, 13.57], // Rügen (Ostsee)
+];
+
+function nearestCoastalPoint(lat: number, lon: number, locale: Locale = "nl"): [number, number] {
+  const points = locale === "de" ? DE_COASTAL_POINTS : NL_COASTAL_POINTS;
+  let best = points[0];
   let bestDist = Infinity;
-  for (const p of NL_COASTAL_POINTS) {
+  for (const p of points) {
     const d = (p[0] - lat) ** 2 + (p[1] - lon) ** 2;
     if (d < bestDist) { bestDist = d; best = p; }
   }
   return best;
 }
 
-export async function fetchMarineData(lat: number, lon: number): Promise<MarineData | null> {
+export async function fetchMarineData(lat: number, lon: number, locale: Locale = "nl"): Promise<MarineData | null> {
   if (process.env.NEXT_PHASE === "phase-production-build") return null;
-  const [clat, clon] = nearestCoastalPoint(lat, lon);
+  const [clat, clon] = nearestCoastalPoint(lat, lon, locale);
   try {
     const params = new URLSearchParams({
       latitude: clat.toString(),
       longitude: clon.toString(),
       hourly: "wave_height,wave_direction,wave_period,wind_wave_height,swell_wave_height,sea_surface_temperature",
-      timezone: "Europe/Amsterdam",
+      timezone: locale === "de" ? "Europe/Berlin" : "Europe/Amsterdam",
       forecast_days: "5",
     });
     const res = await fetch(`${MARINE_BASE}?${params}`, { next: { revalidate: 3600 } });

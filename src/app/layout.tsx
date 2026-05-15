@@ -70,15 +70,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Lees pathname uit Next.js headers — usePathname() in client components
-  // tijdens SSR geeft niet altijd het juiste pad terug bij gecached/PPR-style
-  // renders, dus we picken hier de locale serverside en geven die expliciet
-  // door aan SiteShell + nakomelingen.
-  const hdrs = await headers();
-  const pathname =
-    hdrs.get("x-invoke-path") ?? hdrs.get("x-pathname") ?? hdrs.get("next-url") ?? "/";
-  const locale = detectLocale(pathname);
-
   let activeDeal = null;
   const supabase = getSupabase();
   if (supabase) {
@@ -92,12 +83,12 @@ export default async function RootLayout({
         activeDeal = state;
       }
     } catch {
-      // Stil falen — activeDeal blijft null, banner verschijnt niet
+      // Stil falen — activeDeal bleibt null
     }
   }
 
   return (
-    <html lang={locale === "de" ? "de" : "nl"} className="antialiased">
+    <html lang="nl" className="antialiased">
       <head>
         <meta name="theme-color" content="#0f172a" />
       </head>
@@ -106,7 +97,7 @@ export default async function RootLayout({
           <Suspense fallback={null}>
             <PostHogPageView />
           </Suspense>
-          <SiteShell activeDeal={activeDeal} globalSchemasLd={globalSchemasLd} serverLocale={locale}>
+          <SiteShell activeDeal={activeDeal} globalSchemasLd={globalSchemasLd}>
             {children}
           </SiteShell>
         </Providers>

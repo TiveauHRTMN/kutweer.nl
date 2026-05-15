@@ -14,9 +14,9 @@ const SOCIALS = [
   { label: "Wikidata", href: "https://www.wikidata.org/wiki/Q139675943" },
 ];
 
-export default function Footer({ serverLocale }: { serverLocale?: Locale }) {
+export default function Footer() {
   const pathname = usePathname() ?? "/";
-  const locale: Locale = serverLocale ?? detectLocale(pathname);
+  const locale: Locale = detectLocale(pathname);
   const isDE = locale === "de";
   const cfg = LOCALES[locale];
   const isHome = pathname === cfg.routes.home;

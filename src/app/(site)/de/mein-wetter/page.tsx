@@ -109,8 +109,8 @@ export default async function MeinWetterPage() {
 
   const [initialWeather, airQuality, marineData, allWarnings, bundeslandSlug] = await Promise.all([
     fetchWeatherData(lat, lon, false, false, undefined, "de").catch(() => undefined),
-    fetchAirQuality(lat, lon).catch(() => null),
-    fetchMarineData(lat, lon).catch(() => null),
+    fetchAirQuality(lat, lon, "de").catch(() => null),
+    fetchMarineData(lat, lon, "de").catch(() => null),
     fetchDWDWarnings().catch(() => []),
     nearestBundeslandSlug(lat, lon).catch(() => null),
   ]);
@@ -250,8 +250,6 @@ export default async function MeinWetterPage() {
               )}
 
               <DwdForecastCard lat={lat} lon={lon} city={activeLoc.name} initialWeather={initialWeather} />
-
-              <RainMap lat={lat} lon={lon} locale="de" />
 
               {airQuality && <PollenWidget data={airQuality} locale="de" />}
               {marineData && <MarineWidget data={marineData} locale="de" />}

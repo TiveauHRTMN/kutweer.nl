@@ -149,10 +149,3 @@ Genereer een data-gedreven, visueel indrukwekkend storyboard. Focus op de 'bruta
 }
 
 run().catch(console.error);
-
-  } catch (error) {
-    console.error("❌ Gemini AI Error:", error);
-  }
-}
-
-run().catch(console.error);

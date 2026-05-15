@@ -14,24 +14,16 @@ import { detectLocale, type Locale } from "@/config/locales";
 type SiteShellProps = {
   activeDeal: any;
   globalSchemasLd: unknown[];
-  /** Server-side gedetecteerde locale uit root layout (via next/headers).
-   *  Wordt gebruikt als initiële waarde tijdens SSR; client-side schakelt
-   *  het indien nodig over via usePathname(). */
-  serverLocale?: Locale;
   children: React.ReactNode;
 };
 
 export default function SiteShell({
   activeDeal,
   globalSchemasLd,
-  serverLocale,
   children,
 }: SiteShellProps) {
   const pathname = usePathname() ?? "/";
-  // Prefereer de server-side gedetecteerde locale (uit root layout via headers())
-  // boven usePathname, omdat usePathname tijdens SSR niet altijd betrouwbaar het
-  // huidige pad teruggeeft in een Next.js 16 root-layout context.
-  const locale: Locale = serverLocale ?? detectLocale(pathname);
+  const locale: Locale = detectLocale(pathname);
   const isDE = locale === "de";
 
   return (
@@ -56,9 +48,9 @@ export default function SiteShell({
         />
       )}
 
-      <GlobalNav serverLocale={serverLocale} />
+      <GlobalNav />
       <div className="min-h-[60vh]">{children}</div>
-      <Footer serverLocale={serverLocale} />
+      <Footer />
       <CookieBanner />
       <InstallPrompt />
       <FounderBanner />

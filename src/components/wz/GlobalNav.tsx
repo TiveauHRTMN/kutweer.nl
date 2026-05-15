@@ -54,7 +54,7 @@ function LogoBadge({ tier, isFounder }: { tier: PersonaTier | null; isFounder: b
 
 const HIDDEN_PATHS = ["/app/login", "/app/signup", "/app/reset", "/app/verify", "/auth"];
 
-export default function GlobalNav({ serverLocale }: { serverLocale?: Locale }) {
+export default function GlobalNav() {
   const pathname = usePathname() ?? "/";
   const { user, tier, isFounder } = useSession();
   const [open, setOpen] = useState(false);
@@ -65,7 +65,7 @@ export default function GlobalNav({ serverLocale }: { serverLocale?: Locale }) {
 
   if (HIDDEN_PATHS.some(p => pathname.startsWith(p))) return null;
 
-  const locale: Locale = serverLocale ?? detectLocale(pathname);
+  const locale: Locale = detectLocale(pathname);
   const localeConfig = LOCALES[locale];
   const links = localeConfig.nav;
   const homeHref = localeConfig.routes.home;
