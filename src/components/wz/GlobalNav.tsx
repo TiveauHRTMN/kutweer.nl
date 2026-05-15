@@ -128,11 +128,13 @@ export default function GlobalNav() {
     { code: 'fr', component: <FlagFR />, label: 'FR', href: '/fr' }
   ];
 
+  const headerBg = "linear-gradient(160deg, #ffe874 0%, #ffd21a 50%, #e8ba00 100%)";
+
   return (
     <header
       className="sticky top-0 z-50"
       style={{
-        background: "linear-gradient(160deg, #ffe874 0%, #ffd21a 50%, #e8ba00 100%)",
+        background: headerBg,
         borderBottom: "1px solid rgba(160,110,0,0.22)",
         boxShadow:
           "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.07)",
@@ -246,17 +248,17 @@ export default function GlobalNav() {
         </div>
       </div>
 
-      {/* Unified Hamburger Menu Overlay */}
+      {/* Unified Hamburger Menu Overlay (Now matching Nav color) */}
       {open && (
         <div
-          className="absolute top-full left-0 right-0 bg-white shadow-2xl border-t border-slate-100 z-50 animate-in slide-in-from-top duration-200"
-          style={{ background: "rgba(255,255,255,0.98)", backdropFilter: "blur(20px)" }}
+          className="absolute top-full left-0 right-0 shadow-2xl border-t border-black/5 z-50 animate-in slide-in-from-top duration-200"
+          style={{ background: headerBg, backdropFilter: "blur(20px)" }}
         >
           <div className="max-w-[1200px] mx-auto p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
             {/* Column 1: Main Pages */}
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-4">Menu</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/35 mb-4 px-4">Menu</p>
               <nav className="grid gap-1">
                 {links.map(l => {
                   const active = isActive(l.href, l.key);
@@ -267,12 +269,12 @@ export default function GlobalNav() {
                       onClick={() => setOpen(false)}
                       className="px-4 py-3 rounded-2xl text-sm font-black uppercase tracking-widest transition-all flex items-center justify-between group"
                       style={{
-                        color: active ? "#3b7ff0" : "#0f1a2c",
-                        background: active ? "#3b7ff0/5" : "transparent",
+                        color: active ? "#0f1a2c" : "rgba(15,26,44,0.60)",
+                        background: active ? "rgba(0,0,0,0.08)" : "transparent",
                       }}
                     >
                       <span>{l.label}</span>
-                      <span className={`w-1.5 h-1.5 rounded-full bg-[#3b7ff0] transition-transform ${active ? 'scale-100' : 'scale-0 group-hover:scale-50'}`} />
+                      <span className={`w-1.5 h-1.5 rounded-full bg-[#0f1a2c] transition-transform ${active ? 'scale-100' : 'scale-0 group-hover:scale-50'}`} />
                     </Link>
                   );
                 })}
@@ -281,11 +283,11 @@ export default function GlobalNav() {
 
             {/* Column 2: Account Actions */}
             <div className="lg:hidden">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-4">Compte</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/35 mb-4 px-4">Compte</p>
               <div className="grid gap-2">
                 {user ? (
                   <>
-                    <Link href="/app" onClick={() => setOpen(false)} className="py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest transition-all bg-slate-50 border border-slate-100">
+                    <Link href="/app" onClick={() => setOpen(false)} className="py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest transition-all bg-black/5 border border-black/5" style={{ color: "#0f1a2c" }}>
                       Dashboard
                     </Link>
                     <button
@@ -302,7 +304,7 @@ export default function GlobalNav() {
                   </>
                 ) : (
                   <>
-                    <Link href={isFR ? "/app/login?lang=fr" : isDE ? "/app/login?lang=de" : "/app/login"} onClick={() => setOpen(false)} className="py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest transition-all bg-slate-50 border border-slate-100">
+                    <Link href={isFR ? "/app/login?lang=fr" : isDE ? "/app/login?lang=de" : "/app/login"} onClick={() => setOpen(false)} className="py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest transition-all bg-black/5 border border-black/5" style={{ color: "#0f1a2c" }}>
                       {isFR ? "Se connecter" : isDE ? "Anmelden" : "Inloggen"}
                     </Link>
                     <Link href={isFR ? "/fr/tarifs" : isDE ? "/de/preise" : "/app/signup"} onClick={() => setOpen(false)} className="py-4 rounded-2xl text-center text-[10px] font-black uppercase tracking-widest text-white bg-[#0f1a2c]">
@@ -314,17 +316,17 @@ export default function GlobalNav() {
             </div>
 
             {/* Column 3: Brand/Info */}
-            <div className="hidden lg:block border-l border-slate-100 pl-8">
-               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4">Weerzone</p>
+            <div className="hidden lg:block border-l border-black/10 pl-8">
+               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/35 mb-4">Weerzone</p>
                <div className="space-y-4">
-                  <div className="p-4 rounded-2xl bg-[#ffd21a]/10 border border-[#ffd21a]/20">
-                     <p className="text-xs font-bold text-slate-800 leading-relaxed">
+                  <div className="p-4 rounded-2xl bg-black/5 border border-black/5">
+                     <p className="text-xs font-bold text-slate-900 leading-relaxed">
                         {isFR ? "Prévisions hyperlocales basées sur 5 modèles météorologiques. Précis, honnête et sans fioritures." : "Hyperlokale weersverwachting op basis van 5 weermodellen. Eerlijk, nuchter en zonder poespas."}
                      </p>
                   </div>
                   <nav className="grid gap-2">
-                     <Link href={isFR ? "/fr/a-propos" : "/over"} className="text-[10px] font-black uppercase text-slate-400 hover:text-[#0f1a2c] transition-colors">{isFR ? "À Propos" : "Over ons"}</Link>
-                     <Link href={isFR ? "/fr/contact" : "/contact"} className="text-[10px] font-black uppercase text-slate-400 hover:text-[#0f1a2c] transition-colors">Contact</Link>
+                     <Link href={isFR ? "/fr/a-propos" : "/over"} className="text-[10px] font-black uppercase text-black/40 hover:text-[#0f1a2c] transition-colors">{isFR ? "À Propos" : "Over ons"}</Link>
+                     <Link href={isFR ? "/fr/contact" : "/contact"} className="text-[10px] font-black uppercase text-black/40 hover:text-[#0f1a2c] transition-colors">Contact</Link>
                   </nav>
                </div>
             </div>
