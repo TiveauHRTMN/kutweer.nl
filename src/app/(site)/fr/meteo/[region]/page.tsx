@@ -4,6 +4,7 @@ import { fetchWeatherData } from "@/lib/weather";
 import { placesByProvince, placeSlug } from "@/lib/places-data";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getLucWeatherVerdict } from "@/app/actions";
 import {
   FR_REGION_TO_PROVINCE,
   FR_REGION_LABELS,
@@ -74,17 +75,7 @@ export default async function RegionPage({
 
   const weather = await fetchWeatherData(refCity.lat, refCity.lon, false, false, undefined, "fr");
 
-  const temp = weather ? Math.round(weather.current.temperature) : null;
-  const rain = weather?.daily[0]?.precipitationSum ?? 0;
-  const wind = weather ? Math.round(weather.current.windSpeed) : 0;
-
-  const lucUrteil = !weather || temp === null ? null : (() => {
-    if (region === "ile-de-france")
-      return `Île-de-France: ${temp}°C. ${rain > 3 ? "Pluie sur la capitale. N'oubliez pas votre parapluie." : "Une belle journée pour se promener."}`;
-    if (region === "wallonie")
-      return `Wallonie: ${temp}°C. ${wind > 20 ? "Du vent dans les Ardennes. Sortez couvert." : "Temps clément dans le sud."}`;
-    return `${label}: ${temp}°C. ${wind > 30 ? "Venteux." : "Modéré."}`;
-  })();
+  const lucUrteil = weather ? await getLucWeatherVerdict(weather, refCity.name, label) : null;
 
   const jsonLd = [
     {

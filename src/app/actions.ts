@@ -272,7 +272,6 @@ INHOUD:
 
 /**
  * Gemini-verdict apart, zodat de UI niet op hem wacht. Valideert op
-
  * afgemaakte zinnen — truncated output wordt geweigerd.
  */
 export async function getAiVerdict(weather: WeatherData): Promise<string> {
@@ -392,6 +391,52 @@ STIMMUNG: ${stimmung}`;
     }
   }
   return `Aktuell ${weather.current.temperature}°C in ${cityName}. ${weather.daily[1] ? `Morgen bis ${weather.daily[1].tempMax}°C.` : ""} Bleib auf dem Laufenden mit Karl.`;
+}
+
+/**
+ * Luc's Météo-Urteil pour la France. Verwendet Mariana (hermesChat / Hermes 4 70b).
+ */
+export async function getLucWeatherVerdict(
+  weather: WeatherData,
+  cityName: string,
+  region: string,
+): Promise<string> {
+  let attempts = 0;
+  while (attempts < 3) {
+    try {
+      const tomorrow = weather.daily[1];
+      const maxToday = weather.daily[0]?.tempMax ?? weather.current.temperature;
+      const rainToday = weather.daily[0]?.precipitationSum ?? 0;
+      const zonnig = weather.current.weatherCode === 0 || weather.current.weatherCode === 1;
+      const mood =
+        zonnig && maxToday >= 15 ? "ensoleillé-chaud" :
+        rainToday > 5 ? "humide" :
+        maxToday < 5 ? "froid" : "variable";
+
+      const prompt = `DONNÉES MÉTÉO pour ${cityName} (${region}):
+- Maintenant: ${getWeatherDescription(weather.current.weatherCode, "fr")}, ${weather.current.temperature}°C, ressenti ${weather.current.feelsLike}°C.
+- Vent: ${weather.current.windSpeed} km/h.
+- 6 prochaines heures: ${weather.hourly.slice(0, 6).map(h => `${new Date(h.time).getHours()}:00 ${h.temperature}°`).join(", ")}.
+- Demain: max ${tomorrow?.tempMax ?? "?"}°C, ${getWeatherDescription(tomorrow?.weatherCode ?? 0, "fr")}.
+AMBIANCE: ${mood}`;
+
+      const text = (await hermesChat([
+        {
+          role: "system",
+          content: `Tu es Luc de WEERZONE — assistant météo direct pour la France. Écris en français. Court, honnête, concret. 3–4 phrases. Pas de jargon technique, pas de noms de modèles, pas de pourcentages. Dis aux gens ce qu'ils doivent faire : mettre une veste, sortir, rester à l'intérieur. Termine par une courte salutation française.`,
+        },
+        { role: "user", content: prompt },
+      ], { model: "fast", temperature: 0.6, maxTokens: 350 })).trim().replace(/^"|"$/g, "");
+
+      const wordCount = text.split(/\s+/).filter(Boolean).length;
+      if (text && wordCount >= 15 && wordCount < 130) return text;
+      attempts++;
+    } catch (e) {
+      attempts++;
+      console.error(`Luc Météo-Urteil attempt ${attempts}:`, e);
+    }
+  }
+  return `Actuellement ${weather.current.temperature}°C à ${cityName}. ${weather.daily[1] ? `Demain jusqu'à ${weather.daily[1].tempMax}°C.` : ""} Restez informé avec Luc.`;
 }
 
 export async function findBusinessLeads(query: string) {
@@ -621,7 +666,7 @@ export async function getLocationSEOContent(
   placeName: string,
   province: string,
   character?: string,
-  locale: "nl" | "de" = "nl",
+  locale: "nl" | "de" | "fr" = "nl",
 ): Promise<string> {
   try {
     const supabase = createSupabaseAdminClient();
@@ -649,6 +694,13 @@ ${character ? `Berücksichtige den Charakter: ${character}.` : ""}
 - Verknüpfe es konkret mit der geografischen Lage von ${placeName}.
 - Mögliche Aspekte: Küsteneinfluss (falls Küste), Wind über offener Ebene, Hitzeinsel in der Stadt, Höhenlage im Mittelgebirge, Flusstal-Klima, Nähe zu Wäldern oder Seen.
 - Informativ und autoritativ — für jemanden, der konkret das Wetter sucht.`.trim()
+      : locale === "fr"
+      ? `Vous êtes le rédacteur SEO de WEERZONE. Écrivez un texte français COURT et unique (max 2-3 phrases) sur les caractéristiques météorologiques de ${placeName} (${province}).
+${character ? `Tenez compte du caractère : ${character}.` : ""}
+- Pas de formules comme "Bienvenue à".
+- Liez-le concrètement à la situation géographique de ${placeName}.
+- Aspects possibles : influence côtière (si côte), vent sur plaine dégagée, îlot de chaleur urbain, altitude en moyenne montagne, climat de vallée fluviale, proximité de forêts ou de lacs.
+- Informatif et autoritaire — pour quelqu'un qui cherche spécifiquement la météo.`.trim()
       : `Je bent de SEO-copywriter van WEERZONE. Schrijf een KORTE, unieke tekst (max 2-3 zinnen) over de weerskenmerken van ${placeName} (${province}).
 ${character ? `Houd rekening met het karakter: ${character}.` : ""}
 - Gebruik geen clichés als "Welkom in".
@@ -676,9 +728,9 @@ ${character ? `Houd rekening met het karakter: ${character}.` : ""}
     return content;
   } catch (error) {
     console.error("getLocationSEOContent error:", error);
-    return locale === "de"
-      ? `Das Wetter in ${placeName} (${province}) wird durch lokale geografische Faktoren geprägt. WEERZONE liefert die genaueste 48-Stunden-Vorhersage für deine Adresse.`
-      : `Het weer in ${placeName} (${province}) wordt beïnvloed door lokale geografische factoren. Wij tonen de nauwkeurigste actuele voorspelling voor uw locatie.`;
+    if (locale === "de") return `Das Wetter in ${placeName} (${province}) wird durch lokale geografische Faktoren geprägt. WEERZONE liefert die genaueste 48-Stunden-Vorhersage für deine Adresse.`;
+    if (locale === "fr") return `La météo à ${placeName} (${province}) est influencée par des facteurs géographiques locaux. WEERZONE fournit les prévisions les plus précises à 48 heures pour votre adresse.`;
+    return `Het weer in ${placeName} (${province}) wordt beïnvloed door lokale geografische factoren. Wij tonen de nauwkeurigste actuele voorspelling voor uw locatie.`;
   }
 }
 /**
@@ -707,6 +759,7 @@ export async function pingSearchConsole() {
     "https://weerzone.nl/sitemap-nl.xml",
     "https://weerzone.nl/sitemap-be.xml",
     "https://weerzone.nl/sitemap-de.xml",
+    "https://weerzone.nl/sitemap-fr.xml",
   ];
   
   try {

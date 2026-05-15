@@ -3,7 +3,8 @@ import WeatherDashboard from "@/components/WeatherDashboard";
 import { placesByProvince, placeSlug, City } from "@/lib/places-data";
 import { fetchWeatherData } from "@/lib/weather";
 import { notFound } from "next/navigation";
-import { FR_REGION_TO_PROVINCE, FR_REGION_SLUGS } from "@/config/locales";
+import { FR_REGION_TO_PROVINCE, FR_REGION_SLUGS, FR_REGION_LABELS } from "@/config/locales";
+import { getLucWeatherVerdict, getLocationSEOContent } from "@/app/actions";
 
 export function generateStaticParams() {
   const params: { region: string; citySlug: string }[] = [];
@@ -63,7 +64,8 @@ export default async function RegionCityPage({
 }) {
   const { region, citySlug } = await params;
   const province = FR_REGION_TO_PROVINCE[region];
-  if (!province) notFound();
+  const label = FR_REGION_LABELS[region];
+  if (!province || !label) notFound();
 
   const places = placesByProvince()[province] || [];
   const city = places.find((p) => placeSlug(p.name) === citySlug);
@@ -71,13 +73,18 @@ export default async function RegionCityPage({
 
   const weather = await fetchWeatherData(city.lat, city.lon, false, false, undefined, "fr");
 
+  const [lucUrteil, seoText] = await Promise.all([
+    weather ? getLucWeatherVerdict(weather, city.name, label) : null,
+    getLocationSEOContent(city.name, label, undefined, "fr"),
+  ]);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "WEERZONE", item: "https://weerzone.nl/fr" },
       { "@type": "ListItem", position: 2, name: "Météo", item: "https://weerzone.nl/fr/meteo" },
-      { "@type": "ListItem", position: 3, name: region, item: `https://weerzone.nl/fr/meteo/${region}` },
+      { "@type": "ListItem", position: 3, name: label, item: `https://weerzone.nl/fr/meteo/${region}` },
       { "@type": "ListItem", position: 4, name: city.name, item: `https://weerzone.nl/fr/meteo/${region}/${citySlug}` },
     ],
   };
@@ -94,7 +101,38 @@ export default async function RegionCityPage({
         initialWeatherCode={weather?.current?.weatherCode}
         initialIsDay={weather?.current?.isDay}
         locale="fr"
-        // Hide standard weather info title on exact city match pages if needed
+        beforeFooter={
+          <div className="mt-12 mb-20 px-6 max-w-4xl mx-auto space-y-10">
+            {lucUrteil && (
+              <div className="card p-6 bg-[#22c55e]/5 border border-[#22c55e]/20 overflow-hidden relative group">
+                <div className="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:rotate-12 transition-transform">
+                  🌦
+                </div>
+                <div className="flex gap-4 items-start relative z-10">
+                  <div className="w-10 h-10 rounded-full bg-[#22c55e] flex items-center justify-center text-xl font-black text-white shrink-0 shadow-lg">
+                    L
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-text-primary uppercase tracking-tighter mb-1">
+                      L'avis de Luc
+                    </h3>
+                    <p className="text-text-secondary italic leading-relaxed">
+                      &ldquo;{lucUrteil}&rdquo;
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {seoText && (
+              <div className="card p-6 border-white/5">
+                <p className="text-sm text-text-secondary leading-relaxed">
+                  {seoText}
+                </p>
+              </div>
+            )}
+          </div>
+        }
       />
     </>
   );
