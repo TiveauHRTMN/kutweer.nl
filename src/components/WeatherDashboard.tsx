@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
-import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users, Terminal, Droplets, Zap } from "lucide-react";
+import { MapPin, Send, RefreshCw, Thermometer, CloudRain, Wind, AlertTriangle, Sun, Users, Droplets, Zap } from "lucide-react";
 import PremiumGate from "./PremiumGate";
 import { useSession } from "@/lib/session-context";
 import { loadWeather, loadWWS } from "@/lib/weatherCache";
@@ -20,13 +20,13 @@ import { getWeatherEmoji, getWeatherDescription, getWindBeaufort } from "@/lib/w
 import { motion, AnimatePresence } from "framer-motion";
 import AffiliateCard from "./AffiliateCard";
 import AmazonStickyBar from "./AmazonStickyBar";
-import PietInlineTip from "./PietInlineTip";
 import EmailSubscribe from "./EmailSubscribe";
 import SupportBanner from "./SupportBanner";
 import Footer from "./Footer";
 import WeatherAdvice from "./WeatherAdvice";
 import dynamic from "next/dynamic";
 import WeatherBackground from "./WeatherBackground";
+import { getKarlWeatherVerdict } from "@/app/actions";
 
 const RainRadar = dynamic(() => import("./RainRadar"), {
   ssr: false,
@@ -37,12 +37,14 @@ interface DashboardProps {
   initialWeather?: WeatherData;
   initialWeatherCode?: number;
   initialIsDay?: boolean;
+  locale?: "nl" | "de";
   topContent?: React.ReactNode;
   beforeFooter?: React.ReactNode;
   titleOverride?: string;
   hideWeatherInfo?: boolean;
   slimMode?: boolean;
   showRainRadar?: boolean;
+  initialNarrative?: string | null;
 }
 
 
@@ -94,7 +96,20 @@ const DetailItem = ({ label, value, subValue, icon, unit, fillPct }: {
   );
 };
 
-export default function WeatherDashboard({ initialCity, initialWeather, initialWeatherCode, initialIsDay, topContent, beforeFooter, titleOverride, hideWeatherInfo, slimMode, showRainRadar }: DashboardProps) {
+export default function WeatherDashboard({
+  initialCity,
+  initialWeather,
+  initialWeatherCode,
+  initialIsDay,
+  locale = "nl",
+  topContent,
+  beforeFooter,
+  titleOverride,
+  hideWeatherInfo,
+  slimMode,
+  showRainRadar,
+  initialNarrative,
+}: DashboardProps) {
   const needsWeatherData = !hideWeatherInfo || !!showRainRadar;
   const [city, setCity] = useState<City>(initialCity || DUTCH_CITIES.find(c => c.name === "De Bilt") || DUTCH_CITIES[0]);
   const [weather, setWeather] = useState<WeatherData | null>(initialWeather || null);
@@ -104,8 +119,10 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
   const [hourlyMetric, setHourlyMetric] = useState<"temp" | "rain" | "wind">("temp");
   const [isLocating, setIsLocating] = useState(false);
   const [activeActivity, setActiveActivity] = useState<string | null>(null);
+  const [deNarrative, setDeNarrative] = useState<string | null>(initialNarrative ?? null);
   const { tier } = useSession();
   const hourlyScrollRef = useRef<HTMLDivElement>(null);
+  const isDE = locale === "de";
 
   useEffect(() => {
     const el = hourlyScrollRef.current;
@@ -117,7 +134,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, []);
+  }, [isDE, locale]);
 
 
   const loadData = useCallback(async (targetCity: City) => {
@@ -137,7 +154,9 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
             setLoading(false);
           }
         },
-        () => {}
+        () => {},
+        false,
+        locale
       );
 
       const data = await dataPromise;
@@ -157,9 +176,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
       }
     }
 
-    loadWWS(targetCity.lat, targetCity.lon).then(wwsPayload => {
-      if (!cancelled) setWWS(wwsPayload);
-    });
+    if (!isDE) {
+      loadWWS(targetCity.lat, targetCity.lon).then((wwsPayload) => {
+        if (!cancelled) setWWS(wwsPayload);
+      });
+    }
 
     return () => { cancelled = true; };
   }, []);
@@ -178,13 +199,32 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
     };
   }, [city, loadData, needsWeatherData]);
 
+  useEffect(() => {
+    if (!isDE || !weather) return;
+    let cancelled = false;
+    if (initialNarrative) {
+      setDeNarrative(initialNarrative);
+      return;
+    }
+    getKarlWeatherVerdict(weather, city.name, "Deutschland")
+      .then((text) => {
+        if (!cancelled) setDeNarrative(text);
+      })
+      .catch(() => {
+        if (!cancelled) setDeNarrative(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [city.name, initialNarrative, isDE, weather]);
+
   const handleLocationClick = () => {
     if (!("geolocation" in navigator)) return;
     setIsLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude: lat, longitude: lon } = pos.coords;
-        const provisional: City = { name: "Jouw locatie", lat, lon };
+        const provisional: City = { name: isDE ? "Dein Standort" : "Jouw locatie", lat, lon };
         setCity(provisional);
         setIsLocating(false);
         reverseGeocode(lat, lon).then((geoCity) => {
@@ -217,14 +257,20 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
         <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mb-4 backdrop-blur-md border border-white/20">
           <AlertTriangle className="text-accent-orange w-8 h-8" />
         </div>
-        <h2 className="text-xl font-black text-white mb-2 uppercase tracking-wider">Oeps! Geen verbinding</h2>
-        <p className="text-white/60 text-sm max-w-[280px] mb-6">We kunnen de weersgegevens voor {city.name} momenteel niet ophalen.</p>
+        <h2 className="text-xl font-black text-white mb-2 uppercase tracking-wider">
+          {isDE ? "Verbindung fehlt" : "Oeps! Geen verbinding"}
+        </h2>
+        <p className="text-white/60 text-sm max-w-[280px] mb-6">
+          {isDE
+            ? `Wir können die Wetterdaten für ${city.name} gerade nicht laden.`
+            : `We kunnen de weersgegevens voor ${city.name} momenteel niet ophalen.`}
+        </p>
         <button 
           onClick={() => loadData(city)}
           className="btn btn-primary"
         >
           <RefreshCw className="w-4 h-4 mr-2" />
-          Probeer opnieuw
+          {isDE ? "Erneut versuchen" : "Probeer opnieuw"}
         </button>
       </div>
     );
@@ -247,9 +293,11 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
 
   const summaryWords = weather?.summaryVerdict?.split(/\s+/).filter(Boolean).length ?? 0;
   const narrative = weather
-    ? wws?.piet_update?.content
-      || (summaryWords >= 20 ? weather.summaryVerdict : null)
-      || getMainCommentary(weather)
+    ? (isDE
+      ? deNarrative
+      : wws?.piet_update?.content
+        || (summaryWords >= 20 ? weather.summaryVerdict : null)
+        || getMainCommentary(weather))
     : null;
   const backgroundWeatherCode = weather?.current.weatherCode ?? initialWeatherCode ?? 2;
   const backgroundIsDay = weather?.current.isDay ?? initialIsDay ?? true;
@@ -257,7 +305,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
     <div className="min-h-screen relative overflow-x-hidden">
       <WeatherBackground weatherCode={backgroundWeatherCode} isDay={backgroundIsDay} />
       <div className="relative z-10 max-w-2xl mx-auto p-4 pb-20 sm:p-6 space-y-6">
-        <SupportBanner />
+        <SupportBanner locale={locale} />
         {topContent}
 
         <div className="flex flex-col gap-6 animate-fade-in">
@@ -273,7 +321,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
                 }}>
-                  Hyperlokaal weer.<br />Vandaag en morgen.
+                  {isDE ? <>Hyperlokales Wetter.<br />Heute und morgen.</> : <>Hyperlokaal weer.<br />Vandaag en morgen.</>}
                 </h2>
               </div>
 
@@ -287,7 +335,7 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
                       className="text-[12px] font-black uppercase tracking-[0.3em] text-white px-3 py-1.5 rounded-[10px] shadow-sm"
                       style={{ background: "#3b7ff0" }}
                     >
-                      Actueel weer
+                      {isDE ? "Aktuelles Wetter" : "Actueel weer"}
                     </span>
                   </div>
                   <h1 className="text-3xl font-black uppercase tracking-[0.2em] text-text-secondary mb-3">{city.name}</h1>
@@ -305,7 +353,9 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
               <div className="flex flex-col gap-3">
                  <div className="flex flex-wrap items-center gap-5">
                    <span className="text-4xl font-black text-text-primary">{getWeatherDescription(weather.current.weatherCode)}</span>
-                   <span className="text-lg font-bold text-text-secondary bg-[var(--wz-blue)]/5 px-4 py-1.5 rounded-full shadow-inner border border-[var(--wz-blue)]/10">Voelt als {weather.current.feelsLike}°</span>
+                   <span className="text-lg font-bold text-text-secondary bg-[var(--wz-blue)]/5 px-4 py-1.5 rounded-full shadow-inner border border-[var(--wz-blue)]/10">
+                     {isDE ? "Fühlt sich an wie" : "Voelt als"} {weather.current.feelsLike}°
+                   </span>
                  </div>
                </div>
             </div>
@@ -316,80 +366,67 @@ export default function WeatherDashboard({ initialCity, initialWeather, initialW
             <div className="card px-6 py-5">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">
-                  {wws ? "Piet z'n kijk op vandaag" : "De essentie"}
-                </span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">
+                  {isDE ? "Karls Blick auf heute" : wws ? "Piet z'n kijk op vandaag" : "De essentie"}
+                  </span>
               </div>
               <p className="text-base font-medium text-text-primary leading-relaxed">{narrative}</p>
             </div>
           )}
 
-          {weather.mariana && (
-            <div className="card px-6 py-5">
-              <div className="flex items-center justify-between gap-3 mb-3">
-                <div className="flex items-center gap-2">
-                  <Terminal className="w-4 h-4 text-cyan-600" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">
-                    Mariana · atmosferische arbitrage
-                  </span>
-                </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-cyan-700 bg-cyan-50 px-2 py-1 rounded-lg">
-                  {Math.round(weather.mariana.confidence.score * 100)}%
-                </span>
-              </div>
-              <p className="text-sm font-medium text-text-primary leading-relaxed">
-                {weather.mariana.interpretation}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="text-[10px] font-bold text-text-secondary bg-slate-100 px-2 py-1 rounded-lg">
-                  {weather.mariana.weatherRegime.label}
-                </span>
-                {weather.mariana.dominantModels.slice(0, 2).map((model) => (
-                  <span key={model} className="text-[10px] font-bold text-text-secondary bg-slate-100 px-2 py-1 rounded-lg">
-                    {model}
-                  </span>
-                ))}
-                {weather.mariana.correctionApplied && (
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg">
-                    lokaal gecorrigeerd
-                  </span>
-                )}
-              </div>
-            </div>
-          )}
-
           {/* CTA: Mijn Weer */}
-          <Link href="/mijnweer" className="block group">
+          <Link href={isDE ? "/de/mein-wetter" : "/mijnweer"} className="block group">
             <div className="card p-8 sm:p-10">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-3xl">💬</span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">Piet · Mijn Weer</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">
+                  {isDE ? "Karl · Mein Wetter" : "Piet · Mijn Weer"}
+                </span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">Jouw persoonlijke weerbericht</h3>
-              <p className="text-sm text-text-secondary leading-relaxed mb-4">Kledingadvies, terras- en fietsscore, dagdelen, pollen, UV-index en vandaag vs. morgen — precies wat je moet weten.</p>
-              <span className="inline-flex items-center text-sm font-black text-blue-600 group-hover:gap-3 gap-2 transition-all">Bekijk Mijn Weer <span className="text-lg">→</span></span>
+              <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">
+                {isDE ? "Dein persönlicher Wetterbericht" : "Jouw persoonlijke weerbericht"}
+              </h3>
+              <p className="text-sm text-text-secondary leading-relaxed mb-4">
+                {isDE
+                  ? "Kleidungstipps, Tagesabschnitte, UV und heute versus morgen - direkt für deine Entscheidung."
+                  : "Kledingadvies, terras- en fietsscore, dagdelen, pollen, UV-index en vandaag vs. morgen — precies wat je moet weten."}
+              </p>
+              <span className="inline-flex items-center text-sm font-black text-blue-600 group-hover:gap-3 gap-2 transition-all">
+                {isDE ? "Mein Wetter ansehen" : "Bekijk Mijn Weer"} <span className="text-lg">→</span>
+              </span>
             </div>
           </Link>
 
           {/* CTA: Waarschuwingen */}
-          <Link href="/waarschuwingen" className="block group">
+          <Link href={isDE ? "/de/warnungen" : "/waarschuwingen"} className="block group">
           <div className="card p-8 sm:p-10">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-3xl">⚡</span>
-            <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">Reed · Waarschuwingen</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">
+              {isDE ? "Reed · Warnungen" : "Reed · Waarschuwingen"}
+            </span>
           </div>
-          <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">Geen verrassingen bij extreem weer</h3>
-          <p className="text-sm text-text-secondary leading-relaxed mb-4">We houden de horizon 24/7 voor je in de gaten. Van zware windstoten tot naderend onweer — je ziet het direct voor jouw locatie.</p>
-          <span className="inline-flex items-center text-sm font-black text-rose-500 group-hover:gap-3 gap-2 transition-all">Bekijk Waarschuwingen <span className="text-lg">→</span></span>
+          <h3 className="text-2xl sm:text-3xl font-black text-text-primary mb-2 tracking-tight">
+            {isDE ? "Keine Überraschungen bei Extremwetter" : "Geen verrassingen bij extreem weer"}
+          </h3>
+          <p className="text-sm text-text-secondary leading-relaxed mb-4">
+            {isDE
+              ? "Wir beobachten die Lage rund um die Uhr. Von starken Böen bis zu nahendem Gewitter - du siehst es direkt für deinen Standort."
+              : "We houden de horizon 24/7 voor je in de gaten. Van zware windstoten tot naderend onweer — je ziet het direct voor jouw locatie."}
+          </p>
+          <span className="inline-flex items-center text-sm font-black text-rose-500 group-hover:gap-3 gap-2 transition-all">
+            {isDE ? "Warnungen ansehen" : "Bekijk Waarschuwingen"} <span className="text-lg">→</span>
+          </span>
           </div>
           </Link>
-          <EmailSubscribe city={city} />
+          <EmailSubscribe city={city} locale={locale} />
           <WeatherAdvice 
             temperature={weather.current.temperature} 
             precipitation={weather.current.precipitation} 
             isFreezing={weather.current.temperature < 2} 
+            locale={locale}
           />
-          <AffiliateCard weather={weather} placeName={city.name} />
+          <AffiliateCard weather={weather} placeName={city.name} locale={locale} />
               </>)}
           </>
           )}
