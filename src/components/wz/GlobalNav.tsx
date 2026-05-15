@@ -26,6 +26,39 @@ const TIER_LABEL: Record<string, string> = {
   piet: "P", reed: "R", steve: "S", founder: "★",
 };
 
+// SVG Flag Components for maximum reliability across OS/Browsers
+const FlagNL = () => (
+  <svg viewBox="0 0 640 480" className="w-full h-full">
+    <rect width="640" height="480" fill="#21468b"/>
+    <rect width="640" height="320" fill="#fff"/>
+    <rect width="640" height="160" fill="#ae1c28"/>
+  </svg>
+);
+
+const FlagBE = () => (
+  <svg viewBox="0 0 640 480" className="w-full h-full">
+    <rect width="640" height="480" fill="#ed2939"/>
+    <rect width="426.7" height="480" fill="#fae042"/>
+    <rect width="213.3" height="480" fill="#000"/>
+  </svg>
+);
+
+const FlagDE = () => (
+  <svg viewBox="0 0 640 480" className="w-full h-full">
+    <rect width="640" height="480" fill="#ffce00"/>
+    <rect width="640" height="320" fill="#d00"/>
+    <rect width="640" height="160" fill="#000"/>
+  </svg>
+);
+
+const FlagFR = () => (
+  <svg viewBox="0 0 640 480" className="w-full h-full">
+    <rect width="640" height="480" fill="#ed2939"/>
+    <rect width="426.7" height="480" fill="#fff"/>
+    <rect width="213.3" height="480" fill="#002395"/>
+  </svg>
+);
+
 function LogoBadge({ tier, isFounder }: { tier: PersonaTier | null; isFounder: boolean }) {
   const key = isFounder ? "founder" : (tier ?? null);
   const color = key ? TIER_COLOR[key] : null;
@@ -88,6 +121,13 @@ export default function GlobalNav() {
 
   const actionBtnClass = "inline-flex items-center justify-center px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap min-w-[100px]";
 
+  const flags = [
+    { code: 'nl', component: <FlagNL />, label: 'NL', href: '/' },
+    { code: 'be', component: <FlagBE />, label: 'BE', href: '/weer/wallonie' },
+    { code: 'de', component: <FlagDE />, label: 'DE', href: '/de' },
+    { code: 'fr', component: <FlagFR />, label: 'FR', href: '/fr' }
+  ];
+
   return (
     <header
       className="sticky top-0 z-50"
@@ -121,7 +161,7 @@ export default function GlobalNav() {
 
         <div className="w-px h-6 bg-black/10 hidden sm:block" />
 
-        {/* Middle: Location Button (Visible on Desktop, hidden or compact on mobile if space is tight) */}
+        {/* Middle: Location Button */}
         <div className="flex-1 min-w-0">
           <LocatieButton 
             locale={locale} 
@@ -133,12 +173,7 @@ export default function GlobalNav() {
         {/* Right: Flags & Actions (Desktop) */}
         <div className="hidden lg:flex items-center gap-4 shrink-0">
           <div className="flex bg-black/5 rounded-lg p-0.5 border border-black/10">
-            {[
-              { code: 'nl', flag: '🇳🇱', label: 'NL', href: '/' },
-              { code: 'be', flag: '🇧🇪', label: 'BE', href: '/weer/wallonie' },
-              { code: 'de', flag: '🇩🇪', label: 'DE', href: '/de' },
-              { code: 'fr', flag: '🇫🇷', label: 'FR', href: '/fr' }
-            ].map((loc) => {
+            {flags.map((loc) => {
                 const active = (loc.code === 'nl' && !isDE && !isFR && !pathname.includes('wallonie')) || 
                              (loc.code === 'de' && isDE) || 
                              (loc.code === 'fr' && isFR) ||
@@ -147,10 +182,12 @@ export default function GlobalNav() {
                   <Link 
                     key={loc.code}
                     href={loc.href} 
-                    className={`w-9 h-8 flex items-center justify-center rounded-md text-xl transition-all ${active ? 'bg-white shadow-sm grayscale-0' : 'grayscale opacity-50 hover:opacity-100 hover:grayscale-0'}`}
+                    className={`w-9 h-8 flex items-center justify-center rounded-md p-1.5 transition-all ${active ? 'bg-white shadow-sm grayscale-0' : 'grayscale opacity-50 hover:opacity-100 hover:grayscale-0'}`}
                     title={loc.label}
                   >
-                    {loc.flag}
+                    <div className="w-full h-full rounded-[1px] overflow-hidden">
+                      {loc.component}
+                    </div>
                   </Link>
                 );
             })}
@@ -187,14 +224,9 @@ export default function GlobalNav() {
           </div>
         </div>
 
-        {/* Flags (Mobile only, shown next to menu if desktop right is hidden) */}
+        {/* Flags (Mobile only) */}
         <div className="flex lg:hidden bg-black/5 rounded-lg p-0.5 border border-black/10 shrink-0">
-             {[
-              { code: 'nl', flag: '🇳🇱', href: '/' },
-              { code: 'be', flag: '🇧🇪', href: '/weer/wallonie' },
-              { code: 'de', flag: '🇩🇪', href: '/de' },
-              { code: 'fr', flag: '🇫🇷', href: '/fr' }
-            ].map((loc) => {
+             {flags.map((loc) => {
                 const active = (loc.code === 'nl' && !isDE && !isFR && !pathname.includes('wallonie')) || 
                              (loc.code === 'de' && isDE) || 
                              (loc.code === 'fr' && isFR) ||
@@ -203,9 +235,11 @@ export default function GlobalNav() {
                   <Link 
                     key={loc.code}
                     href={loc.href} 
-                    className={`w-7 h-6 flex items-center justify-center rounded-md text-sm transition-all ${active ? 'bg-white shadow-sm grayscale-0' : 'grayscale opacity-40'}`}
+                    className={`w-8 h-7 flex items-center justify-center rounded-md p-1.5 transition-all ${active ? 'bg-white shadow-sm grayscale-0' : 'grayscale opacity-40'}`}
                   >
-                    {loc.flag}
+                    <div className="w-full h-full rounded-[1px] overflow-hidden">
+                      {loc.component}
+                    </div>
                   </Link>
                 );
             })}
@@ -245,7 +279,7 @@ export default function GlobalNav() {
               </nav>
             </div>
 
-            {/* Column 2: Account Actions (especially for mobile/tablet where they might be hidden in the main bar) */}
+            {/* Column 2: Account Actions */}
             <div className="lg:hidden">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-4">Compte</p>
               <div className="grid gap-2">
@@ -285,7 +319,7 @@ export default function GlobalNav() {
                <div className="space-y-4">
                   <div className="p-4 rounded-2xl bg-[#ffd21a]/10 border border-[#ffd21a]/20">
                      <p className="text-xs font-bold text-slate-800 leading-relaxed">
-                        {isFR ? "Prévisions hyperlocales basées op 5 modèles météorologiques. Précis, honnête et sans fioritures." : "Hyperlokale weersverwachting op basis van 5 weermodellen. Eerlijk, nuchter en zonder poespas."}
+                        {isFR ? "Prévisions hyperlocales basées sur 5 modèles météorologiques. Précis, honnête et sans fioritures." : "Hyperlokale weersverwachting op basis van 5 weermodellen. Eerlijk, nuchter en zonder poespas."}
                      </p>
                   </div>
                   <nav className="grid gap-2">
