@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import WzLogo from "./WzLogo";
 import NLPulse from "@/components/NLPulse";
 import DEPulse from "@/components/DEPulse";
@@ -14,7 +14,7 @@ import type { PersonaTier } from "@/lib/personas";
 import { detectLocale, LOCALES, type Locale } from "@/config/locales";
 
 const LOGO_H = 26;
-const BTN_H = 38;
+const BTN_H = 34;
 
 const TIER_COLOR: Record<string, string> = {
   piet:    "#10b981",
@@ -86,6 +86,8 @@ export default function GlobalNav() {
     return pathname === linkHref || pathname.startsWith(linkHref + "/");
   }
 
+  const actionBtnClass = "inline-flex items-center justify-center px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap min-w-[100px]";
+
   return (
     <header
       className="sticky top-0 z-50"
@@ -100,7 +102,7 @@ export default function GlobalNav() {
       {isFR ? <FRPulse /> : isDE ? <DEPulse /> : <NLPulse />}
 
       {/* Desktop */}
-      <div className="hidden md:flex items-center max-w-[1200px] mx-auto px-6 py-2.5" style={{ gap: 16 }}>
+      <div className="hidden md:flex items-center max-w-[1200px] mx-auto px-6 py-2" style={{ gap: 12 }}>
 
         <Link href={homeHref} aria-label={isFR ? "WEERZONE Accueil" : isDE ? "WEERZONE Startseite" : "Weerzone home"} className="shrink-0 transition-opacity hover:opacity-80">
           <LogoBadge tier={tier} isFounder={isFounder} />
@@ -108,7 +110,7 @@ export default function GlobalNav() {
 
         <div className="w-px self-stretch my-1" style={{ background: "rgba(0,0,0,0.10)" }} />
 
-        <nav className="flex items-center gap-1 flex-1">
+        <nav className="flex items-center gap-0.5 flex-1">
           <LocatieButton locale={locale} active={pathname.startsWith(isFR ? "/fr/meteo" : isDE ? "/de/wetter" : "/weer")} />
           {links.map(l => {
             const active = isActive(l.href, l.key);
@@ -116,14 +118,11 @@ export default function GlobalNav() {
               <Link
                 key={l.key}
                 href={l.href}
-                className="px-3.5 py-2 rounded-xl text-[11px] font-black uppercase transition-all whitespace-nowrap"
+                className="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase transition-all whitespace-nowrap"
                 style={{
-                  letterSpacing: "0.07em",
-                  color: active ? "#0f1a2c" : "rgba(15,26,44,0.50)",
-                  background: active ? "rgba(0,0,0,0.11)" : "transparent",
-                  boxShadow: active
-                    ? "inset 0 1px 2px rgba(0,0,0,0.08), inset 0 -1px 0 rgba(255,255,255,0.4)"
-                    : "none",
+                  letterSpacing: "0.05em",
+                  color: active ? "#0f1a2c" : "rgba(15,26,44,0.45)",
+                  background: active ? "rgba(0,0,0,0.08)" : "transparent",
                 }}
               >
                 {l.label}
@@ -133,47 +132,60 @@ export default function GlobalNav() {
         </nav>
 
         {/* Locale Switcher */}
-        <div className="flex items-center gap-2 mr-2">
-          <div className="flex bg-black/5 rounded-lg p-0.5 border border-black/10">
-            <Link 
-              href="/" 
-              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${!isDE && !isFR ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
-              title="Nederland"
-            >
-              NL
-            </Link>
-            <Link 
-              href="/de" 
-              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${isDE ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
-              title="Deutschland"
-            >
-              DE
-            </Link>
-            <Link 
-              href="/fr" 
-              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${isFR ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
-              title="France"
-            >
-              FR
-            </Link>
+        <div className="flex items-center gap-1.5 mr-2">
+          <div className="flex bg-black/5 rounded-lg p-0.5 border border-black/5">
+            {[
+              { code: 'nl', flag: '🇳🇱', label: 'NL', href: '/' },
+              { code: 'be', flag: '🇧🇪', label: 'BE', href: '/weer/wallonie' },
+              { code: 'de', flag: '🇩🇪', label: 'DE', href: '/de' },
+              { code: 'fr', flag: '🇫🇷', label: 'FR', href: '/fr' }
+            ].map((loc) => {
+                const active = (loc.code === 'nl' && !isDE && !isFR && !pathname.includes('wallonie')) || 
+                             (loc.code === 'de' && isDE) || 
+                             (loc.code === 'fr' && isFR) ||
+                             (loc.code === 'be' && pathname.includes('wallonie'));
+                return (
+                  <Link 
+                    key={loc.code}
+                    href={loc.href} 
+                    className={`w-8 h-7 flex items-center justify-center rounded-md text-base transition-all ${active ? 'bg-white shadow-sm grayscale-0' : 'grayscale opacity-50 hover:opacity-100 hover:grayscale-0'}`}
+                    title={loc.label}
+                  >
+                    {loc.flag}
+                  </Link>
+                );
+            })}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Shop Button */}
+          <Link
+            href={isFR ? "/fr/tarifs" : isDE ? "/de/preise" : "/prijzen"}
+            className={actionBtnClass}
+            style={{
+              height: BTN_H,
+              background: "rgba(0,0,0,0.06)",
+              border: "1px solid rgba(0,0,0,0.08)",
+              color: "#0f1a2c",
+            }}
+          >
+            {isFR ? "Boutique" : isDE ? "Shop" : "Winkel"}
+          </Link>
+
           {user ? (
             <>
               <Link
                 href="/app"
-                className="inline-flex items-center px-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all hover:brightness-95"
+                className={actionBtnClass}
                 style={{
                   height: BTN_H,
-                  background: "rgba(0,0,0,0.08)",
-                  border: "1px solid rgba(0,0,0,0.10)",
+                  background: "rgba(0,0,0,0.06)",
+                  border: "1px solid rgba(0,0,0,0.08)",
                   color: "#0f1a2c",
-                  letterSpacing: "0.07em",
                 }}
               >
-                {isFR ? "Tableau de bord" : isDE ? "Dashboard" : "Dashboard"}
+                Dashboard
               </Link>
               <button
                 onClick={async () => {
@@ -181,12 +193,12 @@ export default function GlobalNav() {
                   await createSupabaseBrowserClient().auth.signOut();
                   window.location.href = "/";
                 }}
-                className="inline-flex items-center px-4 rounded-xl text-[11px] font-black uppercase tracking-widest text-white transition-all hover:brightness-110"
+                className={actionBtnClass}
                 style={{
                   background: "#0f1a2c",
                   height: BTN_H,
-                  letterSpacing: "0.07em",
-                  boxShadow: "0 2px 8px rgba(15,26,44,0.25), inset 0 1px 0 rgba(255,255,255,0.08)",
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(15,26,44,0.20)",
                 }}
               >
                 {isFR ? "Déconnexion" : isDE ? "Abmelden" : "Log uit"}
@@ -196,28 +208,27 @@ export default function GlobalNav() {
             <>
               <Link
                 href={isFR ? "/app/login?lang=fr" : isDE ? "/app/login?lang=de" : "/app/login"}
-                className="inline-flex items-center px-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all hover:brightness-95"
+                className={actionBtnClass}
                 style={{
                   height: BTN_H,
-                  background: "rgba(0,0,0,0.08)",
-                  border: "1px solid rgba(0,0,0,0.10)",
+                  background: "rgba(0,0,0,0.06)",
+                  border: "1px solid rgba(0,0,0,0.08)",
                   color: "#0f1a2c",
-                  letterSpacing: "0.07em",
                 }}
               >
-                {isFR ? "Se connecter" : isDE ? "Anmelden" : "Inloggen"}
+                {isFR ? "Connexion" : isDE ? "Login" : "Inloggen"}
               </Link>
               <Link
-              href={isFR ? "/fr/tarifs" : isDE ? "/de/preise" : "/app/signup"}
-                className="inline-flex items-center px-5 rounded-xl text-[11px] font-black uppercase tracking-widest text-white transition-all hover:brightness-110"
+                href={isFR ? "/fr/tarifs" : isDE ? "/de/preise" : "/app/signup"}
+                className={actionBtnClass}
                 style={{
                   background: "#0f1a2c",
                   height: BTN_H,
-                  letterSpacing: "0.07em",
-                  boxShadow: "0 2px 8px rgba(15,26,44,0.25), inset 0 1px 0 rgba(255,255,255,0.08)",
+                  color: "white",
+                  boxShadow: "0 2px 8px rgba(15,26,44,0.20)",
                 }}
               >
-                {isFR ? "S'inscrire" : isDE ? "Jetzt starten" : "Aanmelden"}
+                {isFR ? "S'inscrire" : isDE ? "Starten" : "Aanmelden"}
               </Link>
             </>
           )}
@@ -225,34 +236,33 @@ export default function GlobalNav() {
       </div>
 
       {/* Mobile */}
-      <div className="md:hidden flex items-center justify-between gap-2 px-4 py-3">
+      <div className="md:hidden flex items-center justify-between gap-2 px-4 py-2.5">
         <Link href={homeHref} aria-label={isFR ? "WEERZONE Accueil" : isDE ? "WEERZONE Startseite" : "Weerzone home"}>
           <LogoBadge tier={tier} isFounder={isFounder} />
         </Link>
         <div className="flex items-center gap-2">
           {/* Locale Switcher Mobile */}
-          <div className="flex bg-black/5 rounded-lg p-0.5 border border-black/10 mr-1">
-            <Link 
-              href="/" 
-              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${!isDE && !isFR ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
-              title="Nederland"
-            >
-              NL
-            </Link>
-            <Link 
-              href="/de" 
-              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${isDE ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
-              title="Deutschland"
-            >
-              DE
-            </Link>
-            <Link 
-              href="/fr" 
-              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${isFR ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
-              title="France"
-            >
-              FR
-            </Link>
+          <div className="flex bg-black/5 rounded-lg p-0.5 border border-black/5 mr-1">
+             {[
+              { code: 'nl', flag: '🇳🇱', href: '/' },
+              { code: 'be', flag: '🇧🇪', href: '/weer/wallonie' },
+              { code: 'de', flag: '🇩🇪', href: '/de' },
+              { code: 'fr', flag: '🇫🇷', href: '/fr' }
+            ].map((loc) => {
+                const active = (loc.code === 'nl' && !isDE && !isFR && !pathname.includes('wallonie')) || 
+                             (loc.code === 'de' && isDE) || 
+                             (loc.code === 'fr' && isFR) ||
+                             (loc.code === 'be' && pathname.includes('wallonie'));
+                return (
+                  <Link 
+                    key={loc.code}
+                    href={loc.href} 
+                    className={`w-7 h-6 flex items-center justify-center rounded-md text-sm transition-all ${active ? 'bg-white shadow-sm grayscale-0' : 'grayscale opacity-40'}`}
+                  >
+                    {loc.flag}
+                  </Link>
+                );
+            })}
           </div>
           <LocatieButton locale={locale} compact active={pathname.startsWith(isFR ? "/fr/meteo" : isDE ? "/de/wetter" : "/weer")} />
           <button
@@ -260,12 +270,8 @@ export default function GlobalNav() {
             onClick={() => setOpen(v => !v)}
             aria-label={isFR ? "Menu" : isDE ? "Menü" : "Menu"}
             aria-expanded={open}
-            className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
-            style={
-              open
-                ? { background: "rgba(0,0,0,0.09)", border: "1px solid rgba(0,0,0,0.10)", color: "#0f1a2c" }
-                : { background: "rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.10)", color: "#0f1a2c" }
-            }
+            className="w-8 h-8 flex items-center justify-center rounded-xl transition-all"
+            style={{ background: "rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.10)", color: "#0f1a2c" }}
           >
             {open ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
@@ -287,14 +293,10 @@ export default function GlobalNav() {
                   key={l.key}
                   href={l.href}
                   onClick={() => setOpen(false)}
-                  className="px-4 py-3 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all"
+                  className="px-4 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all"
                   style={{
                     color: active ? "#0f1a2c" : "rgba(15,26,44,0.50)",
                     background: active ? "rgba(0,0,0,0.09)" : "transparent",
-                    boxShadow: active
-                      ? "inset 0 1px 2px rgba(0,0,0,0.06), inset 0 -1px 0 rgba(255,255,255,0.35)"
-                      : "none",
-                    letterSpacing: "0.07em",
                   }}
                 >
                   {l.label}
@@ -303,20 +305,21 @@ export default function GlobalNav() {
             })}
           </nav>
           <div className="grid grid-cols-2 gap-2 pt-3" style={{ borderTop: "1px solid rgba(0,0,0,0.08)" }}>
+             <Link
+                href={isFR ? "/fr/tarifs" : isDE ? "/de/preise" : "/prijzen"}
+                onClick={() => setOpen(false)}
+                className="py-2.5 rounded-xl text-center text-[10px] font-black uppercase tracking-widest transition-all bg-black/5 border border-black/5"
+              >
+                {isFR ? "Boutique" : isDE ? "Shop" : "Winkel"}
+              </Link>
             {user ? (
               <>
                 <Link
                   href="/app"
                   onClick={() => setOpen(false)}
-                  className="py-3 rounded-xl text-center text-[11px] font-black uppercase tracking-widest transition-all"
-                  style={{
-                    background: "rgba(0,0,0,0.08)",
-                    border: "1px solid rgba(0,0,0,0.10)",
-                    color: "#0f1a2c",
-                    letterSpacing: "0.07em",
-                  }}
+                  className="py-2.5 rounded-xl text-center text-[10px] font-black uppercase tracking-widest transition-all bg-black/5 border border-black/5"
                   >
-                  {isFR ? "Tableau de bord" : isDE ? "Dashboard" : "Dashboard"}
+                  Dashboard
                   </Link>
                 <button
                   onClick={async () => {
@@ -325,12 +328,7 @@ export default function GlobalNav() {
                     await createSupabaseBrowserClient().auth.signOut();
                     window.location.href = "/";
                   }}
-                  className="py-3 rounded-xl text-[11px] font-black uppercase tracking-widest text-white"
-                  style={{
-                    background: "#0f1a2c",
-                    letterSpacing: "0.07em",
-                    boxShadow: "0 2px 8px rgba(15,26,44,0.25)",
-                  }}
+                  className="py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest text-white bg-[#0f1a2c]"
                   >
                   {isFR ? "Déconnexion" : isDE ? "Abmelden" : "Log uit"}
                 </button>
@@ -340,27 +338,16 @@ export default function GlobalNav() {
                 <Link
                   href={isFR ? "/app/login?lang=fr" : isDE ? "/app/login?lang=de" : "/app/login"}
                   onClick={() => setOpen(false)}
-                  className="py-3 rounded-xl text-center text-[11px] font-black uppercase tracking-widest transition-all"
-                  style={{
-                    background: "rgba(0,0,0,0.08)",
-                    border: "1px solid rgba(0,0,0,0.10)",
-                    color: "#0f1a2c",
-                    letterSpacing: "0.07em",
-                  }}
+                  className="py-2.5 rounded-xl text-center text-[10px] font-black uppercase tracking-widest transition-all bg-black/5 border border-black/5"
                   >
-                  {isFR ? "Se connecter" : isDE ? "Anmelden" : "Inloggen"}
-                </Link>
+                  {isFR ? "Connexion" : isDE ? "Login" : "Inloggen"}
+                  </Link>
                 <Link
                   href={isFR ? "/fr/tarifs" : isDE ? "/de/preise" : "/app/signup"}
                   onClick={() => setOpen(false)}
-                  className="py-3 rounded-xl text-center text-[11px] font-black uppercase tracking-widest text-white"
-                  style={{
-                    background: "#0f1a2c",
-                    letterSpacing: "0.07em",
-                    boxShadow: "0 2px 8px rgba(15,26,44,0.25)",
-                  }}
+                  className="py-2.5 rounded-xl text-center text-[10px] font-black uppercase tracking-widest text-white bg-[#0f1a2c]"
                 >
-                  {isFR ? "S'inscrire" : isDE ? "Jetzt starten" : "Aanmelden"}
+                  {isFR ? "S'inscrire" : isDE ? "Starten" : "Aanmelden"}
                 </Link>
               </>
             )}
