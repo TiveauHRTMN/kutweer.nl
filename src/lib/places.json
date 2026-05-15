@@ -166190,5 +166190,152 @@
     "lon": 3.9567,
     "population": 95299,
     "character": "urban"
+  },
+  {
+    "name": "Lille",
+    "lat": 50.6292,
+    "lon": 3.0573,
+    "population": 236710,
+    "province": "nord"
+  },
+  {
+    "name": "Roubaix",
+    "lat": 50.6927,
+    "lon": 3.1778,
+    "population": 98828,
+    "province": "nord"
+  },
+  {
+    "name": "Tourcoing",
+    "lat": 50.7239,
+    "lon": 3.1612,
+    "population": 99165,
+    "province": "nord"
+  },
+  {
+    "name": "Dunkerque",
+    "lat": 51.0343,
+    "lon": 2.3768,
+    "population": 86279,
+    "province": "nord"
+  },
+  {
+    "name": "Marseille",
+    "lat": 43.2965,
+    "lon": 5.3698,
+    "population": 870715,
+    "province": "bouches-du-rhone"
+  },
+  {
+    "name": "Aix-en-Provence",
+    "lat": 43.5297,
+    "lon": 5.4474,
+    "population": 145133,
+    "province": "bouches-du-rhone"
+  },
+  {
+    "name": "Arles",
+    "lat": 43.6766,
+    "lon": 4.6278,
+    "population": 50454,
+    "province": "bouches-du-rhone"
+  },
+  {
+    "name": "Lyon",
+    "lat": 45.764,
+    "lon": 4.8357,
+    "population": 522969,
+    "province": "rhone"
+  },
+  {
+    "name": "Villeurbanne",
+    "lat": 45.7719,
+    "lon": 4.8787,
+    "population": 152212,
+    "province": "rhone"
+  },
+  {
+    "name": "Nice",
+    "lat": 43.7102,
+    "lon": 7.262,
+    "population": 342669,
+    "province": "alpes-maritimes"
+  },
+  {
+    "name": "Cannes",
+    "lat": 43.5528,
+    "lon": 7.0174,
+    "population": 72435,
+    "province": "alpes-maritimes"
+  },
+  {
+    "name": "Antibes",
+    "lat": 43.5804,
+    "lon": 7.1251,
+    "population": 72999,
+    "province": "alpes-maritimes"
+  },
+  {
+    "name": "Toulouse",
+    "lat": 43.6047,
+    "lon": 1.4442,
+    "population": 493465,
+    "province": "haute-garonne"
+  },
+  {
+    "name": "Bordeaux",
+    "lat": 44.8378,
+    "lon": -0.5792,
+    "population": 260958,
+    "province": "gironde"
+  },
+  {
+    "name": "Nantes",
+    "lat": 47.2184,
+    "lon": -1.5536,
+    "population": 318808,
+    "province": "loire-atlantique"
+  },
+  {
+    "name": "Strasbourg",
+    "lat": 48.5734,
+    "lon": 7.7521,
+    "population": 287228,
+    "province": "bas-rhin"
+  },
+  {
+    "name": "Montpellier",
+    "lat": 43.6108,
+    "lon": 3.8767,
+    "population": 295542,
+    "province": "herault"
+  },
+  {
+    "name": "Rennes",
+    "lat": 48.1173,
+    "lon": -1.6778,
+    "population": 220488,
+    "province": "ille-et-vilaine"
+  },
+  {
+    "name": "Grenoble",
+    "lat": 45.1885,
+    "lon": 5.7245,
+    "population": 158198,
+    "province": "isere"
+  },
+  {
+    "name": "Wavre",
+    "lat": 50.7171,
+    "lon": 4.6079,
+    "population": 34305,
+    "province": "wallonie"
+  },
+  {
+    "name": "Arlon",
+    "lat": 49.6833,
+    "lon": 5.8167,
+    "population": 29733,
+    "province": "wallonie"
   }
 ]

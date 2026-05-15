@@ -27,7 +27,9 @@ export const DE_PROVINCES = new Set([
 ]);
 
 export const FR_PROVINCES = new Set([
-  "ile-de-france", "wallonie",
+  "nord", "bouches-du-rhone", "rhone", "alpes-maritimes", "haute-garonne",
+  "gironde", "loire-atlantique", "bas-rhin", "herault", "ille-et-vilaine",
+  "isere", "ile-de-france", "wallonie",
 ]);
 
 export const THEME_SLUGS = [

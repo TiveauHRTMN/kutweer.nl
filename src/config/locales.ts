@@ -215,21 +215,53 @@ export const DE_BUNDESLAND_SLUGS = Object.keys(DE_BUNDESLAND_TO_PROVINCE);
 
 // ─── Régions Françaises ─────────────────────────────────────────────────────────
 export const FR_REGION_TO_PROVINCE: Record<string, Province> = {
-  "wallonie": "wallonie",
+  "nord": "nord",
+  "bouches-du-rhone": "bouches-du-rhone",
+  "rhone": "rhone",
+  "alpes-maritimes": "alpes-maritimes",
+  "haute-garonne": "haute-garonne",
+  "gironde": "gironde",
+  "loire-atlantique": "loire-atlantique",
+  "bas-rhin": "bas-rhin",
+  "herault": "herault",
+  "ille-et-vilaine": "ille-et-vilaine",
+  "isere": "isere",
   "ile-de-france": "ile-de-france",
-  // TODO: Add more regions if needed
+  "wallonie": "wallonie",
 };
 
 export const FR_REGION_LABELS: Record<string, string> = {
-  "wallonie": "Wallonie",
+  "nord": "Nord (59)",
+  "bouches-du-rhone": "Bouches-du-Rhône (13)",
+  "rhone": "Rhône (69)",
+  "alpes-maritimes": "Alpes-Maritimes (06)",
+  "haute-garonne": "Haute-Garonne (31)",
+  "gironde": "Gironde (33)",
+  "loire-atlantique": "Loire-Atlantique (44)",
+  "bas-rhin": "Bas-Rhin (67)",
+  "herault": "Hérault (34)",
+  "ille-et-vilaine": "Ille-et-Vilaine (35)",
+  "isere": "Isère (38)",
   "ile-de-france": "Île-de-France",
+  "wallonie": "Wallonie",
 };
 
 export const FR_REGION_SLUGS = Object.keys(FR_REGION_TO_PROVINCE);
 
-export const PROVINCE_TO_FR_REGION: Partial<Record<string, string>> = {
-  "wallonie": "wallonie",
+export const PROVINCE_TO_FR_REGION: Partial<Record<Province, string>> = {
+  "nord": "nord",
+  "bouches-du-rhone": "bouches-du-rhone",
+  "rhone": "rhone",
+  "alpes-maritimes": "alpes-maritimes",
+  "haute-garonne": "haute-garonne",
+  "gironde": "gironde",
+  "loire-atlantique": "loire-atlantique",
+  "bas-rhin": "bas-rhin",
+  "herault": "herault",
+  "ille-et-vilaine": "ille-et-vilaine",
+  "isere": "isere",
   "ile-de-france": "ile-de-france",
+  "wallonie": "wallonie",
 };
 
 // ─── hreflang helpers ─────────────────────────────────────────────────────────
