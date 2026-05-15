@@ -42,9 +42,8 @@ export const FR_PROVINCES = new Set([
   "seine-maritime", "seine-et-marne", "yvelines", "deux-sevres", "somme", "tarn",
   "tarn-et-garonne", "var", "vaucluse", "vendee", "vienne", "haute-vienne",
   "vosges", "yonne", "territoire-de-belfort", "essonne", "hauts-de-seine",
-  "seine-saint-denis", "val-de-marne", "val-d-oise", "guadeloupe", "martinique",
-  "guyane", "la-reunion", "mayotte",
-]);
+  "seine-saint-denis", "val-de-marne", "val-d-oise", "wallonie",
+  ]);
 
 export const THEME_SLUGS = [
   "bbq-weer", "strandweer", "hardloopweer", "hooikoorts", "wintersport-nl",
