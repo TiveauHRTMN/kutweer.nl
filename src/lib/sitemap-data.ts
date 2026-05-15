@@ -5,8 +5,8 @@
  * Houd de exports synchroon met scripts/gen-sitemap.ts en src/config/locales.ts.
  */
 
-import { ALL_PLACES, placeSlug as canonicalPlaceSlug, type Place } from "@/lib/places-data";
-import { PROVINCE_TO_DE_BUNDESLAND } from "@/config/locales";
+import { ALL_PLACES, placeSlug as canonicalPlaceSlug, type Place, type Province } from "@/lib/places-data";
+import { PROVINCE_TO_DE_BUNDESLAND, PROVINCE_TO_FR_REGION } from "@/config/locales";
 
 export const BASE_URL = "https://weerzone.nl";
 
@@ -43,7 +43,8 @@ export const FR_PROVINCES = new Set([
   "tarn-et-garonne", "var", "vaucluse", "vendee", "vienne", "haute-vienne",
   "vosges", "yonne", "territoire-de-belfort", "essonne", "hauts-de-seine",
   "seine-saint-denis", "val-de-marne", "val-d-oise", "wallonie", "luxembourg-country",
-  ]);
+]);
+
 export const THEME_SLUGS = [
   "bbq-weer", "strandweer", "hardloopweer", "hooikoorts", "wintersport-nl",
 ] as const;
@@ -169,7 +170,7 @@ export function buildStaticSitemap(): string {
 
   // DE Bundesland-overzichten
   for (const p of DE_PROVINCES) {
-    const bundesland = PROVINCE_TO_DE_BUNDESLAND[p as keyof typeof PROVINCE_TO_DE_BUNDESLAND];
+    const bundesland = PROVINCE_TO_DE_BUNDESLAND[p as Province];
     if (bundesland) {
       entries.push({
         url: `${BASE_URL}/de/wetter/${bundesland}`,
@@ -181,8 +182,8 @@ export function buildStaticSitemap(): string {
   }
 
   // FR statisch
-  entries.push({ url: `${BASE_URL}/fr`,             lastmod: today, changefreq: "weekly",  priority: 0.9 });
-  entries.push({ url: `${BASE_URL}/fr/meteo`,       lastmod: today, changefreq: "hourly",  priority: 0.8 });
+  entries.push({ url: `${BASE_URL}/fr`,             lastmod: today, changefreq: "weekly",  priority: 1.0 });
+  entries.push({ url: `${BASE_URL}/fr/meteo`,       lastmod: today, changefreq: "hourly",  priority: 0.9 });
   entries.push({ url: `${BASE_URL}/fr/mon-meteo`,   lastmod: today, changefreq: "weekly",  priority: 0.8 });
   entries.push({ url: `${BASE_URL}/fr/alertes`,     lastmod: today, changefreq: "weekly",  priority: 0.7 });
   entries.push({ url: `${BASE_URL}/fr/tarifs`,      lastmod: today, changefreq: "monthly", priority: 0.7 });
@@ -191,12 +192,15 @@ export function buildStaticSitemap(): string {
 
   // FR Région-overzichten
   for (const p of FR_PROVINCES) {
-    entries.push({
-      url: `${BASE_URL}/fr/meteo/${p}`,
-      lastmod: today,
-      changefreq: "hourly",
-      priority: 0.8,
-    });
+    const region = PROVINCE_TO_FR_REGION[p as Province];
+    if (region) {
+      entries.push({
+        url: `${BASE_URL}/fr/meteo/${region}`,
+        lastmod: today,
+        changefreq: "hourly",
+        priority: 0.8,
+      });
+    }
   }
   // Add Wallonia overview specifically to static sitemap if not already there
   entries.push({ url: `${BASE_URL}/weer/wallonie`, lastmod: today, changefreq: "hourly", priority: 0.8 });
@@ -255,7 +259,7 @@ export function buildDESitemap(): string {
   for (const place of ALL_PLACES) {
     if (!isSitemapPlace(place)) continue;
     if (!DE_PROVINCES.has(place.province)) continue;
-    const bundesland = PROVINCE_TO_DE_BUNDESLAND[place.province as keyof typeof PROVINCE_TO_DE_BUNDESLAND];
+    const bundesland = PROVINCE_TO_DE_BUNDESLAND[place.province as Province];
     if (!bundesland) continue;
     const slug = canonicalPlaceSlug(place.name);
     const url = `${BASE_URL}/de/wetter/${bundesland}/${slug}`;
@@ -277,7 +281,10 @@ export function buildFRSitemap(): string {
   for (const place of ALL_PLACES) {
     if (!isSitemapPlace(place)) continue;
     if (!FR_PROVINCES.has(place.province)) continue;
-    const region = place.province;
+    
+    const region = PROVINCE_TO_FR_REGION[place.province as Province];
+    if (!region) continue;
+
     const slug = canonicalPlaceSlug(place.name);
     const url = `${BASE_URL}/fr/meteo/${region}/${slug}`;
     if (seen.has(url)) continue;

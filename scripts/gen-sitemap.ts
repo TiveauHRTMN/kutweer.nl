@@ -52,8 +52,7 @@ const FR_PROVINCES = new Set([
   "seine-maritime", "seine-et-marne", "yvelines", "deux-sevres", "somme", "tarn",
   "tarn-et-garonne", "var", "vaucluse", "vendee", "vienne", "haute-vienne",
   "vosges", "yonne", "territoire-de-belfort", "essonne", "hauts-de-seine",
-  "seine-saint-denis", "val-de-marne", "val-d-oise", "guadeloupe", "martinique",
-  "guyane", "la-reunion", "mayotte",
+  "seine-saint-denis", "val-de-marne", "val-d-oise", "wallonie", "luxembourg-country",
 ]);
 
 // Interne province-key → publieke Duitse URL-slug.
@@ -74,6 +73,108 @@ const PROVINCE_TO_DE_BUNDESLAND: Record<string, string> = {
   bremen: 'bremen',
   saarland: 'saarland',
   brandenburg: 'brandenburg',
+  'luxembourg-country': 'luxembourg',
+};
+
+const PROVINCE_TO_FR_REGION: Record<string, string> = {
+  "ain": "ain",
+  "aisne": "aisne",
+  "allier": "allier",
+  "alpes-de-haute-provence": "alpes-de-haute-provence",
+  "hautes-alpes": "hautes-alpes",
+  "alpes-maritimes": "alpes-maritimes",
+  "ardeche": "ardeche",
+  "ardennes": "ardennes",
+  "ariege": "ariege",
+  "aube": "aube",
+  "aude": "aude",
+  "aveyron": "aveyron",
+  "bouches-du-rhone": "bouches-du-rhone",
+  "calvados": "calvados",
+  "cantal": "cantal",
+  "charente": "charente",
+  "charente-maritime": "charente-maritime",
+  "cher": "cher",
+  "correze": "correze",
+  "cote-d-or": "cote-d-or",
+  "cotes-d-armor": "cotes-d-armor",
+  "creuse": "creuse",
+  "dordogne": "dordogne",
+  "doubs": "doubs",
+  "drome": "drome",
+  "eure": "eure",
+  "eure-et-loir": "eure-et-loir",
+  "finistere": "finistere",
+  "corse-du-sud": "corse-du-sud",
+  "haute-corse": "haute-corse",
+  "gard": "gard",
+  "haute-garonne": "haute-garonne",
+  "gers": "gers",
+  "gironde": "gironde",
+  "herault": "herault",
+  "ille-et-vilaine": "ille-et-vilaine",
+  "indre": "indre",
+  "indre-et-loire": "indre-et-loire",
+  "isere": "isere",
+  "jura": "jura",
+  "landes": "landes",
+  "loir-et-cher": "loir-et-cher",
+  "loire": "loire",
+  "haute-loire": "haute-loire",
+  "loire-atlantique": "loire-atlantique",
+  "loiret": "loiret",
+  "lot": "lot",
+  "lot-et-garonne": "lot-et-garonne",
+  "lozere": "lozere",
+  "maine-et-loire": "maine-et-loire",
+  "manche": "manche",
+  "marne": "marne",
+  "haute-marne": "haute-marne",
+  "mayenne": "mayenne",
+  "meurthe-et-moselle": "meurthe-et-moselle",
+  "meuse": "meuse",
+  "morbihan": "morbihan",
+  "moselle": "moselle",
+  "nievre": "nievre",
+  "nord": "nord",
+  "oise": "oise",
+  "orne": "orne",
+  "pas-de-calais": "pas-de-calais",
+  "puy-de-dome": "puy-de-dome",
+  "pyrenees-atlantiques": "pyrenees-atlantiques",
+  "hautes-pyrenees": "hautes-pyrenees",
+  "pyrenees-orientales": "pyrenees-orientales",
+  "bas-rhin": "bas-rhin",
+  "haut-rhin": "haut-rhin",
+  "rhone": "rhone",
+  "haute-saone": "haute-saone",
+  "saone-et-loire": "saone-et-loire",
+  "sarthe": "sarthe",
+  "savoie": "savoie",
+  "haute-savoie": "haute-savoie",
+  "paris": "paris",
+  "seine-maritime": "seine-maritime",
+  "seine-et-marne": "seine-et-marne",
+  "yvelines": "yvelines",
+  "deux-sevres": "deux-sevres",
+  "somme": "somme",
+  "tarn": "tarn",
+  "tarn-et-garonne": "tarn-et-garonne",
+  "var": "var",
+  "vaucluse": "vaucluse",
+  "vendee": "vendee",
+  "vienne": "vienne",
+  "haute-vienne": "haute-vienne",
+  "vosges": "vosges",
+  "yonne": "yonne",
+  "territoire-de-belfort": "territoire-de-belfort",
+  "essonne": "essonne",
+  "hauts-de-seine": "hauts-de-seine",
+  "seine-saint-denis": "seine-saint-denis",
+  "val-de-marne": "val-de-marne",
+  "val-d-oise": "val-d-oise",
+  "wallonie": "wallonie",
+  "luxembourg-country": "luxembourg",
 };
 
 const NL_THEMES = ['bbq-weer', 'strandweer', 'hardloopweer', 'hooikoorts', 'wintersport-nl'];
@@ -166,15 +267,18 @@ async function run() {
   }
 
   // FR statisch
-  staticXml += url(`${BASE_URL}/fr`,             staticLastMod, 'weekly',  '0.9');
-  staticXml += url(`${BASE_URL}/fr/meteo`,       staticLastMod, 'hourly',  '0.8');
+  staticXml += url(`${BASE_URL}/fr`,             staticLastMod, 'weekly',  '1.0');
+  staticXml += url(`${BASE_URL}/fr/meteo`,       staticLastMod, 'hourly',  '0.9');
   staticXml += url(`${BASE_URL}/fr/mon-meteo`,   staticLastMod, 'weekly',  '0.8');
   staticXml += url(`${BASE_URL}/fr/alertes`,     staticLastMod, 'weekly',  '0.7');
   staticXml += url(`${BASE_URL}/fr/tarifs`,      staticLastMod, 'monthly', '0.7');
   staticXml += url(`${BASE_URL}/fr/a-propos`,    staticLastMod, 'monthly', '0.5');
   staticXml += url(`${BASE_URL}/fr/contact`,     staticLastMod, 'monthly', '0.4');
   for (const p of FR_PROVINCES) {
-    staticXml += url(`${BASE_URL}/fr/meteo/${p}`, placesLastMod, 'hourly', '0.8');
+    const region = PROVINCE_TO_FR_REGION[p];
+    if (region) {
+      staticXml += url(`${BASE_URL}/fr/meteo/${region}`, placesLastMod, 'hourly', '0.8');
+    }
   }
 
   fs.writeFileSync(path.join(publicDir, 'sitemap-static.xml'), wrapUrlset(staticXml));
@@ -194,7 +298,7 @@ async function run() {
     if (NL_PROVINCES.has(place.province)) buckets.nl.push(place);
     else if (BE_PROVINCES.has(place.province) || place.province === 'wallonie') buckets.be.push(place);
     else if (DE_PROVINCES.has(place.province)) buckets.de.push(place);
-    else if (FR_PROVINCES.has(place.province)) buckets.fr.push(place);
+    else if (FR_PROVINCES.has(place.province) || place.province === 'luxembourg-country') buckets.fr.push(place);
   }
 
   // NL: /weer/${province}/${slug}
@@ -230,9 +334,11 @@ async function run() {
   {
     let xml = '';
     buckets.fr.sort((a, b) => (b.population ?? 0) - (a.population ?? 0)).forEach(place => {
+      const region = PROVINCE_TO_FR_REGION[place.province];
+      if (!region) return;
       const priority = placePriority(place.population);
       const freq = (place.population && place.population > 50000) ? 'hourly' : 'daily';
-      xml += url(`${BASE_URL}/fr/meteo/${place.province}/${placeSlug(place.name)}`, placesLastMod, freq, priority);
+      xml += url(`${BASE_URL}/fr/meteo/${region}/${placeSlug(place.name)}`, placesLastMod, freq, priority);
     });
     fs.writeFileSync(path.join(publicDir, 'sitemap-fr.xml'), wrapUrlset(xml));
   }
