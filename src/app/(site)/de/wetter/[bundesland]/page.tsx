@@ -14,6 +14,8 @@ export function generateStaticParams() {
   return DE_BUNDESLAND_SLUGS.map((bundesland) => ({ bundesland }));
 }
 
+export const revalidate = 300;
+
 export async function generateMetadata({
   params,
 }: {
@@ -70,14 +72,13 @@ export default async function BundeslandPage({
   const refCity = mainCities[0] ?? places[0];
   if (!refCity) notFound();
 
-  const weather = await fetchWeatherData(refCity.lat, refCity.lon);
-  if (!weather) return <div>Wetterdaten vorübergehend nicht verfügbar…</div>;
+  const weather = await fetchWeatherData(refCity.lat, refCity.lon, false, false, undefined, "de");
 
-  const temp = Math.round(weather.current.temperature);
-  const rain = weather.daily[0]?.precipitationSum ?? 0;
-  const wind = Math.round(weather.current.windSpeed);
+  const temp = weather ? Math.round(weather.current.temperature) : null;
+  const rain = weather?.daily[0]?.precipitationSum ?? 0;
+  const wind = weather ? Math.round(weather.current.windSpeed) : 0;
 
-  const karlUrteil = (() => {
+  const karlUrteil = !weather || temp === null ? null : (() => {
     if (bundesland === "nordrhein-westfalen")
       return `NRW: ${temp}°C. ${wind > 25 ? `${wind} km/h — Ruhrgebiet trifft Nordseesturm. Jacke einpacken.` : "Zwischen Rhein und Ruhr heute okay. Kurze Pause draußen ist drin."}`;
     if (bundesland === "bayern")
@@ -143,28 +144,31 @@ export default async function BundeslandPage({
       />
       <WeatherDashboard
         initialCity={refCity}
-        initialWeather={weather}
+        initialWeather={weather ?? undefined}
+        locale="de"
         titleOverride={`Wetter in ${label}`}
         beforeFooter={
           <div className="mt-12 mb-20 px-6 max-w-4xl mx-auto">
-            <div className="card p-6 bg-[#22c55e]/5 border border-[#22c55e]/20 mb-10 overflow-hidden relative group">
-              <div className="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:rotate-12 transition-transform">
-                🌦
-              </div>
-              <div className="flex gap-4 items-start relative z-10">
-                <div className="w-10 h-10 rounded-full bg-[#22c55e] flex items-center justify-center text-xl font-black text-white shrink-0 shadow-lg">
-                  K
+            {karlUrteil && (
+              <div className="card p-6 bg-[#22c55e]/5 border border-[#22c55e]/20 mb-10 overflow-hidden relative group">
+                <div className="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:rotate-12 transition-transform">
+                  🌦
                 </div>
-                <div>
-                  <h3 className="text-lg font-black text-text-primary uppercase tracking-tighter mb-1">
-                    Karls Regionales Urteil
-                  </h3>
-                  <p className="text-text-secondary italic leading-relaxed">
-                    &ldquo;{karlUrteil}&rdquo;
-                  </p>
+                <div className="flex gap-4 items-start relative z-10">
+                  <div className="w-10 h-10 rounded-full bg-[#22c55e] flex items-center justify-center text-xl font-black text-white shrink-0 shadow-lg">
+                    K
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-black text-text-primary uppercase tracking-tighter mb-1">
+                      Karls Regionales Urteil
+                    </h3>
+                    <p className="text-text-secondary italic leading-relaxed">
+                      &ldquo;{karlUrteil}&rdquo;
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {mainCities.length > 0 && (
               <div className="mb-12">
