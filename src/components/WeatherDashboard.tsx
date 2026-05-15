@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import Link from "next/link";
@@ -352,7 +352,7 @@ export default function WeatherDashboard({
 
               <div className="flex flex-col gap-3">
                  <div className="flex flex-wrap items-center gap-5">
-                   <span className="text-4xl font-black text-text-primary">{getWeatherDescription(weather.current.weatherCode)}</span>
+                   <span className="text-4xl font-black text-text-primary">{getWeatherDescription(weather.current.weatherCode, locale)}</span>
                    <span className="text-lg font-bold text-text-secondary bg-[var(--wz-blue)]/5 px-4 py-1.5 rounded-full shadow-inner border border-[var(--wz-blue)]/10">
                      {isDE ? "Fühlt sich an wie" : "Voelt als"} {weather.current.feelsLike}°
                    </span>

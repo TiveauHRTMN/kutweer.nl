@@ -2,6 +2,7 @@ import type { WeatherData, HourlyForecast, MinutelyPrecipitation, AirQualityData
 import { hermesChat } from "@/lib/hermes";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import { fetchGoogleWeather, mapGoogleWeatherConditionToWMO } from "./google-weather";
+import type { Locale } from "@/config/locales";
 
 const OPEN_METEO_BASE = "https://api.open-meteo.com/v1/forecast";
 const DWD_ICON_BASE = "https://api.open-meteo.com/v1/dwd-icon";
@@ -38,6 +39,31 @@ const DAILY_PARAMS = [
   "uv_index_max",
   "sunshine_duration",
 ].join(",");
+
+const BASE_URL_BY_LOCALE: Record<Locale, string> = {
+  nl: OPEN_METEO_BASE,
+  de: DWD_ICON_BASE,
+};
+
+const BASE_MODEL_BY_LOCALE: Record<Locale, string> = {
+  nl: "knmi_seamless",
+  de: "dwd_icon_d2",
+};
+
+const SECONDARY_MODEL_BY_LOCALE: Record<Locale, string> = {
+  nl: "dwd_icon_d2",
+  de: "knmi_seamless",
+};
+
+const LEAD_SOURCE_LABEL: Record<Locale, string> = {
+  nl: "KNMI HARMONIE",
+  de: "DWD ICON-D2",
+};
+
+const SECONDARY_SOURCE_LABEL: Record<Locale, string> = {
+  nl: "DWD ICON-D2",
+  de: "KNMI HARMONIE",
+};
 
 interface RawModelHourly {
   time: string[];
@@ -109,15 +135,17 @@ export async function fetchWeatherData(
   lon: number,
   isBot: boolean = false,
   forceHighRes: boolean = false,
-  marianaLocation?: { name?: string; province?: string; lat: number; lon: number; id?: string; locationId?: string }
+  marianaLocation?: { name?: string; province?: string; lat: number; lon: number; id?: string; locationId?: string },
+  locale: Locale = "nl"
 ): Promise<WeatherData> {
   // Skip live API calls during Next.js build-time static generation
   if (process.env.NEXT_PHASE === 'phase-production-build') return null as any;
 
   const attemptFetch = async (): Promise<any> => {
-    const url = `${OPEN_METEO_BASE}?${new URLSearchParams({
+    const url = `${BASE_URL_BY_LOCALE[locale]}?${new URLSearchParams({
       latitude: lat.toString(),
       longitude: lon.toString(),
+      models: BASE_MODEL_BY_LOCALE[locale],
       current: CURRENT_PARAMS,
       hourly: HOURLY_PARAMS + ",apparent_temperature",
       daily: DAILY_PARAMS,
@@ -144,16 +172,15 @@ export async function fetchWeatherData(
   };
 
   try {
-    const genericRes = await attemptFetch();
+    const leadRes = await attemptFetch();
 
-    const fetchPromises: Promise<any>[] = [Promise.resolve(genericRes)];
+    const fetchPromises: Promise<any>[] = [Promise.resolve(leadRes)];
 
     // Zware extra modellen: alleen ophalen als expliciet gevraagd (forceHighRes)
     // of bij bots nooit. Default = alleen het basismodel → geen rate limiting.
     if (!isBot && forceHighRes) {
       fetchPromises.push(
-        fetchModel(OPEN_METEO_BASE, lat, lon, { models: "knmi_seamless" }).catch(() => null),
-        fetchModel(OPEN_METEO_BASE, lat, lon, { models: "dwd_icon_d2" }).catch(() => null),
+        fetchModel(OPEN_METEO_BASE, lat, lon, { models: SECONDARY_MODEL_BY_LOCALE[locale] }).catch(() => null),
         fetchModel(OPEN_METEO_BASE, lat, lon, { models: "meteofrance_arome_france_hd" }).catch(() => null)
       );
     }
@@ -167,9 +194,10 @@ export async function fetchWeatherData(
       return null as any;
     }
 
-    const harmonieData = (!isBot && results[1]) || null;
-    const iconData = (!isBot && results[2]) || null;
-    const aromeData = (!isBot && results[3]) || null;
+    const secondaryData = (!isBot && forceHighRes ? results[1] : null) || null;
+    const aromeData = (!isBot && forceHighRes ? results[2] : null) || null;
+    const harmonieData = locale === "nl" ? coreData : secondaryData;
+    const iconData = locale === "de" ? coreData : secondaryData;
     const googleData: any = null;
 
     const data = coreData;
@@ -210,12 +238,13 @@ export async function fetchWeatherData(
         weatherCode: googleData.weatherCode[i] ?? 0,
         windSpeed: Math.round(googleData.windSpeed[i] ?? 0)
       } : undefined;
+      const leadModelEntry = locale === "de" ? icon : harmonie;
 
-      // Base values (prefer Harmonie, but fallback to Generic)
-      const temperature = (harmonie && typeof harmonie.temperature === 'number') ? harmonie.temperature : Math.round(data.hourly.temperature_2m[i] ?? 0);
-      const precipitation = (harmonie && typeof harmonie.precipitation === 'number') ? harmonie.precipitation : (data.hourly.precipitation?.[i] ?? 0);
-      const weatherCode = (harmonie && typeof harmonie.weatherCode === 'number') ? harmonie.weatherCode : (data.hourly.weather_code?.[i] ?? 0);
-      const windSpeed = (harmonie && typeof harmonie.windSpeed === 'number') ? harmonie.windSpeed : Math.round(data.hourly.wind_speed_10m?.[i] ?? 0);
+      // Base values volgen altijd het land-specifieke leidende model.
+      const temperature = Math.round(data.hourly.temperature_2m[i] ?? 0);
+      const precipitation = data.hourly.precipitation?.[i] ?? 0;
+      const weatherCode = data.hourly.weather_code?.[i] ?? 0;
+      const windSpeed = Math.round(data.hourly.wind_speed_10m?.[i] ?? 0);
 
       return {
         time,
@@ -225,7 +254,7 @@ export async function fetchWeatherData(
         precipitation,
         windSpeed,
         cape: Math.round(data.hourly.cape?.[i] ?? 0),
-        confidence: harmonie ? "high" : "medium",
+        confidence: leadModelEntry ? "high" : "medium",
         models: { harmonie, icon, arome, google }
       };
     });
@@ -234,26 +263,28 @@ export async function fetchWeatherData(
     let agreement = 100;
     if (harmonieData?.precipitation && iconData?.precipitation && aromeData?.precipitation) {
       // Check for divergence in precipitation in next 12 hours
-      const next12Harmonie = (harmonieData.precipitation || []).slice(0, 12).reduce((a: number, b: number) => a + b, 0);
-      const next12Icon = (iconData.precipitation || []).slice(0, 12).reduce((a: number, b: number) => a + b, 0);
+      const leadSeries = locale === "de" ? iconData : harmonieData;
+      const secondarySeries = locale === "de" ? harmonieData : iconData;
+      const next12Lead = (leadSeries?.precipitation || []).slice(0, 12).reduce((a: number, b: number) => a + b, 0);
+      const next12Secondary = (secondarySeries?.precipitation || []).slice(0, 12).reduce((a: number, b: number) => a + b, 0);
       const next12Arome = (aromeData.precipitation || []).slice(0, 12).reduce((a: number, b: number) => a + b, 0);
       
       const diff = Math.max(
-        Math.abs(next12Harmonie - next12Icon),
-        Math.abs(next12Harmonie - next12Arome)
+        Math.abs(next12Lead - next12Secondary),
+        Math.abs(next12Lead - next12Arome)
       );
       if (diff > 2) agreement = 75;
       if (diff > 5) agreement = 50;
     }
 
-    // 3. SYNC CURRENT WITH HARMONIE (Consistentie!)
+    // 3. SYNC CURRENT WITH THE LEADING MODEL (Consistentie!)
     let currentTemp = Math.round(data.current.temperature_2m ?? 0);
     let currentFeels = Math.round(data.current.apparent_temperature ?? 0);
     let currentPrecip = data.current.precipitation ?? 0;
     let currentCode = data.current.weather_code ?? 0;
     let currentWind = Math.round(data.current.wind_speed_10m ?? 0);
 
-    if (harmonieData && hourly.length > 0) {
+    if (hourly.length > 0) {
       const currentApiTime = data.current.time;
       const currentIndex = times.indexOf(currentApiTime);
       const targetIndex = currentIndex !== -1 ? currentIndex : 0;
@@ -285,8 +316,8 @@ export async function fetchWeatherData(
       }
     }
 
-    const sources = ["KNMI HARMONIE"];
-    if (iconData) sources.push("DWD ICON-D2");
+    const sources = [LEAD_SOURCE_LABEL[locale]];
+    if (secondaryData) sources.push(SECONDARY_SOURCE_LABEL[locale]);
     if (aromeData) sources.push("METEOFRANCE AROME");
     if (googleData) sources.push("GOOGLE WEATHER API");
 
@@ -296,7 +327,7 @@ export async function fetchWeatherData(
         feelsLike: currentFeels,
         humidity: data.current?.relative_humidity_2m ?? 50,
         windSpeed: currentWind,
-        windDirection: degreesToDirection(data.current?.wind_direction_10m ?? 0),
+        windDirection: degreesToDirection(data.current?.wind_direction_10m ?? 0, locale),
         windGusts: Math.round(data.current?.wind_gusts_10m ?? 0),
         precipitation: currentPrecip,
         weatherCode: currentCode,
@@ -319,7 +350,9 @@ export async function fetchWeatherData(
       uvIndex: data.daily?.uv_index_max?.[0] ?? 0,
       models: {
         agreement,
-        label: agreement > 80 ? "Hoge modelconsensus" : agreement > 50 ? "Gemiddelde consensus" : "Lage consensus (Divergentie)",
+        label: locale === "de"
+          ? (agreement > 80 ? "Hohe Modellübereinstimmung" : agreement > 50 ? "Mittlere Übereinstimmung" : "Geringe Übereinstimmung (Divergenz)")
+          : (agreement > 80 ? "Hoge modelconsensus" : agreement > 50 ? "Gemiddelde consensus" : "Lage consensus (Divergentie)"),
         sources,
       },
     };
@@ -443,19 +476,20 @@ export async function fetchAirQuality(lat: number, lon: number): Promise<AirQual
   }
 }
 
-export function getPollenLevel(grains: number | null, type: "grass" | "tree"): { label: string; level: 0 | 1 | 2 | 3 } {
-  if (grains === null) return { label: "Onbekend", level: 0 };
+export function getPollenLevel(grains: number | null, type: "grass" | "tree", locale: Locale = "nl"): { label: string; level: 0 | 1 | 2 | 3 } {
+  const de = locale === "de";
+  if (grains === null) return { label: de ? "Unbekannt" : "Onbekend", level: 0 };
   if (type === "grass") {
-    if (grains < 10) return { label: "Laag", level: 0 };
-    if (grains < 30) return { label: "Matig", level: 1 };
-    if (grains < 50) return { label: "Hoog", level: 2 };
-    return { label: "Zeer hoog", level: 3 };
+    if (grains < 10) return { label: de ? "Niedrig" : "Laag", level: 0 };
+    if (grains < 30) return { label: de ? "Mäßig" : "Matig", level: 1 };
+    if (grains < 50) return { label: de ? "Hoch" : "Hoog", level: 2 };
+    return { label: de ? "Sehr hoch" : "Zeer hoog", level: 3 };
   }
   // tree (birch, alder, mugwort)
-  if (grains < 10) return { label: "Laag", level: 0 };
-  if (grains < 50) return { label: "Matig", level: 1 };
-  if (grains < 200) return { label: "Hoog", level: 2 };
-  return { label: "Zeer hoog", level: 3 };
+  if (grains < 10) return { label: de ? "Niedrig" : "Laag", level: 0 };
+  if (grains < 50) return { label: de ? "Mäßig" : "Matig", level: 1 };
+  if (grains < 200) return { label: de ? "Hoch" : "Hoog", level: 2 };
+  return { label: de ? "Sehr hoch" : "Zeer hoog", level: 3 };
 }
 
 const NL_COASTAL_POINTS: [number, number][] = [
@@ -512,8 +546,10 @@ export async function fetchMarineData(lat: number, lon: number): Promise<MarineD
   }
 }
 
-function degreesToDirection(deg: number): string {
-  const dirs = ["N", "NNO", "NO", "ONO", "O", "OZO", "ZO", "ZZO", "Z", "ZZW", "ZW", "WZW", "W", "WNW", "NW", "NNW"];
+function degreesToDirection(deg: number, locale: Locale = "nl"): string {
+  const dirs = locale === "de"
+    ? ["N", "NNO", "NO", "ONO", "O", "OSO", "SO", "SSO", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+    : ["N", "NNO", "NO", "ONO", "O", "OZO", "ZO", "ZZO", "Z", "ZZW", "ZW", "WZW", "W", "WNW", "NW", "NNW"];
   return dirs[Math.round(deg / 22.5) % 16];
 }
 
@@ -531,7 +567,23 @@ export function getWeatherEmoji(code: number, isDay: boolean = true): string {
   return "🌤️";
 }
 
-export function getWeatherDescription(code: number): string {
+export function getWeatherDescription(code: number, locale: Locale = "nl"): string {
+  if (locale === "de") {
+    if (code === 0) return "Wolkenlos";
+    if (code <= 2) return "Teilweise bewölkt";
+    if (code === 3) return "Bewölkt";
+    if (code <= 48) return "Nebel";
+    if (code <= 55) return "Nieselregen";
+    if (code <= 57) return "Gefrierender Nieselregen";
+    if (code <= 65) return "Regen";
+    if (code <= 67) return "Gefrierender Regen";
+    if (code <= 75) return "Schnee";
+    if (code === 77) return "Graupel";
+    if (code <= 82) return "Regenschauer";
+    if (code <= 86) return "Schneeschauer";
+    if (code >= 95) return "Gewitter";
+    return "Wechselhaft";
+  }
   if (code === 0) return "Onbewolkt";
   if (code <= 2) return "Half bewolkt";
   if (code === 3) return "Bewolkt";
@@ -548,7 +600,22 @@ export function getWeatherDescription(code: number): string {
   return "Wisselend";
 }
 
-export function getWindBeaufort(kmh: number): { scale: number; label: string } {
+export function getWindBeaufort(kmh: number, locale: Locale = "nl"): { scale: number; label: string } {
+  if (locale === "de") {
+    if (kmh < 1) return { scale: 0, label: "Windstille" };
+    if (kmh <= 5) return { scale: 1, label: "Leiser Zug" };
+    if (kmh <= 11) return { scale: 2, label: "Leichte Brise" };
+    if (kmh <= 19) return { scale: 3, label: "Schwache Brise" };
+    if (kmh <= 28) return { scale: 4, label: "Mäßige Brise" };
+    if (kmh <= 38) return { scale: 5, label: "Frische Brise" };
+    if (kmh <= 49) return { scale: 6, label: "Starker Wind" };
+    if (kmh <= 61) return { scale: 7, label: "Steifer Wind" };
+    if (kmh <= 74) return { scale: 8, label: "Stürmischer Wind" };
+    if (kmh <= 88) return { scale: 9, label: "Sturm" };
+    if (kmh <= 102) return { scale: 10, label: "Schwerer Sturm" };
+    if (kmh <= 117) return { scale: 11, label: "Orkanartiger Sturm" };
+    return { scale: 12, label: "Orkan" };
+  }
   if (kmh < 1) return { scale: 0, label: "Windstil" };
   if (kmh <= 5) return { scale: 1, label: "Zwak" };
   if (kmh <= 11) return { scale: 2, label: "Zwak" };

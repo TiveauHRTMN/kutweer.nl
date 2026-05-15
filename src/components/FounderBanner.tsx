@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { X, Sparkles } from "lucide-react";
 import PersonaModal from "./PersonaModal";
 import { useSession } from "@/lib/session-context";
+import { detectLocale } from "@/config/locales";
 
 const STORAGE_KEY = "wz-founder-banner-dismissed";
 const IDLE_MS = 10_000;
@@ -17,6 +19,8 @@ export default function FounderBanner() {
   const [visible, setVisible] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const { tier, loading } = useSession();
+  const pathname = usePathname() ?? "/";
+  const isDE = detectLocale(pathname) === "de";
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -73,11 +77,12 @@ export default function FounderBanner() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-lg sm:text-xl font-black text-text-primary leading-tight">
-                  Nu nog gratis aanmelden
+                  {isDE ? "Noch kostenlos anmelden" : "Nu nog gratis aanmelden"}
                 </p>
                 <p className="text-sm text-text-secondary mt-1">
-                  Elke ochtend een weermail van Piet, Reed of Steve. Zonder
-                  reclame. Tijdelijk gratis.
+                  {isDE
+                    ? "Jeden Morgen eine Wettermail von Karl, Reed oder Steve. Ohne Werbung. Vorübergehend kostenlos."
+                    : "Elke ochtend een weermail van Piet, Reed of Steve. Zonder reclame. Tijdelijk gratis."}
                 </p>
               </div>
             </div>
@@ -85,7 +90,7 @@ export default function FounderBanner() {
               type="button"
               onClick={(e) => { e.stopPropagation(); dismiss(); }}
               className="absolute top-4 right-4 w-8 h-8 rounded-full hover:bg-black/5 flex items-center justify-center transition-colors"
-              aria-label="Sluiten"
+              aria-label={isDE ? "Schließen" : "Sluiten"}
             >
               <X className="w-4 h-4 text-text-muted" />
             </button>

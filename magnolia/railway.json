@@ -1,0 +1,10 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "/opt/venv/bin/python -u magnolia_scan.py",
+    "restartPolicyType": "ALWAYS"
+  }
+}

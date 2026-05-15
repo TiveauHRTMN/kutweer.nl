@@ -5,8 +5,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function SupportBanner() {
+export default function SupportBanner({ locale = "nl" }: { locale?: "nl" | "de" }) {
   const [isVisible, setIsVisible] = useState(true);
+
+  if (locale === "de") return null;
 
   return (
     <AnimatePresence>

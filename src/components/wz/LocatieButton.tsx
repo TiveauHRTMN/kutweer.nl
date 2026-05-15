@@ -3,20 +3,23 @@
 import { useState, useEffect } from "react";
 import { MapPin, Loader2, AlertCircle } from "lucide-react";
 import { persistCity } from "@/lib/persist-city";
+import { detectLocale } from "@/config/locales";
 
 interface Props {
   active?: boolean;
   compact?: boolean;
+  locale?: "nl" | "de";
 }
 
 type State = "idle" | "loading" | "found" | "error";
 
-export default function LocatieButton({ active = false, compact = false }: Props) {
+export default function LocatieButton({ active = false, compact = false, locale }: Props) {
   const [state, setState] = useState<State>("idle");
   const [found, setFound] = useState<string | null>(null);
   const [currentCity, setCurrentCity] = useState<string | null>(null);
+  const navLocale =
+    locale ?? (typeof window === "undefined" ? "nl" : detectLocale(window.location.pathname));
 
-  // Sync city name from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("wz_city");
     if (saved) {
@@ -26,7 +29,6 @@ export default function LocatieButton({ active = false, compact = false }: Props
       } catch {}
     }
 
-    // Listen for updates from other components
     const handleUpdate = () => {
       const updated = localStorage.getItem("wz_city");
       if (updated) {
@@ -44,11 +46,17 @@ export default function LocatieButton({ active = false, compact = false }: Props
     };
   }, []);
 
+  function goToWeather(province: string, slug: string) {
+    window.location.href = navLocale === "de"
+      ? `/de/wetter/${province}/${slug}`
+      : `/weer/${province}/${slug}`;
+  }
+
   function handleClick() {
     if (state === "loading") return;
 
     if (!navigator.geolocation) {
-      window.location.href = "/weer";
+      window.location.href = navLocale === "de" ? "/de/wetter" : "/weer";
       return;
     }
 
@@ -66,9 +74,7 @@ export default function LocatieButton({ active = false, compact = false }: Props
             setFound(place.name);
             setState("found");
             persistCity({ name: place.name, lat: place.lat, lon: place.lon });
-            setTimeout(() => {
-              window.location.href = `/weer/${place.province}/${place.slug}`;
-            }, 800);
+            setTimeout(() => goToWeather(place.province, place.slug), 800);
           } else {
             throw new Error("Geen plaats gevonden");
           }
@@ -84,24 +90,31 @@ export default function LocatieButton({ active = false, compact = false }: Props
         setTimeout(() => setState("idle"), 4000);
       },
       {
-        enableHighAccuracy: false, // Minder streng, sneller resultaat op mobiel/desktop
+        enableHighAccuracy: false,
         timeout: 10000,
-        maximumAge: 60 * 60000, // Gebruik cache indien beschikbaar (1 uur)
+        maximumAge: 60 * 60000,
       }
     );
   }
 
-  if (compact) {
-    const cityLabel = state === "loading" ? null
+  const cityLabel =
+    state === "loading" ? null
       : state === "error" ? null
       : state === "found" ? (found ?? currentCity)
       : currentCity;
 
+  const idleLabel = navLocale === "de" ? "Dein Standort" : "Jouw locatie";
+  const loadingLabel = navLocale === "de" ? "Standort suchen…" : "Locatie zoeken…";
+  const foundLabel = navLocale === "de" ? "Gefunden!" : "Gevonden!";
+  const errorLabel = navLocale === "de" ? "Kein GPS-Zugriff" : "Geen GPS toegang";
+  const ariaLabel = navLocale === "de" ? "Zu deinem Standort" : "Spring naar jouw locatie";
+
+  if (compact) {
     return (
       <button
         onClick={handleClick}
         disabled={state === "loading" || state === "found"}
-        aria-label="Spring naar jouw locatie"
+        aria-label={ariaLabel}
         className="flex items-center gap-1 h-9 px-2.5 rounded-xl border transition-all disabled:opacity-60"
         style={{
           borderColor: state === "error" ? "#ef4444" : active ? "var(--wz-brand)" : "var(--wz-border)",
@@ -110,11 +123,11 @@ export default function LocatieButton({ active = false, compact = false }: Props
         }}
       >
         {state === "loading" && <Loader2 className="w-4 h-4 animate-spin shrink-0" />}
-        {state === "error"   && <AlertCircle className="w-4 h-4 shrink-0" />}
+        {state === "error" && <AlertCircle className="w-4 h-4 shrink-0" />}
         {(state === "idle" || state === "found") && <MapPin className="w-4 h-4 shrink-0" />}
         {cityLabel && (
           <span className="text-[11px] font-black max-w-[80px] truncate leading-none">
-            {cityLabel}
+            {state === "found" ? (found ?? foundLabel) : state === "idle" ? (currentCity ?? idleLabel) : cityLabel}
           </span>
         )}
       </button>
@@ -129,22 +142,22 @@ export default function LocatieButton({ active = false, compact = false }: Props
       style={{
         color: state === "error" ? "#ef4444" : active ? "var(--wz-brand)" : "var(--ink-700)",
         background:
-          state === "found"  ? "#dcfce7" :
-          state === "error"  ? "#fee2e2" :
-          active             ? "var(--wz-brand-soft)" : "transparent",
+          state === "found" ? "#dcfce7" :
+          state === "error" ? "#fee2e2" :
+          active ? "var(--wz-brand-soft)" : "transparent",
         cursor: (state === "loading" || state === "found") ? "default" : "pointer",
       }}
-      title="Spring naar jouw locatie"
+      title={ariaLabel}
     >
       {state === "loading" && <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0" />}
-      {state === "error"   && <AlertCircle className="w-3.5 h-3.5 shrink-0" />}
+      {state === "error" && <AlertCircle className="w-3.5 h-3.5 shrink-0" />}
       {(state === "idle" || state === "found") && <MapPin className="w-3.5 h-3.5 shrink-0" />}
 
       <span>
-        {state === "loading" && "Locatie zoeken…"}
-        {state === "found"   && (found ?? "Gevonden!")}
-        {state === "error"   && "Geen GPS toegang"}
-        {state === "idle"    && (currentCity ?? "Jouw locatie")}
+        {state === "loading" && loadingLabel}
+        {state === "found" && (found ?? foundLabel)}
+        {state === "error" && errorLabel}
+        {state === "idle" && (currentCity ?? idleLabel)}
       </span>
     </button>
   );

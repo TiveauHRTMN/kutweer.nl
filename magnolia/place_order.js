@@ -19,6 +19,14 @@ const ENV_PATH = path.join(__dirname, ".env");
 const DEPOSIT_WALLET = "0x393f39B28b1Ac8234B6B8Cf1739E54CE769e4B63";
 
 async function main() {
+  if (process.env.POLYMARKET_TRADING_ENABLED !== "true") {
+    out({
+      success: false,
+      error: "Polymarket trading is disabled. Use read-only signals unless access and trading are legal for you.",
+    });
+    return;
+  }
+
   const [, , conditionId, noPriceStr, sizeUsdcStr] = process.argv;
 
   if (!conditionId || !noPriceStr || !sizeUsdcStr) {

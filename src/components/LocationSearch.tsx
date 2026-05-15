@@ -7,9 +7,11 @@ import { DUTCH_CITIES } from "@/lib/types";
 interface Props {
   currentCity: City;
   onCityChange: (city: City) => void;
+  locale?: "nl" | "de";
 }
 
-export default function LocationSearch({ currentCity, onCityChange }: Props) {
+export default function LocationSearch({ currentCity, onCityChange, locale = "nl" }: Props) {
+  const isDE = locale === "de";
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [externalResults, setExternalResults] = useState<City[]>([]);
@@ -30,7 +32,7 @@ export default function LocationSearch({ currentCity, onCityChange }: Props) {
       setSearching(true);
       try {
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=5&countrycodes=nl&accept-language=nl`,
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=5&countrycodes=${isDE ? "de" : "nl"}&accept-language=${isDE ? "de" : "nl"}`,
           { headers: { "User-Agent": "WEERZONE/1.0" } }
         );
         if (res.ok) {
@@ -73,7 +75,7 @@ export default function LocationSearch({ currentCity, onCityChange }: Props) {
         </span>
         <input
           className="search-input"
-          placeholder="Zoek een stad..."
+          placeholder={isDE ? "Stadt suchen..." : "Zoek een stad..."}
           value={open ? query : currentCity.name}
           onFocus={() => {
             setOpen(true);
@@ -105,7 +107,7 @@ export default function LocationSearch({ currentCity, onCityChange }: Props) {
                   <div className="flex flex-col">
                     <span className="font-black text-sm uppercase tracking-tight">{city.name}</span>
                     <span className="text-[9px] font-bold text-text-muted uppercase tracking-widest group-hover:text-text-primary transition-colors">
-                      {idx < localMatches.length ? "Weerstation" : "Gemeente / Plaats"}
+                      {idx < localMatches.length ? (isDE ? "Wetterstation" : "Weerstation") : (isDE ? "Gemeinde / Ort" : "Gemeente / Plaats")}
                     </span>
                   </div>
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity text-xs">→</span>
@@ -115,9 +117,9 @@ export default function LocationSearch({ currentCity, onCityChange }: Props) {
           ) : (
             <div className="px-4 py-6 text-center">
               {searching ? (
-                <div className="animate-pulse text-[10px] font-black uppercase tracking-widest text-text-muted">Zoeken...</div>
+                <div className="animate-pulse text-[10px] font-black uppercase tracking-widest text-text-muted">{isDE ? "Suchen..." : "Zoeken..."}</div>
               ) : (
-                <div className="text-[10px] font-black uppercase tracking-widest text-text-muted">Geen resultaten gevonden</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-text-muted">{isDE ? "Keine Ergebnisse" : "Geen resultaten gevonden"}</div>
               )}
             </div>
           )}

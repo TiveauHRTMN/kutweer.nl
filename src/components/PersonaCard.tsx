@@ -1,6 +1,6 @@
 "use client";
 
-import { PERSONAS, formatPrice, type PersonaTier } from "@/lib/personas";
+import { PERSONAS, type PersonaTier } from "@/lib/personas";
 import { Check } from "lucide-react";
 
 interface Props {
@@ -8,12 +8,12 @@ interface Props {
   onSelect?: (tier: PersonaTier) => void;
   compact?: boolean;
   highlighted?: boolean;
+  locale?: "nl" | "de";
 }
 
-export default function PersonaCard({ tier, onSelect, compact = false, highlighted = false }: Props) {
+export default function PersonaCard({ tier, onSelect, compact = false, highlighted = false, locale = "nl" }: Props) {
   const p = PERSONAS[tier];
   const isComingSoon = tier === "steve";
-  const hasPrice = p.priceCents !== undefined && p.founderPriceCents !== undefined;
 
   return (
     <div
@@ -28,13 +28,11 @@ export default function PersonaCard({ tier, onSelect, compact = false, highlight
         transition: "transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s ease, background 0.22s ease",
       }}
     >
-      {/* Kleurbalk bovenaan */}
       <div
         className="absolute top-0 left-5 right-5 h-1 rounded-full"
         style={{ background: p.color }}
       />
 
-      {/* Header */}
       <div className="pt-2 mb-4">
         <div className="flex items-center gap-2 mb-1">
           <div
@@ -56,33 +54,31 @@ export default function PersonaCard({ tier, onSelect, compact = false, highlight
         )}
       </div>
 
-      {/* Prijs */}
       <div className="mb-4 pb-4 border-b border-black/10">
         <div className="flex items-baseline gap-2">
           {isComingSoon ? (
             <span className="text-3xl font-black text-text-primary">
-              Coming Soon
+              {locale === "de" ? "Bald verfügbar" : "Binnenkort beschikbaar"}
             </span>
           ) : (
             <span className="text-3xl font-black text-text-primary">
-              Gratis
+              {locale === "de" ? "Kostenlos" : "Gratis"}
             </span>
           )}
         </div>
         <div className="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-black/5">
           {isComingSoon ? (
             <span className="text-xs font-bold text-text-primary">
-              Ontwikkeling in volle gang
+              {locale === "de" ? "In Entwicklung" : "Ontwikkeling in volle gang"}
             </span>
           ) : (
             <span className="text-xs font-bold text-text-primary">
-              Tijdelijk gratis te proberen
+              {locale === "de" ? "Vorübergehend kostenlos testen" : "Tijdelijk gratis te proberen"}
             </span>
           )}
         </div>
       </div>
 
-      {/* Features */}
       <ul className="space-y-2 mb-5">
         {p.features.map((f) => (
           <li key={f} className="flex items-start gap-2 text-sm text-text-primary">
@@ -99,7 +95,6 @@ export default function PersonaCard({ tier, onSelect, compact = false, highlight
         <p className="text-xs text-text-muted mb-4 italic">{p.audience}</p>
       )}
 
-      {/* CTA */}
       <button
         type="button"
         disabled={isComingSoon}
@@ -109,7 +104,13 @@ export default function PersonaCard({ tier, onSelect, compact = false, highlight
         }`}
         style={!isComingSoon ? { background: p.color } : {}}
       >
-        {isComingSoon ? "Binnenkort beschikbaar" : "Aanmelden →"}
+        {isComingSoon
+          ? locale === "de"
+            ? "Bald verfügbar"
+            : "Binnenkort beschikbaar"
+          : locale === "de"
+            ? "Anmelden →"
+            : "Aanmelden →"}
       </button>
     </div>
   );

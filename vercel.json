@@ -43,6 +43,14 @@
     {
       "path": "/api/magnolia/cron",
       "schedule": "0 14 * * 1,3,5"
+    },
+    {
+      "path": "/api/cron/piet-morning-email",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/karl-morning-email",
+      "schedule": "0 6 * * *"
     }
   ]
 }

@@ -60,6 +60,115 @@ const URBAN_NAMES = new Set([
   "arnhem",
 ]);
 
+const PLACE_OVERRIDES: Record<string, {
+  label: string;
+  summary: string;
+  factors: string[];
+}> = {
+  "den helder": {
+    label: "kuststad aan de kop van Noord-Holland",
+    summary:
+      "Den Helder is voor WEERZONE een uitgesproken kuststad aan de noordelijke windvang. Zeelucht, open aanvoer en snel draaiende stroming maken het weer hier anders dan in het binnenland.",
+    factors: [
+      "open zeewind vanaf de Noordzee",
+      "snelle omslag tussen droge en vochtige lucht",
+      "kustmist en buien kunnen hier eerder binnenrollen",
+    ],
+  },
+  amsterdam: {
+    label: "stedelijke warmte-eilandkern aan het IJ",
+    summary:
+      "Amsterdam gedraagt zich als een compacte stadsomgeving met grachten, steen en veel bebouwing. Daardoor blijft warmte langer hangen en wordt wind lokaal gestuurd door de stadsvorm.",
+    factors: [
+      "stedelijke warmteopslag in de bebouwde kom",
+      "grachten en open water geven kleine lokale temperatuursprongen",
+      "windkanalen tussen bebouwing en langs brede straten",
+    ],
+  },
+  "den haag": {
+    label: "duinrand en bestuurlijke stad aan zee",
+    summary:
+      "Den Haag zit precies op de overgang tussen duinen, kustlucht en een dicht stedelijk weefsel. Dat geeft een mix van maritieme invloed en stedelijke opwarming.",
+    factors: [
+      "duinrand dempt of versnelt kustinvloed per wijk",
+      "stedelijke opwarming rond het centrum en de randen",
+      "zeewind en kustmist verschillen snel per afstand tot de kust",
+    ],
+  },
+  antwerpen: {
+    label: "Scheldestad met havenlucht",
+    summary:
+      "Antwerpen krijgt zijn eigen weerkarakter door de Schelde, de haven en de open aanvoer richting de Kempen. Die combinatie maakt wind en vocht hier opvallend lokaal.",
+    factors: [
+      "rivierlucht langs de Schelde",
+      "haven en brede verharding versterken stedelijke opwarming",
+      "open aanvoer vanuit de Kempen kan de lucht snel laten omslaan",
+    ],
+  },
+  berlin: {
+    label: "continentale metropool op de vlakte",
+    summary:
+      "Berlijn is een grote stedelijke vlakte met meer continentale warmte- en kouverschillen dan kuststeden. Daardoor reageren temperatuur en wind hier sterker op droge of juist vochtige aanvoer.",
+    factors: [
+      "grote stedelijke warmte-eilandwerking",
+      "meer continentale lucht dan maritieme invloed",
+      "droge, warme of koude lucht kan lang blijven hangen boven de stad",
+    ],
+  },
+};
+
+const MICRO_TAGS = {
+  coastal: [
+    "zoute kustrand",
+    "duinvoorzijde",
+    "havenkom",
+    "windrijke zeekant",
+    "strandzone",
+    "delta-adem",
+  ],
+  urban: [
+    "stenen warmte-eiland",
+    "compacte stadskern",
+    "verharde stadszone",
+    "bebouwde kom",
+    "stedelijke canyon",
+    "asfaltkamer",
+  ],
+  highland: [
+    "hellingrand",
+    "hoogtekamer",
+    "plateaurand",
+    "dalzoom",
+    "reliefzone",
+    "randen van hoger terrein",
+  ],
+  inland: [
+    "open binnenland",
+    "akkerlint",
+    "polderrand",
+    "bos- en beekzone",
+    "dorpslint",
+    "landschapskamer",
+  ],
+} as const;
+
+function normalizeName(name: string): string {
+  return name.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function hashString(input: string): number {
+  let hash = 0;
+  for (let i = 0; i < input.length; i++) {
+    hash = ((hash << 5) - hash) + input.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function pickFrom<T>(items: readonly T[], seed: number): T {
+  return items[seed % items.length];
+}
+
 function characterLabel(character?: LocationCharacter): string {
   switch (character) {
     case "coastal":
@@ -73,13 +182,20 @@ function characterLabel(character?: LocationCharacter): string {
   }
 }
 
-function inferSpecialContext(place: Place): { label?: string; factors: string[] } {
-  const name = place.name.toLowerCase();
+function inferSpecialContext(place: Place): { label?: string; summary?: string; factors: string[] } {
+  const name = normalizeName(place.name);
+  const override = PLACE_OVERRIDES[name];
   const factors: string[] = [];
+
+  if (override) {
+    return override;
+  }
 
   if (WADDEN_NAMES.has(name) || (place.lat > 52.7 && place.lon < 6.3 && place.character === "coastal")) {
     return {
       label: "Wadden- en Noordzeelocatie",
+      summary:
+        `${place.name} ligt op een plek waar de zee de toon zet. Wind, vocht en kustmist kunnen hier sneller doorslaan dan verder landinwaarts.`,
       factors: [
         "directe invloed van Noordzee en Waddenzee",
         "windrichting bepaalt sterk of lucht koel, vochtig of juist droger binnenkomt",
@@ -103,7 +219,27 @@ function inferSpecialContext(place: Place): { label?: string; factors: string[] 
     factors.push("wind en neerslag pakken anders uit dan in nabijgelegen dalen");
   }
 
-  return { factors };
+  const hash = hashString(`${name}|${place.province}|${place.lat.toFixed(3)}|${place.lon.toFixed(3)}`);
+  const character = place.character ?? "inland";
+  const tag = pickFrom(MICRO_TAGS[character], hash);
+  const orientation = pickFrom([
+    "windvang",
+    "vochtzone",
+    "warmtekamer",
+    "overgangsrand",
+    "luchtcorridor",
+    "stille hoek",
+  ] as const, hash >> 2);
+
+  return {
+    label: `${characterLabel(place.character)} met ${tag}`,
+    summary: `${place.name} heeft voor WEERZONE een eigen signatuur: een ${tag} met ${orientation}. Daardoor krijgt deze plek net andere wind-, temperatuur- en neerslagaccenten dan omliggende locaties.`,
+    factors: [
+      `${tag} bepaalt hoe snel lucht hier doorstroomt`,
+      `${orientation} stuurt lokale temperatuurverschillen`,
+      `coordinaten ${place.lat.toFixed(2)}, ${place.lon.toFixed(2)} voor lokale modelcorrectie`,
+    ],
+  };
 }
 
 export function getLocationWeatherProfile(place: Place): LocationWeatherProfile {
@@ -113,6 +249,8 @@ export function getLocationWeatherProfile(place: Place): LocationWeatherProfile 
   };
   const special = inferSpecialContext(place);
   const label = special.label ?? `${characterLabel(place.character)} in ${provinceContext.label}`;
+  const summary = special.summary
+    ?? `${place.name} is voor WEERZONE geen generieke plaatsnaam maar een ${label}. Daardoor wegen windrichting, ondergrond en nabij water of bebouwing anders mee dan in omliggende plaatsen.`;
   const factors = [
     ...special.factors,
     provinceContext.factor,
@@ -122,7 +260,7 @@ export function getLocationWeatherProfile(place: Place): LocationWeatherProfile 
   return {
     label,
     factors,
-    summary: `${place.name} is voor WEERZONE geen generieke plaatsnaam maar een ${label}. Daardoor wegen windrichting, ondergrond en nabij water of bebouwing anders mee dan in omliggende plaatsen.`,
+    summary,
     marianaContext: `Mariana gebruikt dit locatieprofiel als startpunt voor ${place.name}: eerst geografische verwachting, daarna steeds meer lokale correctie zodra forecasts en observaties binnenkomen.`,
   };
 }

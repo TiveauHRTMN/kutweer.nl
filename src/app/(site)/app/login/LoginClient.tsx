@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, ArrowLeft, Mail, ShieldCheck } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import WzAuthShell from "@/components/wz/WzAuthShell";
+import { detectLocale } from "@/config/locales";
 import {
   WzTextField,
   WzPasswordField,
@@ -23,6 +24,9 @@ export default function LoginClient() {
   const searchParams = useSearchParams();
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
+  const locale = searchParams?.get("lang") === "de" ? "de" : detectLocale("/");
+  const isDE = locale === "de";
+
   const [step, setStep] = useState<LoginStep>("email");
   const [email, setEmail] = useState(searchParams?.get("email") || "");
   const [password, setPassword] = useState("");
@@ -34,7 +38,7 @@ export default function LoginClient() {
   async function handleEmailNext(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim() || !/.+@.+\..+/.test(email)) {
-      setErrors({ email: "Vul een geldig e-mailadres in" });
+      setErrors({ email: isDE ? "Gib eine gültige E-Mail-Adresse ein" : "Vul een geldig e-mailadres in" });
       return;
     }
 
@@ -47,10 +51,10 @@ export default function LoginClient() {
       if (exists) {
         setStep("password");
       } else {
-        router.push(`/app/signup?email=${encodeURIComponent(email.trim())}`);
+        router.push(`/app/signup?email=${encodeURIComponent(email.trim())}${isDE ? "&lang=de" : ""}`);
       }
-    } catch (err: any) {
-      setSubmitError("Er ging iets mis bij het controleren van je account.");
+    } catch {
+      setSubmitError(isDE ? "Beim Prüfen deines Kontos ist etwas schiefgelaufen." : "Er ging iets mis bij het controleren van je account.");
     } finally {
       setLoading(false);
     }
@@ -59,24 +63,24 @@ export default function LoginClient() {
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     if (!password) {
-      setErrors({ pw: "Vul je wachtwoord in" });
+      setErrors({ pw: isDE ? "Gib dein Passwort ein" : "Vul je wachtwoord in" });
       return;
     }
 
     setSubmitError(null);
     setLoading(true);
-    
+
     const { error: signInErr } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
     });
 
     if (signInErr) {
-      setSubmitError("Wachtwoord is onjuist. Probeer het opnieuw of gebruik de inloglink.");
+      setSubmitError(isDE ? "Das Passwort ist falsch. Versuche es erneut oder nutze den Login-Link." : "Wachtwoord is onjuist. Probeer het opnieuw of gebruik de inloglink.");
       setLoading(false);
       return;
     }
-    
+
     const next = searchParams?.get("next") || "/app";
     router.replace(next);
   }
@@ -84,12 +88,12 @@ export default function LoginClient() {
   async function handleMagicLink() {
     setSubmitError(null);
     setLoading(true);
-    
+
     try {
-      await sendBrandedMagicLink(email.trim(), "piet", "");
+      await sendBrandedMagicLink(email.trim(), isDE ? "karl" : "piet", "");
       setStep("magic_link_sent");
     } catch (err: any) {
-      setSubmitError(err.message || "Kon geen inloglink sturen.");
+      setSubmitError(err.message || (isDE ? "Konnte keinen Login-Link senden." : "Kon geen inloglink sturen."));
     } finally {
       setLoading(false);
     }
@@ -98,34 +102,34 @@ export default function LoginClient() {
   async function handleOAuth(provider: "google" | "apple") {
     setSubmitError(null);
     setLoading(true);
-    const redirectTo = `${window.location.origin}/auth/callback?next=/app`;
+    const redirectTo = `${window.location.origin}/auth/callback?next=/app${isDE ? "&lang=de" : ""}`;
     const { error: oauthErr } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo },
     });
     if (oauthErr) {
-      setSubmitError("Inloggen via sociale provider is tijdelijk niet beschikbaar. Gebruik e-mail.");
+      setSubmitError(isDE ? "Anmeldung via soziale Anbieter ist derzeit nicht verfügbar. Nutze E-Mail." : "Inloggen via sociale provider is tijdelijk niet beschikbaar. Gebruik e-mail.");
       setLoading(false);
     }
   }
 
   const renderEmailStep = () => (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-      <h1 className="h-1 mb-2">Welkom terug.</h1>
-      <p className="t-body mb-6">Voer je e-mailadres in om verder te gaan.</p>
+      <h1 className="h-1 mb-2">{isDE ? "Willkommen zurück." : "Welkom terug."}</h1>
+      <p className="t-body mb-6">{isDE ? "Gib deine E-Mail-Adresse ein, um weiterzumachen." : "Voer je e-mailadres in om verder te gaan."}</p>
 
       {/* TODO: Supabase Pro Custom Domain benodigd voor clean OAuth
       <WzSocialButtons onGoogle={() => handleOAuth("google")} onApple={() => handleOAuth("apple")} loading={loading} />
-      <WzDivider>of gebruik e-mail</WzDivider>
+      <WzDivider>oder mit E-Mail fortfahren</WzDivider>
       */}
 
       <form onSubmit={handleEmailNext} noValidate>
         <WzTextField
-          label="E-mailadres"
+          label={isDE ? "E-Mail-Adresse" : "E-mailadres"}
           type="email"
           value={email}
           onChange={setEmail}
-          placeholder="je@voorbeeld.nl"
+          placeholder={isDE ? "du@beispiel.de" : "je@voorbeeld.nl"}
           error={errors.email}
           autoComplete="email"
           autoFocus
@@ -136,7 +140,7 @@ export default function LoginClient() {
           disabled={loading}
           className="btn btn-primary btn-block btn-lg mt-2 disabled:opacity-60"
         >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Doorgaan"}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : isDE ? "Weiter" : "Doorgaan"}
         </button>
       </form>
     </div>
@@ -144,11 +148,11 @@ export default function LoginClient() {
 
   const renderPasswordStep = () => (
     <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-      <button 
+      <button
         onClick={() => setStep("email")}
         className="flex items-center gap-1.5 text-xs font-bold text-slate-400 hover:text-slate-600 mb-6 transition-colors"
       >
-        <ArrowLeft className="w-3 h-3" /> E-mail wijzigen
+        <ArrowLeft className="w-3 h-3" /> {isDE ? "E-Mail ändern" : "E-mail wijzigen"}
       </button>
 
       <div className="flex items-center gap-3 mb-6 p-3 bg-[var(--ink-050)] rounded-2xl border border-[var(--border)]">
@@ -156,7 +160,7 @@ export default function LoginClient() {
           <ShieldCheck className="w-5 h-5" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="t-micro">Account gevonden</p>
+          <p className="t-micro">{isDE ? "Konto gefunden" : "Account gevonden"}</p>
           <p className="t-body font-bold truncate text-[var(--ink-900)]">{email}</p>
         </div>
       </div>
@@ -164,19 +168,16 @@ export default function LoginClient() {
       <form onSubmit={handleLogin} noValidate>
         <div className="flex justify-between items-baseline mb-1.5">
           <label className="text-[13px] font-bold" style={{ color: "var(--wz-text)" }}>
-            Wachtwoord
+            {isDE ? "Passwort" : "Wachtwoord"}
           </label>
-          <Link
-            href="/app/reset"
-            className="btn btn-link"
-          >
-            Vergeten?
+          <Link href={isDE ? "/app/reset?lang=de" : "/app/reset"} className="btn btn-link">
+            {isDE ? "Vergessen?" : "Vergeten?"}
           </Link>
         </div>
         <WzPasswordField
           value={password}
           onChange={setPassword}
-          placeholder="Je wachtwoord"
+          placeholder={isDE ? "Dein Passwort" : "Je wachtwoord"}
           error={errors.pw}
           autoComplete="current-password"
           autoFocus
@@ -184,7 +185,7 @@ export default function LoginClient() {
 
         <div className="mt-1.5 mb-6">
           <WzCheckbox checked={remember} onChange={setRemember}>
-            Onthoud mij op dit apparaat
+            {isDE ? "Auf diesem Gerät merken" : "Onthoud mij op dit apparaat"}
           </WzCheckbox>
         </div>
 
@@ -194,9 +195,9 @@ export default function LoginClient() {
             disabled={loading}
             className="btn btn-primary btn-block btn-lg disabled:opacity-60"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : "Inloggen"}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : isDE ? "Anmelden" : "Inloggen"}
           </button>
-          
+
           <button
             type="button"
             onClick={handleMagicLink}
@@ -204,7 +205,7 @@ export default function LoginClient() {
             className="btn btn-ghost btn-block btn-lg flex items-center justify-center gap-2 disabled:opacity-60"
           >
             <Mail className="w-4 h-4" />
-            {loading ? "Even geduld..." : "Inloggen zonder wachtwoord"}
+            {loading ? (isDE ? "Bitte warten..." : "Even geduld...") : isDE ? "Ohne Passwort anmelden" : "Inloggen zonder wachtwoord"}
           </button>
         </div>
       </form>
@@ -216,41 +217,39 @@ export default function LoginClient() {
       <div className="w-16 h-16 bg-[var(--success-bg)] text-[var(--success)] rounded-full flex items-center justify-center mx-auto mb-6">
         <Mail className="w-8 h-8" />
       </div>
-      <h2 className="h-2 mb-2">Check je inbox!</h2>
+      <h2 className="h-2 mb-2">{isDE ? "Posteingang prüfen!" : "Check je inbox!"}</h2>
       <p className="t-body mb-8">
-        We hebben een magische inloglink gestuurd naar <br />
+        {isDE ? "Wir haben dir einen Login-Link gesendet an" : "We hebben een magische inloglink gestuurd naar"} <br />
         <strong className="text-[var(--ink-900)]">{email}</strong>.
       </p>
-      
+
       <div className="bg-[var(--ink-050)] border border-[var(--border)] rounded-2xl p-4 t-small mb-8">
-        Geen mail ontvangen? Check je spam-folder of klik hieronder om het opnieuw te proberen.
+        {isDE ? "Keine Mail erhalten? Prüfe deinen Spam-Ordner oder versuche es unten erneut." : "Geen mail ontvangen? Check je spam-folder of klik hieronder om het opnieuw te proberen."}
       </div>
 
-      <button 
+      <button
         onClick={() => setStep("password")}
         className="btn btn-ghost btn-block"
       >
-        Toch met wachtwoord inloggen
+        {isDE ? "Doch mit Passwort anmelden" : "Toch met wachtwoord inloggen"}
       </button>
     </div>
   );
 
   return (
     <WzAuthShell
-      title={step === 'email' ? "Welkom terug." : "Beveiligde toegang."}
-      subtitle={step === 'email' 
-        ? "Log in om je persoonlijke weerbericht en voorkeuren te beheren."
-        : "Bevestig je identiteit om door te gaan naar je dashboard."
+      title={step === "email" ? (isDE ? "Willkommen zurück." : "Welkom terug.") : (isDE ? "Sicherer Zugang." : "Beveiligde toegang.")}
+      subtitle={
+        step === "email"
+          ? (isDE ? "Melde dich an, um deine persönlichen Wetterdaten und Einstellungen zu verwalten." : "Log in om je persoonlijke weerbericht en voorkeuren te beheren.")
+          : (isDE ? "Bestätige deine Identität, um zu deinem Dashboard zu gelangen." : "Bevestig je identiteit om door te gaan naar je dashboard.")
       }
       footer={
-        step === 'email' ? (
+        step === "email" ? (
           <>
-            Nog geen account?{" "}
-            <Link
-              href="/app/signup"
-              className="btn btn-link"
-            >
-              Maak er één
+            {isDE ? "Noch kein Konto? " : "Nog geen account? "}
+            <Link href={isDE ? "/app/signup?lang=de" : "/app/signup"} className="btn btn-link">
+              {isDE ? "Konto erstellen" : "Maak er één"}
             </Link>
           </>
         ) : null

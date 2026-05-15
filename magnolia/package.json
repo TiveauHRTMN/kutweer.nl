@@ -13,7 +13,9 @@
   "dependencies": {
     "@polymarket/clob-client": "^5.8.1",
     "@polymarket/clob-client-v2": "^1.0.6",
+    "aider": "^1.0.1",
     "dotenv": "^17.4.2",
+    "railway": "^2.0.17",
     "viem": "^2.48.11"
   }
 }

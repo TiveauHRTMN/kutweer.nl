@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { detectLocale } from "@/config/locales";
 
 type Consent = "all" | "necessary" | null;
 
@@ -11,6 +13,8 @@ export function getConsent(): Consent {
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const pathname = usePathname() ?? "/";
+  const isDE = detectLocale(pathname) === "de";
 
   useEffect(() => {
     const consent = getConsent();
@@ -34,11 +38,13 @@ export default function CookieBanner() {
         <div className="flex items-start gap-3">
           <span className="text-2xl shrink-0">🍪</span>
           <div className="flex-1">
-            <h3 className="font-bold text-sm text-gray-900">Even serieus</h3>
+            <h3 className="font-bold text-sm text-gray-900">
+              {isDE ? "Kurz gesagt" : "Even serieus"}
+            </h3>
             <p className="text-xs text-gray-600 mt-1 leading-relaxed">
-              We gebruiken cookies voor het onthouden van je voorkeuren en anonieme statistieken.
-              Affiliate-links (Bol.com, Booking.com) gebruiken tracking-cookies als je doorklikt.
-              Geen stiekeme zooi, geen datahandel. Beloofd.
+              {isDE
+                ? "Wir verwenden Cookies, um deine Einstellungen zu merken und anonyme Statistiken zu erfassen. Affiliate-Links (Bol.com, Booking.com) setzen Tracking-Cookies, wenn du weiterklickst. Kein versteckter Kram, kein Datenhandel."
+                : "We gebruiken cookies voor het onthouden van je voorkeuren en anonieme statistieken. Affiliate-links (Bol.com, Booking.com) gebruiken tracking-cookies als je doorklikt. Geen stiekeme zooi, geen datahandel. Beloofd."}
             </p>
           </div>
         </div>
@@ -48,19 +54,28 @@ export default function CookieBanner() {
             onClick={() => accept("all")}
             className="flex-1 px-4 py-2.5 bg-accent-orange text-text-primary text-sm font-bold rounded-xl hover:brightness-90 transition-colors"
           >
-            Prima, alles goed
+            {isDE ? "Alles klar" : "Prima, alles goed"}
           </button>
           <button
             onClick={() => accept("necessary")}
             className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 text-sm font-bold rounded-xl hover:bg-gray-200 transition-colors"
           >
-            Alleen noodzakelijk
+            {isDE ? "Nur notwendig" : "Alleen noodzakelijk"}
           </button>
         </div>
 
         <p className="text-[10px] text-gray-400 mt-3 text-center">
-          Lees ons <a href="/privacy" className="underline hover:text-accent-orange">privacybeleid</a>.
-          Je kunt je keuze altijd wijzigen.
+          {isDE ? (
+            <>
+              Lies unsere <a href="/privacy" className="underline hover:text-accent-orange">Datenschutzerklärung</a>.
+              Du kannst deine Wahl jederzeit ändern.
+            </>
+          ) : (
+            <>
+              Lees ons <a href="/privacy" className="underline hover:text-accent-orange">privacybeleid</a>.
+              Je kunt je keuze altijd wijzigen.
+            </>
+          )}
         </p>
       </div>
     </div>

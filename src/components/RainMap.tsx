@@ -10,7 +10,8 @@ interface Props {
   lon: number;
 }
 
-export default function RainMap({ lat, lon }: Props) {
+export default function RainMap({ lat, lon, locale = "nl" }: Props & { locale?: "nl" | "de" }) {
+  const isDE = locale === "de";
   const [refreshKey, setRefreshKey] = useState(0);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -54,9 +55,9 @@ export default function RainMap({ lat, lon }: Props) {
       <div className="px-5 pt-4 pb-3 flex items-center justify-between">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">
-            Live neerslag
+            {isDE ? "Live Niederschlag" : "Live neerslag"}
           </p>
-          <h3 className="text-sm font-black text-slate-800 leading-none">Regenradar</h3>
+          <h3 className="text-sm font-black text-slate-800 leading-none">{isDE ? "Regenradar" : "Regenradar"}</h3>
         </div>
         <span className="flex items-center gap-1.5 text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
@@ -74,14 +75,14 @@ export default function RainMap({ lat, lon }: Props) {
         {error ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
             <span className="text-2xl">🌧️</span>
-            <p className="text-[11px] text-slate-400 font-medium">Radar tijdelijk niet beschikbaar</p>
+            <p className="text-[11px] text-slate-400 font-medium">{isDE ? "Radar vorübergehend nicht verfügbar" : "Radar tijdelijk niet beschikbaar"}</p>
           </div>
         ) : (
           <img
             ref={imgRef}
             key={refreshKey}
             src={radarUrl}
-            alt="Regenradar Nederland"
+            alt={isDE ? "Regenradar" : "Regenradar Nederland"}
             className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
             onLoad={() => setLoaded(true)}
             onError={() => { setLoaded(true); setError(true); }}
@@ -103,7 +104,7 @@ export default function RainMap({ lat, lon }: Props) {
       {/* Footer */}
       <div className="px-4 py-3 flex items-center justify-between border-t border-slate-100">
         <span className="text-[9px] text-slate-400 tabular-nums">
-          Bijgewerkt {timeStr}
+          {isDE ? "Aktualisiert" : "Bijgewerkt"} {timeStr}
         </span>
         <button
           onClick={() => {
@@ -114,9 +115,9 @@ export default function RainMap({ lat, lon }: Props) {
           }}
           className="text-[9px] font-black uppercase tracking-widest text-[#3b7ff0] hover:text-blue-700 transition-colors"
         >
-          Vernieuwen
+          {isDE ? "Aktualisieren" : "Vernieuwen"}
         </button>
-        <span className="text-[9px] text-slate-400">Bron: Buienradar</span>
+        <span className="text-[9px] text-slate-400">{isDE ? "Quelle: Buienradar" : "Bron: Buienradar"}</span>
       </div>
     </div>
   );

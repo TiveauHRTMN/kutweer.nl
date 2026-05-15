@@ -8,6 +8,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { registerUser } from "@/app/actions";
 import { PERSONA_ORDER, type PersonaTier } from "@/lib/personas";
 import WzAuthShell from "@/components/wz/WzAuthShell";
+import { detectLocale } from "@/config/locales";
 import {
   WzTextField,
   WzPasswordField,
@@ -25,8 +26,9 @@ export default function SignupClient() {
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
 
   const queryTier = searchParams?.get("tier") as PersonaTier | null;
-  const preTier =
-    queryTier && PERSONA_ORDER.includes(queryTier) ? queryTier : null;
+  const preTier = queryTier && PERSONA_ORDER.includes(queryTier) ? queryTier : null;
+  const locale = searchParams?.get("lang") === "de" ? "de" : detectLocale("/");
+  const isDE = locale === "de";
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState(searchParams?.get("email") || "");
@@ -44,16 +46,18 @@ export default function SignupClient() {
   function nextAfterSignup(): string {
     const next = searchParams?.get("next");
     if (next) return next;
-    return preTier ? `/app/onboarding?tier=${preTier}` : "/app/onboarding";
+    const tierPart = preTier ? `?tier=${preTier}` : "";
+    const langPart = isDE ? (tierPart ? "&lang=de" : "?lang=de") : "";
+    return `/app/onboarding${tierPart}${langPart}`;
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const errs: typeof errors = {};
-    if (!fullName.trim()) errs.name = "Vul je naam in";
-    if (!email.trim() || !/.+@.+\..+/.test(email)) errs.email = "Vul een geldig e-mailadres in";
-    if (!password || password.length < 8) errs.pw = "Minimaal 8 tekens";
-    if (!agree) errs.agree = "Je moet akkoord gaan met de voorwaarden";
+    if (!fullName.trim()) errs.name = isDE ? "Gib deinen Namen ein" : "Vul je naam in";
+    if (!email.trim() || !/.+@.+\..+/.test(email)) errs.email = isDE ? "Gib eine gültige E-Mail-Adresse ein" : "Vul een geldig e-mailadres in";
+    if (!password || password.length < 8) errs.pw = isDE ? "Mindestens 8 Zeichen" : "Minimaal 8 tekens";
+    if (!agree) errs.agree = isDE ? "Du musst den Bedingungen zustimmen" : "Je moet akkoord gaan met de voorwaarden";
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
@@ -76,7 +80,7 @@ export default function SignupClient() {
       password,
     });
     if (signInErr) {
-      setSubmitError(`Inloggen mislukt: ${signInErr.message}`);
+      setSubmitError(`${isDE ? "Anmelden fehlgeschlagen" : "Inloggen mislukt"}: ${signInErr.message}`);
       setLoading(false);
       return;
     }
@@ -88,7 +92,8 @@ export default function SignupClient() {
     setSubmitError(null);
     setLoading(true);
     const tierParam = preTier ? `&tier=${preTier}` : "";
-    const redirectTo = `${window.location.origin}/auth/callback?next=/app/onboarding${tierParam}`;
+    const langParam = isDE ? "&lang=de" : "";
+    const redirectTo = `${window.location.origin}/auth/callback?next=/app/onboarding${tierParam}${langParam}`;
     const { error: oauthErr } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo },
@@ -101,26 +106,29 @@ export default function SignupClient() {
 
   return (
     <WzAuthShell
-      title="Word onderdeel van Weerzone."
-      subtitle="Maak een gratis account en ontvang elke ochtend je persoonlijke weerbericht — geschreven door Piet."
+      title={isDE ? "Werde Teil von WEERZONE." : "Word onderdeel van Weerzone."}
+      subtitle={
+        isDE
+          ? "Erstelle ein kostenloses Konto und erhalte jeden Morgen deinen persönlichen Wetterbericht - geschrieben von Karl."
+          : "Maak een gratis account en ontvang elke ochtend je persoonlijke weerbericht - geschreven door Piet."
+      }
       quote={{
-        text: "Sinds Weerzone weet ik precies wanneer ik mijn terras moet opruimen. Gewoon fijn.",
+        text: isDE
+          ? "Seit WEERZONE weiß ich genau, wann ich meine Terrasse reinholen muss. Sehr praktisch."
+          : "Sinds Weerzone weet ik precies wanneer ik mijn terras moet opruimen. Gewoon fijn.",
         author: "Marieke, Utrecht",
       }}
       footer={
         <>
-          Heb je al een account?{" "}
-          <Link
-            href="/app/login"
-            className="btn btn-link"
-          >
-            Inloggen
+          {isDE ? "Hast du schon ein Konto? " : "Heb je al een account? "}
+          <Link href={isDE ? "/app/login?lang=de" : "/app/login"} className="btn btn-link">
+            {isDE ? "Anmelden" : "Inloggen"}
           </Link>
         </>
       }
     >
-      <h1 className="h-1 mb-2">Maak een account</h1>
-      <p className="t-body mb-6">Gratis proberen — geen creditcard nodig.</p>
+      <h1 className="h-1 mb-2">{isDE ? "Konto erstellen" : "Maak een account"}</h1>
+      <p className="t-body mb-6">{isDE ? "Kostenlos testen - keine Kreditkarte nötig." : "Gratis proberen - geen creditcard nodig."}</p>
 
       {/* TODO: Supabase Pro Custom Domain benodigd voor clean OAuth
       <WzSocialButtons onGoogle={() => handleOAuth("google")} onApple={() => handleOAuth("apple")} loading={loading} />
@@ -129,28 +137,28 @@ export default function SignupClient() {
 
       <form onSubmit={handleSubmit} noValidate>
         <WzTextField
-          label="Naam"
+          label={isDE ? "Name" : "Naam"}
           value={fullName}
           onChange={setFullName}
-          placeholder="Jouw naam"
+          placeholder={isDE ? "Dein Name" : "Jouw naam"}
           error={errors.name}
           autoFocus
           autoComplete="name"
         />
         <WzTextField
-          label="E-mailadres"
+          label={isDE ? "E-Mail-Adresse" : "E-mailadres"}
           type="email"
           value={email}
           onChange={setEmail}
-          placeholder="je@voorbeeld.nl"
+          placeholder={isDE ? "du@beispiel.de" : "je@voorbeeld.nl"}
           error={errors.email}
           autoComplete="email"
         />
         <WzPasswordField
-          label="Wachtwoord"
+          label={isDE ? "Passwort" : "Wachtwoord"}
           value={password}
           onChange={setPassword}
-          placeholder="Minimaal 8 tekens"
+          placeholder={isDE ? "Mindestens 8 Zeichen" : "Minimaal 8 tekens"}
           error={errors.pw}
           showStrength
           autoComplete="new-password"
@@ -158,10 +166,22 @@ export default function SignupClient() {
 
         <div className="mt-1.5 mb-4">
           <WzCheckbox checked={agree} onChange={setAgree}>
-            Ik ga akkoord met de{" "}
-            <Link href="/voorwaarden" className="kbd-link">voorwaarden</Link>{" "}
-            en het{" "}
-            <Link href="/privacy" className="kbd-link">privacybeleid</Link>.
+            {isDE ? (
+              <>
+                Ich stimme den{" "}
+                <Link href="/voorwaarden" className="kbd-link">Nutzungsbedingungen</Link>{" "}
+                und der{" "}
+                <Link href="/privacy" className="kbd-link">Datenschutzerklärung</Link>{" "}
+                zu.
+              </>
+            ) : (
+              <>
+                Ik ga akkoord met de{" "}
+                <Link href="/voorwaarden" className="kbd-link">voorwaarden</Link>{" "}
+                en het{" "}
+                <Link href="/privacy" className="kbd-link">privacybeleid</Link>.
+              </>
+            )}
           </WzCheckbox>
           {errors.agree && (
             <div className="err mt-1.5">
@@ -181,7 +201,7 @@ export default function SignupClient() {
           disabled={loading}
           className="btn btn-primary btn-block btn-lg disabled:opacity-60"
         >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Account aanmaken"}
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : isDE ? "Konto erstellen" : "Account aanmaken"}
         </button>
       </form>
     </WzAuthShell>

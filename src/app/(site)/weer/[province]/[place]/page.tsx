@@ -236,7 +236,7 @@ export default async function PlaceWeatherPage({ params }: PageProps) {
                   <span className="text-accent-cyan">ℹ️</span> Weer in {place.name}: Lokaal karakter
                 </h2>
                 <div className="text-white/60 text-xs leading-relaxed italic mb-6" data-speakable>
-                  {hermesSEO?.geo_optimized_summary || seoContent || locationProfile.summary}
+                  {hermesSEO?.geo_optimized_summary || locationProfile.summary || seoContent}
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
                   {locationProfile.factors.map((factor) => (

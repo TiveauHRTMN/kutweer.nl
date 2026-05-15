@@ -1,18 +1,24 @@
+"""Lijst beschikbare modellen via OpenRouter."""
 import os
-from google import genai
+import httpx
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+api_key = os.getenv("OPENROUTER_API_KEY")
+if not api_key:
+    print("OPENROUTER_API_KEY niet gevonden in .env")
+    exit(1)
 
-def list_models():
-    print("Beschikbare modellen:")
-    try:
-        for model in client.models.list():
-            print(f"- {model.name}")
-    except Exception as e:
-        print(f"Fout bij ophalen modellen: {e}")
+res = httpx.get(
+    "https://openrouter.ai/api/v1/models",
+    headers={"Authorization": f"Bearer {api_key}"},
+    timeout=15,
+)
+res.raise_for_status()
+models = res.json().get("data", [])
 
-if __name__ == "__main__":
-    list_models()
+print(f"{len(models)} modellen beschikbaar via OpenRouter:\n")
+for m in sorted(models, key=lambda x: x.get("id", "")):
+    ctx = m.get("context_length", "?")
+    print(f"  {m['id']:<55} ctx: {ctx}")

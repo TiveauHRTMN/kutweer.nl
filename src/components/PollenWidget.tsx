@@ -21,11 +21,18 @@ interface Species {
   type: "grass" | "tree";
 }
 
-const SPECIES: Species[] = [
+const SPECIES_NL: Species[] = [
   { key: "peakGrass", label: "Gras", type: "grass" },
   { key: "peakBirch", label: "Berk", type: "tree" },
   { key: "peakAlder", label: "Els", type: "tree" },
   { key: "peakMugwort", label: "Alsem", type: "tree" },
+];
+
+const SPECIES_DE: Species[] = [
+  { key: "peakGrass", label: "Gräser", type: "grass" },
+  { key: "peakBirch", label: "Birke", type: "tree" },
+  { key: "peakAlder", label: "Erle", type: "tree" },
+  { key: "peakMugwort", label: "Beifuß", type: "tree" },
 ];
 
 function getTodayPeak(data: AirQualityData, speciesKey: "grass" | "birch" | "alder" | "mugwort"): number | null {
@@ -37,11 +44,12 @@ function getTodayPeak(data: AirQualityData, speciesKey: "grass" | "birch" | "ald
   return vals.length ? Math.max(...vals) : null;
 }
 
-export default function PollenWidget({ data }: { data: AirQualityData }) {
-  const active = SPECIES.map((s) => {
+export default function PollenWidget({ data, locale = "nl" }: { data: AirQualityData; locale?: "nl" | "de" }) {
+  const speciesList = locale === "de" ? SPECIES_DE : SPECIES_NL;
+  const active = speciesList.map((s) => {
     const speciesKey = s.key.replace("peak", "").toLowerCase() as "grass" | "birch" | "alder" | "mugwort";
     const todayPeak = getTodayPeak(data, speciesKey);
-    const info = getPollenLevel(todayPeak, s.type);
+    const info = getPollenLevel(todayPeak, s.type, locale);
     return { ...s, todayPeak, info };
   }).filter((s) => s.todayPeak !== null && s.todayPeak > 0);
 
@@ -51,7 +59,7 @@ export default function PollenWidget({ data }: { data: AirQualityData }) {
     <div className="card p-5 sm:p-6">
       <div className="flex items-center gap-2 mb-6">
         <span className="text-lg">🌿</span>
-        <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Pollen-index</h2>
+        <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{locale === "de" ? "Pollen-Index" : "Pollen-index"}</h2>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-2">

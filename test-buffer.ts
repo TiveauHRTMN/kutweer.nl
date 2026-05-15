@@ -1,7 +1,7 @@
 import { config } from "dotenv";
 config({ path: ".env.local" });
 
-import { GET } from "./src/app/api/cron/social-post/route";
+import { GET } from "./src/app/(site)/api/cron/social-post/route";
 
 async function test() {
   console.log("Starting Buffer test (TikTok only)...");

@@ -251,10 +251,10 @@ export default async function MeinWetterPage() {
 
               <DwdForecastCard lat={lat} lon={lon} city={activeLoc.name} initialWeather={initialWeather} />
 
-              <RainMap lat={lat} lon={lon} />
+              <RainMap lat={lat} lon={lon} locale="de" />
 
-              {airQuality && <PollenWidget data={airQuality} />}
-              {marineData && <MarineWidget data={marineData} />}
+              {airQuality && <PollenWidget data={airQuality} locale="de" />}
+              {marineData && <MarineWidget data={marineData} locale="de" />}
             </div>
           }
         />

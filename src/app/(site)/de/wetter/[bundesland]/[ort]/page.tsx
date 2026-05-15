@@ -5,6 +5,7 @@ import WeatherDashboard from "@/components/WeatherDashboard";
 import { getKarlWeatherVerdict, getLocationSEOContent } from "@/app/actions";
 import { fetchWeatherData } from "@/lib/weather";
 import Link from "next/link";
+import { getLocationWeatherProfile } from "@/lib/location-profile";
 import {
   DE_BUNDESLAND_TO_PROVINCE,
   DE_BUNDESLAND_LABELS,
@@ -68,9 +69,10 @@ export default async function OrtWeatherPage({ params }: PageProps) {
   const label = DE_BUNDESLAND_LABELS[bundesland] ?? bundesland;
 
   const [initialWeather, marianaSeoText] = await Promise.all([
-    fetchWeatherData(place.lat, place.lon, false),
+    fetchWeatherData(place.lat, place.lon, false, false, undefined, "de"),
     getLocationSEOContent(place.name, label, place.character, "de").catch(() => null),
   ]);
+  const locationProfile = getLocationWeatherProfile(place);
 
   const karlVerdict = initialWeather
     ? await getKarlWeatherVerdict(initialWeather, place.name, label).catch(() => null)
@@ -106,25 +108,10 @@ export default async function OrtWeatherPage({ params }: PageProps) {
         <WeatherDashboard
           initialCity={place}
           initialWeather={initialWeather}
+          locale="de"
+          initialNarrative={karlVerdict}
           beforeFooter={
             <div className="space-y-6 pt-10">
-              {/* Karl's Wetter-Urteil */}
-              {karlVerdict && (
-                <div className="card p-6 bg-[#22c55e]/5 border border-[#22c55e]/20 overflow-hidden relative">
-                  <div className="flex gap-4 items-start">
-                    <div className="w-10 h-10 rounded-full bg-[#22c55e] flex items-center justify-center text-xl font-black text-white shrink-0 shadow-lg">
-                      K
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-black text-text-primary uppercase tracking-tighter mb-1">
-                        Karl über {place.name}
-                      </h3>
-                      <p className="text-text-secondary text-sm leading-relaxed">{karlVerdict}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* CTAs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Link
@@ -160,6 +147,7 @@ export default async function OrtWeatherPage({ params }: PageProps) {
                 </h2>
                 <p className="text-white/65 text-xs leading-relaxed italic" data-speakable>
                   {marianaSeoText ||
+                    locationProfile.summary ||
                     `${place.name} liegt in ${label}. WEERZONE liefert die stündlich aktualisierte Vorhersage mit 1 km Auflösung — direkt für deine Straße, nicht nur für die Stadt.`}
                 </p>
               </div>

@@ -150,7 +150,8 @@
       "Bash(grep -oE \"level [0-9]+|Level [0-9]+|threat_level|class=\\\\\"forecast|class=\\\\\"level|VALID|Issued|http[s]?://[^\\\\\"' ]*\\\\\\\\.\\(xml|json|rss\\)[^\\\\\"' ]*\" /c/Users/rwnhr/AppData/Local/Temp/estofex.html)",
       "Bash(where vercel *)",
       "Bash(npx --yes vercel --version)",
-      "Bash(npx --yes vercel deploy --prod --yes)"
+      "Bash(npx --yes vercel deploy --prod --yes)",
+      "mcp__claude_ai_Vercel__list_teams"
     ]
   }
 }

@@ -11,6 +11,7 @@ import { getBrandedMagicLinkHtml } from "@/lib/magic-link-email";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { PersonaTier } from "@/lib/personas";
+import type { Locale } from "@/config/locales";
 
 /**
  * Update het profiel van de ingelogde gebruiker.
@@ -57,8 +58,8 @@ export async function updateProfile(args: {
  * SNELLE weer-fetch. Geen AI. Open-Meteo cached 5 min (via fetch revalidate).
  * Client rendert hiermee meteen. getAiVerdict draait apart op de achtergrond.
  */
-export async function getWeather(lat: number, lon: number, forceHighRes = false): Promise<WeatherData> {
-  return await fetchWeatherData(lat, lon, false, forceHighRes);
+export async function getWeather(lat: number, lon: number, forceHighRes = false, locale: Locale = "nl"): Promise<WeatherData> {
+  return await fetchWeatherData(lat, lon, false, forceHighRes, undefined, locale);
 }
 
 /**
@@ -92,6 +93,39 @@ export async function getStationsWeather(): Promise<Array<{ name: string; temp: 
     }));
   } catch (error) {
     console.error("getStationsWeather error:", error);
+    return [];
+  }
+}
+
+/**
+ * Haalt de actuele temperatuur op voor alle DWD-steden in één batch.
+ * Gebruikt voor de DEPulse-Ticker in de GlobalNav.
+ */
+export async function getDEStationsWeather(): Promise<Array<{ name: string; temp: number; weatherCode: number; isDay: boolean }>> {
+  const { DWD_STATIONS } = await import("@/lib/types");
+
+  const lats = DWD_STATIONS.map(s => s.lat).join(",");
+  const lons = DWD_STATIONS.map(s => s.lon).join(",");
+
+  try {
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/dwd-icon?latitude=${lats}&longitude=${lons}&current=temperature_2m,weather_code,is_day&timezone=Europe/Berlin&models=icon_d2`,
+      { next: { revalidate: 600 } }
+    );
+
+    if (!res.ok) throw new Error("Open-Meteo DWD batch fetch failed");
+
+    const data = await res.json();
+    const results = Array.isArray(data) ? data : [data];
+
+    return DWD_STATIONS.map((s, i) => ({
+      name: s.name,
+      temp: Math.round(results[i].current.temperature_2m),
+      weatherCode: results[i].current.weather_code ?? 0,
+      isDay: results[i].current.is_day === 1,
+    }));
+  } catch (error) {
+    console.error("getDEStationsWeather error:", error);
     return [];
   }
 }
@@ -302,10 +336,10 @@ export async function getKarlWeatherVerdict(
         maxToday < 5 ? "kalt" : "wechselhaft";
 
       const prompt = `WETTERDATEN für ${cityName} (${bundesland}):
-- Jetzt: ${getWeatherDescription(weather.current.weatherCode)}, ${weather.current.temperature}°C, gefühlt ${weather.current.feelsLike}°C.
+- Jetzt: ${getWeatherDescription(weather.current.weatherCode, "de")}, ${weather.current.temperature}°C, gefühlt ${weather.current.feelsLike}°C.
 - Wind: ${weather.current.windSpeed} km/h.
 - Nächste 6 Stunden: ${weather.hourly.slice(0, 6).map(h => `${new Date(h.time).getHours()}:00 ${h.temperature}°`).join(", ")}.
-- Morgen: max ${tomorrow?.tempMax ?? "?"}°C, ${getWeatherDescription(tomorrow?.weatherCode ?? 0)}.
+- Morgen: max ${tomorrow?.tempMax ?? "?"}°C, ${getWeatherDescription(tomorrow?.weatherCode ?? 0, "de")}.
 STIMMUNG: ${stimmung}`;
 
       const text = (await hermesChat([
@@ -634,12 +668,24 @@ export async function getProvinceVerdict(provinceLabel: string): Promise<string>
  * Cruciaal voor programmatic SEO om nieuwe pagina's snel te laten indexeren.
  */
 export async function pingSearchConsole() {
-  const sitemapUrl = "https://weerzone.nl/sitemap.xml";
-  const googlePing = `https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`;
+  const sitemapUrls = [
+    "https://weerzone.nl/sitemap.xml",
+    "https://weerzone.nl/sitemap-static.xml",
+    "https://weerzone.nl/sitemap-nl.xml",
+    "https://weerzone.nl/sitemap-be.xml",
+    "https://weerzone.nl/sitemap-de.xml",
+  ];
   
   try {
-    const res = await fetch(googlePing);
-    if (res.ok) {
+    const results = await Promise.all(
+      sitemapUrls.map(async (sitemapUrl) => {
+        const googlePing = `https://www.google.com/ping?sitemap=${encodeURIComponent(sitemapUrl)}`;
+        const res = await fetch(googlePing);
+        return { sitemapUrl, ok: res.ok };
+      }),
+    );
+
+    if (results.every((result) => result.ok)) {
       console.log("✅ Google gepind voor sitemap update.");
       return { success: true };
     }

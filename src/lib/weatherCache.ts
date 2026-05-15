@@ -3,6 +3,7 @@
 import type { WeatherData, WWSPayload } from "./types";
 import { getWeather as fetchServer, getAiVerdict } from "@/app/actions";
 import { getNeuralInsights } from "./weather";
+import type { Locale } from "@/config/locales";
 
 /**
  * Hyperintelligente client-cache.
@@ -23,7 +24,7 @@ type CacheEntry = {
 const FRESH_MS = 10 * 60 * 1000;       // 10 min — geen refetch
 const STALE_MS = 60 * 60 * 1000;       // 60 min — toon direct, revalideer op achtergrond
 const EMERGENCY_MS = 4 * 60 * 60 * 1000; // 4 uur — noodcache bij API-uitval
-const STORAGE_KEY_PREFIX = "wz_weather_v5_";
+const STORAGE_KEY_PREFIX = "wz_weather_v6_";
 
 const memory = new Map<string, CacheEntry>();
 const inflight = new Map<string, Promise<WeatherData>>();
@@ -31,20 +32,20 @@ const revalidating = new Set<string>();
 
 const wwsMemory = new Map<string, { payload: WWSPayload, ts: number }>();
 
-function key(lat: number, lon: number) {
-  return `${lat.toFixed(3)},${lon.toFixed(3)}`;
+function key(lat: number, lon: number, locale: Locale) {
+  return `${locale}:${lat.toFixed(3)},${lon.toFixed(3)}`;
 }
-function storageKey(lat: number, lon: number) {
-  return STORAGE_KEY_PREFIX + key(lat, lon);
+function storageKey(lat: number, lon: number, locale: Locale) {
+  return STORAGE_KEY_PREFIX + key(lat, lon, locale);
 }
 
-function readCache(lat: number, lon: number): CacheEntry | null {
-  const k = key(lat, lon);
+function readCache(lat: number, lon: number, locale: Locale): CacheEntry | null {
+  const k = key(lat, lon, locale);
   const mem = memory.get(k);
   if (mem) return mem;
   if (typeof localStorage === "undefined") return null;
   try {
-    const raw = localStorage.getItem(storageKey(lat, lon));
+    const raw = localStorage.getItem(storageKey(lat, lon, locale));
     if (!raw) return null;
     const entry: CacheEntry = JSON.parse(raw);
     memory.set(k, entry);
@@ -53,32 +54,32 @@ function readCache(lat: number, lon: number): CacheEntry | null {
     return null;
   }
 }
-function writeCache(lat: number, lon: number, weather: WeatherData) {
-  const k = key(lat, lon);
+function writeCache(lat: number, lon: number, weather: WeatherData, locale: Locale) {
+  const k = key(lat, lon, locale);
   const entry: CacheEntry = { weather, ts: Date.now() };
   memory.set(k, entry);
   if (typeof localStorage === "undefined") return;
   try {
-    localStorage.setItem(storageKey(lat, lon), JSON.stringify(entry));
+    localStorage.setItem(storageKey(lat, lon, locale), JSON.stringify(entry));
   } catch {}
 }
-function patchCacheSummary(lat: number, lon: number, verdict: string) {
-  const entry = readCache(lat, lon);
+function patchCacheSummary(lat: number, lon: number, verdict: string, locale: Locale) {
+  const entry = readCache(lat, lon, locale);
   if (!entry) return;
   entry.weather.summaryVerdict = verdict;
-  writeCache(lat, lon, entry.weather);
+  writeCache(lat, lon, entry.weather, locale);
 }
-export function patchCacheDeep(lat: number, lon: number, analysis: string) {
-  const entry = readCache(lat, lon);
+export function patchCacheDeep(lat: number, lon: number, analysis: string, locale: Locale = "nl") {
+  const entry = readCache(lat, lon, locale);
   if (!entry) return;
   entry.weather.deepAnalysis = analysis;
-  writeCache(lat, lon, entry.weather);
+  writeCache(lat, lon, entry.weather, locale);
 }
-function patchCacheNeural(lat: number, lon: number, neural: WeatherData["neuralData"]) {
-  const entry = readCache(lat, lon);
+function patchCacheNeural(lat: number, lon: number, neural: WeatherData["neuralData"], locale: Locale) {
+  const entry = readCache(lat, lon, locale);
   if (!entry) return;
   entry.weather.neuralData = neural;
-  writeCache(lat, lon, entry.weather);
+  writeCache(lat, lon, entry.weather, locale);
 }
 
 async function fetchAndCache(
@@ -86,17 +87,18 @@ async function fetchAndCache(
   lon: number,
   onSummary?: (v: string) => void,
   onNeural?: (n: WeatherData["neuralData"]) => void,
-  forceHighRes = false
+  forceHighRes = false,
+  locale: Locale = "nl"
 ): Promise<WeatherData> {
-  const weather = await fetchServer(lat, lon, forceHighRes);
+  const weather = await fetchServer(lat, lon, forceHighRes, locale);
   if (!weather) throw new Error("fetchServer returned null");
-  writeCache(lat, lon, weather);
+  writeCache(lat, lon, weather, locale);
   
   // Async background enrichment (Teaser for Homepage)
   if (onSummary) {
     getAiVerdict(weather)
       .then((v) => {
-        patchCacheSummary(lat, lon, v);
+        patchCacheSummary(lat, lon, v, locale);
         onSummary(v);
       })
       .catch(() => {});
@@ -104,7 +106,7 @@ async function fetchAndCache(
   if (onNeural) {
     getNeuralInsights(lat, lon, weather)
       .then((n) => {
-        patchCacheNeural(lat, lon, n);
+        patchCacheNeural(lat, lon, n, locale);
         onNeural(n);
       })
       .catch(() => {});
@@ -118,10 +120,11 @@ export async function loadWeather(
   onSummary?: (verdict: string) => void,
   onFresh?: (weather: WeatherData) => void,
   onNeural?: (neural: WeatherData["neuralData"]) => void,
-  forceHighRes = false
+  forceHighRes = false,
+  locale: Locale = "nl"
 ): Promise<WeatherData> {
-  const k = key(lat, lon);
-  const cached = readCache(lat, lon);
+  const k = key(lat, lon, locale);
+  const cached = readCache(lat, lon, locale);
   const now = Date.now();
 
   // FRESH cache — direct terug, maar niet als forceHighRes en modellen ontbreken
@@ -129,12 +132,12 @@ export async function loadWeather(
   if (cached && now - cached.ts < FRESH_MS && (!forceHighRes || cachedHasModels)) {
     if (!cached.weather.summaryVerdict && onSummary) {
       getAiVerdict(cached.weather)
-        .then((v) => { patchCacheSummary(lat, lon, v); onSummary(v); })
+        .then((v) => { patchCacheSummary(lat, lon, v, locale); onSummary(v); })
         .catch(() => {});
     }
     if (!cached.weather.neuralData && onNeural) {
       getNeuralInsights(lat, lon, cached.weather)
-        .then((n) => { patchCacheNeural(lat, lon, n); onNeural(n); })
+        .then((n) => { patchCacheNeural(lat, lon, n, locale); onNeural(n); })
         .catch(() => {});
     }
     return cached.weather;
@@ -144,19 +147,19 @@ export async function loadWeather(
   if (cached && now - cached.ts < STALE_MS && (!forceHighRes || cachedHasModels)) {
     if (!revalidating.has(k)) {
       revalidating.add(k);
-      fetchAndCache(lat, lon, onSummary, onNeural)
+      fetchAndCache(lat, lon, onSummary, onNeural, false, locale)
         .then((fresh) => onFresh?.(fresh))
         .catch(() => {})
         .finally(() => revalidating.delete(k));
     }
     if (!cached.weather.summaryVerdict && onSummary) {
       getAiVerdict(cached.weather)
-        .then((v) => { patchCacheSummary(lat, lon, v); onSummary(v); })
+        .then((v) => { patchCacheSummary(lat, lon, v, locale); onSummary(v); })
         .catch(() => {});
     }
     if (!cached.weather.neuralData && onNeural) {
       getNeuralInsights(lat, lon, cached.weather)
-        .then((n) => { patchCacheNeural(lat, lon, n); onNeural(n); })
+        .then((n) => { patchCacheNeural(lat, lon, n, locale); onNeural(n); })
         .catch(() => {});
     }
     return cached.weather;
@@ -169,7 +172,7 @@ export async function loadWeather(
   // EMERGENCY cache: stale data > 60min maar < 4uur — toon direct bij API-uitval
   const emergencyCached = cached && now - cached.ts < EMERGENCY_MS ? cached : null;
 
-  const promise = fetchAndCache(lat, lon, onSummary, onNeural, forceHighRes).catch((err) => {
+  const promise = fetchAndCache(lat, lon, onSummary, onNeural, forceHighRes, locale).catch((err) => {
     if (emergencyCached) {
       console.warn("fetchAndCache failed, using emergency cache:", err?.message);
       return emergencyCached.weather;
@@ -189,7 +192,7 @@ export async function loadWeather(
  * Gebruikt caching om dubbele API calls te voorkomen.
  */
 export async function loadWWS(lat: number, lon: number): Promise<WWSPayload | null> {
-  const k = key(lat, lon);
+  const k = key(lat, lon, "nl");
   const cached = wwsMemory.get(k);
   const now = Date.now();
 
@@ -210,8 +213,8 @@ export async function loadWWS(lat: number, lon: number): Promise<WWSPayload | nu
 }
 
 export function prefetchWeather(lat: number, lon: number) {
-  const cached = readCache(lat, lon);
+  const cached = readCache(lat, lon, "nl");
   if (cached && Date.now() - cached.ts < FRESH_MS) return;
-  if (inflight.get(key(lat, lon))) return;
+  if (inflight.get(key(lat, lon, "nl"))) return;
   loadWeather(lat, lon).catch(() => {});
 }

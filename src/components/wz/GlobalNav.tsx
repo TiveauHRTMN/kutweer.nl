@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import WzLogo from "./WzLogo";
 import NLPulse from "@/components/NLPulse";
+import DEPulse from "@/components/DEPulse";
 import LocatieButton from "@/components/wz/LocatieButton";
 import { useSession } from "@/lib/session-context";
 import type { PersonaTier } from "@/lib/personas";
@@ -94,7 +95,7 @@ export default function GlobalNav({ serverLocale }: { serverLocale?: Locale }) {
         color: "#0f1a2c",
       }}
     >
-      {!isDE && <NLPulse />}
+      {isDE ? <DEPulse /> : <NLPulse />}
 
       {/* Desktop */}
       <div className="hidden md:flex items-center max-w-[1200px] mx-auto px-6 py-2.5" style={{ gap: 16 }}>

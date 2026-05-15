@@ -11,6 +11,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
+import config
 from py_clob_client.client import ClobClient
 from py_clob_client.clob_types import OrderArgs, OrderType
 from py_clob_client.constants import POLYGON
@@ -26,6 +27,9 @@ MAX_TRADE_USDC = 5.0    # max per trade in USDC
 
 
 def get_client():
+    if not config.POLYMARKET_TRADING_ENABLED:
+        raise PermissionError("Polymarket trading is disabled. Use read-only signals unless access and trading are legal for you.")
+
     if not PRIVATE_KEY:
         raise ValueError("POLYGON_PRIVATE_KEY niet gevonden in .env")
 
@@ -108,6 +112,10 @@ def place_no_trade(condition_id, no_price, size_usdc=2.0):
     """
     Koop 'No' shares via Node.js wrapper (CLOB v2 compatible).
     """
+    if not config.POLYMARKET_TRADING_ENABLED:
+        print("Hunter: Polymarket execution disabled. Geen order geplaatst.")
+        return None
+
     import subprocess
     import json as _json
 
@@ -170,6 +178,10 @@ def run_hunter(size_usdc=2.0, dry_run=False):
 
     if dry_run:
         print(f"[DRY RUN] Zou {size_usdc} USDC inzetten op No. Geen order geplaatst.")
+        return
+
+    if not config.POLYMARKET_TRADING_ENABLED:
+        print("[BLOCKED] Polymarket trading staat uit. Gebruik alleen read-only analyse.")
         return
 
     return place_no_trade(best["condition_id"], best["no_price"], size_usdc)

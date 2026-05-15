@@ -1,4 +1,4 @@
-import type { MarianaForecastIntelligence, MarianaHourlyIntelligence } from "@/lib/mariana/types";
+﻿import type { MarianaForecastIntelligence, MarianaHourlyIntelligence } from "@/lib/mariana/types";
 
 export interface MinutelyPrecipitation {
   time: string;
@@ -48,7 +48,7 @@ export interface HourlyForecast {
   weatherCode: number;
   precipitation: number;
   windSpeed: number;
-  cape: number; // Convective Available Potential Energy (J/kg) — onweersrisico
+  cape: number; // Convective Available Potential Energy (J/kg) â€” onweersrisico
   confidence: "high" | "medium" | "low";
   mariana?: MarianaHourlyIntelligence;
   models?: {
@@ -162,10 +162,10 @@ export interface City {
 // ============================================================
 
 export const DUTCH_CITIES: City[] = [
-  // ── Het Meteorologische Hart (Default) ──
+  // â”€â”€ Het Meteorologische Hart (Default) â”€â”€
   { name: "De Bilt", lat: 52.1011, lon: 5.1775 },
 
-  // ── Top 10 grootste steden ──
+  // â”€â”€ Top 10 grootste steden â”€â”€
   { name: "Amsterdam", lat: 52.3676, lon: 4.9041 },
   { name: "Rotterdam", lat: 51.9244, lon: 4.4777 },
   { name: "Den Haag", lat: 52.0705, lon: 4.3007 },
@@ -177,7 +177,7 @@ export const DUTCH_CITIES: City[] = [
   { name: "Breda", lat: 51.5719, lon: 4.7683 },
   { name: "Nijmegen", lat: 51.8126, lon: 5.8372 },
 
-  // ── KNMI weerstations (officieel meetnetwerk) ──
+  // â”€â”€ KNMI weerstations (officieel meetnetwerk) â”€â”€
   // Waddeneilanden & Noord
   { name: "Vlieland", lat: 53.2417, lon: 5.0000 },
   { name: "Terschelling", lat: 53.3917, lon: 5.3458 },
@@ -232,7 +232,7 @@ export const DUTCH_CITIES: City[] = [
 ];
 
 /**
- * Lijst van officiële KNMI-weerstations op land.
+ * Lijst van officiÃ«le KNMI-weerstations op land.
  * Gebruikt voor de landelijke "Pulse" ticker.
  */
 export const KNMI_STATIONS = DUTCH_CITIES.filter((c, i) => 
@@ -241,10 +241,48 @@ export const KNMI_STATIONS = DUTCH_CITIES.filter((c, i) =>
   (i === 0 || i >= 11) // De Bilt + alle stations vanaf sectie "KNMI weerstations"
 );
 
+// ============================================================
+// Deutsche Städte für DEPulse Live-Ticker
+// ============================================================
+
+export const GERMAN_CITIES: City[] = [
+  { name: "Berlin", lat: 52.5200, lon: 13.4050 },
+  { name: "Hamburg", lat: 53.5511, lon: 9.9937 },
+  { name: "München", lat: 48.1351, lon: 11.5820 },
+  { name: "Köln", lat: 50.9375, lon: 6.9603 },
+  { name: "Frankfurt", lat: 50.1109, lon: 8.6821 },
+  { name: "Stuttgart", lat: 48.7758, lon: 9.1829 },
+  { name: "Düsseldorf", lat: 51.2277, lon: 6.7735 },
+  { name: "Leipzig", lat: 51.3397, lon: 12.3731 },
+  { name: "Dortmund", lat: 51.5136, lon: 7.4653 },
+  { name: "Dresden", lat: 51.0504, lon: 13.7373 },
+  { name: "Hannover", lat: 52.3759, lon: 9.7320 },
+  { name: "Nürnberg", lat: 49.4521, lon: 11.0767 },
+  { name: "Bremen", lat: 53.0793, lon: 8.8017 },
+  { name: "Kiel", lat: 54.3233, lon: 10.1228 },
+  { name: "Erfurt", lat: 50.9847, lon: 11.0299 },
+  { name: "Magdeburg", lat: 52.1205, lon: 11.6276 },
+  { name: "Schwerin", lat: 53.6355, lon: 11.4015 },
+  { name: "Potsdam", lat: 52.3906, lon: 13.0645 },
+  { name: "Mainz", lat: 49.9929, lon: 8.2473 },
+  { name: "Saarbrücken", lat: 49.2402, lon: 6.9969 },
+  { name: "Rostock", lat: 54.0924, lon: 12.0991 },
+  { name: "Freiburg", lat: 47.9990, lon: 7.8421 },
+  { name: "Konstanz", lat: 47.6603, lon: 9.1758 },
+  { name: "Zugspitze", lat: 47.4211, lon: 10.9853 },
+  { name: "Sylt", lat: 54.9079, lon: 8.3278 },
+  { name: "Kassel", lat: 51.3127, lon: 9.4797 },
+  { name: "Regensburg", lat: 49.0134, lon: 12.1016 },
+  { name: "Lübeck", lat: 53.8655, lon: 10.6866 },
+];
+
+/** DWD-Wetterstationen für die DEPulse-Ticker. */
+export const DWD_STATIONS = GERMAN_CITIES;
+
 /**
  * Reverse geocode via OpenStreetMap Nominatim: geeft de werkelijke
  * plaatsnaam voor de opgegeven GPS-coördinaten. Gebruikt de exacte
- * locatie van de gebruiker — geen snapping naar KNMI-stations.
+ * locatie van de gebruiker â€” geen snapping naar KNMI-stations.
  * Valt terug op findNearestCity als de API geen resultaat geeft.
  */
 export async function reverseGeocode(lat: number, lon: number): Promise<City> {
@@ -269,7 +307,7 @@ export async function reverseGeocode(lat: number, lon: number): Promise<City> {
 }
 
 /**
- * Zoek het dichtstbijzijnde station/stad op basis van coördinaten.
+ * Zoek het dichtstbijzijnde station/stad op basis van coÃ¶rdinaten.
  * Gebruikt Haversine-afstand.
  */
 export function findNearestCity(lat: number, lon: number): City {
@@ -294,7 +332,7 @@ export function findNearestCity(lat: number, lon: number): City {
 }
 
 /**
- * Afstand in km tussen twee coördinaten (voor chat "dichtstbijzijnde station")
+ * Afstand in km tussen twee coÃ¶rdinaten (voor chat "dichtstbijzijnde station")
  */
 export function distanceBetween(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const dLat = (lat2 - lat1) * Math.PI / 180;
