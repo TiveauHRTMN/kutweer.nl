@@ -8,6 +8,8 @@
  * DOEL: ~7.000 plaatsen → ~7.000 indexeerbare pagina's.
  */
 
+import allPlacesRaw from "./places.json";
+
 export interface Place {
   name: string;
   province: string;
@@ -16,6 +18,9 @@ export interface Place {
   population?: number;
   character?: "coastal" | "inland" | "highland" | "urban" | "mountain" | "mediterranean coastal" | "atlantic coastal" | "northern continental"; // Voor slimme AI-commentaar en affiliates
 }
+
+export const ALL_PLACES = allPlacesRaw as Place[];
+export const PLACES_COUNT = ALL_PLACES.length;
 
 export type Province =
   | "groningen"
@@ -261,7 +266,7 @@ export const PROVINCE_LABELS: Record<Province, string> = {
   "haut-rhin": "Haut-Rhin",
   "rhone": "Rhône",
   "haute-saone": "Haute-Saône",
-  "saone-et-loire": "Saône-et-Loire",
+  "saone-et-loire": "Saone-et-Loire",
   "sarthe": "Sarthe",
   "savoie": "Savoie",
   "haute-savoie": "Haute-Savoie",
@@ -297,9 +302,8 @@ export const PROVINCE_LABELS: Record<Province, string> = {
 export type City = { name: string; lat: number; lon: number; population?: number; character?: string };
 
 export function placesByProvince(): Record<string, Place[]> {
-  const data = require("./places.json");
   const grouped: Record<string, Place[]> = {};
-  for (const p of data) {
+  for (const p of ALL_PLACES) {
     if (!grouped[p.province]) grouped[p.province] = [];
     grouped[p.province].push(p);
   }
@@ -313,4 +317,16 @@ export function placeSlug(name: string): string {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+export function findPlace(province: string, slug: string): Place | undefined {
+    return ALL_PLACES.find(p => p.province === province && placeSlug(p.name) === slug);
+}
+
+export function nearbyPlaces(base: Place, limit = 10): Place[] {
+    const dist = (p: Place) => (p.lat - base.lat) ** 2 + (p.lon - base.lon) ** 2;
+    return ALL_PLACES
+        .filter(p => p.name !== base.name || p.province !== base.province)
+        .sort((a, b) => dist(a) - dist(b))
+        .slice(0, limit);
 }
