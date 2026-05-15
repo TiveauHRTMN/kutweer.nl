@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import CookieBanner from "@/components/CookieBanner";
 import InstallPrompt from "@/components/InstallPrompt";
 import FounderBanner from "@/components/FounderBanner";
@@ -8,14 +9,31 @@ import AffiliateBanner from "@/components/AffiliateBanner";
 import GlobalNav from "@/components/wz/GlobalNav";
 import Footer from "@/components/Footer";
 import Script from "next/script";
+import { detectLocale, type Locale } from "@/config/locales";
 
 type SiteShellProps = {
   activeDeal: any;
   globalSchemasLd: unknown[];
+  /** Server-side gedetecteerde locale uit root layout (via next/headers).
+   *  Wordt gebruikt als initiële waarde tijdens SSR; client-side schakelt
+   *  het indien nodig over via usePathname(). */
+  serverLocale?: Locale;
   children: React.ReactNode;
 };
 
-export default function SiteShell({ activeDeal, globalSchemasLd, children }: SiteShellProps) {
+export default function SiteShell({
+  activeDeal,
+  globalSchemasLd,
+  serverLocale,
+  children,
+}: SiteShellProps) {
+  const pathname = usePathname() ?? "/";
+  // Prefereer de server-side gedetecteerde locale (uit root layout via headers())
+  // boven usePathname, omdat usePathname tijdens SSR niet altijd betrouwbaar het
+  // huidige pad teruggeeft in een Next.js 16 root-layout context.
+  const locale: Locale = serverLocale ?? detectLocale(pathname);
+  const isDE = locale === "de";
+
   return (
     <>
       <script
@@ -33,14 +51,14 @@ export default function SiteShell({ activeDeal, globalSchemasLd, children }: Sit
         <AffiliateBanner
           message={activeDeal.flash_deal_message}
           link={activeDeal.flash_deal_link}
-          cta="Profiteer nu"
+          cta={isDE ? "Jetzt sichern" : "Profiteer nu"}
           type={activeDeal.flash_deal_type as any}
         />
       )}
 
-      <GlobalNav />
+      <GlobalNav serverLocale={serverLocale} />
       <div className="min-h-[60vh]">{children}</div>
-      <Footer />
+      <Footer serverLocale={serverLocale} />
       <CookieBanner />
       <InstallPrompt />
       <FounderBanner />

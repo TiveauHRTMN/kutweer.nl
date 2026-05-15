@@ -9,7 +9,7 @@ import NLPulse from "@/components/NLPulse";
 import LocatieButton from "@/components/wz/LocatieButton";
 import { useSession } from "@/lib/session-context";
 import type { PersonaTier } from "@/lib/personas";
-import { detectLocale, LOCALES } from "@/config/locales";
+import { detectLocale, LOCALES, type Locale } from "@/config/locales";
 
 const LOGO_H = 26;
 const BTN_H = 38;
@@ -53,7 +53,7 @@ function LogoBadge({ tier, isFounder }: { tier: PersonaTier | null; isFounder: b
 
 const HIDDEN_PATHS = ["/app/login", "/app/signup", "/app/reset", "/app/verify", "/auth"];
 
-export default function GlobalNav() {
+export default function GlobalNav({ serverLocale }: { serverLocale?: Locale }) {
   const pathname = usePathname() ?? "/";
   const { user, tier, isFounder } = useSession();
   const [open, setOpen] = useState(false);
@@ -64,7 +64,7 @@ export default function GlobalNav() {
 
   if (HIDDEN_PATHS.some(p => pathname.startsWith(p))) return null;
 
-  const locale = detectLocale(pathname);
+  const locale: Locale = serverLocale ?? detectLocale(pathname);
   const localeConfig = LOCALES[locale];
   const links = localeConfig.nav;
   const homeHref = localeConfig.routes.home;

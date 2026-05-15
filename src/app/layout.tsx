@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { headers } from "next/headers";
 import { Providers } from "./providers";
 import PostHogPageView from "@/components/PostHogPageView";
 import SiteShell from "@/components/SiteShell";
 import { getSupabase } from "@/lib/supabase";
+import { detectLocale } from "@/config/locales";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -68,6 +70,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Lees pathname uit Next.js headers — usePathname() in client components
+  // tijdens SSR geeft niet altijd het juiste pad terug bij gecached/PPR-style
+  // renders, dus we picken hier de locale serverside en geven die expliciet
+  // door aan SiteShell + nakomelingen.
+  const hdrs = await headers();
+  const pathname =
+    hdrs.get("x-invoke-path") ?? hdrs.get("x-pathname") ?? hdrs.get("next-url") ?? "/";
+  const locale = detectLocale(pathname);
+
   let activeDeal = null;
   const supabase = getSupabase();
   if (supabase) {
@@ -86,7 +97,7 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="nl" className="antialiased">
+    <html lang={locale === "de" ? "de" : "nl"} className="antialiased">
       <head>
         <meta name="theme-color" content="#0f172a" />
       </head>
@@ -95,7 +106,7 @@ export default async function RootLayout({
           <Suspense fallback={null}>
             <PostHogPageView />
           </Suspense>
-          <SiteShell activeDeal={activeDeal} globalSchemasLd={globalSchemasLd}>
+          <SiteShell activeDeal={activeDeal} globalSchemasLd={globalSchemasLd} serverLocale={locale}>
             {children}
           </SiteShell>
         </Providers>
