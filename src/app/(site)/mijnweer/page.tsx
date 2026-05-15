@@ -2,7 +2,6 @@
 import { Suspense } from "react";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import RainMap from "@/components/RainMap";
-import KNMIClimateCard from "@/components/KNMIClimateCard";
 import KNMIForecastCard from "@/components/KNMIForecastCard";
 import { getSavedLocationServer } from "@/lib/location-cookies";
 import { DUTCH_CITIES } from "@/lib/types";
@@ -145,7 +144,6 @@ export default async function MijnWeerPage() {
           showRainRadar={true}
           beforeFooter={
             <div className="space-y-4 mt-8">
-              <KNMIClimateCard lat={lat} lon={lon} />
               <div className="card p-6 sm:p-8">
                 <p className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">
                   Hoe werkt Mijn Weer
