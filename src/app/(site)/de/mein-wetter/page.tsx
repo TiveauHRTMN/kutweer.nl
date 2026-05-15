@@ -3,9 +3,12 @@ import WeatherDashboard from "@/components/WeatherDashboard";
 import RainMap from "@/components/RainMap";
 import PollenWidget from "@/components/PollenWidget";
 import MarineWidget from "@/components/MarineWidget";
+import DwdForecastCard from "@/components/DwdForecastCard";
+import DwdWarningBanner from "@/components/DwdWarningBanner";
 import { getSavedLocationServer } from "@/lib/location-cookies";
 import { ALL_PLACES } from "@/lib/places-data";
 import { fetchWeatherData, fetchAirQuality, fetchMarineData } from "@/lib/weather";
+import { fetchDWDWarnings, warningsForBundesland, nearestBundeslandSlug } from "@/lib/dwd-warnings";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -104,11 +107,14 @@ export default async function MeinWetterPage() {
   const lat = activeLoc.lat;
   const lon = activeLoc.lon;
 
-  const [initialWeather, airQuality, marineData] = await Promise.all([
+  const [initialWeather, airQuality, marineData, allWarnings, bundeslandSlug] = await Promise.all([
     fetchWeatherData(lat, lon, false, false, undefined, "de").catch(() => undefined),
     fetchAirQuality(lat, lon).catch(() => null),
     fetchMarineData(lat, lon).catch(() => null),
+    fetchDWDWarnings().catch(() => []),
+    nearestBundeslandSlug(lat, lon).catch(() => null),
   ]);
+  const bundeslandWarnings = bundeslandSlug ? warningsForBundesland(allWarnings, bundeslandSlug) : [];
 
   let greetingName = "dich";
   try {
@@ -238,6 +244,12 @@ export default async function MeinWetterPage() {
                   <span className="text-sm font-bold text-slate-700">{activeLoc.name}</span>
                 </div>
               </div>
+
+              {bundeslandWarnings.length > 0 && (
+                <DwdWarningBanner warnings={bundeslandWarnings} />
+              )}
+
+              <DwdForecastCard lat={lat} lon={lon} city={activeLoc.name} initialWeather={initialWeather} />
 
               <RainMap lat={lat} lon={lon} />
 

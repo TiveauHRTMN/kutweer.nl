@@ -9,6 +9,7 @@ import NLPulse from "@/components/NLPulse";
 import LocatieButton from "@/components/wz/LocatieButton";
 import { useSession } from "@/lib/session-context";
 import type { PersonaTier } from "@/lib/personas";
+import { detectLocale, LOCALES } from "@/config/locales";
 
 const LOGO_H = 26;
 const BTN_H = 38;
@@ -50,23 +51,6 @@ function LogoBadge({ tier, isFounder }: { tier: PersonaTier | null; isFounder: b
   );
 }
 
-const LINKS = [
-  { key: "piet",    label: "Mijn Weer",      href: "/mijnweer" },
-  { key: "reed",    label: "Waarschuwingen", href: "/waarschuwingen" },
-  { key: "prijzen", label: "Prijzen",        href: "/prijzen" },
-  { key: "over",    label: "Over",           href: "/over" },
-  { key: "contact", label: "Contact",        href: "/contact" },
-];
-
-function isActive(pathname: string, key: string) {
-  if (key === "piet")    return pathname.startsWith("/mijnweer") || pathname.startsWith("/jouwweer");
-  if (key === "reed")    return pathname.startsWith("/waarschuwingen");
-  if (key === "prijzen") return pathname.startsWith("/prijzen");
-  if (key === "over")    return pathname.startsWith("/over");
-  if (key === "contact") return pathname.startsWith("/contact");
-  return false;
-}
-
 const HIDDEN_PATHS = ["/app/login", "/app/signup", "/app/reset", "/app/verify", "/auth"];
 
 export default function GlobalNav() {
@@ -80,6 +64,25 @@ export default function GlobalNav() {
 
   if (HIDDEN_PATHS.some(p => pathname.startsWith(p))) return null;
 
+  const locale = detectLocale(pathname);
+  const localeConfig = LOCALES[locale];
+  const links = localeConfig.nav;
+  const homeHref = localeConfig.routes.home;
+  const isDE = locale === "de";
+
+  function isActive(linkHref: string, key: string) {
+    if (key === "piet" || key === "mein-wetter") {
+      return pathname.startsWith(locale === "de" ? "/de/mein-wetter" : "/mijnweer") || pathname.startsWith(locale === "de" ? "/de/wetter" : "/weer") || pathname.startsWith("/jouwweer");
+    }
+    if (key === "reed" || key === "warnungen" || key === "waarschuwingen") {
+      return pathname.startsWith(locale === "de" ? "/de/warnungen" : "/waarschuwingen");
+    }
+    if (key === "preise" || key === "prijzen") return pathname.startsWith(locale === "de" ? "/de/preise" : "/prijzen");
+    if (key === "uber-uns" || key === "over") return pathname.startsWith(locale === "de" ? "/de/uber-uns" : "/over");
+    if (key === "kontakt" || key === "contact") return pathname.startsWith(locale === "de" ? "/de/kontakt" : "/contact");
+    return pathname === linkHref || pathname.startsWith(linkHref + "/");
+  }
+
   return (
     <header
       className="sticky top-0 z-50"
@@ -91,21 +94,21 @@ export default function GlobalNav() {
         color: "#0f1a2c",
       }}
     >
-      <NLPulse />
+      {!isDE && <NLPulse />}
 
       {/* Desktop */}
       <div className="hidden md:flex items-center max-w-[1200px] mx-auto px-6 py-2.5" style={{ gap: 16 }}>
 
-        <Link href="/" aria-label="Weerzone home" className="shrink-0 transition-opacity hover:opacity-80">
+        <Link href={homeHref} aria-label={isDE ? "WEERZONE Startseite" : "Weerzone home"} className="shrink-0 transition-opacity hover:opacity-80">
           <LogoBadge tier={tier} isFounder={isFounder} />
         </Link>
 
         <div className="w-px self-stretch my-1" style={{ background: "rgba(0,0,0,0.10)" }} />
 
         <nav className="flex items-center gap-1 flex-1">
-          <LocatieButton active={pathname.startsWith("/weer")} />
-          {LINKS.map(l => {
-            const active = isActive(pathname, l.key);
+          <LocatieButton locale={locale} active={pathname.startsWith(locale === "de" ? "/de/wetter" : "/weer")} />
+          {links.map(l => {
+            const active = isActive(l.href, l.key);
             return (
               <Link
                 key={l.key}
@@ -140,7 +143,7 @@ export default function GlobalNav() {
                   letterSpacing: "0.07em",
                 }}
               >
-                Dashboard
+                {isDE ? "Dashboard" : "Dashboard"}
               </Link>
               <button
                 onClick={async () => {
@@ -156,13 +159,13 @@ export default function GlobalNav() {
                   boxShadow: "0 2px 8px rgba(15,26,44,0.25), inset 0 1px 0 rgba(255,255,255,0.08)",
                 }}
               >
-                Log uit
+                {isDE ? "Abmelden" : "Log uit"}
               </button>
             </>
           ) : (
             <>
               <Link
-                href="/app/login"
+                href={isDE ? "/app/login?lang=de" : "/app/login"}
                 className="inline-flex items-center px-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all hover:brightness-95"
                 style={{
                   height: BTN_H,
@@ -172,10 +175,10 @@ export default function GlobalNav() {
                   letterSpacing: "0.07em",
                 }}
               >
-                Inloggen
+                {isDE ? "Anmelden" : "Inloggen"}
               </Link>
               <Link
-                href="/app/signup"
+              href={isDE ? "/de/preise" : "/app/signup"}
                 className="inline-flex items-center px-5 rounded-xl text-[11px] font-black uppercase tracking-widest text-white transition-all hover:brightness-110"
                 style={{
                   background: "#0f1a2c",
@@ -184,7 +187,7 @@ export default function GlobalNav() {
                   boxShadow: "0 2px 8px rgba(15,26,44,0.25), inset 0 1px 0 rgba(255,255,255,0.08)",
                 }}
               >
-                Aanmelden
+                {isDE ? "Jetzt starten" : "Aanmelden"}
               </Link>
             </>
           )}
@@ -193,15 +196,15 @@ export default function GlobalNav() {
 
       {/* Mobile */}
       <div className="md:hidden flex items-center justify-between gap-2 px-4 py-3">
-        <Link href="/" aria-label="Weerzone home">
+        <Link href={homeHref} aria-label={isDE ? "WEERZONE Startseite" : "Weerzone home"}>
           <LogoBadge tier={tier} isFounder={isFounder} />
         </Link>
         <div className="flex items-center gap-2">
-          <LocatieButton compact active={pathname.startsWith("/weer")} />
+          <LocatieButton locale={locale} compact active={pathname.startsWith(locale === "de" ? "/de/wetter" : "/weer")} />
           <button
             type="button"
             onClick={() => setOpen(v => !v)}
-            aria-label="Menu"
+            aria-label={isDE ? "Menü" : "Menu"}
             aria-expanded={open}
             className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
             style={
@@ -222,9 +225,9 @@ export default function GlobalNav() {
           style={{ borderTop: "1px solid rgba(0,0,0,0.08)" }}
         >
           <nav className="grid gap-0.5 mb-4">
-            <LocatieButton active={pathname.startsWith("/weer")} />
-            {LINKS.map(l => {
-              const active = isActive(pathname, l.key);
+            <LocatieButton locale={locale} active={pathname.startsWith(locale === "de" ? "/de/wetter" : "/weer")} />
+            {links.map(l => {
+              const active = isActive(l.href, l.key);
               return (
                 <Link
                   key={l.key}
@@ -258,9 +261,9 @@ export default function GlobalNav() {
                     color: "#0f1a2c",
                     letterSpacing: "0.07em",
                   }}
-                >
-                  Dashboard
-                </Link>
+                  >
+                  {isDE ? "Dashboard" : "Dashboard"}
+                  </Link>
                 <button
                   onClick={async () => {
                     setOpen(false);
@@ -274,14 +277,14 @@ export default function GlobalNav() {
                     letterSpacing: "0.07em",
                     boxShadow: "0 2px 8px rgba(15,26,44,0.25)",
                   }}
-                >
-                  Log uit
+                  >
+                  {isDE ? "Abmelden" : "Log uit"}
                 </button>
               </>
             ) : (
               <>
                 <Link
-                  href="/app/login"
+                  href={isDE ? "/app/login?lang=de" : "/app/login"}
                   onClick={() => setOpen(false)}
                   className="py-3 rounded-xl text-center text-[11px] font-black uppercase tracking-widest transition-all"
                   style={{
@@ -290,11 +293,11 @@ export default function GlobalNav() {
                     color: "#0f1a2c",
                     letterSpacing: "0.07em",
                   }}
-                >
-                  Inloggen
+                  >
+                  {isDE ? "Anmelden" : "Inloggen"}
                 </Link>
                 <Link
-                  href="/app/signup"
+                  href={isDE ? "/de/preise" : "/app/signup"}
                   onClick={() => setOpen(false)}
                   className="py-3 rounded-xl text-center text-[11px] font-black uppercase tracking-widest text-white"
                   style={{
@@ -303,7 +306,7 @@ export default function GlobalNav() {
                     boxShadow: "0 2px 8px rgba(15,26,44,0.25)",
                   }}
                 >
-                  Aanmelden
+                  {isDE ? "Jetzt starten" : "Aanmelden"}
                 </Link>
               </>
             )}
