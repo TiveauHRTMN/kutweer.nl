@@ -2,7 +2,9 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import WzLogo from "./WzLogo";
+import { detectLocale } from "@/config/locales";
 
 const PAGE_BG = "linear-gradient(160deg, #1a3a6e 0%, #0f2244 40%, #080f1f 100%)";
 
@@ -27,6 +29,12 @@ export default function WzAuthShell({
   children: ReactNode;
   footer?: ReactNode;
 }) {
+  const pathname = usePathname() ?? "/";
+  const searchParams = useSearchParams();
+  const locale = searchParams?.get("lang") === "de" ? "de" : detectLocale(pathname);
+  const isDE = locale === "de";
+  const homeHref = isDE ? "/de" : "/";
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6" style={{ background: PAGE_BG }}>
       {/* Subtle noise overlay */}
@@ -35,8 +43,8 @@ export default function WzAuthShell({
       <div className="relative w-full" style={{ maxWidth: 440 }}>
         {/* Logo boven de kaart */}
         <div className="flex justify-center mb-8">
-          <Link href="/" aria-label="Weerzone home">
-            <WzLogo height={22} />
+          <Link href={homeHref} aria-label={isDE ? "WEERZONE Startseite" : "Weerzone home"}>
+            <WzLogo href={null} height={22} />
           </Link>
         </div>
 

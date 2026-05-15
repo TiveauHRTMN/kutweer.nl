@@ -31,7 +31,7 @@ function LogoBadge({ tier, isFounder }: { tier: PersonaTier | null; isFounder: b
 
   return (
     <div className="relative inline-flex shrink-0">
-      <WzLogo height={LOGO_H} />
+      <WzLogo href={null} height={LOGO_H} />
       {color && label && (
         <span
           className="absolute -right-2 -top-1.5 flex items-center justify-center text-white font-black"
