@@ -4,6 +4,12 @@ import SiteShell from "@/components/SiteShell";
 
 const ADSENSE_CLIENT = "ca-pub-6187487207780127";
 
+// Force-dynamic: SiteLayout queryt Supabase voor activeDeal en gebruikt
+// usePathname in child client-components. Zonder dit kan Next.js 16 een
+// statische shell + dynamische render naast elkaar in dezelfde HTML
+// payload zetten, wat zich uit als dubbele GlobalNav / Footer op /de en /.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   icons: {
     icon: [
