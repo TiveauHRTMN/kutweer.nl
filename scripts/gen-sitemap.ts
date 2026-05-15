@@ -13,6 +13,7 @@ import path from 'path';
  *   sitemap-nl.xml          — Nederlandse plaatsen (~10.400)
  *   sitemap-be.xml          — Vlaamse plaatsen (~1.600)
  *   sitemap-de.xml          — Duitse plaatsen (~150, groeit via OpenClaw)
+ *   sitemap-fr.xml          — Franse + Waalse plaatsen (~35.000)
  */
 
 const placesPath = path.join(process.cwd(), 'src/lib/places.json');
@@ -33,6 +34,26 @@ const DE_PROVINCES = new Set([
   'beieren', 'berlijn', 'brandenburg', 'bremen', 'hamburg', 'hessen',
   'mecklenburg-voorpommeren', 'nedersaksen', 'noordrijn-westfalen', 'rijnland-palts',
   'saarland', 'saksen', 'saksen-anhalt', 'sleeswijk-holstein', 'thuringen', 'baden-wurttemberg',
+]);
+
+const FR_PROVINCES = new Set([
+  "ain", "aisne", "allier", "alpes-de-haute-provence", "hautes-alpes", "alpes-maritimes",
+  "ardeche", "ardennes", "ariege", "aube", "aude", "aveyron", "bouches-du-rhone",
+  "calvados", "cantal", "charente", "charente-maritime", "cher", "correze", "cote-d-or",
+  "cotes-d-armor", "creuse", "dordogne", "doubs", "drome", "eure", "eure-et-loir",
+  "finistere", "corse-du-sud", "haute-corse", "gard", "haute-garonne", "gers",
+  "gironde", "herault", "ille-et-vilaine", "indre", "indre-et-loire", "isere", "jura",
+  "landes", "loir-et-cher", "loire", "haute-loire", "loire-atlantique", "loiret",
+  "lot", "lot-et-garonne", "lozere", "maine-et-loire", "manche", "marne", "haute-marne",
+  "mayenne", "meurthe-et-moselle", "meuse", "morbihan", "moselle", "nievre", "nord",
+  "oise", "orne", "pas-de-calais", "puy-de-dome", "pyrenees-atlantiques",
+  "hautes-pyrenees", "pyrenees-orientales", "bas-rhin", "haut-rhin", "rhone",
+  "haute-saone", "saone-et-loire", "sarthe", "savoie", "haute-savoie", "paris",
+  "seine-maritime", "seine-et-marne", "yvelines", "deux-sevres", "somme", "tarn",
+  "tarn-et-garonne", "var", "vaucluse", "vendee", "vienne", "haute-vienne",
+  "vosges", "yonne", "territoire-de-belfort", "essonne", "hauts-de-seine",
+  "seine-saint-denis", "val-de-marne", "val-d-oise", "guadeloupe", "martinique",
+  "guyane", "la-reunion", "mayotte", "wallonie",
 ]);
 
 // Interne province-key → publieke Duitse URL-slug.
@@ -145,11 +166,25 @@ async function run() {
       staticXml += url(`${BASE_URL}/de/wetter/${bundesland}`, placesLastMod, 'hourly', '0.8');
     }
   }
+
+  // FR statisch
+  staticXml += url(`${BASE_URL}/fr`,             staticLastMod, 'weekly',  '0.9');
+  staticXml += url(`${BASE_URL}/fr/meteo`,       staticLastMod, 'hourly',  '0.8');
+  staticXml += url(`${BASE_URL}/fr/mon-meteo`,   staticLastMod, 'weekly',  '0.8');
+  staticXml += url(`${BASE_URL}/fr/alertes`,     staticLastMod, 'weekly',  '0.7');
+  staticXml += url(`${BASE_URL}/fr/tarifs`,      staticLastMod, 'monthly', '0.7');
+  staticXml += url(`${BASE_URL}/fr/a-propos`,    staticLastMod, 'monthly', '0.5');
+  staticXml += url(`${BASE_URL}/fr/contact`,     staticLastMod, 'monthly', '0.4');
+  // FR Régions (gebruiken /fr/meteo/${region})
+  for (const p of FR_PROVINCES) {
+    staticXml += url(`${BASE_URL}/fr/meteo/${p}`, placesLastMod, 'hourly', '0.8');
+  }
+
   fs.writeFileSync(path.join(publicDir, 'sitemap-static.xml'), wrapUrlset(staticXml));
   console.log(`  ✅ sitemap-static.xml`);
 
   // ── per-land plaatsen sitemaps ──
-  const buckets: Record<'nl' | 'be' | 'de', RawPlace[]> = { nl: [], be: [], de: [] };
+  const buckets: Record<'nl' | 'be' | 'de' | 'fr', RawPlace[]> = { nl: [], be: [], de: [], fr: [] };
   const seen = new Set<string>();
 
   for (const place of places) {
@@ -163,6 +198,7 @@ async function run() {
     if (NL_PROVINCES.has(place.province)) buckets.nl.push(place);
     else if (BE_PROVINCES.has(place.province)) buckets.be.push(place);
     else if (DE_PROVINCES.has(place.province)) buckets.de.push(place);
+    else if (FR_PROVINCES.has(place.province)) buckets.fr.push(place);
   }
 
   // NL + BE: legacy `/weer/${province}/${slug}` URL
@@ -193,17 +229,32 @@ async function run() {
     console.log(`  ✅ sitemap-de.xml — ${buckets.de.length} locaties`);
   }
 
+  // FR: `/fr/meteo/${region}/${slug}` URL
+  {
+    let xml = '';
+    buckets.fr
+      .sort((a, b) => (b.population ?? 0) - (a.population ?? 0))
+      .forEach(place => {
+        const region = place.province;
+        const slug = placeSlug(place.name);
+        xml += url(`${BASE_URL}/fr/meteo/${region}/${slug}`, placesLastMod, 'hourly', placePriority(place.population));
+      });
+    fs.writeFileSync(path.join(publicDir, 'sitemap-fr.xml'), wrapUrlset(xml));
+    console.log(`  ✅ sitemap-fr.xml — ${buckets.fr.length} locaties`);
+  }
+
   // ── sitemap.xml (index) ──
   const childUrls = [
     `${BASE_URL}/sitemap-static.xml`,
     `${BASE_URL}/sitemap-nl.xml`,
     `${BASE_URL}/sitemap-be.xml`,
     `${BASE_URL}/sitemap-de.xml`,
+    `${BASE_URL}/sitemap-fr.xml`,
   ];
   fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), wrapIndex(childUrls));
 
-  const total = buckets.nl.length + buckets.be.length + buckets.de.length;
-  console.log(`✅ Sitemap index klaar — ${total} locaties over 4 sitemaps`);
+  const total = buckets.nl.length + buckets.be.length + buckets.de.length + buckets.fr.length;
+  console.log(`✅ Sitemap index klaar — ${total} locaties over 5 sitemaps`);
 }
 
 run().catch((err) => {

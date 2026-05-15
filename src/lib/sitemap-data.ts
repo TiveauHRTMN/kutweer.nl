@@ -27,9 +27,23 @@ export const DE_PROVINCES = new Set([
 ]);
 
 export const FR_PROVINCES = new Set([
-  "nord", "bouches-du-rhone", "rhone", "alpes-maritimes", "haute-garonne",
-  "gironde", "loire-atlantique", "bas-rhin", "herault", "ille-et-vilaine",
-  "isere", "ile-de-france", "wallonie",
+  "ain", "aisne", "allier", "alpes-de-haute-provence", "hautes-alpes", "alpes-maritimes",
+  "ardeche", "ardennes", "ariege", "aube", "aude", "aveyron", "bouches-du-rhone",
+  "calvados", "cantal", "charente", "charente-maritime", "cher", "correze", "cote-d-or",
+  "cotes-d-armor", "creuse", "dordogne", "doubs", "drome", "eure", "eure-et-loir",
+  "finistere", "corse-du-sud", "haute-corse", "gard", "haute-garonne", "gers",
+  "gironde", "herault", "ille-et-vilaine", "indre", "indre-et-loire", "isere", "jura",
+  "landes", "loir-et-cher", "loire", "haute-loire", "loire-atlantique", "loiret",
+  "lot", "lot-et-garonne", "lozere", "maine-et-loire", "manche", "marne", "haute-marne",
+  "mayenne", "meurthe-et-moselle", "meuse", "morbihan", "moselle", "nievre", "nord",
+  "oise", "orne", "pas-de-calais", "puy-de-dome", "pyrenees-atlantiques",
+  "hautes-pyrenees", "pyrenees-orientales", "bas-rhin", "haut-rhin", "rhone",
+  "haute-saone", "saone-et-loire", "sarthe", "savoie", "haute-savoie", "paris",
+  "seine-maritime", "seine-et-marne", "yvelines", "deux-sevres", "somme", "tarn",
+  "tarn-et-garonne", "var", "vaucluse", "vendee", "vienne", "haute-vienne",
+  "vosges", "yonne", "territoire-de-belfort", "essonne", "hauts-de-seine",
+  "seine-saint-denis", "val-de-marne", "val-d-oise", "guadeloupe", "martinique",
+  "guyane", "la-reunion", "mayotte", "wallonie",
 ]);
 
 export const THEME_SLUGS = [
