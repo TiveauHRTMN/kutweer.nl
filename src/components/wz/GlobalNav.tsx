@@ -332,7 +332,7 @@ export default function GlobalNav() {
                <div className="space-y-4">
                   <div className="p-4 rounded-2xl bg-black/5 border border-black/5">
                      <p className="text-xs font-bold text-slate-900 leading-relaxed">
-                        {isFR ? "Prévisions hyperlocales basées sur 5 modèles météorologiques. Précis, honnête et sans fioritures." : "Hyperlokale weersverwachting op basis van 5 weermodellen. Eerlijk, nuchter en zonder poespas."}
+                        {isFR ? "Météo hyperlocale. Aujourd'hui et demain." : "Hyperlokaal weer. Vandaag en morgen."}
                      </p>
                   </div>
                   <nav className="grid gap-2">
