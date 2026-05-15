@@ -43,26 +43,31 @@ const DAILY_PARAMS = [
 const BASE_URL_BY_LOCALE: Record<Locale, string> = {
   nl: OPEN_METEO_BASE,
   de: DWD_ICON_BASE,
+  fr: OPEN_METEO_BASE,
 };
 
 const BASE_MODEL_BY_LOCALE: Record<Locale, string> = {
   nl: "knmi_seamless",
   de: "dwd_icon_d2",
+  fr: "meteofrance_seamless",
 };
 
 const SECONDARY_MODEL_BY_LOCALE: Record<Locale, string> = {
   nl: "dwd_icon_d2",
   de: "knmi_seamless",
+  fr: "icon_eu",
 };
 
 const LEAD_SOURCE_LABEL: Record<Locale, string> = {
   nl: "KNMI HARMONIE",
   de: "DWD ICON-D2",
+  fr: "METEOFRANCE AROME",
 };
 
 const SECONDARY_SOURCE_LABEL: Record<Locale, string> = {
   nl: "DWD ICON-D2",
   de: "KNMI HARMONIE",
+  fr: "DWD ICON-EU",
 };
 
 interface RawModelHourly {
@@ -151,7 +156,7 @@ export async function fetchWeatherData(
       daily: DAILY_PARAMS,
       minutely_15: "precipitation",
       forecast_minutely_15: "96",
-      timezone: locale === "de" ? "Europe/Berlin" : "Europe/Amsterdam",
+      timezone: locale === "de" ? "Europe/Berlin" : locale === "fr" ? "Europe/Paris" : "Europe/Amsterdam",
       forecast_days: "2",
       forecast_hours: "48",
     })}`;
@@ -190,14 +195,14 @@ export async function fetchWeatherData(
 
     // Defensive check for core data
     if (!coreData || !coreData.current || !coreData.hourly) {
-      console.error("fetchWeatherData: Core Open-Meteo data failed", { hasRes: !!coreData });
+      console.error("fetchWeatherData: Core Open-Meteo data failed", { hasRes: !!coreData, locale, lat, lon });
       return null as any;
     }
 
     const secondaryData = (!isBot && forceHighRes ? results[1] : null) || null;
     const aromeData = (!isBot && forceHighRes ? results[2] : null) || null;
     const harmonieData = locale === "nl" ? coreData : secondaryData;
-    const iconData = locale === "de" ? coreData : secondaryData;
+    const iconData = locale === "de" ? coreData : (locale === "fr" ? secondaryData : null);
     const googleData: any = null;
 
     const data = coreData;
@@ -478,18 +483,19 @@ export async function fetchAirQuality(lat: number, lon: number, locale: Locale =
 
 export function getPollenLevel(grains: number | null, type: "grass" | "tree", locale: Locale = "nl"): { label: string; level: 0 | 1 | 2 | 3 } {
   const de = locale === "de";
-  if (grains === null) return { label: de ? "Unbekannt" : "Onbekend", level: 0 };
+  const fr = locale === "fr";
+  if (grains === null) return { label: fr ? "Inconnu" : (de ? "Unbekannt" : "Onbekend"), level: 0 };
   if (type === "grass") {
-    if (grains < 10) return { label: de ? "Niedrig" : "Laag", level: 0 };
-    if (grains < 30) return { label: de ? "Mäßig" : "Matig", level: 1 };
-    if (grains < 50) return { label: de ? "Hoch" : "Hoog", level: 2 };
-    return { label: de ? "Sehr hoch" : "Zeer hoog", level: 3 };
+    if (grains < 10) return { label: fr ? "Faible" : (de ? "Niedrig" : "Laag"), level: 0 };
+    if (grains < 30) return { label: fr ? "Modéré" : (de ? "Mäßig" : "Matig"), level: 1 };
+    if (grains < 50) return { label: fr ? "Élevé" : (de ? "Hoch" : "Hoog"), level: 2 };
+    return { label: fr ? "Très élevé" : (de ? "Sehr hoch" : "Zeer hoog"), level: 3 };
   }
   // tree (birch, alder, mugwort)
-  if (grains < 10) return { label: de ? "Niedrig" : "Laag", level: 0 };
-  if (grains < 50) return { label: de ? "Mäßig" : "Matig", level: 1 };
-  if (grains < 200) return { label: de ? "Hoch" : "Hoog", level: 2 };
-  return { label: de ? "Sehr hoch" : "Zeer hoog", level: 3 };
+  if (grains < 10) return { label: fr ? "Faible" : (de ? "Niedrig" : "Laag"), level: 0 };
+  if (grains < 50) return { label: fr ? "Modéré" : (de ? "Mäßig" : "Matig"), level: 1 };
+  if (grains < 200) return { label: fr ? "Élevé" : (de ? "Hoch" : "Hoog"), level: 2 };
+  return { label: fr ? "Très élevé" : (de ? "Sehr hoch" : "Zeer hoog"), level: 3 };
 }
 
 const NL_COASTAL_POINTS: [number, number][] = [
@@ -557,9 +563,15 @@ export async function fetchMarineData(lat: number, lon: number, locale: Locale =
 }
 
 function degreesToDirection(deg: number, locale: Locale = "nl"): string {
-  const dirs = locale === "de"
-    ? ["N", "NNO", "NO", "ONO", "O", "OSO", "SO", "SSO", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
-    : ["N", "NNO", "NO", "ONO", "O", "OZO", "ZO", "ZZO", "Z", "ZZW", "ZW", "WZW", "W", "WNW", "NW", "NNW"];
+  if (locale === "de") {
+    const dirs = ["N", "NNO", "NO", "ONO", "O", "OSO", "SO", "SSO", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+    return dirs[Math.round(deg / 22.5) % 16];
+  }
+  if (locale === "fr") {
+    const dirs = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSO", "SO", "OSO", "O", "ONO", "NO", "NNO"];
+    return dirs[Math.round(deg / 22.5) % 16];
+  }
+  const dirs = ["N", "NNO", "NO", "ONO", "O", "OZO", "ZO", "ZZO", "Z", "ZZW", "ZW", "WZW", "W", "WNW", "NW", "NNW"];
   return dirs[Math.round(deg / 22.5) % 16];
 }
 
@@ -593,6 +605,22 @@ export function getWeatherDescription(code: number, locale: Locale = "nl"): stri
     if (code <= 86) return "Schneeschauer";
     if (code >= 95) return "Gewitter";
     return "Wechselhaft";
+  }
+  if (locale === "fr") {
+    if (code === 0) return "Dégagé";
+    if (code <= 2) return "Partiellement nuageux";
+    if (code === 3) return "Nuageux";
+    if (code <= 48) return "Brouillard";
+    if (code <= 55) return "Bruine";
+    if (code <= 57) return "Bruine verglaçante";
+    if (code <= 65) return "Pluie";
+    if (code <= 67) return "Pluie verglaçante";
+    if (code <= 75) return "Neige";
+    if (code === 77) return "Grésil";
+    if (code <= 82) return "Averses de pluie";
+    if (code <= 86) return "Averses de neige";
+    if (code >= 95) return "Orage";
+    return "Variable";
   }
   if (code === 0) return "Onbewolkt";
   if (code <= 2) return "Half bewolkt";
