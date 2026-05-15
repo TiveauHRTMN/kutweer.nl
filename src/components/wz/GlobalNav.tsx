@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Globe } from "lucide-react";
 import WzLogo from "./WzLogo";
 import NLPulse from "@/components/NLPulse";
 import DEPulse from "@/components/DEPulse";
@@ -132,6 +132,33 @@ export default function GlobalNav() {
           })}
         </nav>
 
+        {/* Locale Switcher */}
+        <div className="flex items-center gap-2 mr-2">
+          <div className="flex bg-black/5 rounded-lg p-0.5 border border-black/10">
+            <Link 
+              href="/" 
+              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${!isDE && !isFR ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
+              title="Nederland"
+            >
+              NL
+            </Link>
+            <Link 
+              href="/de" 
+              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${isDE ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
+              title="Deutschland"
+            >
+              DE
+            </Link>
+            <Link 
+              href="/fr" 
+              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${isFR ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
+              title="France"
+            >
+              FR
+            </Link>
+          </div>
+        </div>
+
         <div className="flex items-center gap-2">
           {user ? (
             <>
@@ -203,6 +230,30 @@ export default function GlobalNav() {
           <LogoBadge tier={tier} isFounder={isFounder} />
         </Link>
         <div className="flex items-center gap-2">
+          {/* Locale Switcher Mobile */}
+          <div className="flex bg-black/5 rounded-lg p-0.5 border border-black/10 mr-1">
+            <Link 
+              href="/" 
+              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${!isDE && !isFR ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
+              title="Nederland"
+            >
+              NL
+            </Link>
+            <Link 
+              href="/de" 
+              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${isDE ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
+              title="Deutschland"
+            >
+              DE
+            </Link>
+            <Link 
+              href="/fr" 
+              className={`px-2 py-1 rounded-md text-[10px] font-black transition-all ${isFR ? 'bg-white shadow-sm text-slate-900' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
+              title="France"
+            >
+              FR
+            </Link>
+          </div>
           <LocatieButton locale={locale} compact active={pathname.startsWith(isFR ? "/fr/meteo" : isDE ? "/de/wetter" : "/weer")} />
           <button
             type="button"

@@ -284,11 +284,8 @@ export const DWD_STATIONS = GERMAN_CITIES;
 // ============================================================
 
 export const FRENCH_CITIES: City[] = [
-  { name: "Bruxelles", lat: 50.8503, lon: 4.3517 },
+  // Grandes Villes
   { name: "Paris", lat: 48.8566, lon: 2.3522 },
-  { name: "Liège", lat: 50.6326, lon: 5.5797 },
-  { name: "Namur", lat: 50.4674, lon: 4.8719 },
-  { name: "Charleroi", lat: 50.4105, lon: 4.4446 },
   { name: "Marseille", lat: 43.2965, lon: 5.3698 },
   { name: "Lyon", lat: 45.7640, lon: 4.8357 },
   { name: "Toulouse", lat: 43.6047, lon: 1.4442 },
@@ -298,6 +295,44 @@ export const FRENCH_CITIES: City[] = [
   { name: "Montpellier", lat: 43.6108, lon: 3.8767 },
   { name: "Bordeaux", lat: 44.8378, lon: -0.5792 },
   { name: "Lille", lat: 50.6292, lon: 3.0573 },
+  { name: "Rennes", lat: 48.1173, lon: -1.6778 },
+  { name: "Reims", lat: 49.2583, lon: 4.0317 },
+  { name: "Saint-Étienne", lat: 45.4397, lon: 4.3872 },
+  { name: "Toulon", lat: 43.1242, lon: 5.9280 },
+  { name: "Grenoble", lat: 45.1885, lon: 5.7245 },
+  { name: "Dijon", lat: 47.3220, lon: 5.0415 },
+  { name: "Angers", lat: 47.4784, lon: -0.5532 },
+  { name: "Nîmes", lat: 43.8367, lon: 4.3601 },
+  { name: "Clermont-Ferrand", lat: 45.7772, lon: 3.0870 },
+  { name: "Le Mans", lat: 48.0061, lon: 0.1996 },
+  { name: "Aix-en-Provence", lat: 43.5297, lon: 5.4474 },
+  { name: "Brest", lat: 48.3904, lon: -4.4861 },
+  { name: "Tours", lat: 47.3941, lon: 0.6848 },
+  { name: "Amiens", lat: 49.8941, lon: 2.2957 },
+  { name: "Limoges", lat: 45.8336, lon: 1.2611 },
+  { name: "Annecy", lat: 45.8992, lon: 6.1294 },
+  { name: "Perpignan", lat: 42.6986, lon: 2.8956 },
+  { name: "Metz", lat: 49.1191, lon: 6.1727 },
+  { name: "Besançon", lat: 47.2378, lon: 6.0241 },
+  { name: "Orléans", lat: 47.9029, lon: 1.9092 },
+  { name: "Rouen", lat: 49.4431, lon: 1.0993 },
+  // Villages et lieux célèbres
+  { name: "Chamonix", lat: 45.9237, lon: 6.8694 },
+  { name: "Rocamadour", lat: 44.7994, lon: 1.6181 },
+  { name: "Gordes", lat: 43.9114, lon: 5.2003 },
+  { name: "Saint-Malo", lat: 48.6493, lon: -2.0257 },
+  { name: "Carcassonne", lat: 43.2122, lon: 2.3537 },
+  { name: "Cannes", lat: 43.5528, lon: 7.0174 },
+  { name: "Biarritz", lat: 43.4831, lon: -1.5586 },
+  { name: "Saint-Tropez", lat: 43.2677, lon: 6.6407 },
+  { name: "Colmar", lat: 48.0794, lon: 7.3585 },
+  { name: "Troyes", lat: 48.2973, lon: 4.0744 },
+  { name: "Avignon", lat: 43.9493, lon: 4.8055 },
+  // Belgique francophone (historique dans cette liste)
+  { name: "Bruxelles", lat: 50.8503, lon: 4.3517 },
+  { name: "Liège", lat: 50.6326, lon: 5.5797 },
+  { name: "Namur", lat: 50.4674, lon: 4.8719 },
+  { name: "Charleroi", lat: 50.4105, lon: 4.4446 },
 ];
 
 export const FR_STATIONS = FRENCH_CITIES;
