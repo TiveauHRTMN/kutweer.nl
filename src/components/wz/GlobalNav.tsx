@@ -59,6 +59,14 @@ const FlagFR = () => (
   </svg>
 );
 
+const FlagLU = () => (
+  <svg viewBox="0 0 640 480" className="w-full h-full">
+    <rect width="640" height="480" fill="#00a3e0"/>
+    <rect width="640" height="320" fill="#fff"/>
+    <rect width="640" height="160" fill="#ea1423"/>
+  </svg>
+);
+
 function LogoBadge({ tier, isFounder }: { tier: PersonaTier | null; isFounder: boolean }) {
   const key = isFounder ? "founder" : (tier ?? null);
   const color = key ? TIER_COLOR[key] : null;
@@ -125,7 +133,8 @@ export default function GlobalNav() {
     { code: 'nl', component: <FlagNL />, label: 'NL', href: '/' },
     { code: 'be', component: <FlagBE />, label: 'BE', href: '/weer/wallonie' },
     { code: 'de', component: <FlagDE />, label: 'DE', href: '/de' },
-    { code: 'fr', component: <FlagFR />, label: 'FR', href: '/fr' }
+    { code: 'fr', component: <FlagFR />, label: 'FR', href: '/fr' },
+    { code: 'lu', component: <FlagLU />, label: 'LU', href: '/fr/meteo/luxembourg' }
   ];
 
   const headerBg = "linear-gradient(160deg, #ffe874 0%, #ffd21a 50%, #e8ba00 100%)";
@@ -176,10 +185,11 @@ export default function GlobalNav() {
         <div className="hidden lg:flex items-center gap-4 shrink-0">
           <div className="flex bg-black/5 rounded-lg p-0.5 border border-black/10">
             {flags.map((loc) => {
-                const active = (loc.code === 'nl' && !isDE && !isFR && !pathname.includes('wallonie')) || 
-                             (loc.code === 'de' && isDE) || 
-                             (loc.code === 'fr' && isFR) ||
-                             (loc.code === 'be' && pathname.includes('wallonie'));
+                const active = (loc.code === 'nl' && !isDE && !isFR && !pathname.includes('wallonie') && !pathname.includes('luxembourg')) || 
+                             (loc.code === 'de' && isDE && !pathname.includes('luxembourg')) || 
+                             (loc.code === 'fr' && isFR && !pathname.includes('wallonie') && !pathname.includes('luxembourg')) ||
+                             (loc.code === 'be' && pathname.includes('wallonie')) ||
+                             (loc.code === 'lu' && pathname.includes('luxembourg'));
                 return (
                   <Link 
                     key={loc.code}
@@ -229,10 +239,11 @@ export default function GlobalNav() {
         {/* Flags (Mobile only) */}
         <div className="flex lg:hidden bg-black/5 rounded-lg p-0.5 border border-black/10 shrink-0">
              {flags.map((loc) => {
-                const active = (loc.code === 'nl' && !isDE && !isFR && !pathname.includes('wallonie')) || 
-                             (loc.code === 'de' && isDE) || 
-                             (loc.code === 'fr' && isFR) ||
-                             (loc.code === 'be' && pathname.includes('wallonie'));
+                const active = (loc.code === 'nl' && !isDE && !isFR && !pathname.includes('wallonie') && !pathname.includes('luxembourg')) || 
+                             (loc.code === 'de' && isDE && !pathname.includes('luxembourg')) || 
+                             (loc.code === 'fr' && isFR && !pathname.includes('wallonie') && !pathname.includes('luxembourg')) ||
+                             (loc.code === 'be' && pathname.includes('wallonie')) ||
+                             (loc.code === 'lu' && pathname.includes('luxembourg'));
                 return (
                   <Link 
                     key={loc.code}

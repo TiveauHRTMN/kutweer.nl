@@ -3,154 +3,91 @@
  *
  * NL  → Piet-tier,  routes zonder prefix  (/mijnweer, /weer/…)
  * DE  → Karl-tier,  routes onder /de/     (/de/mein-wetter, /de/wetter/…)
- *
- * Voeg /be/ toe door een derde locale entry te maken.
+ * FR  → Luc-tier,   routes onder /fr/     (/fr/mon-meteo, /fr/meteo/…)
  */
 
-import type { Province } from "@/lib/places-data";
+import { type Province } from "@/lib/places-data";
 
-// ─── Locale type ─────────────────────────────────────────────────────────────
 export type Locale = "nl" | "de" | "fr";
 
-// ─── Nav link definitie ───────────────────────────────────────────────────────
-export interface NavLink {
-  key: string;
-  label: string;
+export interface HreflangEntry {
+  hreflang: string;
   href: string;
 }
 
-// ─── Locale config ────────────────────────────────────────────────────────────
 export interface LocaleConfig {
-  locale: Locale;
-  lang: string;
-  entryTier: "piet" | "karl";
+  code: Locale;
+  label: string;
+  hreflang: string;
   routes: {
     home: string;
+    weather: string;
     myWeather: string;
     warnings: string;
-    pricing: string;
-    about: string;
-    contact: string;
-    weather: string;
   };
-  nav: NavLink[];
-  meta: {
-    titleDefault: string;
-    titleTemplate: string;
-    description: string;
-    ogLocale: string;
-    siteName: string;
-  };
-  hreflang: string;
+  nav: Array<{ key: string; label: string; href: string }>;
 }
 
 export const LOCALES: Record<Locale, LocaleConfig> = {
   nl: {
-    locale: "nl",
-    lang: "nl",
-    entryTier: "piet",
+    code: "nl",
+    label: "Nederland",
+    hreflang: "nl-NL",
     routes: {
       home: "/",
+      weather: "/weer",
       myWeather: "/mijnweer",
       warnings: "/waarschuwingen",
-      pricing: "/prijzen",
-      about: "/over",
-      contact: "/contact",
-      weather: "/weer",
     },
     nav: [
-      { key: "mijnweer",        label: "Mijn Weer",      href: "/mijnweer" },
-      { key: "waarschuwingen",  label: "Waarschuwingen", href: "/waarschuwingen" },
-      { key: "zakelijk",        label: "Zakelijk",       href: "/zakelijk" },
-      { key: "prijzen",         label: "Prijzen",        href: "/prijzen" },
-      { key: "over",            label: "Over",           href: "/over" },
-      { key: "contact",         label: "Contact",        href: "/contact" },
+      { key: "mijnweer", label: "Mijn Weer", href: "/mijnweer" },
+      { key: "waarschuwingen", label: "Alerts", href: "/waarschuwingen" },
+      { key: "prijzen", label: "Prijzen", href: "/prijzen" },
     ],
-    meta: {
-      titleDefault:   "WEERZONE | Weerkeuzes voor vandaag en morgen",
-      titleTemplate:  "%s | WEERZONE",
-      description:    "WEERZONE helpt je beslissen wat je vandaag en morgen met het weer doet. Hyperlokaal, tot 48 uur vooruit.",
-      ogLocale:       "nl_NL",
-      siteName:       "WEERZONE",
-    },
-    hreflang: "nl-NL",
   },
-
   de: {
-    locale: "de",
-    lang: "de",
-    entryTier: "karl",
+    code: "de",
+    label: "Deutschland",
+    hreflang: "de-DE",
     routes: {
       home: "/de",
+      weather: "/de/wetter",
       myWeather: "/de/mein-wetter",
       warnings: "/de/warnungen",
-      pricing: "/de/preise",
-      about: "/de/uber-uns",
-      contact: "/de/kontakt",
-      weather: "/de/wetter",
     },
     nav: [
       { key: "mein-wetter", label: "Mein Wetter", href: "/de/mein-wetter" },
-      { key: "warnungen",   label: "Warnungen",   href: "/de/warnungen" },
-      { key: "preise",      label: "Preise",      href: "/de/preise" },
-      { key: "uber-uns",    label: "Über uns",    href: "/de/uber-uns" },
-      { key: "kontakt",     label: "Kontakt",     href: "/de/kontakt" },
+      { key: "warnungen", label: "Warnungen", href: "/de/warnungen" },
+      { key: "preise", label: "Preise", href: "/de/preise" },
     ],
-    meta: {
-      titleDefault:   "WEERZONE | Lokale Wettervorhersage für Deutschland",
-      titleTemplate:  "%s | WEERZONE Deutschland",
-      description:    "Aktuelle Wettervorhersage für Deutschland. Präzise lokale Prognosen für Temperatur, Niederschlag, Wind und Warnungen für die nächsten 48 Stunden.",
-      ogLocale:       "de_DE",
-      siteName:       "WEERZONE",
-    },
-    hreflang: "de-DE",
   },
   fr: {
-    locale: "fr",
-    lang: "fr",
-    entryTier: "piet",
+    code: "fr",
+    label: "France",
+    hreflang: "fr-FR",
     routes: {
       home: "/fr",
-      myWeather: "/fr/ma-meteo",
-      warnings: "/fr/alertes",
-      pricing: "/fr/tarifs",
-      about: "/fr/a-propos",
-      contact: "/fr/contact",
       weather: "/fr/meteo",
+      myWeather: "/fr/mon-meteo",
+      warnings: "/fr/alertes",
     },
     nav: [
-      { key: "ma-meteo", label: "Ma Météo", href: "/fr/ma-meteo" },
-      { key: "alertes",   label: "Alertes",    href: "/fr/alertes" },
-      { key: "tarifs",    label: "Tarifs",     href: "/fr/tarifs" },
-      { key: "a-propos",  label: "À propos",   href: "/fr/a-propos" },
-      { key: "contact",   label: "Contact",    href: "/fr/contact" },
+      { key: "ma-meteo", label: "Ma Météo", href: "/fr/mon-meteo" },
+      { key: "alertes", label: "Alertes", href: "/fr/alertes" },
+      { key: "tarifs", label: "Tarifs", href: "/fr/tarifs" },
     ],
-    meta: {
-      titleDefault:   "WEERZONE | Prévisions météo pour la France & Belgique",
-      titleTemplate:  "%s | WEERZONE France",
-      description:    "Prévisions météo actuelles pour la France et la Belgique. Prévisions locales précises pour la température, les précipitations, le vent et alertes pour les prochaines 48 heures.",
-      ogLocale:       "fr_FR",
-      siteName:       "WEERZONE",
-    },
-    hreflang: "fr-FR",
   },
 };
 
-// ─── Locale detection ─────────────────────────────────────────────────────────
+export const DEFAULT_LOCALE: Locale = "nl";
+
 export function detectLocale(pathname: string): Locale {
-  if (pathname === "/de" || pathname.startsWith("/de/")) return "de";
-  if (pathname === "/fr" || pathname.startsWith("/fr/")) return "fr";
+  if (pathname.startsWith("/de")) return "de";
+  if (pathname.startsWith("/fr")) return "fr";
   return "nl";
 }
 
-export function getLocaleConfig(pathname: string): LocaleConfig {
-  return LOCALES[detectLocale(pathname)];
-}
-
 // ─── Bundesland URL-slug ↔ interne province-key mapping ──────────────────────
-// /de/wetter/[bundesland]/[ort] gebruikt Duitse URL-slugs voor SEO.
-// Intern slaan we plaatsen op met de Dutch-slang province-keys.
-
 export const DE_BUNDESLAND_TO_PROVINCE: Record<string, Province> = {
   "berlin":                  "berlijn",
   "bayern":                  "beieren",
@@ -163,12 +100,12 @@ export const DE_BUNDESLAND_TO_PROVINCE: Record<string, Province> = {
   "schleswig-holstein":      "sleeswijk-holstein",
   "rheinland-pfalz":         "rijnland-palts",
   "baden-wuerttemberg":      "baden-wurttemberg",
-  // Identiek in Duits en intern
   "hessen":                  "hessen",
   "hamburg":                 "hamburg",
   "bremen":                  "bremen",
   "saarland":                "saarland",
   "brandenburg":             "brandenburg",
+  "luxembourg":              "luxembourg-country",
 };
 
 export const PROVINCE_TO_DE_BUNDESLAND: Partial<Record<Province, string>> = {
@@ -177,7 +114,7 @@ export const PROVINCE_TO_DE_BUNDESLAND: Partial<Record<Province, string>> = {
   "noordrijn-westfalen":     "nordrhein-westfalen",
   nedersaksen:               "niedersachsen",
   saksen:                    "sachsen",
-  "saksen-anhalt":           "sachsen-anhalt",
+  "saksen-anhalt":           "saksen-anhalt",
   thuringen:                 "thueringen",
   "mecklenburg-voorpommeren":"mecklenburg-vorpommern",
   "sleeswijk-holstein":      "schleswig-holstein",
@@ -188,9 +125,9 @@ export const PROVINCE_TO_DE_BUNDESLAND: Partial<Record<Province, string>> = {
   bremen:                    "bremen",
   saarland:                  "saarland",
   brandenburg:               "brandenburg",
+  "luxembourg-country":      "luxembourg",
 };
 
-// Weergave-namen voor /de/wetter/[bundesland] pagina's
 export const DE_BUNDESLAND_LABELS: Record<string, string> = {
   berlin:                   "Berlin",
   bayern:                   "Bayern",
@@ -208,9 +145,9 @@ export const DE_BUNDESLAND_LABELS: Record<string, string> = {
   bremen:                   "Bremen",
   saarland:                 "Saarland",
   brandenburg:              "Brandenburg",
+  luxembourg:               "Luxemburg",
 };
 
-// Alle geldige Duitse Bundesland URL-slugs
 export const DE_BUNDESLAND_SLUGS = Object.keys(DE_BUNDESLAND_TO_PROVINCE);
 
 // ─── Régions Françaises ─────────────────────────────────────────────────────────
@@ -311,12 +248,8 @@ export const FR_REGION_TO_PROVINCE: Record<string, Province> = {
   "seine-saint-denis": "seine-saint-denis",
   "val-de-marne": "val-de-marne",
   "val-d-oise": "val-d-oise",
-  "guadeloupe": "guadeloupe",
-  "martinique": "martinique",
-  "guyane": "guyane",
-  "la-reunion": "la-reunion",
-  "mayotte": "mayotte",
   "wallonie": "wallonie",
+  "luxembourg": "luxembourg-country",
 };
 
 export const FR_REGION_LABELS: Record<string, string> = {
@@ -416,12 +349,8 @@ export const FR_REGION_LABELS: Record<string, string> = {
   "seine-saint-denis": "Seine-Saint-Denis (93)",
   "val-de-marne": "Val-de-Marne (94)",
   "val-d-oise": "Val-d'Oise (95)",
-  "guadeloupe": "Guadeloupe (971)",
-  "martinique": "Martinique (972)",
-  "guyane": "Guyane (973)",
-  "la-reunion": "La Réunion (974)",
-  "mayotte": "Mayotte (976)",
   "wallonie": "Wallonie",
+  "luxembourg": "Luxembourg",
 };
 
 export const FR_REGION_SLUGS = Object.keys(FR_REGION_TO_PROVINCE);
@@ -523,31 +452,22 @@ export const PROVINCE_TO_FR_REGION: Partial<Record<Province, string>> = {
   "seine-saint-denis": "seine-saint-denis",
   "val-de-marne": "val-de-marne",
   "val-d-oise": "val-d-oise",
-  "guadeloupe": "guadeloupe",
-  "martinique": "martinique",
-  "guyane": "guyane",
-  "la-reunion": "la-reunion",
-  "mayotte": "mayotte",
   "wallonie": "wallonie",
+  "luxembourg-country": "luxembourg",
 };
 
 // ─── hreflang helpers ─────────────────────────────────────────────────────────
 const BASE = "https://weerzone.nl";
 
-export interface HreflangEntry {
-  hreflang: string;
-  href: string;
-}
-
-export function buildHreflang(nlPath: string, dePath: string): HreflangEntry[] {
+export function buildHreflang(path: string): HreflangEntry[] {
   return [
-    { hreflang: "nl-NL",    href: `${BASE}${nlPath}` },
-    { hreflang: "de-DE",    href: `${BASE}${dePath}` },
-    { hreflang: "x-default", href: `${BASE}${nlPath}` },
+    { hreflang: LOCALES.nl.hreflang, href: `${BASE}${path}` },
+    { hreflang: LOCALES.de.hreflang, href: `${BASE}/de${path}` },
+    { hreflang: LOCALES.fr.hreflang, href: `${BASE}/fr${path}` },
+    { hreflang: "x-default", href: `${BASE}${path}` },
   ];
 }
 
-// Voor pagina's die alleen in één taal bestaan (bijv. DE-weerplaats zonder NL-equivalent)
 export function buildHreflangSingle(path: string, locale: Locale): HreflangEntry[] {
   return [
     { hreflang: LOCALES[locale].hreflang, href: `${BASE}${path}` },

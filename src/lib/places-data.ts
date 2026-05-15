@@ -14,7 +14,7 @@ export interface Place {
   lat: number;
   lon: number;
   population?: number;
-  character?: "coastal" | "inland" | "highland" | "urban"; // Voor slimme AI-commentaar en affiliates
+  character?: "coastal" | "inland" | "highland" | "urban" | "mountain" | "mediterranean coastal" | "atlantic coastal" | "northern continental"; // Voor slimme AI-commentaar en affiliates
 }
 
 export type Province =
@@ -35,7 +35,7 @@ export type Province =
   | "oost-vlaanderen"
   | "vlaams-brabant"
   | "west-vlaanderen"
-  // Duitsland — Bundesländer
+  | "wallonie"
   | "beieren"
   | "berlijn"
   | "brandenburg"
@@ -52,9 +52,108 @@ export type Province =
   | "sleeswijk-holstein"
   | "thuringen"
   | "baden-wurttemberg"
-  // Frankrijk & Wallonie
-  | "wallonie"
-  | "ile-de-france";
+  | "ain"
+  | "aisne"
+  | "allier"
+  | "alpes-de-haute-provence"
+  | "hautes-alpes"
+  | "alpes-maritimes"
+  | "ardeche"
+  | "ardennes"
+  | "ariege"
+  | "aube"
+  | "aude"
+  | "aveyron"
+  | "bouches-du-rhone"
+  | "calvados"
+  | "cantal"
+  | "charente"
+  | "charente-maritime"
+  | "cher"
+  | "correze"
+  | "cote-d-or"
+  | "cotes-d-armor"
+  | "creuse"
+  | "dordogne"
+  | "doubs"
+  | "drome"
+  | "eure"
+  | "eure-et-loir"
+  | "finistere"
+  | "corse-du-sud"
+  | "haute-corse"
+  | "gard"
+  | "haute-garonne"
+  | "gers"
+  | "gironde"
+  | "herault"
+  | "ille-et-vilaine"
+  | "indre"
+  | "indre-et-loire"
+  | "isere"
+  | "jura"
+  | "landes"
+  | "loir-et-cher"
+  | "loire"
+  | "haute-loire"
+  | "loire-atlantique"
+  | "loiret"
+  | "lot"
+  | "lot-et-garonne"
+  | "lozere"
+  | "maine-et-loire"
+  | "manche"
+  | "marne"
+  | "haute-marne"
+  | "mayenne"
+  | "meurthe-et-moselle"
+  | "meuse"
+  | "morbihan"
+  | "moselle"
+  | "nievre"
+  | "nord"
+  | "oise"
+  | "orne"
+  | "pas-de-calais"
+  | "puy-de-dome"
+  | "pyrenees-atlantiques"
+  | "hautes-pyrenees"
+  | "pyrenees-orientales"
+  | "bas-rhin"
+  | "haut-rhin"
+  | "rhone"
+  | "haute-saone"
+  | "saone-et-loire"
+  | "sarthe"
+  | "savoie"
+  | "haute-savoie"
+  | "paris"
+  | "seine-maritime"
+  | "seine-et-marne"
+  | "yvelines"
+  | "deux-sevres"
+  | "somme"
+  | "tarn"
+  | "tarn-et-garonne"
+  | "var"
+  | "vaucluse"
+  | "vendee"
+  | "vienne"
+  | "haute-vienne"
+  | "vosges"
+  | "yonne"
+  | "territoire-de-belfort"
+  | "essonne"
+  | "hauts-de-seine"
+  | "seine-saint-denis"
+  | "val-de-marne"
+  | "val-d-oise"
+  | "guadeloupe"
+  | "martinique"
+  | "guyane"
+  | "la-reunion"
+  | "mayotte"
+  | "luxembourg-country";
 
 export const PROVINCE_LABELS: Record<Province, string> = {
   groningen: "Groningen",
@@ -74,7 +173,7 @@ export const PROVINCE_LABELS: Record<Province, string> = {
   "oost-vlaanderen": "Oost-Vlaanderen",
   "vlaams-brabant": "Vlaams-Brabant",
   "west-vlaanderen": "West-Vlaanderen",
-  // Duitsland
+  wallonie: "Wallonie",
   beieren: "Beieren",
   berlijn: "Berlijn",
   brandenburg: "Brandenburg",
@@ -87,71 +186,131 @@ export const PROVINCE_LABELS: Record<Province, string> = {
   "rijnland-palts": "Rijnland-Palts",
   saarland: "Saarland",
   saksen: "Saksen",
-  "saksen-anhalt": "Saksen-Anhalt",
+  "saksen-anhalt": "Sachsen-Anhalt",
   "sleeswijk-holstein": "Sleeswijk-Holstein",
   thuringen: "Thüringen",
   "baden-wurttemberg": "Baden-Württemberg",
-  // Frankrijk & Wallonie
-  wallonie: "Wallonie",
-  "ile-de-france": "Île-de-France",
+  "ain": "Ain",
+  "aisne": "Aisne",
+  "allier": "Allier",
+  "alpes-de-haute-provence": "Alpes-de-Haute-Provence",
+  "hautes-alpes": "Hautes-Alpes",
+  "alpes-maritimes": "Alpes-Maritimes",
+  "ardeche": "Ardèche",
+  "ardennes": "Ardennes",
+  "ariege": "Ariège",
+  "aube": "Aube",
+  "aude": "Aude",
+  "aveyron": "Aveyron",
+  "bouches-du-rhone": "Bouches-du-Rhône",
+  "calvados": "Calvados",
+  "cantal": "Cantal",
+  "charente": "Charente",
+  "charente-maritime": "Charente-Maritime",
+  "cher": "Cher",
+  "correze": "Corrèze",
+  "cote-d-or": "Côte-d'Or",
+  "cotes-d-armor": "Côtes-d'Armor",
+  "creuse": "Creuse",
+  "dordogne": "Dordogne",
+  "doubs": "Doubs",
+  "drome": "Drôme",
+  "eure": "Eure",
+  "eure-et-loir": "Eure-et-Loir",
+  "finistere": "Finistère",
+  "corse-du-sud": "Corse-du-Sud",
+  "haute-corse": "Haute-Corse",
+  "gard": "Gard",
+  "haute-garonne": "Haute-Garonne",
+  "gers": "Gers",
+  "gironde": "Gironde",
+  "herault": "Hérault",
+  "ille-et-vilaine": "Ille-et-Vilaine",
+  "indre": "Indre",
+  "indre-et-loire": "Indre-et-Loire",
+  "isere": "Isère",
+  "jura": "Jura",
+  "landes": "Landes",
+  "loir-et-cher": "Loir-et-Cher",
+  "loire": "Loire",
+  "haute-loire": "Haute-Loire",
+  "loire-atlantique": "Loire-Atlantique",
+  "loiret": "Loiret",
+  "lot": "Lot",
+  "lot-et-garonne": "Lot-et-Garonne",
+  "lozere": "Lozère",
+  "maine-et-loire": "Maine-et-Loire",
+  "manche": "Manche",
+  "marne": "Marne",
+  "haute-marne": "Haute-Marne",
+  "mayenne": "Mayenne",
+  "meurthe-et-moselle": "Meurthe-et-Moselle",
+  "meuse": "Meuse",
+  "morbihan": "Morbihan",
+  "moselle": "Moselle",
+  "nievre": "Nièvre",
+  "nord": "Nord",
+  "oise": "Oise",
+  "orne": "Orne",
+  "pas-de-calais": "Pas-de-Calais",
+  "puy-de-dome": "Puy-de-Dôme",
+  "pyrenees-atlantiques": "Pyrénées-Atlantiques",
+  "hautes-pyrenees": "Hautes-Pyrénées",
+  "pyrenees-orientales": "Pyrénées-Orientales",
+  "bas-rhin": "Bas-Rhin",
+  "haut-rhin": "Haut-Rhin",
+  "rhone": "Rhône",
+  "haute-saone": "Haute-Saône",
+  "saone-et-loire": "Saône-et-Loire",
+  "sarthe": "Sarthe",
+  "savoie": "Savoie",
+  "haute-savoie": "Haute-Savoie",
+  "paris": "Paris",
+  "seine-maritime": "Seine-Maritime",
+  "seine-et-marne": "Seine-et-Marne",
+  "yvelines": "Yvelines",
+  "deux-sevres": "Deux-Sèvres",
+  "somme": "Somme",
+  "tarn": "Tarn",
+  "tarn-et-garonne": "Tarn-et-Garonne",
+  "var": "Var",
+  "vaucluse": "Vaucluse",
+  "vendee": "Vendée",
+  "vienne": "Vienne",
+  "haute-vienne": "Haute-Vienne",
+  "vosges": "Vosges",
+  "yonne": "Yonne",
+  "territoire-de-belfort": "Territoire de Belfort",
+  "essonne": "Essonne",
+  "hauts-de-seine": "Hauts-de-Seine",
+  "seine-saint-denis": "Seine-Saint-Denis",
+  "val-de-marne": "Val-de-Marne",
+  "val-d-oise": "Val-d'Oise",
+  "guadeloupe": "Guadeloupe",
+  "martinique": "Martinique",
+  "guyane": "Guyane",
+  "la-reunion": "La Réunion",
+  "mayotte": "Mayotte",
+  "luxembourg-country": "Luxembourg",
 };
 
-// ============================================================
-// PLAATSEN DATABASE
-// OpenClaw voegt hier continu plaatsen aan toe.
-// Sorteer per provincie, alfabetisch op naam.
-// ============================================================
+export type City = { name: string; lat: number; lon: number; population?: number; character?: string };
 
-import rawPlaces from './places.json';
-export const ALL_PLACES: Place[] = rawPlaces as Place[];
-
-// ============================================================
-// Helper functies
-// ============================================================
-
-/** Totaal aantal plaatsen in de database */
-export const PLACES_COUNT = ALL_PLACES.length;
-
-/** Alle provincies met hun plaatsen */
 export function placesByProvince(): Record<string, Place[]> {
-  const result: Record<string, Place[]> = {};
-  for (const place of ALL_PLACES) {
-    if (!result[place.province]) {
-      result[place.province] = [];
-    }
-    result[place.province].push(place);
+  const data = require("./places.json");
+  const grouped: Record<string, Place[]> = {};
+  for (const p of data) {
+    if (!grouped[p.province]) grouped[p.province] = [];
+    grouped[p.province].push(p);
   }
-  return result;
+  return grouped;
 }
 
-/** Zoek een plaats op slug */
-export function findPlace(provinceSlug: string, placeSlugToFind: string): Place | undefined {
-  return ALL_PLACES.find(
-    (p) =>
-      p.province === provinceSlug &&
-      placeSlug(p.name) === placeSlugToFind
-  );
-}
-
-/** Maak een URL-slug van een plaatsnaam */
 export function placeSlug(name: string): string {
   return name
     .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Verwijder e.g. û naar u
-    .replace(/&/g, "en")                              // & naar en
-    .replace(/[^a-z0-9\-]+/g, "-")                    // Alleen letters, cijfers & streepjes
-    .replace(/-+/g, "-")                              // Voorkom dubbele streepjes in URLs
-    .replace(/^-+|-+$/g, "");                         // Trim streepjes aan uiteinden
-}
-
-/** Vind de 5 dichtstbijzijnde plaatsen */
-export function nearbyPlaces(place: Place, count = 5): Place[] {
-  return ALL_PLACES
-    .filter((p) => p.name !== place.name)
-    .map((p) => ({
-      ...p,
-      dist: Math.sqrt(Math.pow(p.lat - place.lat, 2) + Math.pow(p.lon - place.lon, 2)),
-    }))
-    .sort((a, b) => a.dist - b.dist)
-    .slice(0, count);
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
