@@ -16,9 +16,11 @@
 const ESTOFEX_INDEX = "https://www.estofex.org/cgi-bin/polygon/showforecast.cgi?listvalid=yes";
 const ESTOFEX_DETAIL = "https://www.estofex.org/cgi-bin/polygon/showforecast.cgi?text=yes&fcstfile=";
 
-const BENELUX_KEYWORDS = [
+const REGIONAL_KEYWORDS = [
   "Benelux", "Netherlands", "Holland", "Belgium", "Belgian", "Luxembourg",
   "Limburg", "Brabant", "Friesland", "Frisia",
+  "Germany", "German", "Deutschland", "Bavaria", "NRW", "Nordrhein", "Hesse", "Rhineland", "Lower Saxony",
+  "France", "French", "Paris", "Bruxelles", "Brussels", "Wallonia", "Marseille", "Lyon", "Lille",
 ];
 
 export interface EstofexForecast {
@@ -168,6 +170,94 @@ export function summarizeEstofexNL(est: EstofexBeneluxSummary): string | null {
   return `${lvlPhrase} met ${threatPart}${suffix}${whenSuffix}.`;
 }
 
+export function summarizeEstofexDE(est: EstofexBeneluxSummary): string | null {
+  const text = (est.beneluxText ?? "").toLowerCase();
+  const lvl = est.maxLevel;
+
+  if (!est.mentionsBenelux && lvl < 2) return null;
+
+  const threats: string[] = [];
+  if (/\b(thunderstorm|onweer|supercell|convective)\b/.test(text)) threats.push("Gewitter");
+  if (/\b(large hail|hail)\b/.test(text)) threats.push("(großer) Hagel");
+  if (/\b(severe gust|damaging wind|gust)\b/.test(text)) threats.push("schwere Sturmböen");
+  if (/\b(heavy rain|excessive rain|flooding)\b/.test(text)) threats.push("Starkregen");
+  if (/\b(tornado|funnel)\b/.test(text)) threats.push("Tornado-Risiko");
+
+  const threatPart = threats.length > 0
+    ? threats.slice(0, 3).join(", ")
+    : "unbeständiges Wetter";
+
+  const period = est.validFrom ? new Date(est.validFrom) : null;
+  let when = "";
+  if (period && !isNaN(period.getTime())) {
+    const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const day = new Date(period);
+    day.setHours(0, 0, 0, 0);
+    const diff = Math.round((day.getTime() - today.getTime()) / 86400000);
+    if (diff === 0) when = "heute";
+    else if (diff === 1) when = "morgen";
+    else if (diff === 2) when = "übermorgen";
+    else if (diff > 0 && diff < 7) when = days[period.getDay()];
+  }
+
+  const lvlPhrase = lvl >= 3
+    ? "Hohes Risiko für extremes Unwetter"
+    : lvl >= 2
+    ? "Erhöhtes Risiko für Unwetter"
+    : "Leichtes Risiko für Unwetter";
+
+  const suffix = est.mentionsBenelux ? " in deiner Region" : " in Teilen Europas";
+  const whenSuffix = when ? ` für ${when}` : "";
+
+  return `${lvlPhrase} mit ${threatPart}${suffix}${whenSuffix}.`;
+}
+
+export function summarizeEstofexFR(est: EstofexBeneluxSummary): string | null {
+  const text = (est.beneluxText ?? "").toLowerCase();
+  const lvl = est.maxLevel;
+
+  if (!est.mentionsBenelux && lvl < 2) return null;
+
+  const threats: string[] = [];
+  if (/\b(thunderstorm|onweer|supercell|convective)\b/.test(text)) threats.push("orages");
+  if (/\b(large hail|hail)\b/.test(text)) threats.push("gros grêlons");
+  if (/\b(severe gust|damaging wind|gust)\b/.test(text)) threats.push("fortes rafales");
+  if (/\b(heavy rain|excessive rain|flooding)\b/.test(text)) threats.push("fortes pluies");
+  if (/\b(tornado|funnel)\b/.test(text)) threats.push("risque de tornade");
+
+  const threatPart = threats.length > 0
+    ? threats.slice(0, 3).join(", ")
+    : "temps instable";
+
+  const period = est.validFrom ? new Date(est.validFrom) : null;
+  let when = "";
+  if (period && !isNaN(period.getTime())) {
+    const days = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const day = new Date(period);
+    day.setHours(0, 0, 0, 0);
+    const diff = Math.round((day.getTime() - today.getTime()) / 86400000);
+    if (diff === 0) when = "aujourd'hui";
+    else if (diff === 1) when = "demain";
+    else if (diff === 2) when = "après-demain";
+    else if (diff > 0 && diff < 7) when = days[period.getDay()];
+  }
+
+  const lvlPhrase = lvl >= 3
+    ? "Risque élevé de conditions extrêmes"
+    : lvl >= 2
+    ? "Risque accru d'intempéries"
+    : "Léger risque d'intempéries";
+
+  const suffix = est.mentionsBenelux ? " dans votre région" : " dans certaines parties de l'Europe";
+  const whenSuffix = when ? ` pour ${when}` : "";
+
+  return `${lvlPhrase} avec ${threatPart}${suffix}${whenSuffix}.`;
+}
+
 function extractBeneluxParagraph(bulletin: string): string | null {
   // Splits het bulletin in zinnen, vind de eerste zin met een Benelux/NL
   // keyword en geef die + de 1-2 omliggende zinnen terug. Dat is veel
@@ -179,7 +269,7 @@ function extractBeneluxParagraph(bulletin: string): string | null {
 
   for (let i = 0; i < sentences.length; i++) {
     const s = sentences[i];
-    if (BENELUX_KEYWORDS.some((kw) => s.includes(kw))) {
+    if (REGIONAL_KEYWORDS.some((kw) => s.includes(kw))) {
       // 1 zin ervoor (context) + de match + 2 zinnen erna.
       const start = Math.max(0, i - 1);
       const end = Math.min(sentences.length, i + 3);

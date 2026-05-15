@@ -1,4 +1,4 @@
-﻿import type { MarianaForecastIntelligence, MarianaHourlyIntelligence } from "@/lib/mariana/types";
+import type { MarianaForecastIntelligence, MarianaHourlyIntelligence } from "@/lib/mariana/types";
 
 export interface MinutelyPrecipitation {
   time: string;
@@ -279,16 +279,39 @@ export const GERMAN_CITIES: City[] = [
 /** DWD-Wetterstationen für die DEPulse-Ticker. */
 export const DWD_STATIONS = GERMAN_CITIES;
 
+// ============================================================
+// French Cities for FR locale
+// ============================================================
+
+export const FRENCH_CITIES: City[] = [
+  { name: "Bruxelles", lat: 50.8503, lon: 4.3517 },
+  { name: "Paris", lat: 48.8566, lon: 2.3522 },
+  { name: "Liège", lat: 50.6326, lon: 5.5797 },
+  { name: "Namur", lat: 50.4674, lon: 4.8719 },
+  { name: "Charleroi", lat: 50.4105, lon: 4.4446 },
+  { name: "Marseille", lat: 43.2965, lon: 5.3698 },
+  { name: "Lyon", lat: 45.7640, lon: 4.8357 },
+  { name: "Toulouse", lat: 43.6047, lon: 1.4442 },
+  { name: "Nice", lat: 43.7102, lon: 7.2620 },
+  { name: "Nantes", lat: 47.2184, lon: -1.5536 },
+  { name: "Strasbourg", lat: 48.5734, lon: 7.7521 },
+  { name: "Montpellier", lat: 43.6108, lon: 3.8767 },
+  { name: "Bordeaux", lat: 44.8378, lon: -0.5792 },
+  { name: "Lille", lat: 50.6292, lon: 3.0573 },
+];
+
+export const FR_STATIONS = FRENCH_CITIES;
+
 /**
  * Reverse geocode via OpenStreetMap Nominatim: geeft de werkelijke
  * plaatsnaam voor de opgegeven GPS-coördinaten. Gebruikt de exacte
  * locatie van de gebruiker â€” geen snapping naar KNMI-stations.
  * Valt terug op findNearestCity als de API geen resultaat geeft.
  */
-export async function reverseGeocode(lat: number, lon: number): Promise<City> {
+export async function reverseGeocode(lat: number, lon: number, locale = "nl"): Promise<City> {
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=nl&zoom=10`,
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=${locale}&zoom=10`,
       { headers: { "User-Agent": "WEERZONE/1.0 (weerzone.nl)" } }
     );
     if (res.ok) {

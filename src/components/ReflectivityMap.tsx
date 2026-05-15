@@ -4,7 +4,7 @@ import type { HourlyForecast } from "@/lib/types";
 
 interface Props {
   hourly: HourlyForecast[];
-  locale?: "nl" | "de";
+  locale?: "nl" | "de" | "fr";
 }
 
 // dBZ-like reflectivity scale derived from precipitation rate (mm/h)
@@ -28,31 +28,34 @@ function dbzColor(dbz: number): string {
   return "#7e22ce";                  // purple — extreme
 }
 
-function dbzLabel(dbz: number, locale: "nl" | "de" = "nl"): string {
+function dbzLabel(dbz: number, locale: "nl" | "de" | "fr" = "nl"): string {
   const isDE = locale === "de";
-  if (dbz <= 0)  return isDE ? "Trocken" : "Droog";
-  if (dbz < 15)  return isDE ? "Nieselregen" : "Motregen";
-  if (dbz < 25)  return isDE ? "Leichter Regen" : "Lichte regen";
-  if (dbz < 35)  return isDE ? "Mäßiger Regen" : "Matige regen";
-  if (dbz < 40)  return isDE ? "Starker Regen" : "Zware regen";
-  if (dbz < 50)  return isDE ? "Schwere Schauer" : "Felle buien";
-  return isDE ? "Extrem" : "Extreem";
+  const isFR = locale === "fr";
+  if (dbz <= 0)  return isFR ? "Sec" : isDE ? "Trocken" : "Droog";
+  if (dbz < 15)  return isFR ? "Bruine" : isDE ? "Nieselregen" : "Motregen";
+  if (dbz < 25)  return isFR ? "Pluie légère" : isDE ? "Leichter Regen" : "Lichte regen";
+  if (dbz < 35)  return isFR ? "Pluie modérée" : isDE ? "Mäßiger Regen" : "Matige regen";
+  if (dbz < 40)  return isFR ? "Fortes pluies" : isDE ? "Starker Regen" : "Zware regen";
+  if (dbz < 50)  return isFR ? "Fortes averses" : isDE ? "Schwere Schauer" : "Felle buien";
+  return isFR ? "Extrême" : isDE ? "Extrem" : "Extreem";
 }
 
-function formatHour(iso: string, locale: "nl" | "de" = "nl"): string {
-  return locale === "de" ? `${new Date(iso).getHours()}h` : `${new Date(iso).getHours()}u`;
+function formatHour(iso: string, locale: "nl" | "de" | "fr" = "nl"): string {
+  return locale === "de" || locale === "fr" ? `${new Date(iso).getHours()}h` : `${new Date(iso).getHours()}u`;
 }
 
-function dateLabel(d: Date, locale: "nl" | "de" = "nl"): string {
+function dateLabel(d: Date, locale: "nl" | "de" | "fr" = "nl"): string {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const target = new Date(d);
   target.setHours(0, 0, 0, 0);
   const diff = Math.round((target.getTime() - today.getTime()) / 86400000);
   const isDE = locale === "de";
-  if (diff === 0) return isDE ? "Heute" : "Vandaag";
-  if (diff === 1) return isDE ? "Morgen" : "Morgen";
-  return target.toLocaleDateString(isDE ? "de-DE" : "nl-NL", { weekday: "short" }).toUpperCase();
+  const isFR = locale === "fr";
+  if (diff === 0) return isFR ? "Aujourd'hui" : isDE ? "Heute" : "Vandaag";
+  if (diff === 1) return isFR ? "Demain" : isDE ? "Morgen" : "Morgen";
+  const lc = isFR ? "fr-FR" : isDE ? "de-DE" : "nl-NL";
+  return target.toLocaleDateString(lc, { weekday: "short" }).toUpperCase();
 }
 
 // Scale legend items
@@ -67,6 +70,7 @@ const SCALE = [
 
 export default function ReflectivityMap({ hourly, locale = "nl" }: Props) {
   const isDE = locale === "de";
+  const isFR = locale === "fr";
   const hours = hourly.slice(0, 48);
   if (hours.length === 0) return null;
 
@@ -100,16 +104,16 @@ export default function ReflectivityMap({ hourly, locale = "nl" }: Props) {
       <div className="px-5 pt-5 pb-3 flex items-center justify-between">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">
-            {isDE ? "Wetterradar" : "Buitenradar"}
+            {isFR ? "Radar météo" : isDE ? "Wetterradar" : "Buitenradar"}
           </p>
           <h3 className="text-sm font-black text-slate-800 leading-none">
-            {isDE ? "Regen — 48 Stunden" : "Regenval — 48 uur"}
+            {isFR ? "Pluie — 48 heures" : isDE ? "Regen — 48 Stunden" : "Regenval — 48 uur"}
           </h3>
         </div>
         <div className="flex items-center gap-1.5">
           <div className={`w-2 h-2 rounded-full ${hasActivity ? "bg-blue-500 animate-pulse" : "bg-emerald-500"}`} />
           <span className="text-[10px] font-bold text-slate-400 uppercase">
-            {hasActivity ? (isDE ? "Regen im Anmarsch" : "Regen op komst") : (isDE ? "Komplett trocken" : "Helemaal droog")}
+            {hasActivity ? (isFR ? "Pluie en approche" : isDE ? "Regen im Anmarsch" : "Regen op komst") : (isFR ? "Complètement sec" : isDE ? "Komplett trocken" : "Helemaal droog")}
           </span>
         </div>
       </div>
@@ -147,7 +151,7 @@ export default function ReflectivityMap({ hourly, locale = "nl" }: Props) {
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1.5 bg-slate-900 text-white text-[10px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-all pointer-events-none z-30 shadow-xl whitespace-nowrap text-center">
                       <div>{formatHour(h.time, locale)} — {h.precip.toFixed(1)} mm</div>
                       <div className="text-slate-400">{dbzLabel(h.dbz, locale)}</div>
-                      {h.cape > 500 && <div className="text-amber-300">{isDE ? "Blitz-Risiko" : "Bliksem-kans"}</div>}
+                      {h.cape > 500 && <div className="text-amber-300">{isFR ? "Risque de foudre" : isDE ? "Blitz-Risiko" : "Bliksem-kans"}</div>}
                     </div>
                   </div>
                 );
@@ -159,14 +163,14 @@ export default function ReflectivityMap({ hourly, locale = "nl" }: Props) {
 
       {/* Legend */}
       <div className="px-5 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{isDE ? "Intensität" : "Intensiteit"}</span>
+        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400">{isFR ? "Intensité" : isDE ? "Intensität" : "Intensiteit"}</span>
         <div className="flex items-center gap-1">
           {SCALE.map(s => (
             <div key={s.label} className="flex items-center gap-1">
               <div className="w-4 h-3 rounded-[2px]" style={{ background: dbzColor(s.dbz) }} />
             </div>
           ))}
-          <span className="text-[8px] font-bold text-slate-400 ml-1">{isDE ? "Leicht → Stark" : "Licht → Zwaar"}</span>
+          <span className="text-[8px] font-bold text-slate-400 ml-1">{isFR ? "Léger → Fort" : isDE ? "Leicht → Stark" : "Licht → Zwaar"}</span>
         </div>
       </div>
     </div>

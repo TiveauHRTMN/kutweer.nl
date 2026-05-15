@@ -4,7 +4,7 @@ import type { HourlyForecast } from "@/lib/types";
 
 interface Props {
   hourly: HourlyForecast[];
-  locale?: "nl" | "de";
+  locale?: "nl" | "de" | "fr";
 }
 
 // ─── Layout constants ─────────────────────────────────────────
@@ -17,9 +17,9 @@ const PB = 24;  // bottom padding for time axis
 const CW = W - PL - PR;
 const CH = H - PT - PB;
 
-function formatHour(iso: string, locale: "nl" | "de" = "nl"): string {
+function formatHour(iso: string, locale: "nl" | "de" | "fr" = "nl"): string {
   const hr = new Date(iso).getHours();
-  return locale === "de" ? `${hr}h` : `${hr}u`;
+  return locale === "de" || locale === "fr" ? `${hr}h` : `${hr}u`;
 }
 
 function xAt(i: number, n: number) {
@@ -38,6 +38,7 @@ function ChartPanel({
   threshold,
   thresholdLabel,
   type = "bar",
+  locale = "nl",
 }: {
   title: string;
   maxLabel: string;
@@ -49,6 +50,7 @@ function ChartPanel({
   threshold?: number;
   thresholdLabel?: string;
   type?: "bar" | "line";
+  locale?: "nl" | "de" | "fr";
 }) {
   const n = data.length;
   const safeMax = Math.max(yMax, ...data, 1);
@@ -63,15 +65,13 @@ function ChartPanel({
 
   // Time axis: every 6 hours
   const timeLabels: { text: string; x: number }[] = [];
-  const localeStr = (typeof window !== "undefined" && window.location.pathname.startsWith("/de")) ? "de" : "nl"; // Quick hack if locale not passed, but we should pass it
-  // Better: pass locale down to ChartPanel
   hours.forEach((h, i) => {
     const hr = new Date(h.time).getHours();
     if (i === 0) {
       // It's mapped later, but we can pass 'Nu' and translate in render
       timeLabels.push({ text: "Nu", x: xAt(i, n) });
     } else if (hr % 6 === 0) {
-      timeLabels.push({ text: formatHour(h.time, localeStr), x: xAt(i, n) });
+      timeLabels.push({ text: formatHour(h.time, locale), x: xAt(i, n) });
     }
   });
 
@@ -165,7 +165,7 @@ function ChartPanel({
         {/* Time axis labels */}
         {timeLabels.map(({ text, x }) => {
           const isNu = text === "Nu";
-          const display = isNu ? (typeof window !== "undefined" && window.location.pathname.startsWith("/de") ? "Jetzt" : "Nu") : text;
+          const display = isNu ? (locale === "fr" ? "Maint." : locale === "de" ? "Jetzt" : "Nu") : text;
           return (
             <text key={text + x} x={x} y={H - 4}
               fill={isNu ? "#3b82f6" : "#94a3b8"}
@@ -184,6 +184,7 @@ function ChartPanel({
 // ─── Main component ──────────────────────────────────────────
 export default function ReedExtremeCharts({ hourly, locale = "nl" }: Props) {
   const isDE = locale === "de";
+  const isFR = locale === "fr";
   const hours = hourly.slice(0, 48);
   if (hours.length === 0) return null;
 
@@ -199,42 +200,45 @@ export default function ReedExtremeCharts({ hourly, locale = "nl" }: Props) {
     <div className="space-y-4">
       {/* CAPE */}
       <ChartPanel
-        title={isDE ? "Gewitter-Risiko" : "Onweers-kans"}
-        maxLabel={capeMax > 1500 ? (isDE ? "Hoch" : "Hoog") : capeMax > 500 ? (isDE ? "Mittel" : "Matig") : (isDE ? "Niedrig" : "Laag")}
+        title={isFR ? "Risque d'orage" : isDE ? "Gewitter-Risiko" : "Onweers-kans"}
+        maxLabel={capeMax > 1500 ? (isFR ? "Élevé" : isDE ? "Hoch" : "Hoog") : capeMax > 500 ? (isFR ? "Modéré" : isDE ? "Mittel" : "Matig") : (isFR ? "Faible" : isDE ? "Niedrig" : "Laag")}
         data={capeData}
         hours={hours}
         yMax={2000}
         unit=""
         threshold={1000}
-        thresholdLabel={isDE ? "Achtung" : "Pas op"}
+        thresholdLabel={isFR ? "Attention" : isDE ? "Achtung" : "Pas op"}
         colorFn={(v) => v > 1500 ? "#dc2626" : v > 500 ? "#ea580c" : "#f59e0b"}
+        locale={locale}
       />
 
       {/* Neerslag */}
       <ChartPanel
-        title={isDE ? "Regen" : "Regen"}
+        title={isFR ? "Pluie" : isDE ? "Regen" : "Regen"}
         maxLabel={`${precipMax.toFixed(1)}`}
         data={precipData}
         hours={hours}
         yMax={10}
         unit="mm"
         threshold={5}
-        thresholdLabel={isDE ? "Starker Regen" : "Zware regen"}
+        thresholdLabel={isFR ? "Fortes pluies" : isDE ? "Starker Regen" : "Zware regen"}
         colorFn={(v) => v > 5 ? "#dc2626" : v > 1 ? "#2563eb" : "#60a5fa"}
+        locale={locale}
       />
 
       {/* Wind */}
       <ChartPanel
-        title={isDE ? "Wind" : "Wind"}
+        title={isFR ? "Vent" : isDE ? "Wind" : "Wind"}
         maxLabel={`${windMax.toFixed(0)}`}
         data={windData}
         hours={hours}
         yMax={80}
         unit="km/h"
         threshold={50}
-        thresholdLabel={isDE ? "Starker Wind" : "Harde wind"}
+        thresholdLabel={isFR ? "Vent fort" : isDE ? "Starker Wind" : "Harde wind"}
         type="line"
         colorFn={(v) => v > 75 ? "#dc2626" : v > 50 ? "#ea580c" : "#3b82f6"}
+        locale={locale}
       />
     </div>
   );

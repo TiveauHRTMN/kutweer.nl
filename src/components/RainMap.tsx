@@ -3,7 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 
 // Buienradar RadarMapNL geographic bounds (WGS84)
-const BOUNDS = { minLat: 49.36, maxLat: 55.97, minLon: 0.14, maxLon: 10.26 };
+const NL_BOUNDS = { minLat: 49.36, maxLat: 55.97, minLon: 0.14, maxLon: 10.26 };
+// DWD rad_brd_akt.jpg geographic bounds (WGS84)
+const DE_BOUNDS = { minLat: 46.9526, maxLat: 54.7405, minLon: 2.3906, maxLon: 15.7208 };
 
 interface Props {
   lat: number;
@@ -12,6 +14,7 @@ interface Props {
 
 export default function RainMap({ lat, lon, locale = "nl" }: Props & { locale?: "nl" | "de" }) {
   const isDE = locale === "de";
+  const bounds = isDE ? DE_BOUNDS : NL_BOUNDS;
   const [refreshKey, setRefreshKey] = useState(0);
   const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -35,15 +38,15 @@ export default function RainMap({ lat, lon, locale = "nl" }: Props & { locale?: 
     return () => clearInterval(id);
   }, []);
 
-  const leftPct = ((lon - BOUNDS.minLon) / (BOUNDS.maxLon - BOUNDS.minLon) * 100).toFixed(2);
-  const topPct = ((BOUNDS.maxLat - lat) / (BOUNDS.maxLat - BOUNDS.minLat) * 100).toFixed(2);
+  const leftPct = ((lon - bounds.minLon) / (bounds.maxLon - bounds.minLon) * 100).toFixed(2);
+  const topPct = ((bounds.maxLat - lat) / (bounds.maxLat - bounds.minLat) * 100).toFixed(2);
 
   // Proxy via our own API route to avoid hotlink-blocking
-  const radarUrl = `/api/radar-image?r=${refreshKey}`;
+  const radarUrl = isDE ? `/api/radar-image-de?r=${refreshKey}` : `/api/radar-image?r=${refreshKey}`;
 
   const timeStr = updatedAt
-    ? updatedAt.toLocaleTimeString("nl-NL", {
-        timeZone: "Europe/Amsterdam",
+    ? updatedAt.toLocaleTimeString(isDE ? "de-DE" : "nl-NL", {
+        timeZone: isDE ? "Europe/Berlin" : "Europe/Amsterdam",
         hour: "2-digit",
         minute: "2-digit",
       })
@@ -66,7 +69,7 @@ export default function RainMap({ lat, lon, locale = "nl" }: Props & { locale?: 
       </div>
 
       {/* Radar */}
-      <div className="relative w-full overflow-hidden bg-slate-900" style={{ aspectRatio: "700/765" }}>
+      <div className="relative w-full overflow-hidden bg-slate-900" style={{ aspectRatio: isDE ? "540/540" : "700/765" }}>
         {/* Shimmer while loading */}
         {!loaded && !error && (
           <div className="absolute inset-0 bg-slate-800 animate-pulse" />
@@ -82,7 +85,7 @@ export default function RainMap({ lat, lon, locale = "nl" }: Props & { locale?: 
             ref={imgRef}
             key={refreshKey}
             src={radarUrl}
-            alt={isDE ? "Regenradar" : "Regenradar Nederland"}
+            alt={isDE ? "Regenradar Deutschland" : "Regenradar Nederland"}
             className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
             onLoad={() => setLoaded(true)}
             onError={() => { setLoaded(true); setError(true); }}
@@ -117,7 +120,7 @@ export default function RainMap({ lat, lon, locale = "nl" }: Props & { locale?: 
         >
           {isDE ? "Aktualisieren" : "Vernieuwen"}
         </button>
-        <span className="text-[9px] text-slate-400">{isDE ? "Quelle: Buienradar" : "Bron: Buienradar"}</span>
+        <span className="text-[9px] text-slate-400">{isDE ? "Quelle: DWD" : "Bron: Buienradar"}</span>
       </div>
     </div>
   );

@@ -15,7 +15,7 @@ import {
   SEVERITY_LABEL,
   type DWDSeverity,
 } from "@/lib/dwd-warnings";
-import { fetchEstofexBeneluxSummary, summarizeEstofexNL } from "@/lib/estofex";
+import { fetchEstofexBeneluxSummary, summarizeEstofexDE } from "@/lib/estofex";
 import LocateButton from "@/components/LocateButton";
 import { Check, AlertTriangle } from "lucide-react";
 import { DE_BUNDESLAND_LABELS } from "@/config/locales";
@@ -89,7 +89,7 @@ export default async function WarnungenPage() {
   const tone = STATUS_TONE[topSeverity ?? "GREEN"];
   const statusLabel = topSeverity ? SEVERITY_LABEL[topSeverity] : "Code Grün";
 
-  const estofexSummary = estofex ? summarizeEstofexNL(estofex) : null;
+  const estofexSummary = estofex ? summarizeEstofexDE(estofex) : null;
 
   return (
     <main>

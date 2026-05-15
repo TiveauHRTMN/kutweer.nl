@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MapPin, AlertTriangle, Wind, Thermometer } from "lucide-react";
 import { loadWeather, loadWWS } from "@/lib/weatherCache";
-import { DUTCH_CITIES, reverseGeocode, type City, type WeatherData, type WWSPayload } from "@/lib/types";
+import { DUTCH_CITIES, GERMAN_CITIES, FRENCH_CITIES, reverseGeocode, type City, type WeatherData, type WWSPayload } from "@/lib/types";
 import type { KNMIWarningEnriched } from "@/lib/knmi-warnings";
 import { persistCity } from "@/lib/persist-city";
 import ReflectivityMap from "@/components/ReflectivityMap";
@@ -30,12 +30,12 @@ function getSavedCity(): City | null {
 interface ReedProps {
     initialWeather?: WeatherData | null;
     initialCity?: City;
-    locale?: "nl" | "de";
+    locale?: "nl" | "de" | "fr";
 }
 
 export default function ReedExtended({ initialWeather, initialCity, locale = "nl" }: ReedProps) {
   const [city, setCity] = useState<City>(
-    () => initialCity || getSavedCity() || DUTCH_CITIES.find((c) => c.name === "De Bilt") || DUTCH_CITIES[0]
+    () => initialCity || getSavedCity() || (locale === "fr" ? FRENCH_CITIES[0] : locale === "de" ? GERMAN_CITIES.find(c => c.name === "Köln") || GERMAN_CITIES[0] : DUTCH_CITIES.find((c) => c.name === "De Bilt") || DUTCH_CITIES[0])
   );
   const [weather, setWeather] = useState<WeatherData | null>(initialWeather || null);
   const [wws, setWWS] = useState<WWSPayload | null>(null);
@@ -69,11 +69,11 @@ export default function ReedExtended({ initialWeather, initialCity, locale = "nl
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude: lat, longitude: lon } = pos.coords;
-        const prov: City = { name: "Jouw locatie", lat, lon };
+        const prov: City = { name: locale === "fr" ? "Votre position" : locale === "de" ? "Dein Standort" : "Jouw locatie", lat, lon };
         setCity(prov);
         persistCity(prov);
         setLocating(false);
-        reverseGeocode(lat, lon).then((c) => { setCity(c); persistCity(c); }).catch(() => {});
+        reverseGeocode(lat, lon, locale).then((c) => { setCity(c); persistCity(c); }).catch(() => {});
       },
       () => setLocating(false),
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 60 * 60 * 1000 }
@@ -92,28 +92,29 @@ export default function ReedExtended({ initialWeather, initialCity, locale = "nl
           className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/20 bg-white/10 backdrop-blur-md text-white text-sm font-bold hover:bg-white/20 transition-all disabled:opacity-60"
         >
           <MapPin className={`w-4 h-4 ${locating ? "animate-pulse" : ""}`} />
-          {locating ? "Locatie bepalen…" : city.name}
+          {locating ? (locale === "fr" ? "Localisation en cours…" : locale === "de" ? "Standort wird ermittelt…" : "Locatie bepalen…") : city.name}
         </button>
       </div>
 
       {loading && !weather && (
         <div className="card !p-12 text-center">
            <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-4 text-text-secondary" />
-           <p className="text-sm font-bold text-text-secondary">Reed kijkt wat er op je afkomt…</p>
+           <p className="text-sm font-bold text-text-secondary">{locale === "fr" ? "Reed vérifie ce qui vous attend…" : locale === "de" ? "Reed prüft, was auf dich zukommt…" : "Reed kijkt wat er op je afkomt…"}</p>
         </div>
       )}
 
       {knmiWarnings.length > 0 && (
         <div className="space-y-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-text-muted">Officiële Waarschuwingen</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.25em] text-text-muted">{locale === "fr" ? "Avertissements (KNMI/IRM/Météo-France)" : locale === "de" ? "Offizielle Wetterwarnungen (DWD/KNMI)" : "Officiële Waarschuwingen"}</p>
           {knmiWarnings.map((w) => {
-            const accent = w.severity === "RED" ? { line: "border-l-rose-500", bg: "bg-rose-500/5", text: "text-rose-500", chip: "Code Rood" }
-              : w.severity === "ORANGE" ? { line: "border-l-orange-500", bg: "bg-orange-500/5", text: "text-orange-500", chip: "Code Oranje" }
-              : { line: "border-l-amber-400", bg: "bg-amber-400/5", text: "text-amber-400", chip: "Code Geel" };
+            const accent = w.severity === "RED" ? { line: "border-l-rose-500", bg: "bg-rose-500/5", text: "text-rose-500", chip: locale === "fr" ? "Alerte Rouge" : locale === "de" ? "Warnstufe Rot" : "Code Rood" }
+              : w.severity === "ORANGE" ? { line: "border-l-orange-500", bg: "bg-orange-500/5", text: "text-orange-500", chip: locale === "fr" ? "Alerte Orange" : locale === "de" ? "Warnstufe Orange" : "Code Oranje" }
+              : { line: "border-l-amber-400", bg: "bg-amber-400/5", text: "text-amber-400", chip: locale === "fr" ? "Alerte Jaune" : locale === "de" ? "Warnstufe Gelb" : "Code Geel" };
             const fmtTime = (iso: string | null) => {
               if (!iso) return "—";
               const d = new Date(iso);
-              return d.toLocaleString("nl-NL", { weekday: "short", hour: "2-digit", minute: "2-digit" });
+              const lc = locale === "fr" ? "fr-FR" : locale === "de" ? "de-DE" : "nl-NL";
+              return d.toLocaleString(lc, { weekday: "short", hour: "2-digit", minute: "2-digit" });
             };
             return (
               <div key={w.key} className={`card !p-5 border-l-4 ${accent.line} ${accent.bg}`}>
@@ -129,16 +130,16 @@ export default function ReedExtended({ initialWeather, initialCity, locale = "nl
                     {w.enriched && (
                       <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <div className="rounded-xl bg-black/5 p-3">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Verwachte regen</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">{locale === "fr" ? "Pluie attendue" : locale === "de" ? "Erwarteter Regen" : "Verwachte regen"}</p>
                           <p className="text-sm font-black text-text-primary mt-1">{w.enriched.precipitationTotalMm} mm</p>
                         </div>
                         <div className="rounded-xl bg-black/5 p-3">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Hardste bui</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">{locale === "fr" ? "Averse la plus forte" : locale === "de" ? "Stärkster Schauer" : "Hardste bui"}</p>
                           <p className="text-sm font-black text-text-primary mt-1">{w.enriched.precipitationPeakMm} mm</p>
-                          <p className="text-[10px] text-text-muted mt-0.5">Rond {fmtTime(w.enriched.precipitationPeakHour)}</p>
+                          <p className="text-[10px] text-text-muted mt-0.5">{locale === "fr" ? "Vers" : locale === "de" ? "Gegen" : "Rond"} {fmtTime(w.enriched.precipitationPeakHour)}</p>
                         </div>
                         <div className="rounded-xl bg-black/5 p-3">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">Windstoten</p>
+                          <p className="text-[9px] font-black uppercase tracking-widest text-text-muted/70">{locale === "fr" ? "Rafales" : locale === "de" ? "Windböen" : "Windstoten"}</p>
                           <p className="text-sm font-black text-text-primary mt-1">{w.enriched.windPeakKmh} km/h</p>
                         </div>
                       </div>
@@ -155,17 +156,17 @@ export default function ReedExtended({ initialWeather, initialCity, locale = "nl
         <div className="space-y-6 animate-fade-in mb-6">
           <div className="space-y-3">
             <div className="flex items-end justify-between px-1">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">{locale === "de" ? "Niederschlags-Intensität" : "Buien-intensiteit"}</h3>
-              <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">{locale === "de" ? "Kommende 48 Stunden" : "Komende 48 uur"}</span>
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">{locale === "fr" ? "Intensité des précipitations" : locale === "de" ? "Niederschlags-Intensität" : "Buien-intensiteit"}</h3>
+              <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">{locale === "fr" ? "Prochaines 48 heures" : locale === "de" ? "Kommende 48 Stunden" : "Komende 48 uur"}</span>
             </div>
             <ReflectivityMap hourly={weather.hourly} locale={locale} />
           </div>
           <div className="space-y-3">
-            <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">{locale === "de" ? "Live Blitze" : "Live Bliksem"}</h3></div>
+            <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">{locale === "fr" ? "Foudre en direct" : locale === "de" ? "Live Blitze" : "Live Bliksem"}</h3></div>
             <LightningMap lat={city.lat} lon={city.lon} locale={locale} />
           </div>
           <div className="space-y-3">
-            <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">{locale === "de" ? "Regen und Windböen" : "Regen en windstoten"}</h3></div>
+            <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">{locale === "fr" ? "Pluie et rafales de vent" : locale === "de" ? "Regen und Windböen" : "Regen en windstoten"}</h3></div>
             <ReedExtremeCharts hourly={weather.hourly} locale={locale} />
           </div>
         </div>
@@ -176,12 +177,12 @@ export default function ReedExtended({ initialWeather, initialCity, locale = "nl
           <div className={`card !p-8 border-l-8 ${alert.severity === "RED" ? "border-l-rose-500 bg-rose-500/5" : alert.severity === "ORANGE" ? "border-l-orange-500 bg-orange-500/5" : "border-l-amber-500 bg-amber-500/5"}`}>
             <div className="flex items-center gap-3 mb-6">
               <AlertTriangle className={`w-6 h-6 ${alert.severity === "RED" ? "text-rose-500" : alert.severity === "ORANGE" ? "text-orange-500" : "text-amber-500"}`} />
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-text-muted">BELANGRIJK BERICHT · {alert.severity}</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-text-muted">{locale === "fr" ? "MESSAGE IMPORTANT" : locale === "de" ? "WICHTIGE MELDUNG" : "BELANGRIJK BERICHT"} · {alert.severity}</span>
             </div>
             <h2 className="text-4xl font-black text-text-primary leading-tight mb-2">{alert.type.join(" & ")}</h2>
             <p className="text-xl font-bold text-text-secondary mb-6">{alert.location} · {alert.timing}</p>
             <div className="bg-black/5 rounded-2xl p-6 border border-black/5">
-               <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-2">Wat je moet weten</p>
+               <p className="text-[10px] font-black text-text-muted uppercase tracking-widest mb-2">{locale === "fr" ? "Ce qu'il faut savoir" : locale === "de" ? "Was du wissen musst" : "Wat je moet weten"}</p>
                <p className="text-lg font-medium text-text-primary italic">"{alert.instruction}"</p>
                <p className="text-[10px] text-text-muted mt-4 uppercase">— Reed</p>
             </div>
@@ -189,14 +190,14 @@ export default function ReedExtended({ initialWeather, initialCity, locale = "nl
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
              {weather?.current && (
                 <div className="card !p-6">
-                   <p className="text-[10px] font-black text-text-muted uppercase mb-4">Actuele situatie</p>
+                   <p className="text-[10px] font-black text-text-muted uppercase mb-4">{locale === "fr" ? "Situation actuelle" : locale === "de" ? "Aktuelle Situation" : "Actuele situatie"}</p>
                    <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-2"><Wind className="w-4 h-4 text-text-muted" /><span className="text-sm font-bold text-text-secondary">Windvlagen</span></div>
+                         <div className="flex items-center gap-2"><Wind className="w-4 h-4 text-text-muted" /><span className="text-sm font-bold text-text-secondary">{locale === "fr" ? "Rafales" : locale === "de" ? "Windböen" : "Windvlagen"}</span></div>
                          <span className="text-lg font-black text-text-primary">{weather.current.windGusts} km/h</span>
                       </div>
                       <div className="flex items-center justify-between">
-                         <div className="flex items-center gap-2"><Thermometer className="w-4 h-4 text-text-muted" /><span className="text-sm font-bold text-text-secondary">Gevoelstemperatuur</span></div>
+                         <div className="flex items-center gap-2"><Thermometer className="w-4 h-4 text-text-muted" /><span className="text-sm font-bold text-text-secondary">{locale === "fr" ? "Température ressentie" : locale === "de" ? "Gefühlte Temperatur" : "Gevoelstemperatuur"}</span></div>
                          <span className="text-lg font-black text-text-primary">{weather.current.feelsLike}°</span>
                       </div>
                    </div>

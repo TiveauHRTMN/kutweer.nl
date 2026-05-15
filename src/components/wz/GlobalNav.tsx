@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import WzLogo from "./WzLogo";
 import NLPulse from "@/components/NLPulse";
 import DEPulse from "@/components/DEPulse";
+import FRPulse from "@/components/FRPulse";
 import LocatieButton from "@/components/wz/LocatieButton";
 import { useSession } from "@/lib/session-context";
 import type { PersonaTier } from "@/lib/personas";
@@ -70,17 +71,18 @@ export default function GlobalNav() {
   const links = localeConfig.nav;
   const homeHref = localeConfig.routes.home;
   const isDE = locale === "de";
+  const isFR = locale === "fr";
 
   function isActive(linkHref: string, key: string) {
-    if (key === "piet" || key === "mein-wetter") {
-      return pathname.startsWith(locale === "de" ? "/de/mein-wetter" : "/mijnweer") || pathname.startsWith(locale === "de" ? "/de/wetter" : "/weer") || pathname.startsWith("/jouwweer");
+    if (key === "piet" || key === "mein-wetter" || key === "ma-meteo") {
+      return pathname.startsWith(isFR ? "/fr/ma-meteo" : isDE ? "/de/mein-wetter" : "/mijnweer") || pathname.startsWith(isFR ? "/fr/meteo" : isDE ? "/de/wetter" : "/weer") || pathname.startsWith("/jouwweer");
     }
-    if (key === "reed" || key === "warnungen" || key === "waarschuwingen") {
-      return pathname.startsWith(locale === "de" ? "/de/warnungen" : "/waarschuwingen");
+    if (key === "reed" || key === "warnungen" || key === "waarschuwingen" || key === "alertes") {
+      return pathname.startsWith(isFR ? "/fr/alertes" : isDE ? "/de/warnungen" : "/waarschuwingen");
     }
-    if (key === "preise" || key === "prijzen") return pathname.startsWith(locale === "de" ? "/de/preise" : "/prijzen");
-    if (key === "uber-uns" || key === "over") return pathname.startsWith(locale === "de" ? "/de/uber-uns" : "/over");
-    if (key === "kontakt" || key === "contact") return pathname.startsWith(locale === "de" ? "/de/kontakt" : "/contact");
+    if (key === "preise" || key === "prijzen" || key === "tarifs") return pathname.startsWith(isFR ? "/fr/tarifs" : isDE ? "/de/preise" : "/prijzen");
+    if (key === "uber-uns" || key === "over" || key === "a-propos") return pathname.startsWith(isFR ? "/fr/a-propos" : isDE ? "/de/uber-uns" : "/over");
+    if (key === "kontakt" || key === "contact") return pathname.startsWith(isFR ? "/fr/contact" : isDE ? "/de/kontakt" : "/contact");
     return pathname === linkHref || pathname.startsWith(linkHref + "/");
   }
 
@@ -95,19 +97,19 @@ export default function GlobalNav() {
         color: "#0f1a2c",
       }}
     >
-      {isDE ? <DEPulse /> : <NLPulse />}
+      {isFR ? <FRPulse /> : isDE ? <DEPulse /> : <NLPulse />}
 
       {/* Desktop */}
       <div className="hidden md:flex items-center max-w-[1200px] mx-auto px-6 py-2.5" style={{ gap: 16 }}>
 
-        <Link href={homeHref} aria-label={isDE ? "WEERZONE Startseite" : "Weerzone home"} className="shrink-0 transition-opacity hover:opacity-80">
+        <Link href={homeHref} aria-label={isFR ? "WEERZONE Accueil" : isDE ? "WEERZONE Startseite" : "Weerzone home"} className="shrink-0 transition-opacity hover:opacity-80">
           <LogoBadge tier={tier} isFounder={isFounder} />
         </Link>
 
         <div className="w-px self-stretch my-1" style={{ background: "rgba(0,0,0,0.10)" }} />
 
         <nav className="flex items-center gap-1 flex-1">
-          <LocatieButton locale={locale} active={pathname.startsWith(locale === "de" ? "/de/wetter" : "/weer")} />
+          <LocatieButton locale={locale} active={pathname.startsWith(isFR ? "/fr/meteo" : isDE ? "/de/wetter" : "/weer")} />
           {links.map(l => {
             const active = isActive(l.href, l.key);
             return (
@@ -144,7 +146,7 @@ export default function GlobalNav() {
                   letterSpacing: "0.07em",
                 }}
               >
-                {isDE ? "Dashboard" : "Dashboard"}
+                {isFR ? "Tableau de bord" : isDE ? "Dashboard" : "Dashboard"}
               </Link>
               <button
                 onClick={async () => {
@@ -160,13 +162,13 @@ export default function GlobalNav() {
                   boxShadow: "0 2px 8px rgba(15,26,44,0.25), inset 0 1px 0 rgba(255,255,255,0.08)",
                 }}
               >
-                {isDE ? "Abmelden" : "Log uit"}
+                {isFR ? "Déconnexion" : isDE ? "Abmelden" : "Log uit"}
               </button>
             </>
           ) : (
             <>
               <Link
-                href={isDE ? "/app/login?lang=de" : "/app/login"}
+                href={isFR ? "/app/login?lang=fr" : isDE ? "/app/login?lang=de" : "/app/login"}
                 className="inline-flex items-center px-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all hover:brightness-95"
                 style={{
                   height: BTN_H,
@@ -176,10 +178,10 @@ export default function GlobalNav() {
                   letterSpacing: "0.07em",
                 }}
               >
-                {isDE ? "Anmelden" : "Inloggen"}
+                {isFR ? "Se connecter" : isDE ? "Anmelden" : "Inloggen"}
               </Link>
               <Link
-              href={isDE ? "/de/preise" : "/app/signup"}
+              href={isFR ? "/fr/tarifs" : isDE ? "/de/preise" : "/app/signup"}
                 className="inline-flex items-center px-5 rounded-xl text-[11px] font-black uppercase tracking-widest text-white transition-all hover:brightness-110"
                 style={{
                   background: "#0f1a2c",
@@ -188,7 +190,7 @@ export default function GlobalNav() {
                   boxShadow: "0 2px 8px rgba(15,26,44,0.25), inset 0 1px 0 rgba(255,255,255,0.08)",
                 }}
               >
-                {isDE ? "Jetzt starten" : "Aanmelden"}
+                {isFR ? "S'inscrire" : isDE ? "Jetzt starten" : "Aanmelden"}
               </Link>
             </>
           )}
@@ -197,15 +199,15 @@ export default function GlobalNav() {
 
       {/* Mobile */}
       <div className="md:hidden flex items-center justify-between gap-2 px-4 py-3">
-        <Link href={homeHref} aria-label={isDE ? "WEERZONE Startseite" : "Weerzone home"}>
+        <Link href={homeHref} aria-label={isFR ? "WEERZONE Accueil" : isDE ? "WEERZONE Startseite" : "Weerzone home"}>
           <LogoBadge tier={tier} isFounder={isFounder} />
         </Link>
         <div className="flex items-center gap-2">
-          <LocatieButton locale={locale} compact active={pathname.startsWith(locale === "de" ? "/de/wetter" : "/weer")} />
+          <LocatieButton locale={locale} compact active={pathname.startsWith(isFR ? "/fr/meteo" : isDE ? "/de/wetter" : "/weer")} />
           <button
             type="button"
             onClick={() => setOpen(v => !v)}
-            aria-label={isDE ? "Menü" : "Menu"}
+            aria-label={isFR ? "Menu" : isDE ? "Menü" : "Menu"}
             aria-expanded={open}
             className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
             style={
@@ -226,7 +228,7 @@ export default function GlobalNav() {
           style={{ borderTop: "1px solid rgba(0,0,0,0.08)" }}
         >
           <nav className="grid gap-0.5 mb-4">
-            <LocatieButton locale={locale} active={pathname.startsWith(locale === "de" ? "/de/wetter" : "/weer")} />
+            <LocatieButton locale={locale} active={pathname.startsWith(isFR ? "/fr/meteo" : isDE ? "/de/wetter" : "/weer")} />
             {links.map(l => {
               const active = isActive(l.href, l.key);
               return (
@@ -263,7 +265,7 @@ export default function GlobalNav() {
                     letterSpacing: "0.07em",
                   }}
                   >
-                  {isDE ? "Dashboard" : "Dashboard"}
+                  {isFR ? "Tableau de bord" : isDE ? "Dashboard" : "Dashboard"}
                   </Link>
                 <button
                   onClick={async () => {
@@ -279,13 +281,13 @@ export default function GlobalNav() {
                     boxShadow: "0 2px 8px rgba(15,26,44,0.25)",
                   }}
                   >
-                  {isDE ? "Abmelden" : "Log uit"}
+                  {isFR ? "Déconnexion" : isDE ? "Abmelden" : "Log uit"}
                 </button>
               </>
             ) : (
               <>
                 <Link
-                  href={isDE ? "/app/login?lang=de" : "/app/login"}
+                  href={isFR ? "/app/login?lang=fr" : isDE ? "/app/login?lang=de" : "/app/login"}
                   onClick={() => setOpen(false)}
                   className="py-3 rounded-xl text-center text-[11px] font-black uppercase tracking-widest transition-all"
                   style={{
@@ -295,10 +297,10 @@ export default function GlobalNav() {
                     letterSpacing: "0.07em",
                   }}
                   >
-                  {isDE ? "Anmelden" : "Inloggen"}
+                  {isFR ? "Se connecter" : isDE ? "Anmelden" : "Inloggen"}
                 </Link>
                 <Link
-                  href={isDE ? "/de/preise" : "/app/signup"}
+                  href={isFR ? "/fr/tarifs" : isDE ? "/de/preise" : "/app/signup"}
                   onClick={() => setOpen(false)}
                   className="py-3 rounded-xl text-center text-[11px] font-black uppercase tracking-widest text-white"
                   style={{
@@ -307,7 +309,7 @@ export default function GlobalNav() {
                     boxShadow: "0 2px 8px rgba(15,26,44,0.25)",
                   }}
                 >
-                  {isDE ? "Jetzt starten" : "Aanmelden"}
+                  {isFR ? "S'inscrire" : isDE ? "Jetzt starten" : "Aanmelden"}
                 </Link>
               </>
             )}

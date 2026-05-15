@@ -131,6 +131,39 @@ export async function getDEStationsWeather(): Promise<Array<{ name: string; temp
 }
 
 /**
+ * Haalt de actuele temperatuur op voor alle FR-steden in één batch.
+ * Gebruikt voor de FRPulse-Ticker in de GlobalNav.
+ */
+export async function getFRStationsWeather(): Promise<Array<{ name: string; temp: number; weatherCode: number; isDay: boolean }>> {
+  const { FR_STATIONS } = await import("@/lib/types");
+
+  const lats = FR_STATIONS.map(s => s.lat).join(",");
+  const lons = FR_STATIONS.map(s => s.lon).join(",");
+
+  try {
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lons}&current=temperature_2m,weather_code,is_day&timezone=Europe/Paris&models=arome_france,best_match`,
+      { next: { revalidate: 600 } }
+    );
+
+    if (!res.ok) throw new Error("Open-Meteo FR batch fetch failed");
+
+    const data = await res.json();
+    const results = Array.isArray(data) ? data : [data];
+
+    return FR_STATIONS.map((s, i) => ({
+      name: s.name,
+      temp: Math.round(results[i].current.temperature_2m),
+      weatherCode: results[i].current.weather_code ?? 0,
+      isDay: results[i].current.is_day === 1,
+    }));
+  } catch (error) {
+    console.error("getFRStationsWeather error:", error);
+    return [];
+  }
+}
+
+/**
  * Geeft de dichtstbijzijnde bekende plaats (met provincie) voor gegeven coördinaten.
  * Gebruikt Haversine-afstand over ALL_PLACES.
  */
