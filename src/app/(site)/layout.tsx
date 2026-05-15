@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
-import { getSupabase } from "@/lib/supabase";
-import SiteShell from "@/components/SiteShell";
 
 const ADSENSE_CLIENT = "ca-pub-6187487207780127";
 
-// Force-dynamic: SiteLayout queryt Supabase voor activeDeal en gebruikt
-// usePathname in child client-components. Zonder dit kan Next.js 16 een
-// statische shell + dynamische render naast elkaar in dezelfde HTML
-// payload zetten, wat zich uit als dubbele GlobalNav / Footer op /de en /.
-export const dynamic = "force-dynamic";
+// (site) is een route group. SiteShell wordt gerenderd vanuit de root
+// layout (src/app/layout.tsx) — hier alleen metadata en pass-through,
+// anders krijg je dubbele GlobalNav/Footer (Next.js 16 PPR-streaming
+// rendert async layouts soms twee keer in dezelfde HTML response).
 
 export const metadata: Metadata = {
   icons: {
@@ -92,72 +89,10 @@ export const metadata: Metadata = {
   },
 };
 
-const globalSchemasLd = [
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "WEERZONE",
-    url: "https://weerzone.nl",
-    logo: "https://weerzone.nl/weerzone-icon.png",
-    description: "Nederlandse hyperlocale weerdienst voor 48-uur weersverwachtingen per stad en provincie.",
-    areaServed: { "@type": "Country", name: "Nederland" },
-    inLanguage: "nl-NL",
-    sameAs: [
-      "https://www.youtube.com/@weerzone",
-      "https://x.com/weerzone",
-      "https://www.instagram.com/weerzone",
-      "https://www.tiktok.com/@weerzone",
-      "https://www.reddit.com/r/weerzone",
-      "https://www.wikidata.org/wiki/Q139675943",
-    ],
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "WEERZONE",
-    url: "https://weerzone.nl",
-    applicationCategory: "WeatherApplication",
-    operatingSystem: "Web, iOS, Android",
-    inLanguage: "nl-NL",
-    description:
-      "Hyperlokale 48-uur weersverwachting voor alle Nederlandse steden en provincies, vertaald naar praktische keuzes.",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "EUR",
-      description: "Gratis 48-uurs weerbericht op weerzone.nl",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "WEERZONE",
-      url: "https://weerzone.nl",
-    },
-  },
-];
-
-export default async function SiteLayout({
+export default function SiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let activeDeal = null;
-
-  const supabase = getSupabase();
-  if (supabase) {
-    const { data: state } = await supabase
-      .from("system_state")
-      .select("*")
-      .eq("id", "global")
-      .single();
-
-    if (state?.is_active) {
-      activeDeal = state;
-    }
-  }
-
-  return (
-    <SiteShell activeDeal={activeDeal} globalSchemasLd={globalSchemasLd}>
-      {children}
-    </SiteShell>
-  );
+  return <>{children}</>;
 }
