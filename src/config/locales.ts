@@ -10,7 +10,7 @@
 import type { Province } from "@/lib/places-data";
 
 // ─── Locale type ─────────────────────────────────────────────────────────────
-export type Locale = "nl" | "de";
+export type Locale = "nl" | "de" | "fr";
 
 // ─── Nav link definitie ───────────────────────────────────────────────────────
 export interface NavLink {
@@ -105,11 +105,41 @@ export const LOCALES: Record<Locale, LocaleConfig> = {
     },
     hreflang: "de-DE",
   },
+  fr: {
+    locale: "fr",
+    lang: "fr",
+    entryTier: "piet",
+    routes: {
+      home: "/fr",
+      myWeather: "/fr/ma-meteo",
+      warnings: "/fr/alertes",
+      pricing: "/fr/tarifs",
+      about: "/fr/a-propos",
+      contact: "/fr/contact",
+      weather: "/fr/meteo",
+    },
+    nav: [
+      { key: "ma-meteo", label: "Ma Météo", href: "/fr/ma-meteo" },
+      { key: "alertes",   label: "Alertes",    href: "/fr/alertes" },
+      { key: "tarifs",    label: "Tarifs",     href: "/fr/tarifs" },
+      { key: "a-propos",  label: "À propos",   href: "/fr/a-propos" },
+      { key: "contact",   label: "Contact",    href: "/fr/contact" },
+    ],
+    meta: {
+      titleDefault:   "WEERZONE | Prévisions météo pour la France & Belgique",
+      titleTemplate:  "%s | WEERZONE France",
+      description:    "Prévisions météo actuelles pour la France et la Belgique. Prévisions locales précises pour la température, les précipitations, le vent et alertes pour les prochaines 48 heures.",
+      ogLocale:       "fr_FR",
+      siteName:       "WEERZONE",
+    },
+    hreflang: "fr-FR",
+  },
 };
 
 // ─── Locale detection ─────────────────────────────────────────────────────────
 export function detectLocale(pathname: string): Locale {
   if (pathname === "/de" || pathname.startsWith("/de/")) return "de";
+  if (pathname === "/fr" || pathname.startsWith("/fr/")) return "fr";
   return "nl";
 }
 
@@ -182,6 +212,25 @@ export const DE_BUNDESLAND_LABELS: Record<string, string> = {
 
 // Alle geldige Duitse Bundesland URL-slugs
 export const DE_BUNDESLAND_SLUGS = Object.keys(DE_BUNDESLAND_TO_PROVINCE);
+
+// ─── Régions Françaises ─────────────────────────────────────────────────────────
+export const FR_REGION_TO_PROVINCE: Record<string, Province> = {
+  "wallonie": "wallonie",
+  "ile-de-france": "ile-de-france",
+  // TODO: Add more regions if needed
+};
+
+export const FR_REGION_LABELS: Record<string, string> = {
+  "wallonie": "Wallonie",
+  "ile-de-france": "Île-de-France",
+};
+
+export const FR_REGION_SLUGS = Object.keys(FR_REGION_TO_PROVINCE);
+
+export const PROVINCE_TO_FR_REGION: Partial<Record<string, string>> = {
+  "wallonie": "wallonie",
+  "ile-de-france": "ile-de-france",
+};
 
 // ─── hreflang helpers ─────────────────────────────────────────────────────────
 const BASE = "https://weerzone.nl";
