@@ -264,21 +264,21 @@ export default function GlobalNav() {
                     </Link>
                   );
                 })}
-                {/* Brand support links */}
-                <div className="h-px bg-black/5 my-2 mx-4" />
                 <Link 
                   href={isFR ? "/fr/a-propos" : isDE ? "/de/uber-uns" : "/over"} 
                   onClick={() => setOpen(false)}
-                  className="px-4 py-2 text-xs font-black uppercase tracking-widest text-black/40 hover:text-[#0f1a2c] transition-colors"
+                  className="px-4 py-3 rounded-2xl text-sm font-black uppercase tracking-widest transition-all flex items-center justify-between group text-[#0f1a2c] hover:bg-[#3b7ff0/5]"
                 >
-                  {isFR ? "À Propos" : isDE ? "Über uns" : "Over ons"}
+                  <span>{isFR ? "À Propos" : isDE ? "Über uns" : "Over ons"}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0f1a2c] transition-transform scale-0 group-hover:scale-50" />
                 </Link>
                 <Link 
                   href={isFR ? "/fr/contact" : isDE ? "/de/kontakt" : "/contact"} 
                   onClick={() => setOpen(false)}
-                  className="px-4 py-2 text-xs font-black uppercase tracking-widest text-black/40 hover:text-[#0f1a2c] transition-colors"
+                  className="px-4 py-3 rounded-2xl text-sm font-black uppercase tracking-widest transition-all flex items-center justify-between group text-[#0f1a2c] hover:bg-[#3b7ff0/5]"
                 >
-                  Contact
+                  <span>Contact</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0f1a2c] transition-transform scale-0 group-hover:scale-50" />
                 </Link>
               </nav>
             </div>
