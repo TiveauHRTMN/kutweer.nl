@@ -285,7 +285,9 @@ export default function GlobalNav() {
 
             {/* Column 2: Account Actions (Shown in menu for mobile/tablet) */}
             <div className="lg:hidden">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/35 mb-4 px-4">Compte</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-black/35 mb-4 px-4">
+                {isFR ? "Compte" : "Account"}
+              </p>
               <div className="grid grid-cols-2 gap-2">
                 {user ? (
                   <>
