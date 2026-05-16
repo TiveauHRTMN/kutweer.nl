@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import HomePitch from "@/components/HomePitch";
 import TrustSection from "@/components/TrustSection";
+import AdSenseSlot from "@/components/AdSenseSlot";
 import { DUTCH_CITIES } from "@/lib/types";
 import { fetchWeatherData } from "@/lib/weather";
 import { getSavedLocationServer } from "@/lib/location-cookies";
@@ -71,6 +72,9 @@ export default async function Home() {
             <>
               <TrustSection />
               <HomePitch />
+              <div className="mx-auto w-full max-w-3xl px-4 py-6">
+                <AdSenseSlot slot="6163080099" />
+              </div>
             </>
           }
         />

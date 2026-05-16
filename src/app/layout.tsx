@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { headers } from "next/headers";
+import Script from "next/script";
 import { Providers } from "./providers";
 import PostHogPageView from "@/components/PostHogPageView";
 import SiteShell from "@/components/SiteShell";
@@ -93,6 +94,13 @@ export default async function RootLayout({
         <meta name="theme-color" content="#0f172a" />
       </head>
       <body className="min-h-screen">
+        <Script
+          id="adsense-loader"
+          async
+          strategy="afterInteractive"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6187487207780127"
+          crossOrigin="anonymous"
+        />
         <Providers>
           <Suspense fallback={null}>
             <PostHogPageView />
