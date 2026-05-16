@@ -129,10 +129,16 @@ export default function GlobalNav() {
       {isFR ? <FRPulse /> : isDE ? <DEPulse /> : <NLPulse />}
 
       {/* Main Bar */}
-      <div className="flex items-center max-w-[1200px] mx-auto px-4 md:px-6 py-2.5 gap-3 md:gap-4">
+      <div className="flex items-center max-w-[1200px] mx-auto px-4 md:px-6 py-2.5 gap-2 md:gap-3">
         
-        {/* Left: Hamburger & Logo */}
-        <div className="flex items-center gap-2 md:gap-4 shrink-0">
+        {/* Left: Brand & Menu Group (Logo - Hamburger - Context) */}
+        <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+          {/* Logo on the far left (Brand Anchor) */}
+          <Link href={homeHref} aria-label="Weerzone home" className="transition-opacity hover:opacity-80 pr-1">
+            <LogoBadge tier={tier} isFounder={isFounder} />
+          </Link>
+
+          {/* Hamburger Menu (Gateway) */}
           <button
             onClick={() => setOpen(!open)}
             className="w-10 h-10 flex items-center justify-center rounded-xl transition-all hover:bg-black/5 border border-transparent active:scale-95"
@@ -140,20 +146,16 @@ export default function GlobalNav() {
           >
             {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-
-          <Link href={homeHref} aria-label="Weerzone home" className="transition-opacity hover:opacity-80">
-            <LogoBadge tier={tier} isFounder={isFounder} />
-          </Link>
         </div>
 
-        <div className="w-px h-6 bg-black/10 hidden sm:block" />
+        <div className="w-px h-6 bg-black/10 hidden sm:block mx-1" />
 
-        {/* Right: Location Button (Now stretched to fill remaining space on mobile) */}
+        {/* Middle: Location Button (Context Action - stetching on mobile) */}
         <div className="flex-1 min-w-0 flex justify-end lg:justify-start">
           <LocatieButton 
             locale={locale} 
             active={pathname.startsWith(isFR ? "/fr/meteo" : isDE ? "/de/wetter" : "/weer")}
-            className="!h-[36px] !px-4 !rounded-xl !text-[10px] !font-black !uppercase !tracking-widest"
+            className="!h-[36px] !px-4 !rounded-xl !text-[10px] !font-black !uppercase !tracking-widest shadow-sm"
           />
         </div>
 
