@@ -42,8 +42,11 @@ export const FR_PROVINCES = new Set([
   "seine-maritime", "seine-et-marne", "yvelines", "deux-sevres", "somme", "tarn",
   "tarn-et-garonne", "var", "vaucluse", "vendee", "vienne", "haute-vienne",
   "vosges", "yonne", "territoire-de-belfort", "essonne", "hauts-de-seine",
-  "seine-saint-denis", "val-de-marne", "val-d-oise", "wallonie", "luxembourg-country",
+  "seine-saint-denis", "val-de-marne", "val-d-oise", "wallonie",
 ]);
+
+// Luxemburg is tweetalig (DE + FR). Eigen sitemap met beide URL-vormen.
+export const LU_PROVINCES = new Set(["luxembourg-country"]);
 
 export const THEME_SLUGS = [
   "bbq-weer", "strandweer", "hardloopweer", "hooikoorts", "wintersport-nl",
@@ -122,6 +125,7 @@ export function buildSitemapIndex(): string {
     `${BASE_URL}/sitemap-be.xml`,
     `${BASE_URL}/sitemap-de.xml`,
     `${BASE_URL}/sitemap-fr.xml`,
+    `${BASE_URL}/sitemap-lu.xml`,
   ]);
 }
 
@@ -266,6 +270,38 @@ export function buildDESitemap(): string {
     if (seen.has(url)) continue;
     seen.add(url);
     entries.push({ url, lastmod: today, changefreq: "hourly", priority: placePriority(place.population) });
+  }
+
+  entries.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  return xmlUrlset(entries);
+}
+
+// ─── LU-plaatsen (tweetalig: DE + FR) ────────────────────────────────────────
+export function buildLUSitemap(): string {
+  const today = todayIso();
+  const seen = new Set<string>();
+  const entries: SitemapEntry[] = [];
+
+  // Beide overzichten staan in LU-sitemap i.p.v. static (Luxemburg is geen DE/FR provincie)
+  entries.push({ url: `${BASE_URL}/de/wetter/luxembourg`, lastmod: today, changefreq: "hourly", priority: 0.9 });
+  entries.push({ url: `${BASE_URL}/fr/meteo/luxembourg`,  lastmod: today, changefreq: "hourly", priority: 0.9 });
+
+  for (const place of ALL_PLACES) {
+    if (!isSitemapPlace(place)) continue;
+    if (!LU_PROVINCES.has(place.province)) continue;
+    const slug = canonicalPlaceSlug(place.name);
+    const priority = placePriority(place.population);
+
+    const deUrl = `${BASE_URL}/de/wetter/luxembourg/${slug}`;
+    if (!seen.has(deUrl)) {
+      seen.add(deUrl);
+      entries.push({ url: deUrl, lastmod: today, changefreq: "hourly", priority });
+    }
+    const frUrl = `${BASE_URL}/fr/meteo/luxembourg/${slug}`;
+    if (!seen.has(frUrl)) {
+      seen.add(frUrl);
+      entries.push({ url: frUrl, lastmod: today, changefreq: "hourly", priority });
+    }
   }
 
   entries.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));

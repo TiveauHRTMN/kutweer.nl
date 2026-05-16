@@ -136,7 +136,7 @@ export const DE_BUNDESLAND_LABELS: Record<string, string> = {
   sachsen:                  "Sachsen",
   "sachsen-anhalt":         "Sachsen-Anhalt",
   thueringen:               "Thüringen",
-  "mecklenburg-vopommern":  "Mecklenburg-Vorpommern",
+  "mecklenburg-vorpommern": "Mecklenburg-Vorpommern",
   "schleswig-holstein":     "Schleswig-Holstein",
   "rheinland-pfalz":        "Rheinland-Pfalz",
   "baden-wuerttemberg":     "Baden-Württemberg",

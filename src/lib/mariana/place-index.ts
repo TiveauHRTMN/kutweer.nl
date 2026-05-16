@@ -1,5 +1,5 @@
 import { ALL_PLACES, placeSlug, type Place } from "@/lib/places-data";
-import { PROVINCE_TO_DE_BUNDESLAND } from "@/config/locales";
+import { PROVINCE_TO_DE_BUNDESLAND, PROVINCE_TO_FR_REGION } from "@/config/locales";
 import { toMarianaLocation } from "./location";
 import type { MarianaLocationRef } from "./types";
 
@@ -9,15 +9,23 @@ export interface MarianaPlaceTarget {
   url: string;
 }
 
-export function marianaTargetForPlace(place: Place): MarianaPlaceTarget {
+function canonicalUrlForPlace(place: Place): string {
+  const slug = placeSlug(place.name);
   const bundesland = PROVINCE_TO_DE_BUNDESLAND[place.province as keyof typeof PROVINCE_TO_DE_BUNDESLAND];
-  const url = bundesland
-    ? `/de/wetter/${bundesland}/${placeSlug(place.name)}`
-    : `/weer/${place.province}/${placeSlug(place.name)}`;
+  if (bundesland) return `/de/wetter/${bundesland}/${slug}`;
+  // Wallonie wordt als Belgisch behandeld en hoort op /weer/wallonie/{slug} (BE-sitemap).
+  if (place.province !== "wallonie") {
+    const region = PROVINCE_TO_FR_REGION[place.province as keyof typeof PROVINCE_TO_FR_REGION];
+    if (region) return `/fr/meteo/${region}/${slug}`;
+  }
+  return `/weer/${place.province}/${slug}`;
+}
+
+export function marianaTargetForPlace(place: Place): MarianaPlaceTarget {
   return {
     place,
     location: toMarianaLocation(place),
-    url,
+    url: canonicalUrlForPlace(place),
   };
 }
 
