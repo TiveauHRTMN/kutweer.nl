@@ -52,7 +52,7 @@ export default function TrustSection() {
           <h2
             className="text-4xl sm:text-5xl font-black leading-tight mb-5"
             style={{
-              background: "linear-gradient(135deg, #ff8400 0%, #9000ff 100%)",
+              background: "linear-gradient(135deg, #ff8400 0%, #4c1d95 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
