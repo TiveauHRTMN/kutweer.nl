@@ -7,9 +7,10 @@ interface Props {
   lon: number;
 }
 
-export default function RainMap({ lat, lon, locale = "nl" }: Props & { locale?: "nl" | "de" | "fr" }) {
+export default function RainMap({ lat, lon, locale = "nl" }: Props & { locale?: "nl" | "de" | "fr" | "es" }) {
   const isDE = locale === "de";
   const isFR = locale === "fr";
+  const isES = locale === "es";
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 
@@ -20,8 +21,8 @@ export default function RainMap({ lat, lon, locale = "nl" }: Props & { locale?: 
 
   const rainviewerUrl = `https://www.rainviewer.com/map.html?loc=${lat},${lon},8&oFa=0&oC=1&oU=0&oCS=1&oF=0&oAP=1&rmt=1`;
 
-  const headerSmall = isFR ? "Précipitations en direct" : isDE ? "Live Niederschlag" : "Live neerslag";
-  const headerLarge = isFR ? "Radar interactif" : isDE ? "Interaktives Regenradar" : "Interactieve Regenradar";
+  const headerSmall = isES ? "Lluvia en directo" : isFR ? "Précipitations en direct" : isDE ? "Live Niederschlag" : "Live neerslag";
+  const headerLarge = isES ? "Radar interactivo" : isFR ? "Radar interactif" : isDE ? "Interaktives Regenradar" : "Interactieve Regenradar";
 
   if (!mounted) return <div className="card overflow-hidden h-[450px] bg-slate-900 animate-pulse" />;
 

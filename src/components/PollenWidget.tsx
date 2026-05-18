@@ -35,6 +35,13 @@ const SPECIES_DE: Species[] = [
   { key: "peakMugwort", label: "Beifuß", type: "tree" },
 ];
 
+const SPECIES_ES: Species[] = [
+  { key: "peakGrass", label: "Gramineas", type: "grass" },
+  { key: "peakBirch", label: "Abedul", type: "tree" },
+  { key: "peakAlder", label: "Aliso", type: "tree" },
+  { key: "peakMugwort", label: "Artemisia", type: "tree" },
+];
+
 function getTodayPeak(data: AirQualityData, speciesKey: "grass" | "birch" | "alder" | "mugwort"): number | null {
   const nowStr = new Date().toLocaleString("sv-SE", { timeZone: "Europe/Amsterdam" }).slice(0, 10);
   const dayHours = data.hourly.filter(
@@ -44,8 +51,8 @@ function getTodayPeak(data: AirQualityData, speciesKey: "grass" | "birch" | "ald
   return vals.length ? Math.max(...vals) : null;
 }
 
-export default function PollenWidget({ data, locale = "nl" }: { data: AirQualityData; locale?: "nl" | "de" }) {
-  const speciesList = locale === "de" ? SPECIES_DE : SPECIES_NL;
+export default function PollenWidget({ data, locale = "nl" }: { data: AirQualityData; locale?: "nl" | "de" | "fr" | "es" }) {
+  const speciesList = locale === "de" ? SPECIES_DE : locale === "es" ? SPECIES_ES : SPECIES_NL;
   const active = speciesList.map((s) => {
     const speciesKey = s.key.replace("peak", "").toLowerCase() as "grass" | "birch" | "alder" | "mugwort";
     const todayPeak = getTodayPeak(data, speciesKey);
@@ -59,7 +66,7 @@ export default function PollenWidget({ data, locale = "nl" }: { data: AirQuality
     <div className="card p-5 sm:p-6">
       <div className="flex items-center gap-2 mb-6">
         <span className="text-lg">🌿</span>
-        <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{locale === "de" ? "Pollen-Index" : "Pollen-index"}</h2>
+        <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">{locale === "de" ? "Pollen-Index" : locale === "fr" ? "Indice pollinique" : locale === "es" ? "Indice polinico" : "Pollen-index"}</h2>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-2">

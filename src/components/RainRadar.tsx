@@ -6,7 +6,7 @@ import { Umbrella, Sun } from "lucide-react";
 
 interface RainRadarProps {
   data: MinutelyPrecipitation[];
-  locale?: "nl" | "de" | "fr";
+  locale?: "nl" | "de" | "fr" | "es";
 }
 
 function getPrecipColor(mm: number): string {

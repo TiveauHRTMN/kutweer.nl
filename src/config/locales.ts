@@ -8,7 +8,7 @@
 
 import { type Province } from "@/lib/places-data";
 
-export type Locale = "nl" | "de" | "fr";
+export type Locale = "nl" | "de" | "fr" | "es";
 
 export interface HreflangEntry {
   hreflang: string;
@@ -77,6 +77,22 @@ export const LOCALES: Record<Locale, LocaleConfig> = {
       { key: "tarifs", label: "Tarifs", href: "/fr/tarifs" },
     ],
   },
+  es: {
+    code: "es",
+    label: "España",
+    hreflang: "es-ES",
+    routes: {
+      home: "/es",
+      weather: "/es/tiempo",
+      myWeather: "/es/mi-tiempo",
+      warnings: "/es/alertas",
+    },
+    nav: [
+      { key: "mi-tiempo", label: "Mi tiempo", href: "/es/mi-tiempo" },
+      { key: "alertas", label: "Alertas", href: "/es/alertas" },
+      { key: "tiempo", label: "Tiempo", href: "/es/tiempo/espana" },
+    ],
+  },
 };
 
 export const DEFAULT_LOCALE: Locale = "nl";
@@ -84,6 +100,7 @@ export const DEFAULT_LOCALE: Locale = "nl";
 export function detectLocale(pathname: string): Locale {
   if (pathname.startsWith("/de")) return "de";
   if (pathname.startsWith("/fr")) return "fr";
+  if (pathname.startsWith("/es")) return "es";
   return "nl";
 }
 
@@ -242,6 +259,7 @@ export function buildHreflang(path: string): HreflangEntry[] {
     { hreflang: LOCALES.nl.hreflang, href: `${BASE}${path}` },
     { hreflang: LOCALES.de.hreflang, href: `${BASE}/de${path}` },
     { hreflang: LOCALES.fr.hreflang, href: `${BASE}/fr${path}` },
+    { hreflang: LOCALES.es.hreflang, href: `${BASE}/es${path}` },
     { hreflang: "x-default", href: `${BASE}${path}` },
   ];
 }

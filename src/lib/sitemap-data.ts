@@ -5,7 +5,7 @@
  * Houd de exports synchroon met scripts/gen-sitemap.ts en src/config/locales.ts.
  */
 
-import { ALL_PLACES, placeSlug as canonicalPlaceSlug, type Place, type Province } from "@/lib/places-data";
+import { ALL_PLACES, placeRouteSlug, type Place, type Province } from "@/lib/places-data";
 import { PROVINCE_TO_DE_BUNDESLAND, PROVINCE_TO_FR_REGION } from "@/config/locales";
 
 export const BASE_URL = "https://weerzone.nl";
@@ -47,6 +47,7 @@ export const FR_PROVINCES = new Set([
 
 // Luxemburg is tweetalig (DE + FR). Eigen sitemap met beide URL-vormen.
 export const LU_PROVINCES = new Set(["luxembourg-country"]);
+export const ES_PROVINCES = new Set(["spanje"]);
 
 export const THEME_SLUGS = [
   "bbq-weer", "strandweer", "hardloopweer", "hooikoorts", "wintersport-nl",
@@ -71,7 +72,7 @@ function escapeXml(s: string): string {
 function isSitemapPlace(p: Place): boolean {
   if (p.province === "unknown-be") return false;
   if (p.name.length > 60) return false;
-  const slug = canonicalPlaceSlug(p.name);
+  const slug = placeRouteSlug(p);
   if (!slug || slug.includes("--")) return false;
   return true;
 }
@@ -126,6 +127,7 @@ export function buildSitemapIndex(): string {
     `${BASE_URL}/sitemap-de.xml`,
     `${BASE_URL}/sitemap-fr.xml`,
     `${BASE_URL}/sitemap-lu.xml`,
+    `${BASE_URL}/sitemap-es.xml`,
   ]);
 }
 
@@ -142,9 +144,28 @@ export function buildStaticSitemap(): string {
   entries.push({ url: `${BASE_URL}/zakelijk`,          lastmod: today, changefreq: "weekly",  priority: 0.8 });
   entries.push({ url: `${BASE_URL}/prijzen`,           lastmod: today, changefreq: "monthly", priority: 0.7 });
   entries.push({ url: `${BASE_URL}/over`,              lastmod: today, changefreq: "monthly", priority: 0.6 });
+  entries.push({ url: `${BASE_URL}/piet`,              lastmod: today, changefreq: "monthly", priority: 0.5 });
+  entries.push({ url: `${BASE_URL}/reed`,              lastmod: today, changefreq: "monthly", priority: 0.5 });
   entries.push({ url: `${BASE_URL}/weer/48-uur`,       lastmod: today, changefreq: "hourly",  priority: 0.7 });
   entries.push({ url: `${BASE_URL}/weer/onweer`,       lastmod: today, changefreq: "hourly",  priority: 0.6 });
   entries.push({ url: `${BASE_URL}/weer/regen`,        lastmod: today, changefreq: "hourly",  priority: 0.6 });
+  entries.push({ url: `${BASE_URL}/weer/regen-op-vakantie`, lastmod: today, changefreq: "weekly",  priority: 0.7 });
+  entries.push({ url: `${BASE_URL}/reiszone`,          lastmod: today, changefreq: "weekly",  priority: 0.7 });
+  entries.push({ url: `${BASE_URL}/reiszone/citytrip`, lastmod: today, changefreq: "weekly",  priority: 0.7 });
+  entries.push({ url: `${BASE_URL}/reiszone/strandweer`, lastmod: today, changefreq: "weekly",  priority: 0.7 });
+  entries.push({ url: `${BASE_URL}/reiszone/waar-is-het-droog`, lastmod: today, changefreq: "daily",  priority: 0.7 });
+  entries.push({ url: `${BASE_URL}/reiszone/dagje-weg`, lastmod: today, changefreq: "daily",  priority: 0.7 });
+  entries.push({ url: `${BASE_URL}/reiszone/dagje-weg-bij-regen`, lastmod: today, changefreq: "daily",  priority: 0.7 });
+  entries.push({ url: `${BASE_URL}/reiszone/dit-weekend`, lastmod: today, changefreq: "daily",  priority: 0.7 });
+  entries.push({ url: `${BASE_URL}/reiszone/pretparkweer`, lastmod: today, changefreq: "daily",  priority: 0.6 });
+  entries.push({ url: `${BASE_URL}/reiszone/wandelweer`, lastmod: today, changefreq: "daily",  priority: 0.6 });
+  entries.push({ url: `${BASE_URL}/reiszone/festivalweer`, lastmod: today, changefreq: "daily",  priority: 0.6 });
+  entries.push({ url: `${BASE_URL}/reiszone/campingweekend`, lastmod: today, changefreq: "weekly",  priority: 0.6 });
+  entries.push({ url: `${BASE_URL}/reiszone/spanje`,   lastmod: today, changefreq: "weekly",  priority: 0.8 });
+  entries.push({ url: `${BASE_URL}/reiszone/spanje/citytrip`, lastmod: today, changefreq: "weekly",  priority: 0.8 });
+  entries.push({ url: `${BASE_URL}/reiszone/spanje/strandweer`, lastmod: today, changefreq: "weekly",  priority: 0.8 });
+  entries.push({ url: `${BASE_URL}/reiszone/spanje/beste-reistijd`, lastmod: today, changefreq: "monthly",  priority: 0.6 });
+  entries.push({ url: `${BASE_URL}/reiszone/spanje/regenrisico`, lastmod: today, changefreq: "monthly",  priority: 0.6 });
   entries.push({ url: `${BASE_URL}/contact`,           lastmod: today, changefreq: "monthly", priority: 0.4 });
   entries.push({ url: `${BASE_URL}/privacy`,           lastmod: today, changefreq: "monthly", priority: 0.3 });
 
@@ -170,6 +191,7 @@ export function buildStaticSitemap(): string {
   entries.push({ url: `${BASE_URL}/de/warnungen`,   lastmod: today, changefreq: "weekly",  priority: 0.7 });
   entries.push({ url: `${BASE_URL}/de/preise`,      lastmod: today, changefreq: "monthly", priority: 0.7 });
   entries.push({ url: `${BASE_URL}/de/uber-uns`,    lastmod: today, changefreq: "monthly", priority: 0.5 });
+  entries.push({ url: `${BASE_URL}/de/karl`,        lastmod: today, changefreq: "monthly", priority: 0.5 });
   entries.push({ url: `${BASE_URL}/de/kontakt`,     lastmod: today, changefreq: "monthly", priority: 0.4 });
 
   // DE Bundesland-overzichten
@@ -192,6 +214,7 @@ export function buildStaticSitemap(): string {
   entries.push({ url: `${BASE_URL}/fr/alertes`,     lastmod: today, changefreq: "weekly",  priority: 0.7 });
   entries.push({ url: `${BASE_URL}/fr/tarifs`,      lastmod: today, changefreq: "monthly", priority: 0.7 });
   entries.push({ url: `${BASE_URL}/fr/a-propos`,    lastmod: today, changefreq: "monthly", priority: 0.5 });
+  entries.push({ url: `${BASE_URL}/fr/luc`,         lastmod: today, changefreq: "monthly", priority: 0.5 });
   entries.push({ url: `${BASE_URL}/fr/contact`,     lastmod: today, changefreq: "monthly", priority: 0.4 });
 
   // FR Région-overzichten
@@ -206,8 +229,18 @@ export function buildStaticSitemap(): string {
       });
     }
   }
+  // ES statisch
+  entries.push({ url: `${BASE_URL}/es`,                lastmod: today, changefreq: "weekly",  priority: 1.0 });
+  entries.push({ url: `${BASE_URL}/es/tiempo`,         lastmod: today, changefreq: "hourly",  priority: 0.9 });
+  entries.push({ url: `${BASE_URL}/es/mi-tiempo`,      lastmod: today, changefreq: "weekly",  priority: 0.8 });
+  entries.push({ url: `${BASE_URL}/es/alertas`,        lastmod: today, changefreq: "weekly",  priority: 0.7 });
+  entries.push({ url: `${BASE_URL}/es/precios`,        lastmod: today, changefreq: "monthly", priority: 0.7 });
+  entries.push({ url: `${BASE_URL}/es/sobre-nosotros`, lastmod: today, changefreq: "monthly", priority: 0.5 });
+  entries.push({ url: `${BASE_URL}/es/contacto`,       lastmod: today, changefreq: "monthly", priority: 0.4 });
+
   // Add Wallonia overview specifically to static sitemap if not already there
   entries.push({ url: `${BASE_URL}/weer/wallonie`, lastmod: today, changefreq: "hourly", priority: 0.8 });
+  entries.push({ url: `${BASE_URL}/weer/spanje`, lastmod: today, changefreq: "hourly", priority: 0.8 });
 
   return xmlUrlset(entries);
 }
@@ -221,7 +254,7 @@ export function buildNLSitemap(): string {
   for (const place of ALL_PLACES) {
     if (!isSitemapPlace(place)) continue;
     if (!NL_PROVINCES.has(place.province)) continue;
-    const slug = canonicalPlaceSlug(place.name);
+    const slug = placeRouteSlug(place);
     const url = `${BASE_URL}/weer/${place.province}/${slug}`;
     if (seen.has(url)) continue;
     seen.add(url);
@@ -243,7 +276,7 @@ export function buildBESitemap(): string {
     // Mariana treatment: include Wallonia in Belgian sitemap
     if (!BE_PROVINCES.has(place.province) && place.province !== "wallonie") continue;
     
-    const slug = canonicalPlaceSlug(place.name);
+    const slug = placeRouteSlug(place);
     const url = `${BASE_URL}/weer/${place.province}/${slug}`;
     if (seen.has(url)) continue;
     seen.add(url);
@@ -265,7 +298,7 @@ export function buildDESitemap(): string {
     if (!DE_PROVINCES.has(place.province)) continue;
     const bundesland = PROVINCE_TO_DE_BUNDESLAND[place.province as Province];
     if (!bundesland) continue;
-    const slug = canonicalPlaceSlug(place.name);
+    const slug = placeRouteSlug(place);
     const url = `${BASE_URL}/de/wetter/${bundesland}/${slug}`;
     if (seen.has(url)) continue;
     seen.add(url);
@@ -289,7 +322,7 @@ export function buildLUSitemap(): string {
   for (const place of ALL_PLACES) {
     if (!isSitemapPlace(place)) continue;
     if (!LU_PROVINCES.has(place.province)) continue;
-    const slug = canonicalPlaceSlug(place.name);
+    const slug = placeRouteSlug(place);
     const priority = placePriority(place.population);
 
     const deUrl = `${BASE_URL}/de/wetter/luxembourg/${slug}`;
@@ -321,7 +354,7 @@ export function buildFRSitemap(): string {
     const region = PROVINCE_TO_FR_REGION[place.province as Province];
     if (!region) continue;
 
-    const slug = canonicalPlaceSlug(place.name);
+    const slug = placeRouteSlug(place);
     const url = `${BASE_URL}/fr/meteo/${region}/${slug}`;
     if (seen.has(url)) continue;
     seen.add(url);
@@ -334,6 +367,29 @@ export function buildFRSitemap(): string {
   }
 
   // Sort by priority so Google crawls big cities first
+  entries.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  return xmlUrlset(entries);
+}
+
+// Spaanse steden en dorpen.
+export function buildESSitemap(): string {
+  const today = todayIso();
+  const seen = new Set<string>();
+  const entries: SitemapEntry[] = [
+    { url: `${BASE_URL}/es/tiempo/espana`, lastmod: today, changefreq: "hourly", priority: 0.9 },
+  ];
+
+  for (const place of ALL_PLACES) {
+    if (!isSitemapPlace(place)) continue;
+    if (!ES_PROVINCES.has(place.province)) continue;
+
+    const slug = placeRouteSlug(place);
+    const url = `${BASE_URL}/es/tiempo/espana/${slug}`;
+    if (seen.has(url)) continue;
+    seen.add(url);
+    entries.push({ url, lastmod: today, changefreq: "daily", priority: placePriority(place.population) });
+  }
+
   entries.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
   return xmlUrlset(entries);
 }

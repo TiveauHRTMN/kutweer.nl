@@ -30,10 +30,11 @@ function getSavedCity(): City | null {
 interface ReedProps {
     initialWeather?: WeatherData | null;
     initialCity?: City;
-    locale?: "nl" | "de" | "fr";
+    locale?: "nl" | "de" | "fr" | "es";
+    includeExternalAiWeather?: boolean;
 }
 
-export default function ReedExtended({ initialWeather, initialCity, locale = "nl" }: ReedProps) {
+export default function ReedExtended({ initialWeather, initialCity, locale = "nl", includeExternalAiWeather = false }: ReedProps) {
   const [city, setCity] = useState<City>(
     () => initialCity || getSavedCity() || (locale === "fr" ? FRENCH_CITIES[0] : locale === "de" ? GERMAN_CITIES.find(c => c.name === "Köln") || GERMAN_CITIES[0] : DUTCH_CITIES.find((c) => c.name === "De Bilt") || DUTCH_CITIES[0])
   );
@@ -52,7 +53,7 @@ export default function ReedExtended({ initialWeather, initialCity, locale = "nl
       .then(data => { if (!cancelled) setKnmiWarnings(data.warnings ?? []); })
       .catch(() => {});
 
-    loadWeather(city.lat, city.lon, () => {}, (fresh) => { if (!cancelled) { setWeather(fresh); setLoading(false); } }, undefined, true)
+    loadWeather(city.lat, city.lon, () => {}, (fresh) => { if (!cancelled) { setWeather(fresh); setLoading(false); } }, undefined, true, locale, includeExternalAiWeather)
     .then((w) => {
       if (cancelled) return;
       setWeather(w);
@@ -159,15 +160,15 @@ export default function ReedExtended({ initialWeather, initialCity, locale = "nl
               <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">{locale === "fr" ? "Intensité des précipitations" : locale === "de" ? "Niederschlags-Intensität" : "Buien-intensiteit"}</h3>
               <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">{locale === "fr" ? "Prochaines 48 heures" : locale === "de" ? "Kommende 48 Stunden" : "Komende 48 uur"}</span>
             </div>
-            <ReflectivityMap hourly={weather.hourly} locale={locale} />
+            <ReflectivityMap hourly={weather.hourly} locale={locale === "es" ? "nl" : locale} />
           </div>
           <div className="space-y-3">
             <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">{locale === "fr" ? "Foudre en direct" : locale === "de" ? "Live Blitze" : "Live Bliksem"}</h3></div>
-            <LightningMap lat={city.lat} lon={city.lon} locale={locale} />
+            <LightningMap lat={city.lat} lon={city.lon} locale={locale === "es" ? "nl" : locale} />
           </div>
           <div className="space-y-3">
             <div className="flex items-end justify-between px-1"><h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">{locale === "fr" ? "Pluie et rafales de vent" : locale === "de" ? "Regen und Windböen" : "Regen en windstoten"}</h3></div>
-            <ReedExtremeCharts hourly={weather.hourly} locale={locale} />
+            <ReedExtremeCharts hourly={weather.hourly} locale={locale === "es" ? "nl" : locale} />
           </div>
         </div>
       )}

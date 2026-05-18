@@ -3,6 +3,7 @@ import { hermesChat } from "@/lib/hermes";
 import { GoogleAIFileManager } from "@google/generative-ai/server";
 import { fetchGoogleWeather, mapGoogleWeatherConditionToWMO } from "./google-weather";
 import type { Locale } from "@/config/locales";
+import { externalAiPointForTime, fetchExternalAiWeatherForecast } from "./external-ai-weather";
 
 const OPEN_METEO_BASE = "https://api.open-meteo.com/v1/forecast";
 const DWD_ICON_BASE = "https://api.open-meteo.com/v1/dwd-icon";
@@ -44,30 +45,35 @@ const BASE_URL_BY_LOCALE: Record<Locale, string> = {
   nl: OPEN_METEO_BASE,
   de: DWD_ICON_BASE,
   fr: OPEN_METEO_BASE,
+  es: OPEN_METEO_BASE,
 };
 
 const BASE_MODEL_BY_LOCALE: Record<Locale, string> = {
   nl: "knmi_seamless",
   de: "dwd_icon_d2",
   fr: "meteofrance_seamless",
+  es: "best_match",
 };
 
 const SECONDARY_MODEL_BY_LOCALE: Record<Locale, string> = {
   nl: "dwd_icon_d2",
   de: "knmi_seamless",
   fr: "icon_eu",
+  es: "icon_eu",
 };
 
 const LEAD_SOURCE_LABEL: Record<Locale, string> = {
   nl: "KNMI HARMONIE",
   de: "DWD ICON-D2",
   fr: "METEOFRANCE AROME",
+  es: "Open-Meteo Best Match",
 };
 
 const SECONDARY_SOURCE_LABEL: Record<Locale, string> = {
   nl: "DWD ICON-D2",
   de: "KNMI HARMONIE",
   fr: "DWD ICON-EU",
+  es: "DWD ICON-EU",
 };
 
 interface RawModelHourly {
@@ -141,10 +147,12 @@ export async function fetchWeatherData(
   isBot: boolean = false,
   forceHighRes: boolean = false,
   marianaLocation?: { name?: string; province?: string; lat: number; lon: number; id?: string; locationId?: string },
-  locale: Locale = "nl"
+  locale: Locale = "nl",
+  includeExternalAi: boolean = false
 ): Promise<WeatherData> {
   // Skip live API calls during Next.js build-time static generation
   if (process.env.NEXT_PHASE === 'phase-production-build') return null as any;
+  const timezone = locale === "de" ? "Europe/Berlin" : locale === "fr" ? "Europe/Paris" : locale === "es" ? "Europe/Madrid" : "Europe/Amsterdam";
 
   const attemptFetch = async (): Promise<any> => {
     const url = `${BASE_URL_BY_LOCALE[locale]}?${new URLSearchParams({
@@ -156,7 +164,7 @@ export async function fetchWeatherData(
       daily: DAILY_PARAMS,
       minutely_15: "precipitation",
       forecast_minutely_15: "96",
-      timezone: locale === "de" ? "Europe/Berlin" : locale === "fr" ? "Europe/Paris" : "Europe/Amsterdam",
+      timezone,
       forecast_days: "2",
       forecast_hours: "48",
     })}`;
@@ -178,6 +186,7 @@ export async function fetchWeatherData(
 
   try {
     const leadRes = await attemptFetch();
+    const shouldFetchExternalAi = !isBot && forceHighRes && includeExternalAi;
 
     const fetchPromises: Promise<any>[] = [Promise.resolve(leadRes)];
 
@@ -190,6 +199,17 @@ export async function fetchWeatherData(
         fetchModel(OPEN_METEO_BASE, lat, lon, { models: "ecmwf_ifs0p25" }).catch(() => null),
         fetchModel(OPEN_METEO_BASE, lat, lon, { models: "gfs_seamless" }).catch(() => null)
       );
+      if (shouldFetchExternalAi) {
+        fetchPromises.push(
+          fetchExternalAiWeatherForecast({
+            lat,
+            lon,
+            timezone,
+            hours: 48,
+            validTimes: Array.isArray(leadRes?.hourly?.time) ? leadRes.hourly.time.slice(0, 48) : undefined,
+          }).catch(() => null)
+        );
+      }
     }
 
     const results = await Promise.all(fetchPromises);
@@ -205,6 +225,7 @@ export async function fetchWeatherData(
     const aromeData = (!isBot && forceHighRes ? results[2] : null) || null;
     const ecmwfData = (!isBot && forceHighRes ? results[3] : null) || null;
     const gfsData = (!isBot && forceHighRes ? results[4] : null) || null;
+    const externalAiData = shouldFetchExternalAi ? results[5] ?? null : null;
 
     const harmonieData = locale === "nl" ? coreData : secondaryData;
     const iconData = locale === "de" ? coreData : (locale === "fr" ? secondaryData : null);
@@ -263,6 +284,11 @@ export async function fetchWeatherData(
         windSpeed: Math.round(googleData.windSpeed[i] ?? 0)
       } : undefined;
 
+      const externalAi = externalAiPointForTime(externalAiData, time, i);
+      const externalAiModels = externalAiData && externalAi
+        ? { [externalAiData.modelKey]: externalAi }
+        : {};
+
       // Mariana 'Geographic Routing' Layer: 
       // We choose the lead model based on the exact coordinates within France.
       // - Northern/Eastern France (lat > 48.5 or lon > 4.5) -> ICON (closer to Germany/Europe)
@@ -289,7 +315,7 @@ export async function fetchWeatherData(
         windSpeed,
         cape: Math.round(data.hourly.cape?.[i] ?? 0),
         confidence: leadModelEntry ? "high" : "medium",
-        models: { harmonie, icon, arome, ecmwf, gfs, google }
+        models: { harmonie, icon, arome, ecmwf, gfs, google, ...externalAiModels }
       };
     });
 
@@ -354,6 +380,7 @@ export async function fetchWeatherData(
     if (secondaryData) sources.push(SECONDARY_SOURCE_LABEL[locale]);
     if (aromeData) sources.push("METEOFRANCE AROME");
     if (googleData) sources.push("GOOGLE WEATHER API");
+    if (externalAiData) sources.push(externalAiData.modelName);
 
     const weather: WeatherData = {
       current: {
@@ -513,18 +540,19 @@ export async function fetchAirQuality(lat: number, lon: number, locale: Locale =
 export function getPollenLevel(grains: number | null, type: "grass" | "tree", locale: Locale = "nl"): { label: string; level: 0 | 1 | 2 | 3 } {
   const de = locale === "de";
   const fr = locale === "fr";
-  if (grains === null) return { label: fr ? "Inconnu" : (de ? "Unbekannt" : "Onbekend"), level: 0 };
+  const es = locale === "es";
+  if (grains === null) return { label: es ? "Desconocido" : fr ? "Inconnu" : (de ? "Unbekannt" : "Onbekend"), level: 0 };
   if (type === "grass") {
-    if (grains < 10) return { label: fr ? "Faible" : (de ? "Niedrig" : "Laag"), level: 0 };
-    if (grains < 30) return { label: fr ? "Modéré" : (de ? "Mäßig" : "Matig"), level: 1 };
-    if (grains < 50) return { label: fr ? "Élevé" : (de ? "Hoch" : "Hoog"), level: 2 };
-    return { label: fr ? "Très élevé" : (de ? "Sehr hoch" : "Zeer hoog"), level: 3 };
+    if (grains < 10) return { label: es ? "Bajo" : fr ? "Faible" : (de ? "Niedrig" : "Laag"), level: 0 };
+    if (grains < 30) return { label: es ? "Moderado" : fr ? "Modéré" : (de ? "Mäßig" : "Matig"), level: 1 };
+    if (grains < 50) return { label: es ? "Alto" : fr ? "Élevé" : (de ? "Hoch" : "Hoog"), level: 2 };
+    return { label: es ? "Muy alto" : fr ? "Très élevé" : (de ? "Sehr hoch" : "Zeer hoog"), level: 3 };
   }
   // tree (birch, alder, mugwort)
-  if (grains < 10) return { label: fr ? "Faible" : (de ? "Niedrig" : "Laag"), level: 0 };
-  if (grains < 50) return { label: fr ? "Modéré" : (de ? "Mäßig" : "Matig"), level: 1 };
-  if (grains < 200) return { label: fr ? "Élevé" : (de ? "Hoch" : "Hoog"), level: 2 };
-  return { label: fr ? "Très élevé" : (de ? "Sehr hoch" : "Zeer hoog"), level: 3 };
+  if (grains < 10) return { label: es ? "Bajo" : fr ? "Faible" : (de ? "Niedrig" : "Laag"), level: 0 };
+  if (grains < 50) return { label: es ? "Moderado" : fr ? "Modéré" : (de ? "Mäßig" : "Matig"), level: 1 };
+  if (grains < 200) return { label: es ? "Alto" : fr ? "Élevé" : (de ? "Hoch" : "Hoog"), level: 2 };
+  return { label: es ? "Muy alto" : fr ? "Très élevé" : (de ? "Sehr hoch" : "Zeer hoog"), level: 3 };
 }
 
 const NL_COASTAL_POINTS: [number, number][] = [
@@ -619,6 +647,22 @@ export function getWeatherEmoji(code: number, isDay: boolean = true): string {
 }
 
 export function getWeatherDescription(code: number, locale: Locale = "nl"): string {
+  if (locale === "es") {
+    if (code === 0) return "Despejado";
+    if (code <= 2) return "Parcialmente nuboso";
+    if (code === 3) return "Nuboso";
+    if (code <= 48) return "Niebla";
+    if (code <= 55) return "Llovizna";
+    if (code <= 57) return "Llovizna helada";
+    if (code <= 65) return "Lluvia";
+    if (code <= 67) return "Lluvia helada";
+    if (code <= 75) return "Nieve";
+    if (code === 77) return "Granizo fino";
+    if (code <= 82) return "Chubascos";
+    if (code <= 86) return "Chubascos de nieve";
+    if (code >= 95) return "Tormenta";
+    return "Variable";
+  }
   if (locale === "de") {
     if (code === 0) return "Wolkenlos";
     if (code <= 2) return "Teilweise bewölkt";
@@ -668,6 +712,21 @@ export function getWeatherDescription(code: number, locale: Locale = "nl"): stri
 }
 
 export function getWindBeaufort(kmh: number, locale: Locale = "nl"): { scale: number; label: string } {
+  if (locale === "es") {
+    if (kmh < 1) return { scale: 0, label: "Calma" };
+    if (kmh <= 5) return { scale: 1, label: "Brisa muy floja" };
+    if (kmh <= 11) return { scale: 2, label: "Brisa floja" };
+    if (kmh <= 19) return { scale: 3, label: "Brisa ligera" };
+    if (kmh <= 28) return { scale: 4, label: "Brisa moderada" };
+    if (kmh <= 38) return { scale: 5, label: "Brisa fresca" };
+    if (kmh <= 49) return { scale: 6, label: "Viento fuerte" };
+    if (kmh <= 61) return { scale: 7, label: "Viento muy fuerte" };
+    if (kmh <= 74) return { scale: 8, label: "Temporal" };
+    if (kmh <= 88) return { scale: 9, label: "Temporal fuerte" };
+    if (kmh <= 102) return { scale: 10, label: "Temporal duro" };
+    if (kmh <= 117) return { scale: 11, label: "Temporal muy duro" };
+    return { scale: 12, label: "Huracán" };
+  }
   if (locale === "de") {
     if (kmh < 1) return { scale: 0, label: "Windstille" };
     if (kmh <= 5) return { scale: 1, label: "Leiser Zug" };
