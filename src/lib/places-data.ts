@@ -15,7 +15,9 @@ export interface Place {
   province: string;
   lat: number;
   lon: number;
+  slug?: string;
   population?: number;
+  geonames_id?: number;
   character?: "coastal" | "inland" | "highland" | "urban" | "mountain" | "mediterranean coastal" | "atlantic coastal" | "northern continental"; // Voor slimme AI-commentaar en affiliates
 }
 
@@ -158,7 +160,8 @@ export type Province =
   | "guyane"
   | "la-reunion"
   | "mayotte"
-  | "luxembourg-country";
+  | "luxembourg-country"
+  | "spanje";
 
 export const PROVINCE_LABELS: Record<Province, string> = {
   groningen: "Groningen",
@@ -297,6 +300,7 @@ export const PROVINCE_LABELS: Record<Province, string> = {
   "la-reunion": "La Réunion",
   "mayotte": "Mayotte",
   "luxembourg-country": "Luxembourg",
+  spanje: "Spanje",
 };
 
 export type City = { name: string; lat: number; lon: number; population?: number; character?: string };
@@ -319,8 +323,12 @@ export function placeSlug(name: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+export function placeRouteSlug(place: Pick<Place, "name" | "slug">): string {
+  return place.slug || placeSlug(place.name);
+}
+
 export function findPlace(province: string, slug: string): Place | undefined {
-    return ALL_PLACES.find(p => p.province === province && placeSlug(p.name) === slug);
+    return ALL_PLACES.find(p => p.province === province && placeRouteSlug(p) === slug);
 }
 
 export function nearbyPlaces(base: Place, limit = 10): Place[] {
