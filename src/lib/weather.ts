@@ -48,11 +48,12 @@ const BASE_URL_BY_LOCALE: Record<Locale, string> = {
   es: OPEN_METEO_BASE,
 };
 
-const BASE_MODEL_BY_LOCALE: Record<Locale, string> = {
-  nl: "knmi_seamless",
-  de: "dwd_icon_d2",
-  fr: "meteofrance_seamless",
-  es: "best_match",
+const BASE_MODELS_BY_LOCALE: Record<Locale, string[]> = {
+  nl: ["knmi_seamless"],
+  de: ["dwd_icon_d2"],
+  // France is AROME-first. Meteo-France seamless is the resilience fallback.
+  fr: ["meteofrance_arome_france_hd", "meteofrance_seamless"],
+  es: ["best_match"],
 };
 
 const SECONDARY_MODEL_BY_LOCALE: Record<Locale, string> = {
@@ -155,10 +156,12 @@ export async function fetchWeatherData(
   const timezone = locale === "de" ? "Europe/Berlin" : locale === "fr" ? "Europe/Paris" : locale === "es" ? "Europe/Madrid" : "Europe/Amsterdam";
 
   const attemptFetch = async (): Promise<any> => {
+    const models = BASE_MODELS_BY_LOCALE[locale];
+    for (const model of models) {
     const url = `${BASE_URL_BY_LOCALE[locale]}?${new URLSearchParams({
       latitude: lat.toString(),
       longitude: lon.toString(),
-      models: BASE_MODEL_BY_LOCALE[locale],
+      models: model,
       current: CURRENT_PARAMS,
       hourly: HOURLY_PARAMS + ",apparent_temperature",
       daily: DAILY_PARAMS,
@@ -175,13 +178,16 @@ export async function fetchWeatherData(
       });
       if (!res.ok) {
         console.error("Open-Meteo non-ok", res.status, url.slice(0, 80));
-        return null;
+        continue;
       }
-      return await res.json();
+      const data = await res.json();
+      return { ...data, __wzModel: model };
     } catch (e) {
       console.error("Open-Meteo fetch error", e instanceof Error ? e.message : String(e));
-      return null;
+      continue;
     }
+    }
+    return null;
   };
 
   try {
@@ -221,14 +227,17 @@ export async function fetchWeatherData(
       return null as any;
     }
 
+    const coreHourly = coreData.hourly as RawModelHourly;
     const secondaryData = (!isBot && forceHighRes ? results[1] : null) || null;
-    const aromeData = (!isBot && forceHighRes ? results[2] : null) || null;
+    const aromeData = locale === "fr"
+      ? coreHourly
+      : ((!isBot && forceHighRes ? results[2] : null) || null);
     const ecmwfData = (!isBot && forceHighRes ? results[3] : null) || null;
     const gfsData = (!isBot && forceHighRes ? results[4] : null) || null;
     const externalAiData = shouldFetchExternalAi ? results[5] ?? null : null;
 
-    const harmonieData = locale === "nl" ? coreData : secondaryData;
-    const iconData = locale === "de" ? coreData : (locale === "fr" ? secondaryData : null);
+    const harmonieData = locale === "nl" ? coreHourly : secondaryData;
+    const iconData = locale === "de" ? coreHourly : (locale === "fr" ? secondaryData : null);
     const googleData: any = null;
 
     const data = coreData;
@@ -289,15 +298,12 @@ export async function fetchWeatherData(
         ? { [externalAiData.modelKey]: externalAi }
         : {};
 
-      // Mariana 'Geographic Routing' Layer: 
-      // We choose the lead model based on the exact coordinates within France.
-      // - Northern/Eastern France (lat > 48.5 or lon > 4.5) -> ICON (closer to Germany/Europe)
-      // - Southern/Western France -> AROME (Atlantic/Mediterranean focus)
-      const isNorthernEasternFR = locale === "fr" && (lat > 48.5 || lon > 4.5);
+      // Mariana 'Geographic Routing' Layer:
+      // France is AROME-first; ICON remains supporting context when high-res is requested.
       const leadModelEntry = locale === "de" 
         ? icon 
         : locale === "fr" 
-          ? (isNorthernEasternFR ? icon : arome) 
+          ? (arome ?? icon) 
           : harmonie;
 
       // Base values volgen altijd het land-specifieke leidende model.
@@ -378,7 +384,7 @@ export async function fetchWeatherData(
 
     const sources = [LEAD_SOURCE_LABEL[locale]];
     if (secondaryData) sources.push(SECONDARY_SOURCE_LABEL[locale]);
-    if (aromeData) sources.push("METEOFRANCE AROME");
+    if (aromeData && locale !== "fr") sources.push("METEOFRANCE AROME");
     if (googleData) sources.push("GOOGLE WEATHER API");
     if (externalAiData) sources.push(externalAiData.modelName);
 
