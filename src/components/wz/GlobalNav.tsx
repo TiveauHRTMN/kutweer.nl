@@ -231,7 +231,17 @@ export default function GlobalNav() {
           <div className="flex items-center gap-2">
             {user ? (
               <>
-                <Link href="/app" className={actionBtnClass} style={{ height: BTN_H, background: "rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.10)", color: "#0f1a2c" }}>
+                <Link
+                  href="/app"
+                  className={actionBtnClass}
+                  style={{
+                    height: BTN_H,
+                    background: "linear-gradient(180deg, #ffe060 0%, #ffd21a 100%)",
+                    border: "1px solid rgba(180,130,0,0.35)",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(160,110,0,0.15)",
+                    color: "#0f1a2c",
+                  }}
+                >
                   Dashboard
                 </Link>
                 <button
@@ -248,7 +258,17 @@ export default function GlobalNav() {
               </>
             ) : (
               <>
-                <Link href={isFR ? "/app/login?lang=fr" : isDE ? "/app/login?lang=de" : "/app/login"} className={actionBtnClass} style={{ height: BTN_H, background: "rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.10)", color: "#0f1a2c" }}>
+                <Link
+                  href={isFR ? "/app/login?lang=fr" : isDE ? "/app/login?lang=de" : "/app/login"}
+                  className={actionBtnClass}
+                  style={{
+                    height: BTN_H,
+                    background: "linear-gradient(180deg, #ffe060 0%, #ffd21a 100%)",
+                    border: "1px solid rgba(180,130,0,0.35)",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(160,110,0,0.15)",
+                    color: "#0f1a2c",
+                  }}
+                >
                   {isFR ? "Se connecter" : isDE ? "Anmelden" : "Inloggen"}
                 </Link>
                 <Link href={isFR ? "/fr/tarifs" : isDE ? "/de/preise" : "/app/signup"} className={actionBtnClass} style={{ background: "#0f1a2c", height: BTN_H, color: "white", boxShadow: "0 2px 8px rgba(15,26,44,0.25)" }}>
